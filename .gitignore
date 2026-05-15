@@ -1,0 +1,20 @@
+# Obsidian vault
+Halosight Knowledge Wiki/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Node (also handled in app/.gitignore)
+node_modules/
+
+# Environment
+.env*
+
+# Next.js build output
+app/.next/
+app/out/
+app/build/
+
+# TypeScript
+*.tsbuildinfo

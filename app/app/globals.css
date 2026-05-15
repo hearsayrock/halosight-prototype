@@ -1,0 +1,255 @@
+@import "tailwindcss";
+
+/* ─── Local Fonts ─────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-Thin.ttf") format("truetype");
+  font-weight: 100; font-style: normal;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-ThinItalic.ttf") format("truetype");
+  font-weight: 100; font-style: italic;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-ExtraLight.ttf") format("truetype");
+  font-weight: 200; font-style: normal;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-Light.ttf") format("truetype");
+  font-weight: 300; font-style: normal;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-Regular.ttf") format("truetype");
+  font-weight: 400; font-style: normal;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-Italic.ttf") format("truetype");
+  font-weight: 400; font-style: italic;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-Medium.ttf") format("truetype");
+  font-weight: 500; font-style: normal;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-SemiBold.ttf") format("truetype");
+  font-weight: 600; font-style: normal;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-Bold.ttf") format("truetype");
+  font-weight: 700; font-style: normal;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-ExtraBold.ttf") format("truetype");
+  font-weight: 800; font-style: normal;
+}
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/barlow/Barlow-Black.ttf") format("truetype");
+  font-weight: 900; font-style: normal;
+}
+@font-face {
+  font-family: "Roboto Slab";
+  src: url("/fonts/roboto-slab/RobotoSlab-Light.ttf") format("truetype");
+  font-weight: 300; font-style: normal;
+}
+@font-face {
+  font-family: "Roboto Slab";
+  src: url("/fonts/roboto-slab/RobotoSlab-Regular.ttf") format("truetype");
+  font-weight: 400; font-style: normal;
+}
+@font-face {
+  font-family: "Roboto Slab";
+  src: url("/fonts/roboto-slab/RobotoSlab-Medium.ttf") format("truetype");
+  font-weight: 500; font-style: normal;
+}
+@font-face {
+  font-family: "Roboto Slab";
+  src: url("/fonts/roboto-slab/RobotoSlab-SemiBold.ttf") format("truetype");
+  font-weight: 600; font-style: normal;
+}
+@font-face {
+  font-family: "Roboto Slab";
+  src: url("/fonts/roboto-slab/RobotoSlab-Bold.ttf") format("truetype");
+  font-weight: 700; font-style: normal;
+}
+@font-face {
+  font-family: "Roboto Slab";
+  src: url("/fonts/roboto-slab/RobotoSlab-ExtraBold.ttf") format("truetype");
+  font-weight: 800; font-style: normal;
+}
+
+/* ─── Design Tokens ───────────────────────────────────────────────────────── */
+/* Halosight token system — M3-aligned, Flutter-portable, Figma-ready         */
+
+/* Primitive palette — reference only, never use directly in components        */
+:root {
+  --palette-coral-subtle: #FF8F82;
+  --palette-coral:        #FF6B5A;
+  --palette-coral-strong: #E64A37;
+  --palette-neon-subtle:  #B3B8FF;
+  --palette-neon:         #8B92FF;
+  --palette-neon-strong:  #6B72E8;
+  --palette-indigo:       #4850B8;
+  --palette-indigo-light: #7E85E6;
+  --palette-teal:         #6B9DB0;
+  --palette-teal-subtle:  #8CB5C5;
+  --palette-pink:         #E85D9C;
+  --palette-green:        #2ECC71;
+  --palette-amber:        #F5A623;
+  --palette-red:          #FF4D4F;
+  --palette-sky:          #4DA3FF;
+}
+
+@theme inline {
+
+  /* ── Surface (M3 roles) ──────────────────────────────────────────────────── */
+  --color-background:                #111420;  /* page / app chrome        */
+  --color-surface-dim:               #171B29;  /* nav, persistent UI       */
+  --color-surface:                   #202535;  /* cards, list items        */
+  --color-surface-variant:           #2A3042;  /* elevated cards, popovers */
+  --color-surface-container-highest: #343B4F;  /* pressed, deep elevation  */
+  --color-on-background:             #F7F8FF;
+  --color-on-surface:                #F7F8FF;
+  --color-on-surface-variant:        #8B94A8;  /* muted text, metadata     */
+  --color-inverse-surface:           #F7F8FF;
+  --color-inverse-on-surface:        #111420;
+
+  /* ── Outline ──────────────────────────────────────────────────────────────── */
+  --color-outline:         #2A3042;
+  --color-outline-variant: #202535;
+
+  /* ── Supplemental text roles (M3 on-surface has two tiers; we need three) ── */
+  --color-on-surface-subtle:   #C3CAD8;  /* supporting text, subtitles */
+  --color-on-surface-disabled: #5D667A;  /* placeholders, inactive nav */
+
+  /* ── Primary — neon indigo (M3: primary) ────────────────────────────────── */
+  --color-primary:              #8B92FF;
+  --color-primary-hover:        #B3B8FF;
+  --color-primary-pressed:      #6B72E8;
+  --color-on-primary:           #111420;
+  --color-primary-container:    #1A1E40;
+  --color-on-primary-container: #B3B8FF;
+
+  /* ── Secondary — neon indigo (M3: secondary) ─────────────────────────────── */
+  --color-secondary:              #8B92FF;
+  --color-secondary-hover:        #B3B8FF;
+  --color-secondary-pressed:      #6B72E8;
+  --color-on-secondary:           #111420;
+  --color-secondary-container:    #1A1E40;
+  --color-on-secondary-container: #B3B8FF;
+
+  /* ── Tertiary — success green (M3: tertiary) ─────────────────────────────── */
+  --color-tertiary:              #2ECC71;
+  --color-on-tertiary:           #FFFFFF;
+  --color-tertiary-container:    #0A2E1A;
+  --color-on-tertiary-container: #6EE9A8;
+
+  /* ── Error (M3: error) ───────────────────────────────────────────────────── */
+  --color-error:                 #FF4D4F;
+  --color-on-error:              #FFFFFF;
+  --color-error-container:       #2E0A10;
+  --color-on-error-container:    #FF9AA2;
+
+  /* ── Warning (M3 supplement — not in spec, required by app) ──────────────── */
+  --color-warning:               #F5A623;
+  --color-on-warning:            #FFFFFF;
+  --color-warning-container:     #2E2308;
+  --color-on-warning-container:  #F9CC7A;
+
+  /* ── Info (M3 supplement) ────────────────────────────────────────────────── */
+  --color-info:                  #4DA3FF;
+  --color-on-info:               #FFFFFF;
+  --color-info-container:        #0A1E3C;
+  --color-on-info-container:     #90CAFF;
+
+  /* ── Halosight custom roles ──────────────────────────────────────────────── */
+  --color-recording:        #FF5A4F;  /* live recording — visually distinct from error */
+  --color-secondary-deep:   #4850B8;  /* deep indigo for filled secondary actions      */
+  --color-teal:             #6B9DB0;  /* account / relationship data viz               */
+  --color-teal-hover:       #8CB5C5;
+  --color-pink:             #E85D9C;  /* engagement / highlight data viz               */
+
+  /* ── Typography ──────────────────────────────────────────────────────────── */
+  --font-sans:  "Barlow", system-ui, sans-serif;
+  --font-serif: "Roboto Slab", Georgia, serif;
+
+  /* ── Border Radius — M3 shape scale ─────────────────────────────────────── */
+  --radius-none: 0px;
+  --radius-xs:   4px;    /* M3: Extra Small */
+  --radius-sm:   8px;    /* M3: Small       */
+  --radius-md:   12px;   /* M3: Medium      */
+  --radius-lg:   16px;   /* M3: Large       */
+  --radius-xl:   28px;   /* M3: Extra Large */
+  --radius-full: 100px;  /* M3: Full        */
+
+  /* ── Spacing — 4px base grid ─────────────────────────────────────────────── */
+  --spacing-1:  4px;
+  --spacing-2:  8px;
+  --spacing-3:  12px;
+  --spacing-4:  16px;
+  --spacing-5:  20px;
+  --spacing-6:  24px;
+  --spacing-8:  32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+
+  /* ── Elevation ───────────────────────────────────────────────────────────── */
+  --elevation-0: none;
+  --elevation-1: 0 1px 2px rgba(0,0,0,0.35), 0 1px 3px 1px rgba(0,0,0,0.2);
+  --elevation-2: 0 1px 2px rgba(0,0,0,0.35), 0 2px 6px 2px rgba(0,0,0,0.2);
+  --elevation-3: 0 4px 8px 3px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.35);
+  --elevation-4: 0 6px 10px 4px rgba(0,0,0,0.2), 0 2px 3px rgba(0,0,0,0.35);
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #111420;
+  color: #F7F8FF;
+  font-family: "Barlow", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Phone Frame ─────────────────────────────────────────────────────────── */
+
+.phone-frame {
+  width: 390px;
+  height: 844px;
+  position: relative;
+  overflow: hidden;
+  background: #111420;
+  border-radius: 40px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 40px 80px rgba(0,0,0,0.7);
+}
+
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-screen::-webkit-scrollbar { display: none; }
