@@ -22,15 +22,16 @@ app/
 ├── components/                   # Reusable UI components
 │   ├── layout/                   # App-level structural components
 │   │   ├── PhoneFrame.tsx        # Web-only phone viewport simulator
-│   │   └── BottomNav.tsx         # Bottom navigation bar
+│   │   └── BottomNav.tsx         # Floating glass pill bottom navigation
 │   ├── accounts/                 # Account-specific components
-│   │   ├── AccountListItem.tsx   # Single account row
-│   │   ├── AccountTypeIcon.tsx   # Corporate/branch/standalone icon
+│   │   ├── AccountListItem.tsx   # Single account card (dark-secondary bg, alpha-white-10 border)
+│   │   ├── AccountTypeIcon.tsx   # Corporate/branch/standalone SVG icon
 │   │   └── SortMenu.tsx          # Sort dropdown overlay
 │   ├── capture/                  # Capture meeting flow components
 │   │   └── (to be built)
 │   └── ui/                       # Generic primitives
-│       └── (to be built)
+│       ├── Icon.tsx              # Material Symbols Rounded wrapper
+│       └── MenuIcon.tsx          # Custom top nav hamburger icon
 │
 ├── lib/
 │   ├── types/index.ts            # All TypeScript interfaces = Flutter Entities
@@ -39,7 +40,10 @@ app/
 │   └── utils.ts                  # formatLastVisited, formatDistance, cn()
 │
 └── public/
-    └── fonts/                    # Barlow + Roboto Slab (local @font-face)
+    └── fonts/
+        ├── barlow/               # Barlow — all UI text (@font-face, self-hosted)
+        ├── roboto-slab/          # Roboto Slab — headings (@font-face, self-hosted)
+        └── material-symbols/     # MaterialSymbolsRounded.woff2 (variable font)
 ```
 
 ---
@@ -47,13 +51,13 @@ app/
 ## Component Hierarchy
 
 ```
-PhoneFrame (web wrapper)
+PhoneFrame (web wrapper — no Flutter equivalent)
 └── Screen (page.tsx)
-    ├── TopBar / Header
+    ├── Header / Top Bar
     ├── Content Area (scrollable)
     │   └── Feature Components
     │       └── UI Primitives
-    └── BottomNav
+    └── BottomNav (floating, outside scroll area)
 ```
 
 ---
@@ -62,48 +66,60 @@ PhoneFrame (web wrapper)
 
 ### Layout Components (`components/layout/`)
 Structural, app-level. One instance per screen. Not domain-specific.
-- `PhoneFrame` — web-only 390×844 simulator. No Flutter equivalent.
-- `BottomNav` — persistent bottom navigation. Flutter: `BottomNavigationBar`.
+
+| Component | Description | Flutter equivalent |
+|---|---|---|
+| `PhoneFrame` | Web-only 390×844 viewport simulator | No equivalent |
+| `BottomNav` | Floating glass pill nav (Home / Accounts) | Custom `NavigationBar` |
 
 ### Feature Components (`components/accounts/`, `components/capture/`)
 Domain-specific. Tied to a feature area. Reusable across screens within that feature.
-- `AccountListItem` — single account row
-- `AccountTypeIcon` — icon indicating account hierarchy level
-- `SortMenu` — sort dropdown
+
+| Component | Description | Flutter equivalent |
+|---|---|---|
+| `AccountListItem` | Account card — icon, name, distance, last visited, city/state | `AccountsViewAccountListItem` |
+| `AccountTypeIcon` | SVG icon for corporate / branch / standalone account types | `CustomPainter` |
+| `SortMenu` | Sort dropdown with checkmark selection | `PopupMenuButton` or custom overlay |
 
 ### UI Primitives (`components/ui/`)
 Generic, not domain-aware. Equivalent to Flutter's shared widget library.
-- To be built: Button, Badge, Chip, Skeleton, ConfidenceBar, AICard
+
+| Component | Description | Flutter equivalent |
+|---|---|---|
+| `Icon` | Material Symbols Rounded variable font wrapper | `Icon(Symbols.name)` |
+| `MenuIcon` | Custom two-bar hamburger SVG for top nav | `CustomPainter` |
+
+**To be built:** Button, Badge, Chip, Skeleton, AICard
 
 ---
 
 ## Naming Conventions
 
-| Type | Naming | Example |
+| Type | Convention | Example |
 |---|---|---|
 | Component files | PascalCase | `AccountListItem.tsx` |
 | Page files | lowercase | `page.tsx` |
 | Utility files | camelCase | `utils.ts` |
 | Mock data files | camelCase | `accounts.ts` |
-| CSS class names | kebab-case | `phone-frame` |
-| CSS tokens | kebab-case with double dash | `--color-primary` |
+| CSS token names | `--kebab-case` | `--color-brand-purple` |
+| CSS class names | `.kebab-case` | `.heading-1`, `.label-serif` |
 
 ---
 
 ## Component File Template
 
-Every component should follow this structure:
+Every component must follow this structure:
 
 ```tsx
-"use client"; // only if needed
+"use client"; // only if using hooks or browser APIs
 
 /**
  * FLUTTER HANDOFF: ComponentName
  * Widget: StatelessWidget | StatefulWidget
  * Props: list props and types
  * State: none OR describe state
- * Flutter equivalent: path/to/widget.dart
- * Tokens: list tokens used
+ * Flutter equivalent: path/to/widget.dart (or description)
+ * Tokens: list every --color-* and --radius-* token used
  * Transitions: describe any animations
  */
 
@@ -118,7 +134,24 @@ export default function ComponentName({ prop }: Props) {
 }
 ```
 
-The Flutter handoff comment block is required on every component. It makes the component self-documenting for engineers who read the prototype as a spec.
+The Flutter handoff comment block is **required** on every component. It makes the component self-documenting for engineers reading the prototype as a spec.
+
+---
+
+## Token Usage Rules
+
+1. **Never use raw hex values** in components — always `var(--color-*)`.
+2. **Never use raw px values for radius** — always `var(--radius-*)`.
+3. Alpha/glass effects use `--color-alpha-*` tokens + `backdropFilter`.
+4. If a color doesn't have a token, add it to `globals.css` and the design system page first.
+
+---
+
+## Design System Sync Rule
+
+> **Any change to a component's visual tokens must be reflected in the design system page** (`/design-system`) before it is considered done.
+
+The design system page imports live components directly (no mocks). Changes to `BottomNav`, `AccountListItem`, `SortMenu`, `Icon`, `MenuIcon` automatically appear on the design system page — no extra step needed for those. For new token additions, add the swatch to the appropriate color section manually.
 
 ---
 
@@ -138,8 +171,8 @@ No Redux, no Zustand, no global state libraries. Keep it simple — the Flutter 
 ## How to Add a New Screen
 
 1. Create `app/app/[route]/page.tsx`
-2. Wrap in `<PhoneFrame>` (unless it's a wide browser tool like design system)
-3. Include `<BottomNav>` if it's a main app screen
+2. Wrap in `<PhoneFrame>` if it's a mobile screen
+3. Include `<BottomNav>` if it's a main app tab
 4. Add Flutter handoff comment at top of file
 5. Pull data from `lib/mock-data/` or define new mock data
 6. Use existing components before creating new ones
@@ -148,11 +181,19 @@ No Redux, no Zustand, no global state libraries. Keep it simple — the Flutter 
 
 1. Determine category: layout / feature / ui primitive
 2. Place in correct `components/` subfolder
-3. Include Flutter handoff comment block
-4. Use CSS tokens — never raw hex values
+3. Add Flutter handoff comment block
+4. Use `var(--color-*)` tokens — never raw hex
 5. Export as default export
-6. Update this doc if it's a reusable primitive worth documenting
+6. If it's a new primitive, add it to `components/ui/` and document it in this file
+7. Add it to the design system page under the appropriate section
+
+## How to Add a New Color Token
+
+1. Add to `@theme inline` in `globals.css`
+2. Add the corresponding `ColorSwatch` or `AlphaSwatch` to the design system page
+3. Update `docs/design-system.md` token table
+4. If it maps to a Flutter color role, update `docs/flutter-handoff.md`
 
 ---
 
-*Last updated: 2026-05-14*
+*Last updated: 2026-05-16*
