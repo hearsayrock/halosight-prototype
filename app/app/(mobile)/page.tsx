@@ -51,7 +51,7 @@ export default function LoginPage() {
           width={220}
           height={60}
           priority
-          style={{ objectFit: "contain" }}
+          style={{ objectFit: "contain", height: "auto" }}
         />
       </div>
 
@@ -106,7 +106,7 @@ export default function LoginPage() {
               borderRadius: "var(--radius-xl)",
             }}
           >
-            <Image src="/apple-logo.svg" alt="" width={18} height={22} />
+            <Image src="/apple-logo.svg" alt="" width={18} height={22} style={{ height: "auto" }} />
             Sign in with Apple
           </button>
         </Link>

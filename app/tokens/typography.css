@@ -1,0 +1,39 @@
+/* ─── Halosight Typography Classes ───────────────────────────────────────────
+   Named CSS classes for all type styles. Use these in components instead of
+   raw font-size/weight values so type scales stay consistent and
+   Flutter engineers can map directly to TextStyle.
+   See flutter-handoff.md for the full Dart mapping.
+──────────────────────────────────────────────────────────────────────────── */
+
+/* ── Headings — Roboto Slab 700 ──────────────────────────────────────────── */
+.heading-1 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 60px; line-height: 66px; }
+.heading-2 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 48px; line-height: 58px; }
+.heading-3 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 36px; line-height: 43px; }
+.heading-4 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 24px; line-height: 31px; }
+.heading-5 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 20px; line-height: 26px; }
+.heading-6 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 18px; line-height: 24px; }
+
+/* ── Body Bold — Barlow 600 ──────────────────────────────────────────────── */
+.text-xl-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 20px; line-height: 30px; }
+.text-lg-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 18px; line-height: 27px; }
+.text-base-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 16px; line-height: 24px; }
+.text-sm-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 14px; line-height: 21px; }
+.text-xs-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 12px; line-height: 18px; }
+
+/* ── Subheadlines — Barlow 400 ───────────────────────────────────────────── */
+.subheadline-lg { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 24px; line-height: 36px; }
+.subheadline-md { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 20px; line-height: 30px; }
+
+/* ── Eyebrow ─────────────────────────────────────────────────────────────── */
+.eyebrow-text {
+  font-family: "Barlow", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ── Labels & Captions ───────────────────────────────────────────────────── */
+.label-serif { font-family: "Roboto Slab", Georgia, serif; font-weight: 400; font-size: 10px; line-height: 14px; }
+.text-2xs    { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 10px; line-height: 14px; }

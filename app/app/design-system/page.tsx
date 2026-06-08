@@ -1134,12 +1134,12 @@ export default function DesignSystemPage() {
           <div className="space-y-8 mb-16">
             <div>
               <SubHeader title="Account List Items (live component)" />
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col">
                 {mockAccounts.slice(0, 4).map((account) => (
                   <AccountListItem key={account.id} account={account} />
                 ))}
               </div>
-              <TokenLabel name="AccountListItem — background: --color-dark-secondary · border: --color-dark-tertiary · radius: --radius-sm" value="px-4 · gap-2 between cards · font: 600 15px + 400 13px" />
+              <TokenLabel name="AccountListItem — separator: --color-dark-tertiary border-bottom · no card bg" value="name: 600 16px · meta: text-sm · badge: dark-tertiary pill · task pill: coral-light 20% opacity bg" />
             </div>
 
             <div>

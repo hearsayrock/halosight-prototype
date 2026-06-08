@@ -6,10 +6,15 @@
 
 export type AccountType = "corporate" | "branch" | "standalone";
 
+export type CrmAccountType = "sold-to" | "shipped-to" | "distributor" | "prospect";
+
 export interface Account {
   id: string;
   name: string;
   type: AccountType;
+  crmAccountType?: CrmAccountType; // CRM classification shown on card badge
+  assignedInitial?: string;        // team member initial shown on card (e.g. "A")
+  taskCount?: number;              // open to-dos for this account
   city?: string;
   state?: string;
   distanceMiles: number;

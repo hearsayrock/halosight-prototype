@@ -112,7 +112,7 @@ export default function AccountsPage() {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-2 px-4 py-2 pb-4">
+          <div className="flex flex-col py-2 pb-4">
             {filtered.map((account) => (
               <AccountListItem key={account.id} account={account} />
             ))}
