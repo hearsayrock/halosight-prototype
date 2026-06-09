@@ -37,7 +37,7 @@ function authorInitial(name: string) {
   return name.charAt(0).toUpperCase();
 }
 
-// ── Code snippet ──────────────────────────────────────────────────────────────
+// ── Shared sub-components ─────────────────────────────────────────────────────
 
 function Code({ children }: { children: React.ReactNode }) {
   return (
@@ -58,93 +58,101 @@ function Code({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** A styled callout showing an example thing to say to Claude */
+function ClaudePrompt({ children }: { children: string }) {
+  return (
+    <div style={{
+      marginTop: 8,
+      padding: "10px 14px",
+      borderRadius: 8,
+      background: "color-mix(in srgb, var(--color-brand-purple) 10%, transparent)",
+      border: "1px solid color-mix(in srgb, var(--color-brand-purple) 30%, transparent)",
+    }}>
+      <p style={{ fontSize: 11, fontWeight: 600, color: "var(--color-brand-purple)", margin: "0 0 4px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+        Say to Claude
+      </p>
+      <p style={{ fontSize: 13, color: "var(--color-text-secondary)", margin: 0, lineHeight: 1.55, fontStyle: "italic" }}>
+        "{children}"
+      </p>
+    </div>
+  );
+}
+
 // ── Instructions modal ────────────────────────────────────────────────────────
 
 const STEPS = [
   {
     num: 1,
-    title: "Add the playground to the registry",
+    title: "Tell Claude what you want to explore",
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Open <code style={{ fontSize: 12, background: "#0D0F1A", padding: "1px 6px", borderRadius: 4, color: "#C3CAD8" }}>app/lib/playgrounds.config.ts</code> on{" "}
-          <strong>main</strong> and add an entry to the <code style={{ fontSize: 12, background: "#0D0F1A", padding: "1px 6px", borderRadius: 4, color: "#C3CAD8" }}>PLAYGROUNDS</code> array:
+          Give Claude a name, a one-line description, and who's working on it.
+          Claude will register the playground and give you the exact branch name to use in step 2.
         </p>
-        <Code>{`{
-  id: "playground/your-slug",   // must match your branch name
-  name: "Your Feature Name",
-  description: "One sentence on what you're exploring.",
-  url: "",                       // fill in after step 4
-  author: "Nate",
-  status: "exploring",
-  startedAt: "${new Date().toISOString().slice(0, 10)}",
-  // routes: [{ label: "Screen", path: "/path" }],
-}`}</Code>
-        <p style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.5, marginTop: 8 }}>
-          Commit this to <strong>main</strong> first so the registry is up to date before you branch.
-        </p>
+        <ClaudePrompt>
+          Start a new playground called 'Map View'. I want to explore adding a map to the accounts tab. It's Nate working on it.
+        </ClaudePrompt>
       </>
     ),
   },
   {
     num: 2,
-    title: "Create and push the branch",
+    title: "Create your branch in Terminal",
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          The branch name must match the <code style={{ fontSize: 12, background: "#0D0F1A", padding: "1px 6px", borderRadius: 4, color: "#C3CAD8" }}>id</code> you used in step 1 exactly.
+          Open Terminal and run these two commands using the branch name Claude gave you.
+          That's it — Vercel will automatically detect the new branch and start building
+          a preview in the background (takes about 1–2 minutes).
         </p>
-        <Code>{`git checkout -b playground/your-slug
-git push -u origin playground/your-slug`}</Code>
-        <p style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.5, marginTop: 8 }}>
-          Vercel will automatically detect the new branch and start building a preview deployment (~1–2 min).
-        </p>
+        <Code>{`git checkout -b playground/map-view\ngit push -u origin playground/map-view`}</Code>
       </>
     ),
   },
   {
     num: 3,
-    title: "Copy the Vercel preview URL",
+    title: "Wait for Vercel, then copy the preview URL",
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Go to <strong>vercel.com → halosight-prototype → Deployments</strong>. Find the deployment for your branch, wait for it to go green, click it, and copy the URL from the browser bar. It will look like:
+          Go to <strong style={{ color: "var(--color-text-primary)" }}>vercel.com</strong>, open the <strong style={{ color: "var(--color-text-primary)" }}>halosight-prototype</strong> project,
+          and click <strong style={{ color: "var(--color-text-primary)" }}>Deployments</strong> in the left sidebar.
+          Find your branch in the list and wait for the status dot to turn green.
+          Once it's green, click <strong style={{ color: "var(--color-text-primary)" }}>Visit</strong> and copy the URL from your browser's address bar.
         </p>
-        <Code>{`halosight-prototype-git-playground-your-slug-xxx.vercel.app`}</Code>
       </>
     ),
   },
   {
     num: 4,
-    title: "Paste the URL back into the config",
+    title: "Give the URL to Claude",
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Back in <code style={{ fontSize: 12, background: "#0D0F1A", padding: "1px 6px", borderRadius: 4, color: "#C3CAD8" }}>playgrounds.config.ts</code>, fill in the <code style={{ fontSize: 12, background: "#0D0F1A", padding: "1px 6px", borderRadius: 4, color: "#C3CAD8" }}>url</code> field with the preview URL, commit, and push. This nav and the DevPanel will now link to your playground.
+          Paste the URL into your chat with Claude. Claude will add it to the registry — this sidebar
+          and the DevPanel on the right will automatically link to your playground.
         </p>
-        <Code>{`url: "https://halosight-prototype-git-playground-your-slug-xxx.vercel.app",`}</Code>
+        <ClaudePrompt>
+          Here's the Vercel preview URL for my playground: [paste URL here]. Add it to the config.
+        </ClaudePrompt>
       </>
     ),
   },
   {
     num: 5,
-    title: "Build your feature",
+    title: "Build, then wrap up when you're done",
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          You're live on the branch. Make your changes freely — nothing on <strong>main</strong> is affected. When you're ready:
+          You're live on a completely separate branch — nothing on the main app is affected.
+          Build with Claude as usual. When you're finished, just tell Claude where things stand
+          and it will update the status badge you see in this sidebar:
         </p>
-        <ul style={{ margin: "8px 0 0", padding: "0 0 0 18px", display: "flex", flexDirection: "column", gap: 5 }}>
-          {[
-            <>Set <code style={{ fontSize: 12, background: "#0D0F1A", padding: "1px 6px", borderRadius: 4, color: "#C3CAD8" }}>status: "review"</code> to flag it for review.</>,
-            <>Set <code style={{ fontSize: 12, background: "#0D0F1A", padding: "1px 6px", borderRadius: 4, color: "#C3CAD8" }}>status: "shipped"</code> once it's merged to main.</>,
-            <>Add <code style={{ fontSize: 12, background: "#0D0F1A", padding: "1px 6px", borderRadius: 4, color: "#C3CAD8" }}>routes</code> to the config for quick-jump buttons in the DevPanel — super useful for jumping directly to the screen you're working on.</>,
-          ].map((item, i) => (
-            <li key={i} style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.5 }}>
-              {item}
-            </li>
-          ))}
-        </ul>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10 }}>
+          <ClaudePrompt>My Map View playground is ready for others to look at.</ClaudePrompt>
+          <ClaudePrompt>The Map View feature has been merged — mark it as shipped.</ClaudePrompt>
+        </div>
       </>
     ),
   },
