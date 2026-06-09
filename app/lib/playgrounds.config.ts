@@ -56,7 +56,7 @@ export const PLAYGROUNDS: Playground[] = [
     id: "playground/onboarding-flow",
     name: "Onboarding Flow",
     description: "A 3-screen welcome slideshow walking new users through the app's most valuable features.",
-    url: "",
+    url: "https://halosight-prototype-9tts0vc29-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
     startedAt: "2026-06-09",
