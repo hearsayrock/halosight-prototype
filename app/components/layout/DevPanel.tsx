@@ -54,6 +54,15 @@ const DEFAULT_NAV = [
       { label: "Action Item",       path: "/accounts/jacks-tire-elko/action-items/ja-t1" },
     ],
   },
+  {
+    group: "States",
+    routes: [
+      { label: "List → loading",    path: "/accounts?preview=loading" },
+      { label: "List → error",      path: "/accounts?preview=error" },
+      { label: "Detail → loading",  path: "/accounts/jacks-tire-elko?preview=loading" },
+      { label: "Detail → error",    path: "/accounts/jacks-tire-elko?preview=error" },
+    ],
+  },
 ];
 
 const DEVICES: { key: DeviceSize; label: string }[] = [

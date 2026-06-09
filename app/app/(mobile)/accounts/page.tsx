@@ -4,29 +4,42 @@
  * FLUTTER HANDOFF: AccountsScreen
  * Route: /accounts
  * Widget: StatefulWidget
- * State: searchQuery (string), sortOption (SortOption)
+ * State: searchQuery (string), sortOption (SortOption), pageState (loading|error|loaded)
  * Flutter equivalent: accounts_page.dart + AccountsViewModel
  * Tokens: --color-background, --color-dark-secondary, --color-text-primary,
  *         --color-text-muted, --color-text-disabled, --color-alpha-white-10
+ *
+ * STATES (preview via ?preview=loading or ?preview=error):
+ *   loading — skeleton shimmer rows while accounts fetch from API
+ *   error   — error card + retry CTA when the fetch fails
+ *   loaded  — normal list (default)
+ *
+ * PULL-TO-REFRESH (Flutter only):
+ *   Wrap the ListView in a RefreshIndicator. On refresh, re-call
+ *   the ViewModel's loadAccounts() method. Not implemented in web prototype.
  */
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import AccountListItem from "@/components/accounts/AccountListItem";
 import SortMenu from "@/components/accounts/SortMenu";
 import MenuIcon from "@/components/ui/MenuIcon";
 import Icon from "@/components/ui/Icon";
+import { AccountListSkeleton } from "@/components/ui/Skeleton";
+import ErrorState from "@/components/ui/ErrorState";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import type { SortOption } from "@/lib/types";
 
 // Accounts tab icon — matches BottomNav, used as profile avatar placeholder
 function AccountsIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M8.8984 11.1592C12.4926 11.1592 14.7626 12.697 15.8662 13.7148C16.6443 14.4326 16.647 15.5215 16.1933 16.3096C15.768 17.0481 14.9801 17.5038 14.1279 17.5039H3.91696C3.04814 17.5037 2.2451 17.039 1.81149 16.2861C1.3709 15.5207 1.34294 14.457 2.0859 13.7256C3.13377 12.6944 5.30781 11.1594 8.8984 11.1592ZM9.00875 0.5C11.3543 0.5 13.2861 2.36179 13.2861 4.69531C13.2861 7.02884 11.3543 8.89062 9.00875 8.89062C6.66339 8.89035 4.73144 7.02867 4.73141 4.69531C4.73144 2.36196 6.6634 0.50027 9.00875 0.5Z"
-        fill="var(--color-text-muted)"
+        d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
+        stroke="var(--color-text-muted)"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -45,6 +58,9 @@ function sortAccounts(accounts: typeof mockAccounts, sort: SortOption) {
 }
 
 export default function AccountsPage() {
+  const searchParams = useSearchParams();
+  const preview = searchParams.get("preview"); // "loading" | "error" | null
+
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("alphabetical");
 
@@ -65,18 +81,20 @@ export default function AccountsPage() {
     <div className="relative flex flex-col h-full" style={{ background: "var(--color-background)" }}>
 
       {/* Top bar — 32px edge padding, nudged up from default safe area */}
-      <div className="flex items-center justify-between px-8 pt-10 pb-3">
+      <div className="flex items-center justify-between pl-8 pr-4 pt-10 pb-3">
         <button className="active:opacity-60 transition-opacity" aria-label="Menu">
           <MenuIcon size={32} />
         </button>
-        <button className="active:opacity-60 transition-opacity" aria-label="Profile">
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center"
-            style={{ background: "var(--color-dark-secondary)" }}
-          >
-            <AccountsIcon />
-          </div>
-        </button>
+        <Link href="/profile">
+          <button className="active:opacity-60 transition-opacity" aria-label="Profile">
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center"
+              style={{ background: "var(--color-dark-secondary)" }}
+            >
+              <AccountsIcon />
+            </div>
+          </button>
+        </Link>
       </div>
 
       {/* Search + sort */}
@@ -103,21 +121,38 @@ export default function AccountsPage() {
         <SortMenu current={sort} onChange={setSort} />
       </div>
 
-      {/* Account list — extends full height, scrolls behind the floating BottomNav */}
-      <div className="flex-1 overflow-y-auto">
-        {filtered.length === 0 ? (
-          <div className="flex items-center justify-center pt-20">
-            <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>
-              No accounts match &quot;{query}&quot;
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col py-2 pb-4">
-            {filtered.map((account) => (
-              <AccountListItem key={account.id} account={account} />
-            ))}
-          </div>
+      {/* Account list — scrolls behind floating BottomNav */}
+      <div className="flex-1 overflow-y-auto flex flex-col">
+
+        {/* Loading state */}
+        {preview === "loading" && <AccountListSkeleton rows={6} />}
+
+        {/* Error state */}
+        {preview === "error" && (
+          <ErrorState
+            title="Couldn't load accounts"
+            message="We had trouble reaching the server. Check your connection and try again."
+            onRetry={() => {}}
+          />
         )}
+
+        {/* Loaded state */}
+        {!preview && (
+          filtered.length === 0 ? (
+            <div className="flex items-center justify-center pt-20">
+              <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>
+                No accounts match &quot;{query}&quot;
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col py-2 pb-28">
+              {filtered.map((account, i) => (
+                <AccountListItem key={account.id} account={account} isLast={i === filtered.length - 1} />
+              ))}
+            </div>
+          )
+        )}
+
       </div>
 
     </div>
