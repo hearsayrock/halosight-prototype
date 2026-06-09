@@ -30,11 +30,27 @@ export interface Account {
   annualRevenue?: number;
 }
 
+export type ActionItemStatus = "open" | "done" | "canceled";
+
+export interface ActionItem {
+  id: string;
+  title: string;
+  dueDate: Date | null;   // null = TBD
+  status: ActionItemStatus;
+}
+
 export interface AccountDetail extends Account {
   lastVisitSummary: string;
   ideasForThisTime: string[];
   recentActivity: ActivityItem[];
+  actionItems: ActionItem[];
   relatedAccountCount: number;
+}
+
+export interface ActivityAISummary {
+  title: string;        // AI-generated headline for the activity
+  tldr: string;         // short paragraph summary
+  keyPoints: string[];  // bullet points — wrap **text** in bold
 }
 
 export interface ActivityItem {
@@ -42,9 +58,12 @@ export interface ActivityItem {
   accountId: string;
   date: Date;
   type: "visit" | "call" | "email" | "task";
+  title: string;
   summary: string;
+  durationMinutes?: number;
   hasTranscript: boolean;
   repName: string;
+  aiSummary?: ActivityAISummary;
 }
 
 export interface Interaction {

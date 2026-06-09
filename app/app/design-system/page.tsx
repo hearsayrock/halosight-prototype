@@ -13,6 +13,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import AccountListItem from "@/components/accounts/AccountListItem";
+import ActionItemCard from "@/components/accounts/ActionItemCard";
 import BottomNav from "@/components/layout/BottomNav";
 import SortMenu from "@/components/accounts/SortMenu";
 import Icon from "@/components/ui/Icon";
@@ -1135,11 +1136,106 @@ export default function DesignSystemPage() {
             <div>
               <SubHeader title="Account List Items (live component)" />
               <div className="flex flex-col">
-                {mockAccounts.slice(0, 4).map((account) => (
-                  <AccountListItem key={account.id} account={account} />
+                {mockAccounts.slice(0, 4).map((account, i) => (
+                  <AccountListItem key={account.id} account={account} isLast={i === 3} />
                 ))}
               </div>
               <TokenLabel name="AccountListItem — separator: --color-dark-tertiary border-bottom · no card bg" value="name: 600 16px · meta: text-sm · badge: dark-tertiary pill · task pill: coral-light 20% opacity bg" />
+            </div>
+
+            <div>
+              <SubHeader title="Action Item Cards (live component)" />
+              <div className="flex flex-col gap-2 max-w-sm">
+                <ActionItemCard item={{ id: "ds-1", title: "Send Q2 pricing update",        dueDate: new Date(2026, 5, 5),  status: "open" }} />
+                <ActionItemCard item={{ id: "ds-2", title: "On-site training for new team", dueDate: null,                  status: "open" }} />
+                <ActionItemCard item={{ id: "ds-3", title: "Follow up with procurement",    dueDate: new Date(2026, 5, 12), status: "open" }} />
+              </div>
+              <TokenLabel name="ActionItemCard — border: #3D4451 50% opacity · no fill · radius: --radius-md" value="title: 600 15px --color-text-primary · due: --color-text-secondary · calendar: --color-brand-purple-dark" />
+            </div>
+
+            <div>
+              <SubHeader title="Task Row (Upcoming)" />
+              <div className="flex flex-col max-w-sm">
+                {/* Task — due today */}
+                <div className="flex items-center gap-3 px-4 py-3.5 relative">
+                  <div className="flex-shrink-0 w-5 h-5 rounded-full" style={{ border: "1.5px solid var(--color-text-disabled)" }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[16px] font-semibold" style={{ color: "var(--color-text-primary)" }}>Send Q2 pricing update</p>
+                    <div className="flex items-center gap-3 mt-0.5">
+                      <div className="flex items-center gap-1">
+                        <Icon name="calendar_today" size={12} style={{ color: "var(--color-brand-purple-dark)" }} />
+                        <span className="text-xs font-medium" style={{ color: "var(--color-brand-coral)" }}>Due Today</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14" stroke="var(--color-brand-teal)" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>Acme Corporation</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-disabled)", flexShrink: 0 }} />
+                  <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                </div>
+                {/* Task — future date */}
+                <div className="flex items-center gap-3 px-4 py-3.5 relative">
+                  <div className="flex-shrink-0 w-5 h-5 rounded-full" style={{ border: "1.5px solid var(--color-text-disabled)" }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[16px] font-semibold" style={{ color: "var(--color-text-primary)" }}>On-site training for new team</p>
+                    <div className="flex items-center gap-3 mt-0.5">
+                      <div className="flex items-center gap-1">
+                        <Icon name="calendar_today" size={12} style={{ color: "var(--color-brand-purple-dark)" }} />
+                        <span className="text-xs font-medium" style={{ color: "var(--color-text-disabled)" }}>Jun 4</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14" stroke="var(--color-brand-teal)" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>Reladyne</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-disabled)", flexShrink: 0 }} />
+                </div>
+              </div>
+              <TokenLabel name="TaskRow — open style · separator: --color-dark-tertiary inset 12px" value="checkbox: 20px stroke circle · calendar: --color-brand-purple-dark · due today: --color-brand-coral · account: --color-brand-teal user-round icon" />
+            </div>
+
+            <div>
+              <SubHeader title="Activity Card (Recently Logged)" />
+              <div className="flex flex-col gap-3 max-w-sm">
+                <div className="flex items-start gap-3 p-4" style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-md)" }}>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[16px] font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Discovery Call</p>
+                    <p className="text-sm leading-relaxed mb-2" style={{ color: "var(--color-text-muted)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      Initial discovery with Jack's Tire and Oil to understand their platform upgrade needs and timeline.
+                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14" stroke="var(--color-brand-teal)" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>Jack's Tire &amp; Oil</span>
+                      <span style={{ display: "inline-block", width: 4 }} />
+                      <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>Jun 02, 3:46 PM</span>
+                      <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>•</span>
+                      <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>35 mins</span>
+                    </div>
+                  </div>
+                  <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
+                </div>
+                <div className="flex items-start gap-3 p-4" style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-md)" }}>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[16px] font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Market Research</p>
+                    <p className="text-sm leading-relaxed mb-2" style={{ color: "var(--color-text-muted)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      Reviewed competitor platforms to identify feature gaps and opportunities for differentiation.
+                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14" stroke="var(--color-brand-teal)" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>Acme Corporation</span>
+                      <span style={{ display: "inline-block", width: 4 }} />
+                      <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>Jun 01, 11:00 PM</span>
+                      <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>•</span>
+                      <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>1hr 20 mins</span>
+                    </div>
+                  </div>
+                  <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
+                </div>
+              </div>
+              <TokenLabel name="ActivityCard — background: --color-dark-secondary · radius: --radius-md" value="title: 600 16px --color-text-primary · description: text-sm --color-text-muted · account: --color-text-secondary · meta: --color-text-disabled" />
             </div>
 
             <div>

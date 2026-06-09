@@ -5,9 +5,10 @@
  * Web-only — no Flutter equivalent needed.
  * Flutter uses Navigator push/pop which handles this natively.
  *
- * Direction detection: compares route depth of current vs previous pathname.
- * Deeper route = forward (slide in from right).
- * Shallower route = back (slide out to right).
+ * Direction detection:
+ *   - Cross-tab navigation (home ↔ accounts): uses tab order position.
+ *     Home (0) → Accounts (1) = forward. Accounts → Home = back.
+ *   - Within a tab: uses route depth (deeper = forward, shallower = back).
  *
  * iOS decelerate easing: cubic-bezier(0.32, 0.72, 0, 1)
  */
@@ -16,8 +17,32 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef } from "react";
 
+// Tab order — determines slide direction when switching between root tabs.
+const TAB_ORDER: { prefix: string; order: number }[] = [
+  { prefix: "/home",     order: 0 },
+  { prefix: "/accounts", order: 1 },
+];
+
 function routeDepth(path: string): number {
   return path.split("/").filter(Boolean).length;
+}
+
+function getDirection(prev: string, curr: string): number {
+  const prevTab = TAB_ORDER.find((t) => prev.startsWith(t.prefix));
+  const currTab = TAB_ORDER.find((t) => curr.startsWith(t.prefix));
+
+  // Cross-tab: use tab order position
+  if (prevTab && currTab && prevTab.prefix !== currTab.prefix) {
+    return currTab.order > prevTab.order ? 1 : -1;
+  }
+
+  // Returning to a root tab from a non-tab page (e.g. /profile → /home): treat as back
+  if (currTab && !prevTab) {
+    return -1;
+  }
+
+  // Within same tab (or unknown): use route depth
+  return routeDepth(curr) >= routeDepth(prev) ? 1 : -1;
 }
 
 // Forward: new page enters from right, old exits to left (partially)
@@ -40,7 +65,7 @@ const variants = {
 const transition = {
   type: "tween" as const,
   duration: 0.32,
-  ease: [0.32, 0.72, 0, 1] as [number, number, number, number], // iOS decelerate curve
+  ease: [0.32, 0.72, 0, 1] as [number, number, number, number],
 };
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
@@ -52,9 +77,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
   const direction = useRef<number>(1);
 
   if (prevPathname.current !== pathname) {
-    const prev = routeDepth(prevPathname.current);
-    const curr = routeDepth(pathname);
-    direction.current = curr >= prev ? 1 : -1;
+    direction.current = getDirection(prevPathname.current, pathname);
     prevPathname.current = pathname;
   }
 

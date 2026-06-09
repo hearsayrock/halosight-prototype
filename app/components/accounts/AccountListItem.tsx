@@ -98,17 +98,19 @@ function AssigneeCircle({ initial }: { initial: string }) {
 
 interface Props {
   account: Account;
+  isLast?: boolean;
 }
 
-export default function AccountListItem({ account }: Props) {
+export default function AccountListItem({ account, isLast = false }: Props) {
   const { label, isToday } = formatLastVisited(account.lastVisited);
 
   return (
     <Link href={`/accounts/${account.id}`}>
       <div
-        className="flex items-start gap-3 px-4 py-3.5 active:opacity-70 transition-opacity"
-        style={{ borderBottom: "1px solid var(--color-dark-tertiary)" }}
+        className="flex items-start gap-3 px-4 py-3.5 active:opacity-70 transition-opacity relative"
       >
+        {/* Separator — inset 12px each side, hidden on last item */}
+        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />}
         {/* Left — 3-line text stack */}
         <div className="flex-1 min-w-0">
           {/* Account name */}

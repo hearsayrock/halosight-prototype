@@ -160,69 +160,261 @@ export const mockAccounts: Account[] = [
   },
 ];
 
+const future = (month: number, day: number) => new Date(2026, month - 1, day);
+
+const at = (daysBack: number, h: number, m: number) => {
+  const d = daysAgo(daysBack);
+  d.setHours(h, m, 0, 0);
+  return d;
+};
+
 export const mockAccountDetails: Record<string, AccountDetail> = {
-  "walmart-corp": {
-    ...mockAccounts[0],
-    relatedAccountCount: 24,
+  "jacks-tire-elko": {
+    ...mockAccounts[2],
+    relatedAccountCount: 3,
     lastVisitSummary:
-      "Visited 2 weeks ago. Recent conversation focused on current service satisfaction and day-to-day operational needs. No major issues surfaced.",
+      "Visited 2 weeks ago. Marcus walked me through a few recurring issues with their current supplier — lead times and inconsistent part quality. They're open to switching if we can demonstrate reliability.",
     ideasForThisTime: [
       "Ask about upcoming seasonal demand",
       "Explore additional product/service needs",
       "Identify front-line decision makers",
       "Confirm any pain points before they grow",
     ],
+    actionItems: [
+      { id: "ja-t1", title: "Send Q2 pricing update",        dueDate: future(6, 5),  status: "open" },
+      { id: "ja-t2", title: "On-site training for new team", dueDate: null,          status: "open" },
+      { id: "ja-t3", title: "Provide weekly updates",        dueDate: future(6, 20), status: "open" },
+      { id: "ja-t4", title: "Investigate account",           dueDate: future(6, 12), status: "open" },
+      { id: "ja-t5", title: "Send intro deck",               dueDate: daysAgo(3),    status: "done" },
+      { id: "ja-t6", title: "Confirm meeting with Marcus",   dueDate: daysAgo(7),    status: "done" },
+    ],
     recentActivity: [
       {
-        id: "act-1",
-        accountId: "walmart-corp",
-        date: daysAgo(3),
-        type: "visit",
-        summary: "Discussed Q2 supply chain concerns. Tom mentioned potential for expanded order next quarter.",
-        hasTranscript: true,
-        repName: "Jordan Mills",
+        id: "ja-1", accountId: "jacks-tire-elko", date: at(9, 15, 46), type: "call", title: "Discovery Call",
+        summary: "Initial discovery with Jack's Tire and Oil to understand their platform upgrade needs and timeline.",
+        durationMinutes: 35, hasTranscript: true, repName: "Jordan Mills",
+        aiSummary: {
+          title: "Marcus outlined supplier pain points and confirmed openness to switching vendors",
+          tldr: "Marcus walked through recurring issues with their current supplier — late deliveries and inconsistent part quality are causing real floor-level slowdowns. He confirmed they're open to switching if reliability can be demonstrated before Q3.",
+          keyPoints: [
+            "**Late deliveries** from the current supplier are creating floor slowdowns — Marcus flagged this as the **primary pain point**.",
+            "Part quality has been **inconsistent**, leading to returns and rework that erode margin.",
+            "Marcus confirmed they have **budget available** and a decision timeline tied to Q3 peak season.",
+            "He wants to see a **concrete delivery SLA** before moving forward — proximity of our distribution hub was well received.",
+          ],
+        },
+      },
+      { id: "ja-2", accountId: "jacks-tire-elko", date: at(9, 15, 46), type: "call",  title: "Discovery Call",       summary: "Initial discovery with Jack's Tire and Oil to understand their platform upgrade needs and timeline.", durationMinutes: 35,  hasTranscript: true,  repName: "Jordan Mills" },
+      {
+        id: "ja-3", accountId: "jacks-tire-elko", date: at(4, 11, 0), type: "visit", title: "Market Research",
+        summary: "Reviewed competitor platforms to identify feature gaps and opportunities for differentiation.",
+        durationMinutes: 80, hasTranscript: false, repName: "Jordan Mills",
+        aiSummary: {
+          title: "Competitive landscape review revealed clear differentiation opportunities for Q3 pitch",
+          tldr: "Reviewed three competitor offerings side-by-side with the Jack's team. Our turnaround time and regional coverage stood out as clear differentiators — their current vendor scores poorly on both.",
+          keyPoints: [
+            "Competitors were evaluated on **turnaround time**, **part quality**, and **regional availability** — we lead on all three.",
+            "The team noted that their current vendor has a **5–7 day average lead time** vs. our 2-day SLA.",
+            "Marcus specifically called out **regional coverage** as a deciding factor — our Cedar City hub is a meaningful advantage.",
+            "The team is now **actively building an internal case** to switch — procurement involvement expected next week.",
+          ],
+        },
+      },
+      { id: "ja-4", accountId: "jacks-tire-elko", date: at(4, 11, 0),  type: "visit", title: "Client Presentation",  summary: "Presented initial project proposal and received feedback from Jack's Tire and Oil stakeholders.", durationMinutes: 45,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "ja-5", accountId: "jacks-tire-elko", date: at(2, 14, 0),  type: "visit", title: "Internal Workshop",    summary: "Collaborated with design and engineering teams to outline technical requirements and wireframes.", durationMinutes: 90,  hasTranscript: false, repName: "Jordan Mills" },
+      { id: "ja-6", accountId: "jacks-tire-elko", date: at(1, 9, 30),  type: "call",  title: "Follow-Up Call",       summary: "Checked in on proposal status. Marcus confirmed internal budget approval. Ready to proceed.", durationMinutes: 18,  hasTranscript: true,  repName: "Jordan Mills" },
+    ],
+  },
+  "walmart-cedar-city": {
+    ...mockAccounts[1],
+    relatedAccountCount: 7,
+    lastVisitSummary:
+      "Visited 3 days ago. Spoke with the store ops lead about ongoing friction with their current parts supplier — late deliveries are causing floor slowdowns. They're motivated to find a better solution before Q3 peak season hits.",
+    ideasForThisTime: [
+      "Come with a concrete delivery SLA to address their lead time concern",
+      "Ask about Q3 seasonal volume to size the opportunity",
+      "Find out who else is involved in the vendor decision",
+      "Mention the Cedar City distribution hub — proximity is a differentiator",
+    ],
+    actionItems: [
+      { id: "wc-t1", title: "Send pricing recap",              dueDate: future(6, 4),  status: "open" },
+      { id: "wc-t2", title: "Follow up with procurement",      dueDate: future(6, 8),  status: "open" },
+      { id: "wc-t3", title: "Confirm delivery SLA in writing", dueDate: future(6, 15), status: "open" },
+      { id: "wc-t4", title: "Schedule Q3 planning call",       dueDate: null,          status: "open" },
+      { id: "wc-t5", title: "Send updated contract draft",     dueDate: future(6, 20), status: "open" },
+    ],
+    recentActivity: [
+      {
+        id: "wc-1", accountId: "walmart-cedar-city", date: at(3, 14, 30), type: "visit", title: "Ops Check-In",
+        summary: "Spoke with ops lead about supplier friction. Late deliveries causing floor slowdowns ahead of Q3. Strong motivation to switch.",
+        durationMinutes: 40, hasTranscript: true, repName: "Jordan Mills",
+        aiSummary: {
+          title: "Ops lead confirmed supplier frustration and signaled strong motivation to switch before Q3",
+          tldr: "The ops lead walked through the impact of their current supplier's delays on floor productivity. With Q3 peak season approaching, they're actively looking for a replacement and want to move fast.",
+          keyPoints: [
+            "**Late deliveries** are the core issue — the ops lead described floor slowdowns happening **2–3 times per week**.",
+            "The team has already started **documenting failures** from their current supplier as part of an internal case to switch.",
+            "They need a solution in place **before July** — Q3 peak season is the hard deadline driving urgency.",
+            "The ops lead confirmed he has **sign-off authority** up to a certain spend threshold — procurement only needed above that.",
+          ],
+        },
       },
       {
-        id: "act-2",
-        accountId: "walmart-corp",
-        date: daysAgo(17),
-        type: "visit",
-        summary: "Routine check-in. Reviewed current service satisfaction. No new opportunities surfaced.",
-        hasTranscript: true,
-        repName: "Jordan Mills",
+        id: "wc-2", accountId: "walmart-cedar-city", date: at(3, 15, 46), type: "call", title: "Discovery Call",
+        summary: "Followed up same day to clarify pricing structure and confirm next steps. Manager looping in their procurement contact.",
+        durationMinutes: 18, hasTranscript: true, repName: "Jordan Mills",
+        aiSummary: {
+          title: "Pricing structure clarified — procurement contact being looped in for final sign-off",
+          tldr: "Quick follow-up call to walk through the pricing tiers after the earlier ops meeting. The manager confirmed interest and said she's looping in their procurement contact to review the SLA terms.",
+          keyPoints: [
+            "Manager confirmed the **standard tier pricing** aligns with their budget — no major concerns raised.",
+            "**Procurement contact** (name TBD) will be looped in — manager expects to make intro by end of week.",
+            "She asked for a **one-pager** summarizing delivery SLA and pricing for the internal review.",
+            "Next step is a **three-way call** with ops lead, manager, and procurement — aiming for early next week.",
+          ],
+        },
       },
-      {
-        id: "act-3",
-        accountId: "walmart-corp",
-        date: daysAgo(31),
-        type: "call",
-        summary: "Follow-up call on delayed shipment. Issue resolved. Customer satisfied.",
-        hasTranscript: false,
-        repName: "Jordan Mills",
-      },
+      { id: "wc-3", accountId: "walmart-cedar-city", date: at(10, 11, 0),  type: "visit", title: "Market Research",       summary: "Reviewed competitor service levels with the store manager. Our proximity advantage resonated strongly.", durationMinutes: 80, hasTranscript: false, repName: "Jordan Mills" },
+      { id: "wc-4", accountId: "walmart-cedar-city", date: at(10, 13, 30), type: "visit", title: "Client Presentation",   summary: "Presented service tier options and delivery SLA guarantees. Positive reception — procurement contact now involved.", durationMinutes: 55, hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "wc-5", accountId: "walmart-cedar-city", date: at(18, 9, 0),   type: "visit", title: "Internal Workshop",     summary: "Walked through implementation logistics with ops and floor leads. Outlined onboarding timeline and support contacts.", durationMinutes: 90, hasTranscript: false, repName: "Jordan Mills" },
+      { id: "wc-6", accountId: "walmart-cedar-city", date: at(25, 10, 15), type: "call",  title: "Contract Discussion",   summary: "Reviewed initial contract terms over the phone. A few line items flagged for revision — following up with updated draft.", durationMinutes: 28, hasTranscript: false, repName: "Jordan Mills" },
+      { id: "wc-7", accountId: "walmart-cedar-city", date: at(33, 14, 0),  type: "visit", title: "Stakeholder Alignment", summary: "Met with store manager and two department heads. All aligned on moving forward pending final budget approval.", durationMinutes: 60, hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "wc-8", accountId: "walmart-cedar-city", date: at(47, 11, 30), type: "call",  title: "Initial Outreach",      summary: "Cold outreach call — introduced ourselves and gauged interest. Manager expressed frustration with current supplier.", durationMinutes: 14, hasTranscript: false, repName: "Jordan Mills" },
+    ],
+  },
+  "walmart-corp": {
+    ...mockAccounts[0],
+    relatedAccountCount: 24,
+    lastVisitSummary:
+      "Visited 3 days ago. Conversation focused on Q2 supply chain concerns. Tom mentioned potential for an expanded order next quarter and flagged some dissatisfaction with current turnaround times.",
+    ideasForThisTime: [
+      "Ask about upcoming seasonal demand",
+      "Explore additional product/service needs",
+      "Identify front-line decision makers",
+      "Confirm any pain points before they grow",
+    ],
+    actionItems: [
+      { id: "wm-t1", title: "Send Q2 pricing update",     dueDate: future(6, 5),  status: "open" },
+      { id: "wm-t2", title: "Schedule executive review",  dueDate: future(6, 18), status: "open" },
+      { id: "wm-t3", title: "Share turnaround SLA doc",   dueDate: future(6, 10), status: "open" },
+      { id: "wm-t4", title: "Send Q1 recap report",       dueDate: daysAgo(5),    status: "done" },
+      { id: "wm-t5", title: "Confirm Q2 site visit",      dueDate: daysAgo(10),   status: "done" },
+    ],
+    recentActivity: [
+      { id: "wm-1", accountId: "walmart-corp", date: at(3, 14, 20),  type: "visit", title: "Quarterly Review",      summary: "Discussed Q2 supply chain concerns. Tom mentioned potential for expanded order next quarter.", durationMinutes: 55,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "wm-2", accountId: "walmart-corp", date: at(17, 10, 0),  type: "visit", title: "Routine Check-In",      summary: "Reviewed current service satisfaction. No new opportunities surfaced — relationship in good standing.", durationMinutes: 30,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "wm-3", accountId: "walmart-corp", date: at(31, 9, 15),  type: "call",  title: "Shipment Follow-Up",   summary: "Follow-up call on delayed shipment. Issue resolved. Customer satisfied with resolution.", durationMinutes: 12,  hasTranscript: false, repName: "Jordan Mills" },
+      { id: "wm-4", accountId: "walmart-corp", date: at(45, 13, 30), type: "visit", title: "Product Demo",          summary: "Walked through new service tier options. Strong interest in the premium package — needs sign-off from procurement.", durationMinutes: 70, hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "wm-5", accountId: "walmart-corp", date: at(60, 11, 0),  type: "email", title: "Contract Renewal",      summary: "Sent over renewal terms for annual contract. Awaiting internal review from their legal team.", durationMinutes: 8,   hasTranscript: false, repName: "Jordan Mills" },
+    ],
+  },
+  "profleet-corp": {
+    ...mockAccounts[3],
+    relatedAccountCount: 14,
+    lastVisitSummary:
+      "Visited 6 days ago. Good conversation with ops leadership about upcoming Q3 fleet expansion. Budget has been earmarked — they want a formal proposal by end of month.",
+    ideasForThisTime: [
+      "Deliver formal Q3 fleet expansion proposal",
+      "Introduce volume discount options",
+      "Discuss service contract upgrade path",
+      "Check in on satisfaction across branch locations",
+    ],
+    actionItems: [
+      { id: "pf-t1", title: "Submit Q3 fleet proposal",      dueDate: future(5, 30), status: "open" },
+      { id: "pf-t2", title: "Prepare volume discount sheet",  dueDate: future(6, 7),  status: "open" },
+      { id: "pf-t3", title: "Check in on Glendale 1 branch",  dueDate: future(6, 14), status: "open" },
+      { id: "pf-t4", title: "Send annual contract renewal",   dueDate: daysAgo(4),    status: "done" },
+    ],
+    recentActivity: [
+      { id: "pf-1", accountId: "profleet-corp", date: at(6, 10, 30),  type: "visit", title: "Leadership Check-In",  summary: "Met with ops leadership re: Q3 fleet expansion. Budget confirmed. Formal proposal requested.", durationMinutes: 60,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "pf-2", accountId: "profleet-corp", date: at(20, 14, 0),  type: "call",  title: "Proposal Kick-Off",   summary: "Aligned on scope and pricing structure for the Q3 proposal. Key decision-makers identified.", durationMinutes: 40,  hasTranscript: false, repName: "Jordan Mills" },
+      { id: "pf-3", accountId: "profleet-corp", date: at(34, 9, 0),   type: "visit", title: "Annual Strategy",      summary: "Year-in-review meeting. Reviewed account health, flagged two underperforming branches for follow-up.", durationMinutes: 90, hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "pf-4", accountId: "profleet-corp", date: at(50, 11, 45), type: "call",  title: "Issue Escalation",    summary: "Handled complaint about delayed parts delivery at Glendale 1 location. Resolved same day.", durationMinutes: 22,  hasTranscript: false, repName: "Jordan Mills" },
     ],
   },
   "profleet-glendale-2": {
     ...mockAccounts[6],
     relatedAccountCount: 14,
     lastVisitSummary:
-      "Visited today. Discussed new fleet acquisition coming in Q3. Manager hinted at budget availability for expanded service contract.",
+      "Visited today. Discussed new fleet acquisition coming in Q3. Manager hinted at budget availability for an expanded service contract — strong opportunity to upsell.",
     ideasForThisTime: [
       "Follow up on Q3 fleet expansion proposal",
       "Introduce premium service tier options",
       "Ask about satisfaction with current turnaround times",
       "Check on status of pending invoice from last month",
     ],
+    actionItems: [
+      { id: "pg-t1", title: "Send expanded contract proposal", dueDate: future(6, 3),  status: "open" },
+      { id: "pg-t2", title: "Resolve pending invoice",         dueDate: future(5, 30), status: "open" },
+    ],
     recentActivity: [
-      {
-        id: "act-4",
-        accountId: "profleet-glendale-2",
-        date: new Date(),
-        type: "visit",
-        summary: "Q3 fleet expansion discussed. Budget confirmed. Strong opportunity for expanded contract.",
-        hasTranscript: true,
-        repName: "Jordan Mills",
-      },
+      { id: "pg-1", accountId: "profleet-glendale-2", date: at(0, 9, 15),  type: "visit", title: "Fleet Expansion",     summary: "Q3 fleet expansion discussed. Budget confirmed. Strong opportunity for expanded contract.",         durationMinutes: 45,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "pg-2", accountId: "profleet-glendale-2", date: at(14, 11, 0), type: "call",  title: "Invoice Follow-Up",  summary: "Checked on outstanding invoice from last month. Confirmed payment scheduled for this Friday.",       durationMinutes: 10,  hasTranscript: false, repName: "Jordan Mills" },
+      { id: "pg-3", accountId: "profleet-glendale-2", date: at(28, 14, 30), type: "visit", title: "Routine Visit",      summary: "Standard quarterly check-in. No major issues. Team satisfied with current service levels.",          durationMinutes: 30,  hasTranscript: true,  repName: "Jordan Mills" },
+    ],
+  },
+  "innovative-tech-tucson": {
+    ...mockAccounts[8],
+    relatedAccountCount: 2,
+    lastVisitSummary:
+      "Visited 30 days ago. Sandra mentioned the team has been evaluating three vendors — we're the frontrunner. Budget is approved. Main concern is implementation timeline.",
+    ideasForThisTime: [
+      "Present implementation timeline to address concerns",
+      "Offer a phased rollout option",
+      "Introduce Sandra to our customer success lead",
+      "Ask about any remaining internal stakeholders to align",
+    ],
+    actionItems: [
+      { id: "it-t1", title: "Share implementation timeline",    dueDate: future(6, 2),  status: "open" },
+      { id: "it-t2", title: "Intro call with CS lead",          dueDate: future(6, 9),  status: "open" },
+      { id: "it-t3", title: "On-site training for new team",    dueDate: null,          status: "open" },
+      { id: "it-t4", title: "Send phased rollout options doc",  dueDate: future(6, 6),  status: "open" },
+    ],
+    recentActivity: [
+      { id: "it-1", accountId: "innovative-tech-tucson", date: at(30, 10, 0),  type: "visit", title: "Vendor Review",        summary: "Sandra shared that we're the frontrunner in their vendor evaluation. Budget approved, timeline is key concern.", durationMinutes: 50,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "it-2", accountId: "innovative-tech-tucson", date: at(45, 15, 30), type: "call",  title: "Discovery Call",      summary: "Initial discovery to understand current workflows and pain points with existing solution.", durationMinutes: 35,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "it-3", accountId: "innovative-tech-tucson", date: at(60, 9, 0),   type: "visit", title: "Intro Meeting",        summary: "First in-person visit. Met with Sandra and two department leads. Very positive reception.", durationMinutes: 60,  hasTranscript: false, repName: "Jordan Mills" },
+    ],
+  },
+  "profleet-flagstaff": {
+    ...mockAccounts[5],
+    relatedAccountCount: 14,
+    lastVisitSummary:
+      "Visited 3 weeks ago. Toured the facility and met the new ops manager. Team is settling in well — discussed Q3 service needs and flagged some potential volume growth.",
+    ideasForThisTime: [
+      "Follow up on Q3 service volume estimate",
+      "Introduce volume discount options",
+      "Check in on the new ops manager's onboarding",
+      "Confirm any outstanding support tickets",
+    ],
+    actionItems: [
+      { id: "pf-flag-t1", title: "Send Q3 service estimate",    dueDate: future(6, 10), status: "open" },
+      { id: "pf-flag-t2", title: "Follow up with ops manager",  dueDate: future(6, 14), status: "open" },
+      { id: "pf-flag-t3", title: "Submit volume discount sheet", dueDate: future(6, 20), status: "open" },
+    ],
+    recentActivity: [
+      { id: "pf-flagstaff-1", accountId: "profleet-flagstaff", date: at(4, 10, 45), type: "visit", title: "On-site Visit", summary: "Toured the Flagstaff facility and met the new ops manager. Discussed Q3 service needs and potential volume growth.", durationMinutes: 64, hasTranscript: true, repName: "Jordan Mills" },
+      { id: "pf-flagstaff-2", accountId: "profleet-flagstaff", date: at(25, 14, 0), type: "call",  title: "Intro Call",   summary: "First call with the incoming ops manager ahead of the on-site visit. Aligned on expectations and open items.", durationMinutes: 20, hasTranscript: false, repName: "Jordan Mills" },
+    ],
+  },
+  "riverbend-collision": {
+    ...mockAccounts[9],
+    relatedAccountCount: 1,
+    lastVisitSummary:
+      "Last visited over a year ago. Tom was friendly but noncommittal — mentioned they'd been getting by with their current setup. Re-engagement should focus on what's changed in their business.",
+    ideasForThisTime: [
+      "Ask what's changed in their business since last visit",
+      "Lead with new product improvements since last conversation",
+      "Offer a no-pressure demo of the latest service tier",
+      "Reconnect with Tom personally before pitching anything",
+    ],
+    actionItems: [
+      { id: "rb-t1", title: "Send re-engagement email", dueDate: future(6, 5),  status: "open" },
+      { id: "rb-t2", title: "Schedule demo call",       dueDate: future(6, 18), status: "open" },
+    ],
+    recentActivity: [
+      { id: "rb-1", accountId: "riverbend-collision", date: at(365, 14, 0), type: "visit", title: "Re-engagement Visit",  summary: "Reconnected with Tom after a long gap. Friendly conversation — not ready to move, but open to staying in touch.", durationMinutes: 25, hasTranscript: false, repName: "Jordan Mills" },
+      { id: "rb-2", accountId: "riverbend-collision", date: at(400, 10, 30), type: "call", title: "Check-In Call",        summary: "Brief check-in. Tom mentioned they recently expanded their service bays — potential upsell opportunity.", durationMinutes: 12, hasTranscript: false, repName: "Jordan Mills" },
     ],
   },
 };

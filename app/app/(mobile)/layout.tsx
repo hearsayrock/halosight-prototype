@@ -1,10 +1,28 @@
 import PhoneFrame from "@/components/layout/PhoneFrame";
+import PageTransition from "@/components/layout/PageTransition";
+import StaticBottomNav from "@/components/layout/StaticBottomNav";
+import { ActionItemsProvider } from "@/lib/context/ActionItemsContext";
+import { CaptureProvider } from "@/lib/context/CaptureContext";
+import CaptureWidget from "@/components/capture/CaptureWidget";
 
 /**
- * Shared mobile layout — wraps all app screens in the single PhoneFrame
- * instance so PageTransition has one persistent AnimatePresence host.
- * The design-system page lives outside this group and is unaffected.
+ * Shared mobile layout — single PhoneFrame instance so AnimatePresence
+ * can coordinate enter/exit across all mobile screens.
+ *
+ * Structure inside phone-screen:
+ *   PageTransition   ← absolute, inset-0, slides with each route change
+ *   StaticBottomNav  ← absolute, bottom-0, z-50, never animates
  */
 export default function MobileLayout({ children }: { children: React.ReactNode }) {
-  return <PhoneFrame>{children}</PhoneFrame>;
+  return (
+    <ActionItemsProvider>
+      <CaptureProvider>
+        <PhoneFrame>
+          <PageTransition>{children}</PageTransition>
+          <StaticBottomNav />
+          <CaptureWidget />
+        </PhoneFrame>
+      </CaptureProvider>
+    </ActionItemsProvider>
+  );
 }

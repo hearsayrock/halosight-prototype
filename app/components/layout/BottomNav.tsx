@@ -41,7 +41,7 @@ function AccountsIcon({ active }: { active: boolean }) {
 export default function BottomNav() {
   const pathname = usePathname();
   const isAccounts = pathname.startsWith("/accounts");
-  const isHome = !isAccounts;
+  const isHome = pathname.startsWith("/home") || pathname === "/";
 
   return (
     /* Outer wrapper: 32px padding on sides and bottom */
@@ -49,6 +49,7 @@ export default function BottomNav() {
       <nav
         className="relative flex items-center"
         style={{
+          width: 230,
           height: 66,
           borderRadius: "var(--radius-full)",
           background: "var(--color-alpha-purple-glass)",
@@ -76,7 +77,7 @@ export default function BottomNav() {
 
         {/* Home */}
         <Link
-          href="/"
+          href="/home"
           className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1 h-full"
         >
           <HomeIcon active={isHome} />
