@@ -468,17 +468,21 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           >
             ▶
           </button>
-          <RailDot color="#2ECC71" icon="★" isActive={isMain} href={CURRENT_APP_URL} title="Current App" />
-          {PLAYGROUNDS.map(p => (
-            <RailDot
-              key={p.id}
-              color={STATUS_COLOR[p.status]}
-              icon="●"
-              isActive={currentBranch === p.id}
-              href={p.url}
-              title={p.name}
-            />
-          ))}
+          <RailDot color="#2ECC71" icon="★" isActive={isMain} href={isMain ? "/home" : CURRENT_APP_URL} title="Current App" />
+          {PLAYGROUNDS.map(p => {
+            const isActive = currentBranch === p.id;
+            const href = isActive ? (p.routes?.[0]?.path ?? "/") : (p.url || "#");
+            return (
+              <RailDot
+                key={p.id}
+                color={STATUS_COLOR[p.status]}
+                icon="●"
+                isActive={isActive}
+                href={href}
+                title={p.name}
+              />
+            );
+          })}
         </div>
         {showInstructions && <InstructionsModal onClose={() => setShowInstructions(false)} />}
       </>
@@ -537,7 +541,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           description="The baseline prototype with all shipped features."
           isCurrent
           isActive={isMain}
-          href={CURRENT_APP_URL}
+          href={isMain ? "/home" : CURRENT_APP_URL}
         />
 
         {/* Divider */}
@@ -556,18 +560,26 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
             No playgrounds yet.
           </p>
         ) : (
-          PLAYGROUNDS.map(p => (
-            <NavItem
-              key={p.id}
-              label={p.name}
-              description={p.description}
-              author={p.author}
-              status={p.status}
-              startedAt={p.startedAt}
-              isActive={currentBranch === p.id}
-              href={p.url}
-            />
-          ))
+          PLAYGROUNDS.map(p => {
+            // When you're already on this playground, use a relative path so
+            // local dev works without needing the Vercel URL.
+            const isActive = currentBranch === p.id;
+            const href = isActive
+              ? (p.routes?.[0]?.path ?? "/")
+              : (p.url || "#");
+            return (
+              <NavItem
+                key={p.id}
+                label={p.name}
+                description={p.description}
+                author={p.author}
+                status={p.status}
+                startedAt={p.startedAt}
+                isActive={isActive}
+                href={href}
+              />
+            );
+          })
         )}
 
         {/* Footer: new playground button */}
