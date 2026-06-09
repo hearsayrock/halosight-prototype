@@ -52,6 +52,18 @@ export const CURRENT_APP_URL = "https://halosight-prototype.vercel.app";
 // Listed in reverse-chronological order (newest first).
 
 export const PLAYGROUNDS: Playground[] = [
+  {
+    id: "playground/onboarding-flow",
+    name: "Onboarding Flow",
+    description: "A 3-screen welcome slideshow walking new users through the app's most valuable features.",
+    url: "",
+    author: "Nate",
+    status: "exploring",
+    startedAt: "2026-06-09",
+    routes: [
+      { label: "Onboarding", path: "/onboarding" },
+    ],
+  },
   // Example entry — copy, fill in, and uncomment when starting a new playground:
   //
   // {
