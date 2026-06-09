@@ -302,6 +302,31 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
         </div>
       </div>
 
+      {/* Handoff */}
+      <a
+        href="/handoff"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "block",
+          fontSize: 13,
+          fontWeight: 500,
+          color: "var(--color-brand-purple)",
+          background: "rgba(139,146,255,0.08)",
+          border: "1px solid rgba(139,146,255,0.2)",
+          borderRadius: 20,
+          padding: "7px 0",
+          textAlign: "center",
+          textDecoration: "none",
+          transition: "opacity 0.12s",
+          width: "100%",
+        }}
+        onMouseEnter={e => (e.currentTarget.style.opacity = "0.75")}
+        onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+      >
+        Flutter handoff ↗
+      </a>
+
       {/* Reset */}
       <button
         onClick={handleReset}
