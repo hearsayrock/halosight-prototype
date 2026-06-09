@@ -154,8 +154,8 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
           </p>
           {!isMain && activePlayground && (
             <p style={{
-              fontSize: 10,
-              color: "var(--color-text-disabled)",
+              fontSize: 12,
+              color: "var(--color-text-muted)",
               margin: "2px 0 0",
               lineHeight: 1.4,
               display: "-webkit-box",
@@ -167,7 +167,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
             </p>
           )}
           {isMain && (
-            <p style={{ fontSize: 10, color: "var(--color-text-disabled)", margin: "2px 0 0" }}>
+            <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "2px 0 0" }}>
               Prototype baseline
             </p>
           )}
@@ -183,7 +183,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
             background: "transparent",
             border: "none",
             cursor: "pointer",
-            color: "var(--color-text-disabled)",
+            color: "var(--color-text-muted)",
             fontSize: 11,
             display: "flex",
             alignItems: "center",
@@ -203,11 +203,11 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
           <div key={group}>
             <p
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 600,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                color: "var(--color-text-disabled)",
+                color: "var(--color-text-muted)",
                 marginBottom: 4,
                 paddingLeft: 10,
               }}
@@ -259,7 +259,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
             fontWeight: 600,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
-            color: "var(--color-text-disabled)",
+            color: "var(--color-text-muted)",
             marginBottom: 6,
             paddingLeft: 2,
           }}

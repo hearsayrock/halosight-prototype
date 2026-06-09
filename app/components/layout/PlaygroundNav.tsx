@@ -56,7 +56,7 @@ function NavItem({
   isActive: boolean;
   href: string;
 }) {
-  const color = isCurrent ? "#2ECC71" : (status ? STATUS_COLOR[status] : "var(--color-text-muted)");
+  const color = isCurrent ? "#2ECC71" : (status ? STATUS_COLOR[status] : "var(--color-text-secondary)");
 
   return (
     <a
@@ -72,17 +72,17 @@ function NavItem({
       }}
     >
       {/* Top row */}
-      <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 4 }}>
         {/* Status dot / star */}
-        <span style={{ fontSize: isCurrent ? 11 : 8, color, flexShrink: 0, lineHeight: 1 }}>
+        <span style={{ fontSize: isCurrent ? 12 : 10, color, flexShrink: 0, lineHeight: 1 }}>
           {isCurrent ? "★" : "●"}
         </span>
 
         {/* Name */}
         <span style={{
-          fontSize: 13,
+          fontSize: 14,
           fontWeight: isActive ? 600 : 500,
-          color: isActive ? "var(--color-text-primary)" : "var(--color-text-muted)",
+          color: isActive ? "var(--color-text-primary)" : "var(--color-text-secondary)",
           flex: 1,
           overflow: "hidden",
           textOverflow: "ellipsis",
@@ -94,16 +94,16 @@ function NavItem({
         {/* Author initial */}
         {author && (
           <span style={{
-            width: 18,
-            height: 18,
+            width: 20,
+            height: 20,
             borderRadius: "50%",
             background: "var(--color-dark-tertiary)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: 9,
+            fontSize: 10,
             fontWeight: 700,
-            color: "var(--color-text-muted)",
+            color: "var(--color-text-secondary)",
             flexShrink: 0,
           }}>
             {authorInitial(author)}
@@ -113,10 +113,10 @@ function NavItem({
 
       {/* Description */}
       <p style={{
-        fontSize: 11,
-        color: "var(--color-text-disabled)",
-        lineHeight: 1.4,
-        margin: "0 0 5px 15px",
+        fontSize: 12,
+        color: "var(--color-text-muted)",
+        lineHeight: 1.45,
+        margin: "0 0 6px 17px",
         display: "-webkit-box",
         WebkitLineClamp: 2,
         WebkitBoxOrient: "vertical",
@@ -127,21 +127,21 @@ function NavItem({
 
       {/* Meta row */}
       {(status || startedAt) && (
-        <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 15 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 17 }}>
           {status && (
             <span style={{
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: 600,
               color,
-              background: `color-mix(in srgb, ${color} 12%, transparent)`,
+              background: `color-mix(in srgb, ${color} 14%, transparent)`,
               borderRadius: 4,
-              padding: "1px 5px",
+              padding: "1px 6px",
             }}>
               {STATUS_LABEL[status]}
             </span>
           )}
           {startedAt && (
-            <span style={{ fontSize: 10, color: "var(--color-text-disabled)" }}>
+            <span style={{ fontSize: 11, color: "var(--color-text-muted)" }}>
               {relativeDate(startedAt)}
             </span>
           )}
@@ -179,7 +179,7 @@ function RailDot({
         borderRadius: "50%",
         background: isActive ? "var(--color-dark-secondary)" : "transparent",
         border: isActive ? `2px solid ${color}` : "2px solid transparent",
-        fontSize: 12,
+        fontSize: 13,
         color,
         textDecoration: "none",
         transition: "all 0.12s",
@@ -201,7 +201,6 @@ interface Props {
 
 export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Props) {
   const isMain = currentBranch === "main" || currentBranch === "local";
-  const activePlayground = PLAYGROUNDS.find(p => p.id === currentBranch);
 
   // ── Collapsed rail ──────────────────────────────────────────────────────────
   if (collapsed) {
@@ -229,7 +228,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "var(--color-text-muted)",
+            color: "var(--color-text-secondary)",
             fontSize: 14,
             marginBottom: 8,
           }}
@@ -264,7 +263,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
   // ── Expanded ────────────────────────────────────────────────────────────────
   return (
     <div style={{
-      width: 210,
+      width: 220,
       alignSelf: "center",
       display: "flex",
       flexDirection: "column",
@@ -281,11 +280,11 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
         marginBottom: 8,
       }}>
         <span style={{
-          fontSize: 10,
+          fontSize: 11,
           fontWeight: 600,
           letterSpacing: "0.08em",
           textTransform: "uppercase",
-          color: "var(--color-text-disabled)",
+          color: "var(--color-text-muted)",
         }}>
           Playgrounds
         </span>
@@ -297,8 +296,8 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
             background: "transparent",
             border: "none",
             cursor: "pointer",
-            color: "var(--color-text-disabled)",
-            fontSize: 13,
+            color: "var(--color-text-muted)",
+            fontSize: 14,
           }}
           title="Collapse"
         >
@@ -323,10 +322,10 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
       {/* Playgrounds */}
       {PLAYGROUNDS.length === 0 ? (
         <p style={{
-          fontSize: 11,
-          color: "var(--color-text-disabled)",
+          fontSize: 13,
+          color: "var(--color-text-muted)",
           padding: "8px 12px",
-          lineHeight: 1.5,
+          lineHeight: 1.55,
         }}>
           No playgrounds yet.{" "}
           <br />
@@ -350,20 +349,27 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
       {/* New playground instructions */}
       <div style={{
         marginTop: 12,
-        padding: "10px 12px",
+        padding: "12px 14px",
         borderRadius: 10,
         border: "1px dashed var(--color-dark-tertiary)",
       }}>
-        <p style={{ fontSize: 10, fontWeight: 600, color: "var(--color-text-disabled)", marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+        <p style={{
+          fontSize: 11,
+          fontWeight: 600,
+          color: "var(--color-text-muted)",
+          marginBottom: 8,
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+        }}>
           Start a playground
         </p>
-        <ol style={{ margin: 0, padding: "0 0 0 14px", display: "flex", flexDirection: "column", gap: 5 }}>
+        <ol style={{ margin: 0, padding: "0 0 0 16px", display: "flex", flexDirection: "column", gap: 6 }}>
           {[
-            <>Add entry to <code style={{ fontSize: 9, background: "var(--color-dark-tertiary)", padding: "1px 4px", borderRadius: 3 }}>playgrounds.config.ts</code></>,
-            <><code style={{ fontSize: 9, background: "var(--color-dark-tertiary)", padding: "1px 4px", borderRadius: 3 }}>git checkout -b playground/&lt;id&gt;</code></>,
+            <>Add entry to <code style={{ fontSize: 11, background: "var(--color-dark-tertiary)", padding: "1px 5px", borderRadius: 3 }}>playgrounds.config.ts</code></>,
+            <><code style={{ fontSize: 11, background: "var(--color-dark-tertiary)", padding: "1px 5px", borderRadius: 3 }}>git checkout -b playground/&lt;id&gt;</code></>,
             <>Push → copy Vercel preview URL → paste into config</>,
           ].map((step, i) => (
-            <li key={i} style={{ fontSize: 10, color: "var(--color-text-disabled)", lineHeight: 1.45 }}>
+            <li key={i} style={{ fontSize: 12, color: "var(--color-text-secondary)", lineHeight: 1.5 }}>
               {step}
             </li>
           ))}
