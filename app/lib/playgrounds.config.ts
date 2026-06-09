@@ -61,7 +61,7 @@ export const PLAYGROUNDS: Playground[] = [
     status: "exploring",
     startedAt: "2026-06-09",
     routes: [
-      { label: "Onboarding", path: "/onboarding" },
+      { label: "Onboarding — Slide 1", path: "/onboarding" },
     ],
   },
   // Example entry — copy, fill in, and uncomment when starting a new playground:
