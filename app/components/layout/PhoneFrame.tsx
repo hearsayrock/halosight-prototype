@@ -69,80 +69,23 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
         />
       )}
 
-      {/* Phone + toggle button */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, flexShrink: 0 }}>
-
-        {/* Focus mode toggle */}
-        <button
-          onClick={() => setFocusMode(f => !f)}
-          title={focusMode ? "Show panels  (\\ key)" : "Hide panels  (\\ key)"}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "5px 12px",
-            borderRadius: 20,
-            background: focusMode ? "var(--color-dark-secondary)" : "transparent",
-            border: `1px solid ${focusMode ? "var(--color-dark-tertiary)" : "transparent"}`,
-            cursor: "pointer",
-            color: focusMode ? "var(--color-text-secondary)" : "var(--color-text-disabled)",
-            fontSize: 11,
-            fontWeight: 500,
-            transition: "all 0.15s",
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = "var(--color-dark-secondary)";
-            e.currentTarget.style.borderColor = "var(--color-dark-tertiary)";
-            e.currentTarget.style.color = "var(--color-text-secondary)";
-          }}
-          onMouseLeave={e => {
-            if (!focusMode) {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.borderColor = "transparent";
-              e.currentTarget.style.color = "var(--color-text-disabled)";
-            }
-          }}
-        >
-          {/* Icon: two vertical bars (panels visible) or just a rect (focus) */}
-          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" style={{ flexShrink: 0 }}>
-            {focusMode ? (
-              // Show panels icon: three columns
-              <>
-                <rect x="0"  y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.6" />
-                <rect x="5.5" y="0" width="3" height="12" rx="1" fill="currentColor" />
-                <rect x="11" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.6" />
-              </>
-            ) : (
-              // Hide panels icon: just center column highlighted
-              <>
-                <rect x="0"  y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.25" />
-                <rect x="5.5" y="0" width="3" height="12" rx="1" fill="currentColor" />
-                <rect x="11" y="0" width="3" height="12" rx="1" fill="currentColor" opacity="0.25" />
-              </>
-            )}
-          </svg>
-          {focusMode ? "Show panels" : "Hide panels"}
-          <span style={{ opacity: 0.45, fontSize: 10, letterSpacing: "0.02em" }}>\\</span>
-        </button>
-
-        {/* Phone */}
-        <div
-          className="phone-frame"
-          style={{ width, height }}
-        >
-          <div className="phone-screen" style={{ position: "relative", overflow: "hidden" }}>
-            {children}
-            {/* Overlay root — sheets/modals portal here to sit above PageTransition + BottomNav */}
-            <div
-              id="phone-overlay-root"
-              style={{
-                position: "absolute",
-                inset: 0,
-                zIndex: 100,
-                pointerEvents: "none",
-              }}
-            />
-          </div>
+      {/* Phone */}
+      <div
+        className="phone-frame"
+        style={{ width, height, flexShrink: 0 }}
+      >
+        <div className="phone-screen" style={{ position: "relative", overflow: "hidden" }}>
+          {children}
+          {/* Overlay root — sheets/modals portal here to sit above PageTransition + BottomNav */}
+          <div
+            id="phone-overlay-root"
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 100,
+              pointerEvents: "none",
+            }}
+          />
         </div>
       </div>
 
