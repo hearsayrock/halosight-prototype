@@ -25,7 +25,7 @@ const SIZES: Record<DeviceSize, { width: number; height: number }> = {
 export default function PhoneFrame({ children }: { children: React.ReactNode }) {
   const [deviceSize, setDeviceSize]         = useState<DeviceSize>("14");
   const [leftCollapsed, setLeftCollapsed]   = useState(false);
-  const [rightCollapsed, setRightCollapsed] = useState(false);
+  const [rightCollapsed, setRightCollapsed] = useState(true);
   const [focusMode, setFocusMode]           = useState(false);
 
   const { width, height } = SIZES[deviceSize];
