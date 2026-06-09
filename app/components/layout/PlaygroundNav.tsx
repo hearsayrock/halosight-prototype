@@ -58,22 +58,29 @@ function Code({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** A styled callout showing an example thing to say to Claude */
-function ClaudePrompt({ children }: { children: string }) {
+/** A slash command chip — shows the exact command to type in Claude */
+function SkillCall({ command, args }: { command: string; args?: string }) {
   return (
     <div style={{
       marginTop: 8,
-      padding: "10px 14px",
+      padding: "9px 12px",
       borderRadius: 8,
       background: "color-mix(in srgb, var(--color-brand-purple) 10%, transparent)",
-      border: "1px solid color-mix(in srgb, var(--color-brand-purple) 30%, transparent)",
+      border: "1px solid color-mix(in srgb, var(--color-brand-purple) 28%, transparent)",
+      display: "flex",
+      alignItems: "baseline",
+      gap: 6,
     }}>
-      <p style={{ fontSize: 11, fontWeight: 600, color: "var(--color-brand-purple)", margin: "0 0 4px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-        Say to Claude
-      </p>
-      <p style={{ fontSize: 13, color: "var(--color-text-secondary)", margin: 0, lineHeight: 1.55, fontStyle: "italic" }}>
-        "{children}"
-      </p>
+      <span style={{ fontSize: 11, fontWeight: 700, color: "var(--color-brand-purple)", letterSpacing: "0.04em", flexShrink: 0 }}>
+        TYPE IN CLAUDE
+      </span>
+      <code style={{
+        fontSize: 13,
+        fontFamily: "ui-monospace, 'Cascadia Code', 'Fira Code', monospace",
+        color: "var(--color-text-primary)",
+      }}>
+        /{command}{args ? <span style={{ color: "var(--color-text-muted)" }}> {args}</span> : null}
+      </code>
     </div>
   );
 }
@@ -83,16 +90,15 @@ function ClaudePrompt({ children }: { children: string }) {
 const STEPS = [
   {
     num: 1,
-    title: "Tell Claude what you want to explore",
+    title: "Register the playground",
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Give Claude a name, a one-line description, and who's working on it.
-          Claude will register the playground and give you the exact branch name to use in step 2.
+          In your Claude chat, run the <strong style={{ color: "var(--color-text-primary)" }}>/new-playground</strong> skill.
+          Give it a name, a one-line description, and who's working on it.
+          Claude will add it to the registry and give you the exact commands to run in step 2.
         </p>
-        <ClaudePrompt>
-          Start a new playground called 'Map View'. I want to explore adding a map to the accounts tab. It's Nate working on it.
-        </ClaudePrompt>
+        <SkillCall command="new-playground" args='"Map View" "Explore adding a map to the accounts tab" Nate' />
       </>
     ),
   },
@@ -102,40 +108,43 @@ const STEPS = [
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Open Terminal and run these two commands using the branch name Claude gave you.
-          That's it — Vercel will automatically detect the new branch and start building
-          a preview in the background (takes about 1–2 minutes).
+          Claude will give you the exact two commands to copy-paste. They'll look like this
+          (using whatever slug it derived from your name):
         </p>
         <Code>{`git checkout -b playground/map-view\ngit push -u origin playground/map-view`}</Code>
+        <p style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.5, marginTop: 8 }}>
+          Once you push, Vercel automatically starts building a preview in the background — takes about 1–2 minutes.
+        </p>
       </>
     ),
   },
   {
     num: 3,
-    title: "Wait for Vercel, then copy the preview URL",
+    title: "Copy the preview URL from Vercel",
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Go to <strong style={{ color: "var(--color-text-primary)" }}>vercel.com</strong>, open the <strong style={{ color: "var(--color-text-primary)" }}>halosight-prototype</strong> project,
-          and click <strong style={{ color: "var(--color-text-primary)" }}>Deployments</strong> in the left sidebar.
+          Go to <strong style={{ color: "var(--color-text-primary)" }}>vercel.com</strong>, open the{" "}
+          <strong style={{ color: "var(--color-text-primary)" }}>halosight-prototype</strong> project, and
+          click <strong style={{ color: "var(--color-text-primary)" }}>Deployments</strong> in the left sidebar.
           Find your branch in the list and wait for the status dot to turn green.
-          Once it's green, click <strong style={{ color: "var(--color-text-primary)" }}>Visit</strong> and copy the URL from your browser's address bar.
+          Once it's green, click <strong style={{ color: "var(--color-text-primary)" }}>Visit</strong> and
+          copy the URL from your browser's address bar.
         </p>
       </>
     ),
   },
   {
     num: 4,
-    title: "Give the URL to Claude",
+    title: "Wire in the URL",
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Paste the URL into your chat with Claude. Claude will add it to the registry — this sidebar
-          and the DevPanel on the right will automatically link to your playground.
+          Run the <strong style={{ color: "var(--color-text-primary)" }}>/playground-url</strong> skill and paste the URL as the argument.
+          Claude will add it to the registry and push — this sidebar and the DevPanel on the right will
+          now link directly to your playground.
         </p>
-        <ClaudePrompt>
-          Here's the Vercel preview URL for my playground: [paste URL here]. Add it to the config.
-        </ClaudePrompt>
+        <SkillCall command="playground-url" args="https://halosight-prototype-git-playground-map-view-xxx.vercel.app" />
       </>
     ),
   },
@@ -145,14 +154,19 @@ const STEPS = [
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          You're live on a completely separate branch — nothing on the main app is affected.
-          Build with Claude as usual. When you're finished, just tell Claude where things stand
-          and it will update the status badge you see in this sidebar:
+          You're live on a completely separate branch — nothing on the main app is affected. Build with Claude as usual.
+          When you're finished, use <strong style={{ color: "var(--color-text-primary)" }}>/playground-status</strong> to update
+          the badge in this sidebar:
         </p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10 }}>
-          <ClaudePrompt>My Map View playground is ready for others to look at.</ClaudePrompt>
-          <ClaudePrompt>The Map View feature has been merged — mark it as shipped.</ClaudePrompt>
+        <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 4 }}>
+          <SkillCall command="playground-status" args='"Map View" review' />
+          <SkillCall command="playground-status" args='"Map View" shipped' />
         </div>
+        <p style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.5, marginTop: 8 }}>
+          <strong style={{ color: "var(--color-text-secondary)" }}>Exploring</strong> = actively working on it (purple) ·{" "}
+          <strong style={{ color: "var(--color-text-secondary)" }}>Review</strong> = ready for others to look at (orange) ·{" "}
+          <strong style={{ color: "var(--color-text-secondary)" }}>Shipped</strong> = merged and live (green)
+        </p>
       </>
     ),
   },
@@ -195,7 +209,7 @@ function InstructionsModal({ onClose }: { onClose: () => void }) {
               How to start a playground
             </h2>
             <p style={{ fontSize: 13, color: "var(--color-text-muted)", margin: "4px 0 0" }}>
-              Each playground is a git branch + Vercel preview deployment.
+              Each playground is a git branch + Vercel preview. Three skills handle all the setup automatically.
             </p>
           </div>
           <button
