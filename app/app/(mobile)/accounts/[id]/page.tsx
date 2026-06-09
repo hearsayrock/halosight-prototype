@@ -20,7 +20,7 @@
  *   Not implemented in web prototype.
  */
 
-import { use, useState } from "react";
+import { use, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/ui/Icon";
@@ -98,7 +98,7 @@ function ActivityCard({ item, accountId }: { item: ActivityItem; accountId: stri
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-export default function AccountDetailPage({ params }: { params: Promise<{ id: string }> }) {
+function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const searchParams = useSearchParams();
   const preview = searchParams.get("preview"); // "loading" | "error" | null
@@ -349,5 +349,13 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
       )}
 
     </div>
+  );
+}
+
+export default function AccountDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense>
+      <AccountDetailPageContent params={params} />
+    </Suspense>
   );
 }

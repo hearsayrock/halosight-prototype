@@ -19,7 +19,7 @@
  *   the ViewModel's loadAccounts() method. Not implemented in web prototype.
  */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import AccountListItem from "@/components/accounts/AccountListItem";
@@ -57,7 +57,7 @@ function sortAccounts(accounts: typeof mockAccounts, sort: SortOption) {
   });
 }
 
-export default function AccountsPage() {
+function AccountsPageContent() {
   const searchParams = useSearchParams();
   const preview = searchParams.get("preview"); // "loading" | "error" | null
 
@@ -156,5 +156,13 @@ export default function AccountsPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function AccountsPage() {
+  return (
+    <Suspense>
+      <AccountsPageContent />
+    </Suspense>
   );
 }
