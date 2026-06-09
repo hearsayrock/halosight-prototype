@@ -471,7 +471,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           <RailDot color="#2ECC71" icon="★" isActive={isMain} href={isMain ? "/home" : CURRENT_APP_URL} title="Current App" />
           {PLAYGROUNDS.map(p => {
             const isActive = currentBranch === p.id;
-            const href = isActive ? (p.routes?.[0]?.path ?? "/") : (p.url || "#");
+            const href = p.routes?.[0]?.path ?? p.url ?? "#";
             return (
               <RailDot
                 key={p.id}
@@ -561,12 +561,11 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           </p>
         ) : (
           PLAYGROUNDS.map(p => {
-            // When you're already on this playground, use a relative path so
-            // local dev works without needing the Vercel URL.
             const isActive = currentBranch === p.id;
-            const href = isActive
-              ? (p.routes?.[0]?.path ?? "/")
-              : (p.url || "#");
+            // If the playground has routes, always use the first one as a
+            // relative path — works in local dev and on Vercel alike.
+            // Only fall back to the external URL when no routes are defined.
+            const href = p.routes?.[0]?.path ?? p.url ?? "#";
             return (
               <NavItem
                 key={p.id}
