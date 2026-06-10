@@ -11,7 +11,8 @@ import BottomNav from "./BottomNav";
 
 export default function StaticBottomNav() {
   const pathname = usePathname();
-  const ROOT_PAGES = ["/home", "/accounts"];
+  // /accounts is the combined home+accounts page on this playground — no nav
+  const ROOT_PAGES = ["/home"];
   if (!ROOT_PAGES.includes(pathname)) return null;
 
   return (
