@@ -37,6 +37,7 @@ import Icon from "@/components/ui/Icon";
 import { AccountListSkeleton } from "@/components/ui/Skeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import CompletionToast from "@/components/ui/CompletionToast";
+import MenuIcon from "@/components/ui/MenuIcon";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import { mockSystemAccounts, systemAccountReps } from "@/lib/mock-data/system-accounts";
 import { mockTasks, mockActivities } from "@/lib/mock-data/home";
@@ -464,12 +465,7 @@ function CombinedPageContent() {
           className="active:opacity-60 transition-opacity p-1"
           aria-label="Engagements"
         >
-          {/* Hamburger */}
-          <svg width="22" height="16" viewBox="0 0 22 16" fill="none">
-            <rect width="22" height="2" rx="1" fill="var(--color-text-secondary)" />
-            <rect y="7" width="16" height="2" rx="1" fill="var(--color-text-secondary)" />
-            <rect y="14" width="10" height="2" rx="1" fill="var(--color-text-secondary)" />
-          </svg>
+          <MenuIcon size={24} />
         </button>
 
         <h1 style={{
