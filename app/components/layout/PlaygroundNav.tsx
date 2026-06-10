@@ -302,10 +302,17 @@ function NavItem({
         display: "block",
         padding: "10px 12px",
         borderRadius: 10,
-        background: isActive ? "var(--color-dark-secondary)" : "transparent",
+        background: isActive
+          ? `color-mix(in srgb, ${color} 12%, var(--color-dark-secondary))`
+          : "transparent",
         textDecoration: "none",
         transition: "background 0.12s",
-        borderLeft: `3px solid ${isActive ? color : "transparent"}`,
+        border: isActive
+          ? `1px solid color-mix(in srgb, ${color} 35%, transparent)`
+          : "1px solid transparent",
+        boxShadow: isActive
+          ? `inset 3px 0 0 ${color}`
+          : "none",
       }}
     >
       {/* Top row */}
@@ -315,7 +322,7 @@ function NavItem({
         </span>
         <span style={{
           fontSize: 14,
-          fontWeight: isActive ? 600 : 500,
+          fontWeight: isActive ? 700 : 500,
           color: isActive ? "var(--color-text-primary)" : "var(--color-text-secondary)",
           flex: 1,
           overflow: "hidden",
@@ -324,7 +331,22 @@ function NavItem({
         }}>
           {label}
         </span>
-        {author && (
+        {isActive && (
+          <span style={{
+            fontSize: 9,
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            color,
+            background: `color-mix(in srgb, ${color} 18%, transparent)`,
+            borderRadius: 4,
+            padding: "2px 5px",
+            flexShrink: 0,
+          }}>
+            Here
+          </span>
+        )}
+        {!isActive && author && (
           <span style={{
             width: 20,
             height: 20,
