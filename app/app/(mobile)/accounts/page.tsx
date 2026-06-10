@@ -814,7 +814,7 @@ function CombinedPageContent() {
                 transition={{ duration: 0.18 }}
                 style={{
                   fontFamily: "Roboto Slab, Georgia, serif",
-                  fontSize: 26, fontWeight: 500,
+                  fontSize: 20, fontWeight: 500,
                   color: "var(--color-text-primary)",
                   margin: 0, lineHeight: 1.15, textAlign: "center",
                 }}
