@@ -1,0 +1,56 @@
+name: Sync Design Tokens
+
+# Runs whenever tokens/tokens.json changes on main.
+# Re-builds the generated CSS and commits it back to the branch.
+#
+# This is the "Figma → code" half of the sync pipeline:
+#   Figma (Tokens Studio plugin) → pushes tokens.json → this Action → generated CSS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/tokens/tokens.json'
+
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-tokens:
+    name: Build tokens → CSS
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # needed to commit generated files back
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Use a token that can push back to protected branches if needed
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Build tokens
+        working-directory: app
+        run: npm run build:tokens
+
+      - name: Commit generated files
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app/tokens/generated/
+          # Only commit if there are actual changes
+          git diff --staged --quiet || git commit -m "chore: regenerate tokens CSS from tokens.json [skip ci]"
+          git push
