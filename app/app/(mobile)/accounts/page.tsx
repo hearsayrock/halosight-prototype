@@ -28,8 +28,8 @@
 import { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { useSearchParams, useRouter } from "next/navigation";
 import AccountListItem from "@/components/accounts/AccountListItem";
 import SystemAccountListItem from "@/components/accounts/SystemAccountListItem";
 import SortMenu from "@/components/accounts/SortMenu";
@@ -573,12 +573,21 @@ type PageMode = "home" | "accounts" | "priorities";
 
 function CombinedPageContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const preview = searchParams.get("preview");
 
   const { startCapture } = useCapture();
 
-  // Page mode — drives the main layout transition
-  const [mode, setMode] = useState<PageMode>("home");
+  // Page mode — derived from URL so browser back restores the expanded view
+  const modeParam = searchParams.get("mode");
+  const mode: PageMode = (modeParam === "accounts" || modeParam === "priorities") ? modeParam : "home";
+
+  function goToMode(m: "accounts" | "priorities") {
+    router.push(`/accounts?mode=${m}`, { scroll: false });
+  }
+  function goHome() {
+    router.back();
+  }
 
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -722,10 +731,9 @@ function CombinedPageContent() {
   const showSystemSection = systemState === "loading" || systemState === "done";
 
   // ── Mini search pill (lives in section headers in home mode) ───────────────
-  function MiniSearchPill({ layoutId, onClick }: { layoutId: string; onClick: () => void }) {
+  function MiniSearchPill({ onClick }: { onClick: () => void }) {
     return (
-      <motion.button
-        layoutId={layoutId}
+      <button
         onClick={onClick}
         style={{
           display: "flex", alignItems: "center", gap: 5,
@@ -734,14 +742,13 @@ function CombinedPageContent() {
           background: "var(--color-dark-secondary)",
           border: "1px solid var(--color-dark-tertiary)",
           cursor: "pointer",
-          overflow: "hidden",
         }}
       >
         <Icon name="search" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
-        <motion.span style={{ fontSize: 12, color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
+        <span style={{ fontSize: 12, color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
           Search
-        </motion.span>
-      </motion.button>
+        </span>
+      </button>
     );
   }
 
@@ -761,7 +768,6 @@ function CombinedPageContent() {
   );
 
   return (
-    <LayoutGroup>
     <div className="relative flex flex-col h-full" style={{ background: "var(--color-background)" }}>
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
@@ -787,7 +793,7 @@ function CombinedPageContent() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -6 }}
               transition={{ duration: 0.18 }}
-              onClick={() => setMode("home")}
+              onClick={goHome}
               className="active:opacity-60 transition-opacity flex-shrink-0"
               aria-label="Back"
               style={{ padding: "4px 2px" }}
@@ -860,7 +866,6 @@ function CombinedPageContent() {
       <AnimatePresence>
         {mode === "accounts" && (
           <motion.div
-            layoutId="search-accounts"
             key="accounts-search-bar"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -907,7 +912,6 @@ function CombinedPageContent() {
 
         {mode === "priorities" && (
           <motion.div
-            layoutId="search-priorities"
             key="priorities-search-bar"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -979,7 +983,7 @@ function CombinedPageContent() {
                       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
                         Accounts
                       </span>
-                      <MiniSearchPill layoutId="search-accounts" onClick={() => setMode("accounts")} />
+                      <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
                     <div style={{ background: "var(--color-dark-secondary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16 }}>
                       {topAccounts.map((account, i) => (
@@ -994,7 +998,7 @@ function CombinedPageContent() {
                       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
                         Top Priorities
                       </span>
-                      <MiniSearchPill layoutId="search-priorities" onClick={() => setMode("priorities")} />
+                      <MiniSearchPill onClick={() => goToMode("priorities")} />
                     </div>
                     <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
                   </div>
@@ -1255,7 +1259,6 @@ function CombinedPageContent() {
         }}
       />
     </div>
-    </LayoutGroup>
   );
 }
 

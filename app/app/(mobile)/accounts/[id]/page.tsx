@@ -21,7 +21,7 @@
  */
 
 import { use, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/ui/Icon";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
@@ -101,6 +101,7 @@ function ActivityCard({ item, accountId }: { item: ActivityItem; accountId: stri
 function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const preview = searchParams.get("preview"); // "loading" | "error" | null
   const [activeTab, setActiveTab] = useState<"overview" | "activity">(
     searchParams.get("tab") === "activity" ? "activity" : "overview"
@@ -123,11 +124,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     return (
       <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
         <div className="pt-10 px-4 pb-2">
-          <Link href="/accounts">
-            <button className="p-1 active:opacity-60 transition-opacity">
-              <Icon name="close" size={22} style={{ color: "var(--color-text-muted)" }} />
-            </button>
-          </Link>
+          <button onClick={() => router.back()} className="p-1 active:opacity-60 transition-opacity">
+            <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
+          </button>
         </div>
         <ErrorState
           title="Couldn't load account"
@@ -142,11 +141,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     return (
       <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
         <div className="pt-10 px-4 pb-2">
-          <Link href="/accounts">
-            <button className="p-1 active:opacity-60 transition-opacity">
-              <Icon name="close" size={22} style={{ color: "var(--color-text-muted)" }} />
-            </button>
-          </Link>
+          <button onClick={() => router.back()} className="p-1 active:opacity-60 transition-opacity">
+            <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
+          </button>
         </div>
         <ErrorState
           title="Account not found"
@@ -164,11 +161,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
         {/* Close button */}
         <div className="mb-3">
-          <Link href="/accounts">
-            <button className="p-1 active:opacity-60 transition-opacity">
-              <Icon name="close" size={22} style={{ color: "var(--color-text-muted)" }} />
-            </button>
-          </Link>
+          <button onClick={() => router.back()} className="p-1 active:opacity-60 transition-opacity">
+            <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
+          </button>
         </div>
 
         {/* Account name */}
