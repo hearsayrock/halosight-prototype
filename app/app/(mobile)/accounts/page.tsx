@@ -259,7 +259,7 @@ function TaskStrip({
           letterSpacing: "0.07em", textTransform: "uppercase",
           color: "var(--color-text-muted)",
         }}>
-          Upcoming
+          Top Priorities
         </span>
         <Link href="/tasks" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-brand-purple)" }}>
           View all
@@ -458,7 +458,7 @@ function CombinedPageContent() {
     <div className="relative flex flex-col h-full" style={{ background: "var(--color-background)" }}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-10 pb-3">
+      <div className="flex items-center justify-between px-4 pt-10 pb-4">
         <button
           onClick={() => setDrawerOpen(true)}
           className="active:opacity-60 transition-opacity p-1"
@@ -472,14 +472,19 @@ function CombinedPageContent() {
           </svg>
         </button>
 
-        <div className="text-center flex-1 px-3">
-          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)", margin: 0 }}>
-            {greeting()}, Nate
-          </p>
-          <h1 style={{ fontFamily: "Roboto Slab, Georgia, serif", fontSize: 22, fontWeight: 600, color: "var(--color-text-primary)", margin: 0, lineHeight: 1.2 }}>
-            Accounts
-          </h1>
-        </div>
+        <h1 style={{
+          fontFamily: "Roboto Slab, Georgia, serif",
+          fontSize: 26,
+          fontWeight: 500,
+          color: "var(--color-text-primary)",
+          margin: 0,
+          lineHeight: 1.15,
+          flex: 1,
+          textAlign: "center",
+          padding: "0 12px",
+        }}>
+          {greeting()}, Nate
+        </h1>
 
         <Link href="/profile">
           <button className="active:opacity-60 transition-opacity" aria-label="Profile">
@@ -492,6 +497,36 @@ function CombinedPageContent() {
             </div>
           </button>
         </Link>
+      </div>
+
+      {/* Search bar — above everything */}
+      <div className="flex items-center gap-2 px-4 pb-4">
+        <div className="flex-1 flex items-center gap-2 h-11 px-3 rounded-xl"
+          style={{
+            background: "var(--color-dark-secondary)",
+            outline: showSystemSection ? "1.5px solid var(--color-brand-purple)" : "none",
+          }}>
+          <Icon name="search" size={18} style={{ color: showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)", flexShrink: 0, transition: "color 0.2s" }} />
+          <input
+            type="text"
+            placeholder={showSystemSection ? "Searching all accounts…" : "Search accounts or priorities"}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="flex-1 bg-transparent text-sm outline-none"
+            style={{ color: "var(--color-text-primary)" }}
+          />
+          {showSystemSection && (
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--color-brand-purple)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0, whiteSpace: "nowrap" }}>
+              ALL
+            </span>
+          )}
+          {query && (
+            <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
+              <Icon name="cancel" fill size={16} style={{ color: "var(--color-text-disabled)" }} />
+            </button>
+          )}
+        </div>
+        <SortMenu current={sort} onChange={setSort} />
       </div>
 
       {/* Scrollable body */}
@@ -508,37 +543,8 @@ function CombinedPageContent() {
             {/* Task strip */}
             <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
 
-            {/* Search + sort */}
-            <div className="flex items-center gap-2 px-4 pb-3">
-              <div className="flex-1 flex items-center gap-2 h-11 px-3 rounded-xl"
-                style={{
-                  background: "var(--color-dark-secondary)",
-                  outline: showSystemSection ? "1.5px solid var(--color-brand-purple)" : "none",
-                }}>
-                <Icon name="search" size={18} style={{ color: showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)", flexShrink: 0, transition: "color 0.2s" }} />
-                <input
-                  type="text"
-                  placeholder={showSystemSection ? "Searching all accounts…" : "Search accounts"}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-sm outline-none"
-                  style={{ color: "var(--color-text-primary)" }}
-                />
-                {showSystemSection && (
-                  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--color-brand-purple)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0, whiteSpace: "nowrap" }}>
-                    ALL
-                  </span>
-                )}
-                {query && (
-                  <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-                    <Icon name="cancel" fill size={16} style={{ color: "var(--color-text-disabled)" }} />
-                  </button>
-                )}
-              </div>
-              <SortMenu current={sort} onChange={setSort} />
-            </div>
-
-            {/* My accounts */}
+            {/* Accounts section label */}
+            {!showSystemSection && <SectionHeader label="Accounts" count={myFiltered.length} />}
             {showSystemSection && <SectionHeader label="Your Accounts" count={myFiltered.length} />}
 
             {myFiltered.length > 0 ? (
