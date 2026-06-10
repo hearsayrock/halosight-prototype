@@ -28,7 +28,7 @@
 import { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import AccountListItem from "@/components/accounts/AccountListItem";
 import SystemAccountListItem from "@/components/accounts/SystemAccountListItem";
@@ -579,24 +579,31 @@ function CreateAccountCTA({ query }: { query: string }) {
 
 type SystemSearchState = "idle" | "loading" | "done";
 
+type PageMode = "home" | "accounts" | "priorities";
+
 function CombinedPageContent() {
   const searchParams = useSearchParams();
   const preview = searchParams.get("preview");
 
   const { startCapture } = useCapture();
 
+  // Page mode — drives the main layout transition
+  const [mode, setMode] = useState<PageMode>("home");
+
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Accounts
-  const [showAllAccounts, setShowAllAccounts] = useState(false);
-
-  // Accounts search
+  // Accounts search (used in accounts mode)
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("alphabetical");
   const [systemState, setSystemState] = useState<SystemSearchState>("idle");
   const [systemResults, setSystemResults] = useState<Account[]>([]);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const accountsInputRef = useRef<HTMLInputElement>(null);
+
+  // Priorities search (used in priorities mode)
+  const [prioritiesQuery, setPrioritiesQuery] = useState("");
+  const prioritiesInputRef = useRef<HTMLInputElement>(null);
 
   // Tasks
   const { getItems, updateItem } = useActionItems();
@@ -622,13 +629,35 @@ function CombinedPageContent() {
     setPendingTaskId(null);
   }
 
-  // Reset system search on query change
+  // Reset system search when accounts query changes
   useEffect(() => {
     setSystemState("idle");
     setSystemResults([]);
   }, [query]);
 
+  // Auto-focus the right input when switching modes
+  useEffect(() => {
+    if (mode === "accounts") {
+      setTimeout(() => accountsInputRef.current?.focus(), 280);
+    } else if (mode === "priorities") {
+      setTimeout(() => prioritiesInputRef.current?.focus(), 280);
+    } else {
+      // Clear searches when returning home
+      setQuery("");
+      setPrioritiesQuery("");
+      setSystemState("idle");
+      setSystemResults([]);
+    }
+  }, [mode]);
+
   const myFiltered = useMemo(() => sortAccounts(searchAccounts(mockAccounts, query), sort), [query, sort]);
+  const filteredTasks = useMemo(() =>
+    availableTasks.filter(t =>
+      !prioritiesQuery.trim() ||
+      t.title.toLowerCase().includes(prioritiesQuery.toLowerCase()) ||
+      t.accountName.toLowerCase().includes(prioritiesQuery.toLowerCase())
+    ),
+  [availableTasks, prioritiesQuery]);
   const topAccounts = useMemo(() =>
     [...mockAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
   []);
@@ -648,220 +677,448 @@ function CombinedPageContent() {
 
   const showSystemSection = systemState === "loading" || systemState === "done";
 
+  // ── Mini search pill (lives in section headers in home mode) ───────────────
+  function MiniSearchPill({ layoutId, onClick }: { layoutId: string; onClick: () => void }) {
+    return (
+      <motion.button
+        layoutId={layoutId}
+        onClick={onClick}
+        style={{
+          display: "flex", alignItems: "center", gap: 5,
+          height: 28, paddingLeft: 9, paddingRight: 11,
+          borderRadius: 20,
+          background: "var(--color-dark-secondary)",
+          border: "1px solid var(--color-dark-tertiary)",
+          cursor: "pointer",
+          overflow: "hidden",
+        }}
+      >
+        <Icon name="search" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+        <motion.span style={{ fontSize: 12, color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
+          Search
+        </motion.span>
+      </motion.button>
+    );
+  }
+
+  // ── Profile button (reused in both header states) ──────────────────────────
+  const ProfileButton = (
+    <Link href="/profile">
+      <button className="active:opacity-60 transition-opacity flex-shrink-0" aria-label="Profile">
+        <div className="w-9 h-9 rounded-full flex items-center justify-center"
+          style={{ background: "var(--color-dark-secondary)" }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
+              stroke="var(--color-text-muted)" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+      </button>
+    </Link>
+  );
+
   return (
+    <LayoutGroup>
     <div className="relative flex flex-col h-full" style={{ background: "var(--color-background)" }}>
 
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-10 pb-4">
-        <button
-          onClick={() => setDrawerOpen(true)}
-          className="active:opacity-60 transition-opacity p-1"
-          aria-label="Engagements"
-        >
-          <MenuIcon size={24} />
-        </button>
-
-        <h1 style={{
-          fontFamily: "Roboto Slab, Georgia, serif",
-          fontSize: 26,
-          fontWeight: 500,
-          color: "var(--color-text-primary)",
-          margin: 0,
-          lineHeight: 1.15,
-          flex: 1,
-          textAlign: "center",
-          padding: "0 12px",
-        }}>
-          {greeting()}, Nate
-        </h1>
-
-        <Link href="/profile">
-          <button className="active:opacity-60 transition-opacity" aria-label="Profile">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center"
-              style={{ background: "var(--color-dark-secondary)" }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-                  stroke="var(--color-text-muted)" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-          </button>
-        </Link>
-      </div>
-
-      {/* Search bar — above everything */}
-      <div className="flex items-center gap-2 px-4 pb-4">
-        <div className="flex-1 flex items-center gap-2 h-11 px-3 rounded-xl"
-          style={{
-            background: "var(--color-dark-secondary)",
-            outline: showSystemSection ? "1.5px solid var(--color-brand-purple)" : "none",
-          }}>
-          <Icon name="search" size={18} style={{ color: showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)", flexShrink: 0, transition: "color 0.2s" }} />
-          <input
-            type="text"
-            placeholder={showSystemSection ? "Searching all accounts…" : "Search accounts or priorities"}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: "var(--color-text-primary)" }}
-          />
-          {showSystemSection && (
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--color-brand-purple)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0, whiteSpace: "nowrap" }}>
-              ALL
-            </span>
+      {/* ── HEADER ─────────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between px-4 pt-10 pb-3" style={{ flexShrink: 0 }}>
+        <AnimatePresence mode="wait" initial={false}>
+          {mode === "home" ? (
+            <motion.button
+              key="hamburger"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              onClick={() => setDrawerOpen(true)}
+              className="active:opacity-60 transition-opacity p-1 flex-shrink-0"
+              aria-label="Engagements"
+            >
+              <MenuIcon size={24} />
+            </motion.button>
+          ) : (
+            <motion.button
+              key="back"
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -6 }}
+              transition={{ duration: 0.18 }}
+              onClick={() => setMode("home")}
+              className="active:opacity-60 transition-opacity flex-shrink-0"
+              aria-label="Back"
+              style={{ padding: "4px 2px" }}
+            >
+              <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-secondary)" }} />
+            </motion.button>
           )}
-          {query && (
-            <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-              <Icon name="cancel" fill size={16} style={{ color: "var(--color-text-disabled)" }} />
-            </button>
-          )}
+        </AnimatePresence>
+
+        <div style={{ flex: 1, overflow: "hidden", padding: "0 10px" }}>
+          <AnimatePresence mode="wait" initial={false}>
+            {mode === "home" && (
+              <motion.h1
+                key="greeting"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                style={{
+                  fontFamily: "Roboto Slab, Georgia, serif",
+                  fontSize: 26, fontWeight: 500,
+                  color: "var(--color-text-primary)",
+                  margin: 0, lineHeight: 1.15, textAlign: "center",
+                }}
+              >
+                {greeting()}, Nate
+              </motion.h1>
+            )}
+            {mode === "accounts" && (
+              <motion.h1
+                key="accounts-title"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                style={{
+                  fontFamily: "Roboto Slab, Georgia, serif",
+                  fontSize: 22, fontWeight: 500,
+                  color: "var(--color-text-primary)",
+                  margin: 0, lineHeight: 1.15, textAlign: "center",
+                }}
+              >
+                Accounts
+              </motion.h1>
+            )}
+            {mode === "priorities" && (
+              <motion.h1
+                key="priorities-title"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                style={{
+                  fontFamily: "Roboto Slab, Georgia, serif",
+                  fontSize: 22, fontWeight: 500,
+                  color: "var(--color-text-primary)",
+                  margin: 0, lineHeight: 1.15, textAlign: "center",
+                }}
+              >
+                Top Priorities
+              </motion.h1>
+            )}
+          </AnimatePresence>
         </div>
+
+        {ProfileButton}
       </div>
 
-      {/* Scrollable body */}
-      <div className="flex-1 overflow-y-auto flex flex-col pb-12">
-
-        {/* Preview states */}
-        {preview === "loading" && <AccountListSkeleton rows={6} />}
-        {preview === "error" && (
-          <ErrorState title="Couldn't load accounts" message="We had trouble reaching the server. Check your connection and try again." onRetry={() => {}} />
+      {/* ── PINNED SEARCH BAR (expands from mini pill via layoutId) ───── */}
+      <AnimatePresence>
+        {mode === "accounts" && (
+          <motion.div
+            layoutId="search-accounts"
+            key="accounts-search-bar"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            style={{
+              margin: "0 16px 12px",
+              borderRadius: 14,
+              background: showSystemSection ? "var(--color-dark-secondary)" : "var(--color-dark-secondary)",
+              outline: showSystemSection ? "1.5px solid var(--color-brand-purple)" : "1px solid var(--color-dark-tertiary)",
+              display: "flex", alignItems: "center", gap: 8,
+              height: 44, padding: "0 12px",
+              flexShrink: 0,
+            }}
+          >
+            <Icon name="search" size={17} style={{ color: showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)", flexShrink: 0, transition: "color 0.2s" }} />
+            <input
+              ref={accountsInputRef}
+              type="text"
+              placeholder={showSystemSection ? "Searching all accounts…" : "Search accounts…"}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="flex-1 bg-transparent text-sm outline-none"
+              style={{ color: "var(--color-text-primary)" }}
+            />
+            {showSystemSection && (
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--color-brand-purple)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
+                ALL
+              </span>
+            )}
+            {query && (
+              <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
+                <Icon name="cancel" fill size={16} style={{ color: "var(--color-text-disabled)" }} />
+              </button>
+            )}
+            <SortMenu current={sort} onChange={setSort} />
+          </motion.div>
         )}
 
-        {!preview && (
-          <>
-            {/* ── DASHBOARD ─────────────────────────────────────────── */}
-            {!hasQuery && !showAllAccounts && (
-              <DashboardGrid
-                openTaskCount={availableTasks.length}
-                nearestAccount={nearestAccount}
-                onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name)}
-              />
+        {mode === "priorities" && (
+          <motion.div
+            layoutId="search-priorities"
+            key="priorities-search-bar"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            style={{
+              margin: "0 16px 12px",
+              borderRadius: 14,
+              background: "var(--color-dark-secondary)",
+              outline: "1px solid var(--color-dark-tertiary)",
+              display: "flex", alignItems: "center", gap: 8,
+              height: 44, padding: "0 12px",
+              flexShrink: 0,
+            }}
+          >
+            <Icon name="search" size={17} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+            <input
+              ref={prioritiesInputRef}
+              type="text"
+              placeholder="Search priorities…"
+              value={prioritiesQuery}
+              onChange={(e) => setPrioritiesQuery(e.target.value)}
+              className="flex-1 bg-transparent text-sm outline-none"
+              style={{ color: "var(--color-text-primary)" }}
+            />
+            {prioritiesQuery && (
+              <button onClick={() => setPrioritiesQuery("")} className="active:opacity-60 flex-shrink-0">
+                <Icon name="cancel" fill size={16} style={{ color: "var(--color-text-disabled)" }} />
+              </button>
             )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            {/* ── ACCOUNTS ──────────────────────────────────────────── */}
-            {!hasQuery ? (
-              /* Collapsed top-accounts view */
-              <div className="mb-2">
-                <div className="flex items-center justify-between px-4 py-2">
-                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
-                    Accounts
-                  </span>
-                  <button
-                    onClick={() => setShowAllAccounts(v => !v)}
-                    style={{ fontSize: 13, fontWeight: 600, color: "var(--color-brand-purple)", background: "none", border: "none", cursor: "pointer" }}
-                  >
-                    {showAllAccounts ? "Show less" : "View all"}
-                  </button>
-                </div>
+      {/* ── BODY ───────────────────────────────────────────────────────── */}
+      <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
+        <AnimatePresence initial={false}>
 
-                {!showAllAccounts ? (
-                  /* Compact top-4 */
-                  <div style={{ background: "var(--color-dark-secondary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16 }}>
-                    {topAccounts.map((account, i) => (
-                      <CompactAccountRow key={account.id} account={account} isLast={i === topAccounts.length - 1} />
-                    ))}
-                  </div>
-                ) : (
-                  /* Full list — existing cards + sort */
-                  <>
-                    <div className="flex items-center justify-end px-4 pb-2">
-                      <SortMenu current={sort} onChange={setSort} />
+          {/* HOME VIEW */}
+          {mode === "home" && (
+            <motion.div
+              key="home"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: 48 }}
+            >
+              {preview === "loading" && <AccountListSkeleton rows={6} />}
+              {preview === "error" && (
+                <ErrorState title="Couldn't load accounts" message="We had trouble reaching the server." onRetry={() => {}} />
+              )}
+              {!preview && (
+                <>
+                  {/* Dashboard */}
+                  <DashboardGrid
+                    openTaskCount={availableTasks.length}
+                    nearestAccount={nearestAccount}
+                    onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name)}
+                  />
+
+                  {/* Accounts section */}
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between px-4 py-2">
+                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
+                        Accounts
+                      </span>
+                      <MiniSearchPill layoutId="search-accounts" onClick={() => setMode("accounts")} />
                     </div>
-                    <div className="flex flex-col">
-                      {myFiltered.map((account, i) => (
-                        <AccountListItem key={account.id} account={account} isLast={i === myFiltered.length - 1} />
+                    <div style={{ background: "var(--color-dark-secondary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16 }}>
+                      {topAccounts.map((account, i) => (
+                        <CompactAccountRow key={account.id} account={account} isLast={i === topAccounts.length - 1} />
                       ))}
                     </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              /* Search results — full cards */
-              <>
-                {showSystemSection && <SectionHeader label="Your Accounts" count={myFiltered.length} />}
-                {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Accounts" count={myFiltered.length} />}
-
-                {myFiltered.length > 0 ? (
-                  <div className="flex flex-col">
-                    {myFiltered.map((account, i) => (
-                      <AccountListItem key={account.id} account={account} isLast={i === myFiltered.length - 1} />
-                    ))}
                   </div>
-                ) : (
-                  <div className="mx-4 mt-2 rounded-2xl flex flex-col items-center gap-4 px-5 py-6"
-                    style={{ background: "var(--color-dark-secondary)" }}>
-                    <div className="w-11 h-11 rounded-full flex items-center justify-center"
-                      style={{ background: "rgba(139,146,255,0.12)" }}>
-                      <Icon name="search_off" size={22} style={{ color: "var(--color-brand-purple)" }} />
+
+                  {/* Priorities section */}
+                  <div>
+                    <div className="flex items-center justify-between px-4 py-2">
+                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
+                        Top Priorities
+                      </span>
+                      <MiniSearchPill layoutId="search-priorities" onClick={() => setMode("priorities")} />
                     </div>
-                    <div className="text-center">
-                      <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Not in your accounts</p>
-                      <p className="text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
-                    </div>
-                    {systemState === "idle" && (
-                      <button onClick={triggerSystemSearch}
-                        className="w-full h-10 rounded-xl font-semibold text-sm active:opacity-80 transition-opacity flex items-center justify-center gap-2"
-                        style={{ background: "rgba(139,146,255,0.15)", border: "1px solid rgba(139,146,255,0.3)", color: "var(--color-brand-purple)" }}>
-                        <Icon name="public" size={16} style={{ color: "var(--color-brand-purple)" }} />
-                        Search all Halosight accounts
-                      </button>
-                    )}
+                    <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
                   </div>
-                )}
+                </>
+              )}
+            </motion.div>
+          )}
 
-                {hasQuery && myFiltered.length > 0 && systemState === "idle" && (
-                  <button onClick={triggerSystemSearch}
-                    className="mx-4 mt-2 mb-1 h-9 rounded-xl text-xs font-semibold active:opacity-70 transition-opacity flex items-center justify-center gap-1.5"
-                    style={{ background: "transparent", border: "1px solid var(--color-dark-tertiary)", color: "var(--color-text-muted)" }}>
-                    <Icon name="public" size={13} style={{ color: "var(--color-text-muted)" }} />
-                    Also search all Halosight accounts
-                  </button>
-                )}
+          {/* ACCOUNTS EXPANDED VIEW */}
+          {mode === "accounts" && (
+            <motion.div
+              key="accounts"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: 48 }}
+            >
+              {/* My accounts */}
+              {showSystemSection && <SectionHeader label="Your Accounts" count={myFiltered.length} />}
+              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Accounts" count={myFiltered.length} />}
 
-                {showSystemSection && (
-                  <div className="mt-4">
-                    <div className="mx-4 mb-1" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
-                    {systemState === "loading" && (
-                      <>
-                        <SectionHeader label="All Halosight Accounts" count={0} />
-                        <SystemSearchSkeleton />
-                      </>
-                    )}
-                    {systemState === "done" && (
-                      <>
-                        <SectionHeader label="All Halosight Accounts" count={systemResults.length} />
-                        {systemResults.length > 0 ? (
-                          <div className="flex flex-col">
-                            {systemResults.map((account, i) => (
-                              <SystemAccountListItem
-                                key={account.id}
-                                account={account}
-                                assignedRep={systemAccountReps[account.id] ?? "Unknown"}
-                                isLast={i === systemResults.length - 1}
-                                onSelect={(a) => { window.location.href = `/accounts/${a.id}`; }}
-                              />
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="px-4 py-6 text-center">
-                            <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>Not found anywhere in Halosight.</p>
-                          </div>
-                        )}
-                        <CreateAccountCTA query={query} />
-                      </>
-                    )}
+              {myFiltered.length > 0 ? (
+                <div className="flex flex-col">
+                  {myFiltered.map((account, i) => (
+                    <AccountListItem key={account.id} account={account} isLast={i === myFiltered.length - 1} />
+                  ))}
+                </div>
+              ) : hasQuery ? (
+                <div className="mx-4 mt-2 rounded-2xl flex flex-col items-center gap-4 px-5 py-6"
+                  style={{ background: "var(--color-dark-secondary)" }}>
+                  <div className="w-11 h-11 rounded-full flex items-center justify-center"
+                    style={{ background: "rgba(139,146,255,0.12)" }}>
+                    <Icon name="search_off" size={22} style={{ color: "var(--color-brand-purple)" }} />
                   </div>
-                )}
-              </>
-            )}
+                  <div className="text-center">
+                    <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Not in your accounts</p>
+                    <p className="text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
+                  </div>
+                  {systemState === "idle" && (
+                    <button onClick={triggerSystemSearch}
+                      className="w-full h-10 rounded-xl font-semibold text-sm active:opacity-80 transition-opacity flex items-center justify-center gap-2"
+                      style={{ background: "rgba(139,146,255,0.15)", border: "1px solid rgba(139,146,255,0.3)", color: "var(--color-brand-purple)" }}>
+                      <Icon name="public" size={16} style={{ color: "var(--color-brand-purple)" }} />
+                      Search all Halosight accounts
+                    </button>
+                  )}
+                </div>
+              ) : null}
 
-            {/* ── TOP PRIORITIES ─────────────────────────────────────── */}
-            {!hasQuery && !showAllAccounts && (
-              <div className="mt-2">
-                <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
-              </div>
-            )}
-          </>
-        )}
+              {hasQuery && myFiltered.length > 0 && systemState === "idle" && (
+                <button onClick={triggerSystemSearch}
+                  className="mx-4 mt-2 mb-1 h-9 rounded-xl text-xs font-semibold active:opacity-70 transition-opacity flex items-center justify-center gap-1.5"
+                  style={{ background: "transparent", border: "1px solid var(--color-dark-tertiary)", color: "var(--color-text-muted)" }}>
+                  <Icon name="public" size={13} style={{ color: "var(--color-text-muted)" }} />
+                  Also search all Halosight accounts
+                </button>
+              )}
+
+              {showSystemSection && (
+                <div className="mt-4">
+                  <div className="mx-4 mb-1" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                  {systemState === "loading" && (
+                    <>
+                      <SectionHeader label="All Halosight Accounts" count={0} />
+                      <SystemSearchSkeleton />
+                    </>
+                  )}
+                  {systemState === "done" && (
+                    <>
+                      <SectionHeader label="All Halosight Accounts" count={systemResults.length} />
+                      {systemResults.length > 0 ? (
+                        <div className="flex flex-col">
+                          {systemResults.map((account, i) => (
+                            <SystemAccountListItem
+                              key={account.id}
+                              account={account}
+                              assignedRep={systemAccountReps[account.id] ?? "Unknown"}
+                              isLast={i === systemResults.length - 1}
+                              onSelect={(a) => { window.location.href = `/accounts/${a.id}`; }}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="px-4 py-6 text-center">
+                          <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>Not found anywhere in Halosight.</p>
+                        </div>
+                      )}
+                      <CreateAccountCTA query={query} />
+                    </>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* PRIORITIES EXPANDED VIEW */}
+          {mode === "priorities" && (
+            <motion.div
+              key="priorities"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: 48 }}
+            >
+              <SectionHeader label="Top Priorities" count={filteredTasks.length} />
+              {filteredTasks.length > 0 ? (
+                <div style={{ background: "var(--color-dark-secondary)", borderRadius: 16, overflow: "hidden", margin: "4px 16px 0" }}>
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    {filteredTasks.map((task, i) => {
+                      const isPending = task.id === pendingTaskId;
+                      const isTaskToday = task.dueDate === null;
+                      const isLast = i === filteredTasks.length - 1;
+                      return (
+                        <motion.div
+                          key={task.id}
+                          layout
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.24 }}
+                          className="flex items-center gap-3 px-3.5 py-3.5 relative"
+                        >
+                          {!isLast && (
+                            <div className="absolute bottom-0 left-3 right-3"
+                              style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                          )}
+                          <button
+                            onClick={() => handleCheck(task)}
+                            className="flex-shrink-0 w-5 h-5 rounded-full relative active:scale-90 transition-transform"
+                          >
+                            <div className="absolute inset-0 rounded-full"
+                              style={{ border: `1.5px solid ${isPending ? "#2ECC71" : "var(--color-text-disabled)"}` }} />
+                            {isPending && (
+                              <div className="absolute inset-0 rounded-full flex items-center justify-center"
+                                style={{ background: "#2ECC71" }}>
+                                <Icon name="check" size={11} style={{ color: "#fff" }} />
+                              </div>
+                            )}
+                          </button>
+                          <Link href={`/accounts/${task.accountId}/action-items/${task.itemId}`} className="flex-1 min-w-0">
+                            <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.3 }}>
+                              {task.title}
+                            </p>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span style={{ fontSize: 11, color: isTaskToday ? "var(--color-brand-coral)" : "var(--color-text-disabled)", fontWeight: 500 }}>
+                                {task.dueDate ? task.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Today"}
+                              </span>
+                              <span style={{ fontSize: 11, color: "var(--color-text-disabled)" }}>·</span>
+                              <span className="truncate" style={{ fontSize: 11, color: "var(--color-text-disabled)" }}>
+                                {task.accountName}
+                              </span>
+                            </div>
+                          </Link>
+                          <Icon name="chevron_right" size={17} style={{ color: "var(--color-text-disabled)", flexShrink: 0 }} />
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <div className="mx-4 mt-2 rounded-2xl flex flex-col items-center gap-3 px-5 py-8"
+                  style={{ background: "var(--color-dark-secondary)" }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center"
+                    style={{ background: "rgba(46,204,113,0.12)" }}>
+                    <Icon name="task_alt" size={20} style={{ color: "#2ECC71" }} />
+                  </div>
+                  <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                    {prioritiesQuery ? "No matching priorities" : "All caught up!"}
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          )}
+
+        </AnimatePresence>
       </div>
 
       {/* Engagements drawer */}
@@ -884,6 +1141,7 @@ function CombinedPageContent() {
         }}
       />
     </div>
+    </LayoutGroup>
   );
 }
 
