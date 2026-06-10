@@ -364,96 +364,112 @@ function DashboardGrid({
 
   return (
     <div className="px-4 pb-5">
-      {/* 2-col bento grid: left card spans 2 rows, right has 2 stacked cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto auto", gap: 10 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
 
-        {/* Large left card — start a visit */}
+        {/* ── Large left card: log a visit — spans both rows ── */}
         <button
           onClick={onStartVisit}
           style={{
             gridRow: "1 / 3",
+            position: "relative",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "16px 14px",
-            borderRadius: 18,
-            background: "var(--color-dark-secondary)",
-            border: "1px solid var(--color-dark-tertiary)",
-            minHeight: 152,
+            justifyContent: "flex-end",
+            alignItems: "flex-start",
+            padding: 16,
+            borderRadius: 20,
+            background: "linear-gradient(150deg, rgba(139,146,255,0.14) 0%, var(--color-dark-secondary) 65%)",
+            border: "1px solid rgba(139,146,255,0.22)",
+            minHeight: 158,
             textAlign: "left",
             cursor: "pointer",
+            overflow: "hidden",
           }}
-          className="active:opacity-70 transition-opacity"
+          className="active:scale-[0.97] transition-transform"
         >
-          {/* Icon */}
+          {/* Soft glow bloom top-right */}
           <div style={{
-            width: 40, height: 40, borderRadius: 12,
-            background: "rgba(139,146,255,0.15)",
+            position: "absolute", top: -24, right: -24,
+            width: 110, height: 110, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(139,146,255,0.22) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }} />
+          {/* Icon badge — top-right */}
+          <div style={{
+            position: "absolute", top: 14, right: 14,
+            width: 42, height: 42, borderRadius: 13,
+            background: "rgba(139,146,255,0.18)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
             <Icon name="mic" size={20} style={{ color: "var(--color-brand-purple)" }} />
           </div>
-          {/* Labels */}
+          {/* Text — pinned bottom-left */}
           <div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.25, margin: 0 }}>
-              Log a visit
+            <p style={{ fontSize: 16, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.2, margin: 0 }}>
+              Log a Visit
             </p>
-            <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 3 }}>
+            <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 4, margin: "4px 0 0" }}>
               or take a note
             </p>
           </div>
         </button>
 
-        {/* Top right — open tasks */}
+        {/* ── Top right: open tasks ── */}
         <Link href="/tasks" style={{ display: "block" }}>
           <div style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "12px 14px",
-            borderRadius: 18,
-            background: "var(--color-dark-secondary)",
-            border: "1px solid var(--color-dark-tertiary)",
-            minHeight: 70,
+            padding: "13px 14px 14px",
+            borderRadius: 20,
+            background: hasTasks
+              ? "linear-gradient(150deg, rgba(255,107,90,0.12) 0%, var(--color-dark-secondary) 70%)"
+              : "var(--color-dark-secondary)",
+            border: hasTasks ? "1px solid rgba(255,107,90,0.22)" : "1px solid var(--color-dark-tertiary)",
           }}
-          className="active:opacity-70 transition-opacity">
-            <Icon name="task_alt" size={16} style={{ color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-disabled)" }} />
-            <div>
-              <p style={{
-                fontSize: 24, fontWeight: 700, lineHeight: 1,
-                color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-secondary)",
-              }}>
-                {openTaskCount}
-              </p>
-              <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 2 }}>
-                {openTaskCount === 1 ? "open task" : "open tasks"}
-              </p>
+          className="active:scale-[0.97] transition-transform">
+            {/* Icon badge */}
+            <div style={{
+              width: 28, height: 28, borderRadius: 8,
+              background: hasTasks ? "rgba(255,107,90,0.18)" : "rgba(255,255,255,0.05)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              marginBottom: 10,
+            }}>
+              <Icon name="task_alt" size={15} style={{ color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-disabled)" }} />
             </div>
+            <p style={{
+              fontSize: 26, fontWeight: 700, lineHeight: 1, margin: 0,
+              color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-secondary)",
+            }}>
+              {openTaskCount}
+            </p>
+            <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 3 }}>
+              {openTaskCount === 1 ? "open task" : "open tasks"}
+            </p>
           </div>
         </Link>
 
-        {/* Bottom right — nearest account */}
+        {/* ── Bottom right: nearest account ── */}
         <Link href={`/accounts/${nearestAccount.id}`} style={{ display: "block" }}>
           <div style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "12px 14px",
-            borderRadius: 18,
+            padding: "13px 14px 14px",
+            borderRadius: 20,
             background: "var(--color-dark-secondary)",
             border: "1px solid var(--color-dark-tertiary)",
-            minHeight: 70,
           }}
-          className="active:opacity-70 transition-opacity">
-            <Icon name="near_me" size={16} style={{ color: "var(--color-brand-teal)" }} />
-            <div>
-              <p className="truncate" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.25, margin: 0 }}>
-                {nearestAccount.name}
-              </p>
-              <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 2 }}>
-                {nearestAccount.distanceMiles} mi away
-              </p>
+          className="active:scale-[0.97] transition-transform">
+            {/* Icon badge */}
+            <div style={{
+              width: 28, height: 28, borderRadius: 8,
+              background: "rgba(38,198,190,0.12)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              marginBottom: 10,
+            }}>
+              <Icon name="near_me" size={15} style={{ color: "var(--color-brand-teal)" }} />
             </div>
+            <p className="truncate" style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.2, margin: 0 }}>
+              {nearestAccount.name}
+            </p>
+            <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 3 }}>
+              {nearestAccount.distanceMiles} mi away
+            </p>
           </div>
         </Link>
 
