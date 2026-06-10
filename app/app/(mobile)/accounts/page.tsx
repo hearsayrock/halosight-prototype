@@ -597,6 +597,7 @@ function CombinedPageContent() {
   // Priorities expanded — filter + sort state
   const [taskStatusFilter, setTaskStatusFilter] = useState<TaskStatusFilter>("open");
   const [taskSortMode, setTaskSortMode] = useState<TaskSortMode>("dueDate");
+  const [openDropdown, setOpenDropdown] = useState<"status" | "sort" | null>(null);
 
   // Tasks
   const { getItems, updateItem, getAllItems } = useActionItems();
@@ -1100,24 +1101,100 @@ function CombinedPageContent() {
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
               style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: 48 }}
             >
-              {/* Filter pills */}
+              {/* Filter pills + dropdowns */}
               <div className="flex items-center gap-2 px-4 pt-1 pb-3">
-                <button
-                  onClick={() => setTaskStatusFilter(s => s === "open" ? "done" : "open")}
-                  className="flex items-center gap-0.5 h-8 px-3 text-sm font-semibold active:opacity-70 transition-opacity"
-                  style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-full)", color: "var(--color-text-primary)" }}
-                >
-                  {taskStatusFilter === "open" ? "Open" : "Done"}
-                  <Icon name="keyboard_arrow_down" size={18} style={{ color: "var(--color-text-muted)" }} />
-                </button>
-                <button
-                  onClick={() => setTaskSortMode(s => s === "dueDate" ? "account" : "dueDate")}
-                  className="flex items-center gap-0.5 h-8 px-3 text-sm font-semibold active:opacity-70 transition-opacity"
-                  style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-full)", color: "var(--color-text-primary)" }}
-                >
-                  {taskSortMode === "dueDate" ? "Due Date" : "Account"}
-                  <Icon name="keyboard_arrow_down" size={18} style={{ color: "var(--color-text-muted)" }} />
-                </button>
+                {/* Status pill */}
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenDropdown(d => d === "status" ? null : "status")}
+                    className="flex items-center gap-0.5 h-8 px-3 text-sm font-semibold transition-opacity active:opacity-70"
+                    style={{
+                      background: openDropdown === "status" ? "var(--color-brand-purple)" : "var(--color-dark-secondary)",
+                      borderRadius: "var(--radius-full)",
+                      color: openDropdown === "status" ? "#fff" : "var(--color-text-primary)",
+                    }}
+                  >
+                    {taskStatusFilter === "open" ? "Open" : "Done"}
+                    <Icon
+                      name={openDropdown === "status" ? "keyboard_arrow_up" : "keyboard_arrow_down"}
+                      size={18}
+                      style={{ color: openDropdown === "status" ? "rgba(255,255,255,0.7)" : "var(--color-text-muted)" }}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {openDropdown === "status" && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.92, y: -4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.92, y: -4 }}
+                        transition={{ duration: 0.14, ease: [0.32, 0, 0.18, 1] }}
+                        className="absolute left-0 top-full mt-1 z-50 overflow-hidden"
+                        style={{ background: "var(--color-dark-elevated)", borderRadius: 14, minWidth: 130, boxShadow: "0 8px 32px rgba(0,0,0,0.45)" }}
+                      >
+                        {(["open", "done"] as TaskStatusFilter[]).map((val) => (
+                          <button
+                            key={val}
+                            onClick={() => { setTaskStatusFilter(val); setOpenDropdown(null); }}
+                            className="flex items-center justify-between w-full px-4 py-3 text-sm font-semibold active:opacity-60"
+                            style={{ color: taskStatusFilter === val ? "var(--color-brand-purple)" : "var(--color-text-primary)" }}
+                          >
+                            {val === "open" ? "Open" : "Done"}
+                            {taskStatusFilter === val && <Icon name="check" size={16} style={{ color: "var(--color-brand-purple)" }} />}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Sort pill */}
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenDropdown(d => d === "sort" ? null : "sort")}
+                    className="flex items-center gap-0.5 h-8 px-3 text-sm font-semibold transition-opacity active:opacity-70"
+                    style={{
+                      background: openDropdown === "sort" ? "var(--color-brand-purple)" : "var(--color-dark-secondary)",
+                      borderRadius: "var(--radius-full)",
+                      color: openDropdown === "sort" ? "#fff" : "var(--color-text-primary)",
+                    }}
+                  >
+                    {taskSortMode === "dueDate" ? "Due Date" : "Account"}
+                    <Icon
+                      name={openDropdown === "sort" ? "keyboard_arrow_up" : "keyboard_arrow_down"}
+                      size={18}
+                      style={{ color: openDropdown === "sort" ? "rgba(255,255,255,0.7)" : "var(--color-text-muted)" }}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {openDropdown === "sort" && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.92, y: -4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.92, y: -4 }}
+                        transition={{ duration: 0.14, ease: [0.32, 0, 0.18, 1] }}
+                        className="absolute left-0 top-full mt-1 z-50 overflow-hidden"
+                        style={{ background: "var(--color-dark-elevated)", borderRadius: 14, minWidth: 140, boxShadow: "0 8px 32px rgba(0,0,0,0.45)" }}
+                      >
+                        {(["dueDate", "account"] as TaskSortMode[]).map((val) => (
+                          <button
+                            key={val}
+                            onClick={() => { setTaskSortMode(val); setOpenDropdown(null); }}
+                            className="flex items-center justify-between w-full px-4 py-3 text-sm font-semibold active:opacity-60"
+                            style={{ color: taskSortMode === val ? "var(--color-brand-purple)" : "var(--color-text-primary)" }}
+                          >
+                            {val === "dueDate" ? "Due Date" : "Account"}
+                            {taskSortMode === val && <Icon name="check" size={16} style={{ color: "var(--color-brand-purple)" }} />}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Tap-away to close */}
+                {openDropdown && (
+                  <div className="fixed inset-0 z-40" onClick={() => setOpenDropdown(null)} />
+                )}
               </div>
 
               {/* Groups */}
