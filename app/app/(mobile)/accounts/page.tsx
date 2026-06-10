@@ -267,19 +267,6 @@ function TaskStrip({
 
   return (
     <div className="px-4 mb-4">
-      <div className="flex items-center justify-between mb-2">
-        <span style={{
-          fontSize: 11, fontWeight: 700,
-          letterSpacing: "0.07em", textTransform: "uppercase",
-          color: "var(--color-text-muted)",
-        }}>
-          Top Priorities
-        </span>
-        <Link href="/tasks" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-brand-purple)" }}>
-          View all
-        </Link>
-      </div>
-
       <div style={{
         background: "var(--color-dark-secondary)",
         borderRadius: 16,
@@ -822,25 +809,26 @@ function CombinedPageContent() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
+            className="flex items-center gap-2 h-11 px-3 rounded-xl"
             style={{
               margin: "0 16px 12px",
-              borderRadius: 14,
-              background: showSystemSection ? "var(--color-dark-secondary)" : "var(--color-dark-secondary)",
-              outline: showSystemSection ? "1.5px solid var(--color-brand-purple)" : "1px solid var(--color-dark-tertiary)",
-              display: "flex", alignItems: "center", gap: 8,
-              height: 44, padding: "0 12px",
+              background: "var(--color-dark-secondary)",
+              outline: showSystemSection ? "1.5px solid var(--color-brand-purple)" : "none",
               flexShrink: 0,
             }}
           >
-            <Icon name="search" size={17} style={{ color: showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)", flexShrink: 0, transition: "color 0.2s" }} />
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+              <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
+              <path d="M12 12L16 16" stroke={showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
+            </svg>
             <input
               ref={accountsInputRef}
               type="text"
               placeholder={showSystemSection ? "Searching all accounts…" : "Search accounts…"}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent text-sm outline-none"
-              style={{ color: "var(--color-text-primary)" }}
+              className="flex-1 bg-transparent text-[15px] outline-none"
+              style={{ color: "var(--color-text-primary)", caretColor: "var(--color-brand-coral)" }}
             />
             {showSystemSection && (
               <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--color-brand-purple)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
@@ -849,7 +837,10 @@ function CombinedPageContent() {
             )}
             {query && (
               <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-                <Icon name="cancel" fill size={16} style={{ color: "var(--color-text-disabled)" }} />
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="7" fill="var(--color-text-disabled)" />
+                  <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
               </button>
             )}
             <SortMenu current={sort} onChange={setSort} />
@@ -864,29 +855,32 @@ function CombinedPageContent() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
+            className="flex items-center gap-2 h-11 px-3 rounded-xl"
             style={{
               margin: "0 16px 12px",
-              borderRadius: 14,
               background: "var(--color-dark-secondary)",
-              outline: "1px solid var(--color-dark-tertiary)",
-              display: "flex", alignItems: "center", gap: 8,
-              height: 44, padding: "0 12px",
               flexShrink: 0,
             }}
           >
-            <Icon name="search" size={17} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+              <circle cx="7.5" cy="7.5" r="6" stroke="var(--color-text-muted)" strokeWidth="1.75" />
+              <path d="M12 12L16 16" stroke="var(--color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
+            </svg>
             <input
               ref={prioritiesInputRef}
               type="text"
               placeholder="Search priorities…"
               value={prioritiesQuery}
               onChange={(e) => setPrioritiesQuery(e.target.value)}
-              className="flex-1 bg-transparent text-sm outline-none"
-              style={{ color: "var(--color-text-primary)" }}
+              className="flex-1 bg-transparent text-[15px] outline-none"
+              style={{ color: "var(--color-text-primary)", caretColor: "var(--color-brand-coral)" }}
             />
             {prioritiesQuery && (
               <button onClick={() => setPrioritiesQuery("")} className="active:opacity-60 flex-shrink-0">
-                <Icon name="cancel" fill size={16} style={{ color: "var(--color-text-disabled)" }} />
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="7" fill="var(--color-text-disabled)" />
+                  <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
               </button>
             )}
           </motion.div>
@@ -994,8 +988,8 @@ function CombinedPageContent() {
 
               {hasQuery && myFiltered.length > 0 && systemState === "idle" && (
                 <button onClick={triggerSystemSearch}
-                  className="mx-4 mt-2 mb-1 h-9 rounded-xl text-xs font-semibold active:opacity-70 transition-opacity flex items-center justify-center gap-1.5"
-                  style={{ background: "transparent", border: "1px solid var(--color-dark-tertiary)", color: "var(--color-text-muted)" }}>
+                  className="mx-4 mt-2 mb-1 rounded-xl text-xs font-semibold active:opacity-70 transition-opacity flex items-center justify-center gap-1.5"
+                  style={{ background: "transparent", border: "1px solid var(--color-dark-tertiary)", color: "var(--color-text-muted)", padding: "10px 16px", width: "calc(100% - 32px)" }}>
                   <Icon name="public" size={13} style={{ color: "var(--color-text-muted)" }} />
                   Also search all Halosight accounts
                 </button>
