@@ -349,6 +349,119 @@ function TaskStrip({
   );
 }
 
+// ── Dashboard grid ────────────────────────────────────────────────────────────
+
+function DashboardGrid({
+  openTaskCount,
+  nearestAccount,
+  onStartVisit,
+}: {
+  openTaskCount: number;
+  nearestAccount: Account;
+  onStartVisit: () => void;
+}) {
+  const hasTasks = openTaskCount > 0;
+
+  return (
+    <div className="px-4 pb-5">
+      {/* 2-col bento grid: left card spans 2 rows, right has 2 stacked cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto auto", gap: 10 }}>
+
+        {/* Large left card — start a visit */}
+        <button
+          onClick={onStartVisit}
+          style={{
+            gridRow: "1 / 3",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: "16px 14px",
+            borderRadius: 18,
+            background: "var(--color-dark-secondary)",
+            border: "1px solid var(--color-dark-tertiary)",
+            minHeight: 152,
+            textAlign: "left",
+            cursor: "pointer",
+          }}
+          className="active:opacity-70 transition-opacity"
+        >
+          {/* Icon */}
+          <div style={{
+            width: 40, height: 40, borderRadius: 12,
+            background: "rgba(139,146,255,0.15)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <Icon name="mic" size={20} style={{ color: "var(--color-brand-purple)" }} />
+          </div>
+          {/* Labels */}
+          <div>
+            <p style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.25, margin: 0 }}>
+              Log a visit
+            </p>
+            <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 3 }}>
+              or take a note
+            </p>
+          </div>
+        </button>
+
+        {/* Top right — open tasks */}
+        <Link href="/tasks" style={{ display: "block" }}>
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: "12px 14px",
+            borderRadius: 18,
+            background: "var(--color-dark-secondary)",
+            border: "1px solid var(--color-dark-tertiary)",
+            minHeight: 70,
+          }}
+          className="active:opacity-70 transition-opacity">
+            <Icon name="task_alt" size={16} style={{ color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-disabled)" }} />
+            <div>
+              <p style={{
+                fontSize: 24, fontWeight: 700, lineHeight: 1,
+                color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-secondary)",
+              }}>
+                {openTaskCount}
+              </p>
+              <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 2 }}>
+                {openTaskCount === 1 ? "open task" : "open tasks"}
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        {/* Bottom right — nearest account */}
+        <Link href={`/accounts/${nearestAccount.id}`} style={{ display: "block" }}>
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: "12px 14px",
+            borderRadius: 18,
+            background: "var(--color-dark-secondary)",
+            border: "1px solid var(--color-dark-tertiary)",
+            minHeight: 70,
+          }}
+          className="active:opacity-70 transition-opacity">
+            <Icon name="near_me" size={16} style={{ color: "var(--color-brand-teal)" }} />
+            <div>
+              <p className="truncate" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.25, margin: 0 }}>
+                {nearestAccount.name}
+              </p>
+              <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 2 }}>
+                {nearestAccount.distanceMiles} mi away
+              </p>
+            </div>
+          </div>
+        </Link>
+
+      </div>
+    </div>
+  );
+}
+
 // ── Compact account row (collapsed top-accounts view) ─────────────────────────
 
 function CompactAccountRow({ account, isLast }: { account: Account; isLast: boolean }) {
@@ -454,6 +567,8 @@ function CombinedPageContent() {
   const searchParams = useSearchParams();
   const preview = searchParams.get("preview");
 
+  const { startCapture } = useCapture();
+
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -500,6 +615,9 @@ function CombinedPageContent() {
   const myFiltered = useMemo(() => sortAccounts(searchAccounts(mockAccounts, query), sort), [query, sort]);
   const topAccounts = useMemo(() =>
     [...mockAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
+  []);
+  const nearestAccount = useMemo(() =>
+    [...mockAccounts].sort((a, b) => a.distanceMiles - b.distanceMiles)[0],
   []);
   const hasQuery = query.trim().length > 0;
 
@@ -581,7 +699,6 @@ function CombinedPageContent() {
             </button>
           )}
         </div>
-        <SortMenu current={sort} onChange={setSort} />
       </div>
 
       {/* Scrollable body */}
@@ -595,6 +712,15 @@ function CombinedPageContent() {
 
         {!preview && (
           <>
+            {/* ── DASHBOARD ─────────────────────────────────────────── */}
+            {!hasQuery && !showAllAccounts && (
+              <DashboardGrid
+                openTaskCount={availableTasks.length}
+                nearestAccount={nearestAccount}
+                onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name)}
+              />
+            )}
+
             {/* ── ACCOUNTS ──────────────────────────────────────────── */}
             {!hasQuery ? (
               /* Collapsed top-accounts view */
