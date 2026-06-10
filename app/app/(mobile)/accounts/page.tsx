@@ -76,6 +76,19 @@ function sortAccounts(accounts: Account[], sort: SortOption) {
   });
 }
 
+/** Score an account so the most relevant ones surface first in the collapsed view. */
+function scoreAccount(a: Account): number {
+  let score = 0;
+  // Pending tasks are the strongest signal
+  score += (a.taskCount ?? 0) * 30;
+  // Recency: up to 20 pts for recently visited (decays over 20 days)
+  const daysSince = (Date.now() - a.lastVisited.getTime()) / 86_400_000;
+  score += Math.max(0, 20 - daysSince);
+  // Proximity: up to 15 pts for nearby accounts
+  score += Math.max(0, 15 - a.distanceMiles / 10);
+  return score;
+}
+
 function searchAccounts(accounts: Account[], q: string) {
   const lower = q.toLowerCase().trim();
   if (!lower) return accounts;
@@ -336,6 +349,46 @@ function TaskStrip({
   );
 }
 
+// ── Compact account row (collapsed top-accounts view) ─────────────────────────
+
+function CompactAccountRow({ account, isLast }: { account: Account; isLast: boolean }) {
+  const hasTask = (account.taskCount ?? 0) > 0;
+  return (
+    <Link href={`/accounts/${account.id}`}>
+      <div className="flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity relative">
+        {!isLast && (
+          <div className="absolute bottom-0 left-4 right-4"
+            style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+        )}
+        {/* Left — name + meta */}
+        <div className="flex-1 min-w-0">
+          <p style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.2 }}
+            className="truncate">
+            {account.name}
+          </p>
+          <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 2 }}>
+            {[account.city && account.state ? `${account.city}, ${account.state}` : null,
+              account.distanceMiles < 999 ? `${account.distanceMiles} mi` : null]
+              .filter(Boolean).join(" · ")}
+          </p>
+        </div>
+        {/* Right — task badge + chevron */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {hasTask && (
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full"
+              style={{ background: "rgba(255,143,130,0.18)", fontSize: 11, fontWeight: 700, color: "var(--color-brand-coral-light)" }}>
+              {account.taskCount} open
+            </span>
+          )}
+          <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1L6 6L1 11" stroke="var(--color-text-disabled)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 // ── Section header ────────────────────────────────────────────────────────────
 
 function SectionHeader({ label, count }: { label: string; count: number }) {
@@ -404,6 +457,9 @@ function CombinedPageContent() {
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // Accounts
+  const [showAllAccounts, setShowAllAccounts] = useState(false);
+
   // Accounts search
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("alphabetical");
@@ -442,6 +498,9 @@ function CombinedPageContent() {
   }, [query]);
 
   const myFiltered = useMemo(() => sortAccounts(searchAccounts(mockAccounts, query), sort), [query, sort]);
+  const topAccounts = useMemo(() =>
+    [...mockAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
+  []);
   const hasQuery = query.trim().length > 0;
 
   function triggerSystemSearch() {
@@ -536,83 +595,127 @@ function CombinedPageContent() {
 
         {!preview && (
           <>
-            {/* Task strip */}
-            <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
+            {/* ── ACCOUNTS ──────────────────────────────────────────── */}
+            {!hasQuery ? (
+              /* Collapsed top-accounts view */
+              <div className="mb-2">
+                <div className="flex items-center justify-between px-4 py-2">
+                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
+                    Accounts
+                  </span>
+                  <button
+                    onClick={() => setShowAllAccounts(v => !v)}
+                    style={{ fontSize: 13, fontWeight: 600, color: "var(--color-brand-purple)", background: "none", border: "none", cursor: "pointer" }}
+                  >
+                    {showAllAccounts ? "Show less" : "View all"}
+                  </button>
+                </div>
 
-            {/* Accounts section label */}
-            {!showSystemSection && <SectionHeader label="Accounts" count={myFiltered.length} />}
-            {showSystemSection && <SectionHeader label="Your Accounts" count={myFiltered.length} />}
-
-            {myFiltered.length > 0 ? (
-              <div className="flex flex-col">
-                {myFiltered.map((account, i) => (
-                  <AccountListItem key={account.id} account={account} isLast={i === myFiltered.length - 1} />
-                ))}
+                {!showAllAccounts ? (
+                  /* Compact top-4 */
+                  <div style={{ background: "var(--color-dark-secondary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16 }}>
+                    {topAccounts.map((account, i) => (
+                      <CompactAccountRow key={account.id} account={account} isLast={i === topAccounts.length - 1} />
+                    ))}
+                  </div>
+                ) : (
+                  /* Full list — existing cards + sort */
+                  <>
+                    <div className="flex items-center justify-end px-4 pb-2">
+                      <SortMenu current={sort} onChange={setSort} />
+                    </div>
+                    <div className="flex flex-col">
+                      {myFiltered.map((account, i) => (
+                        <AccountListItem key={account.id} account={account} isLast={i === myFiltered.length - 1} />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
-            ) : hasQuery ? (
-              <div className="mx-4 mt-2 rounded-2xl flex flex-col items-center gap-4 px-5 py-6"
-                style={{ background: "var(--color-dark-secondary)" }}>
-                <div className="w-11 h-11 rounded-full flex items-center justify-center"
-                  style={{ background: "rgba(139,146,255,0.12)" }}>
-                  <Icon name="search_off" size={22} style={{ color: "var(--color-brand-purple)" }} />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Not in your accounts</p>
-                  <p className="text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
-                </div>
-                {systemState === "idle" && (
+            ) : (
+              /* Search results — full cards */
+              <>
+                {showSystemSection && <SectionHeader label="Your Accounts" count={myFiltered.length} />}
+                {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Accounts" count={myFiltered.length} />}
+
+                {myFiltered.length > 0 ? (
+                  <div className="flex flex-col">
+                    {myFiltered.map((account, i) => (
+                      <AccountListItem key={account.id} account={account} isLast={i === myFiltered.length - 1} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mx-4 mt-2 rounded-2xl flex flex-col items-center gap-4 px-5 py-6"
+                    style={{ background: "var(--color-dark-secondary)" }}>
+                    <div className="w-11 h-11 rounded-full flex items-center justify-center"
+                      style={{ background: "rgba(139,146,255,0.12)" }}>
+                      <Icon name="search_off" size={22} style={{ color: "var(--color-brand-purple)" }} />
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Not in your accounts</p>
+                      <p className="text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
+                    </div>
+                    {systemState === "idle" && (
+                      <button onClick={triggerSystemSearch}
+                        className="w-full h-10 rounded-xl font-semibold text-sm active:opacity-80 transition-opacity flex items-center justify-center gap-2"
+                        style={{ background: "rgba(139,146,255,0.15)", border: "1px solid rgba(139,146,255,0.3)", color: "var(--color-brand-purple)" }}>
+                        <Icon name="public" size={16} style={{ color: "var(--color-brand-purple)" }} />
+                        Search all Halosight accounts
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {hasQuery && myFiltered.length > 0 && systemState === "idle" && (
                   <button onClick={triggerSystemSearch}
-                    className="w-full h-10 rounded-xl font-semibold text-sm active:opacity-80 transition-opacity flex items-center justify-center gap-2"
-                    style={{ background: "rgba(139,146,255,0.15)", border: "1px solid rgba(139,146,255,0.3)", color: "var(--color-brand-purple)" }}>
-                    <Icon name="public" size={16} style={{ color: "var(--color-brand-purple)" }} />
-                    Search all Halosight accounts
+                    className="mx-4 mt-2 mb-1 h-9 rounded-xl text-xs font-semibold active:opacity-70 transition-opacity flex items-center justify-center gap-1.5"
+                    style={{ background: "transparent", border: "1px solid var(--color-dark-tertiary)", color: "var(--color-text-muted)" }}>
+                    <Icon name="public" size={13} style={{ color: "var(--color-text-muted)" }} />
+                    Also search all Halosight accounts
                   </button>
                 )}
-              </div>
-            ) : null}
 
-            {hasQuery && myFiltered.length > 0 && systemState === "idle" && (
-              <button onClick={triggerSystemSearch}
-                className="mx-4 mt-2 mb-1 h-9 rounded-xl text-xs font-semibold active:opacity-70 transition-opacity flex items-center justify-center gap-1.5"
-                style={{ background: "transparent", border: "1px solid var(--color-dark-tertiary)", color: "var(--color-text-muted)" }}>
-                <Icon name="public" size={13} style={{ color: "var(--color-text-muted)" }} />
-                Also search all Halosight accounts
-              </button>
+                {showSystemSection && (
+                  <div className="mt-4">
+                    <div className="mx-4 mb-1" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                    {systemState === "loading" && (
+                      <>
+                        <SectionHeader label="All Halosight Accounts" count={0} />
+                        <SystemSearchSkeleton />
+                      </>
+                    )}
+                    {systemState === "done" && (
+                      <>
+                        <SectionHeader label="All Halosight Accounts" count={systemResults.length} />
+                        {systemResults.length > 0 ? (
+                          <div className="flex flex-col">
+                            {systemResults.map((account, i) => (
+                              <SystemAccountListItem
+                                key={account.id}
+                                account={account}
+                                assignedRep={systemAccountReps[account.id] ?? "Unknown"}
+                                isLast={i === systemResults.length - 1}
+                                onSelect={(a) => { window.location.href = `/accounts/${a.id}`; }}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="px-4 py-6 text-center">
+                            <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>Not found anywhere in Halosight.</p>
+                          </div>
+                        )}
+                        <CreateAccountCTA query={query} />
+                      </>
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
-            {/* System accounts */}
-            {showSystemSection && (
-              <div className="mt-4">
-                <div className="mx-4 mb-1" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
-                {systemState === "loading" && (
-                  <>
-                    <SectionHeader label="All Halosight Accounts" count={0} />
-                    <SystemSearchSkeleton />
-                  </>
-                )}
-                {systemState === "done" && (
-                  <>
-                    <SectionHeader label="All Halosight Accounts" count={systemResults.length} />
-                    {systemResults.length > 0 ? (
-                      <div className="flex flex-col">
-                        {systemResults.map((account, i) => (
-                          <SystemAccountListItem
-                            key={account.id}
-                            account={account}
-                            assignedRep={systemAccountReps[account.id] ?? "Unknown"}
-                            isLast={i === systemResults.length - 1}
-                            onSelect={(a) => { window.location.href = `/accounts/${a.id}`; }}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="px-4 py-6 text-center">
-                        <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>Not found anywhere in Halosight.</p>
-                      </div>
-                    )}
-                    <CreateAccountCTA query={query} />
-                  </>
-                )}
+            {/* ── TOP PRIORITIES ─────────────────────────────────────── */}
+            {!hasQuery && !showAllAccounts && (
+              <div className="mt-2">
+                <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
               </div>
             )}
           </>
