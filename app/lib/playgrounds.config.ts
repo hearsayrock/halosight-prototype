@@ -56,7 +56,7 @@ export const PLAYGROUNDS: Playground[] = [
     id: "playground/account-prospecting",
     name: "Account Prospecting",
     description: "Explore creating a new account and recording onto accounts that exist in the system but aren't assigned to the rep.",
-    url: "",
+    url: "https://halosight-prototype-ksqf69w02-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
     startedAt: "2026-06-10",
