@@ -475,7 +475,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               color={STATUS_COLOR[p.status]}
               icon="●"
               isActive={currentBranch === p.id}
-              href={p.url}
+              href={p.url + (p.routes?.[0]?.path ?? "")}
               title={p.name}
             />
           ))}
@@ -565,7 +565,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               status={p.status}
               startedAt={p.startedAt}
               isActive={currentBranch === p.id}
-              href={p.url}
+              href={p.url + (p.routes?.[0]?.path ?? "")}
             />
           ))
         )}
