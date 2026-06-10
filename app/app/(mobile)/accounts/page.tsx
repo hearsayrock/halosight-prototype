@@ -49,6 +49,16 @@ import type { Account, SortOption } from "@/lib/types";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+// Module-level constants shared by accounts page and priorities view
+const ACCOUNT_NAME: Record<string, string> = Object.fromEntries(
+  mockAccounts.map((a) => [a.id, a.name])
+);
+
+const startOfToday = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; })();
+function dueSortKey(date: Date | null): number {
+  return date ? date.getTime() : startOfToday.getTime();
+}
+
 function greeting(): string {
   const h = new Date().getHours();
   if (h < 12) return "Good morning";
@@ -654,62 +664,43 @@ function CombinedPageContent() {
   }, [mode]);
 
   const myFiltered = useMemo(() => sortAccounts(searchAccounts(mockAccounts, query), sort), [query, sort]);
-  const filteredTasks = useMemo(() =>
-    availableTasks.filter(t =>
-      !prioritiesQuery.trim() ||
-      t.title.toLowerCase().includes(prioritiesQuery.toLowerCase()) ||
-      t.accountName.toLowerCase().includes(prioritiesQuery.toLowerCase())
-    ),
-  [availableTasks, prioritiesQuery]);
-  // Full task groups for the priorities expanded view
+  // Priorities grouped by account — same logic as /tasks page
   const taskGroups = useMemo(() => {
-    const ACCOUNT_NAME: Record<string, string> = Object.fromEntries(mockAccounts.map(a => [a.id, a.name]));
-    const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
-    const dueSortKey = (d: Date | null) => d ? d.getTime() : startOfDay.getTime();
+    const all = getAllItems()
+      .filter(item =>
+        taskStatusFilter === "open" ? item.status === "open" : item.status === "done" || item.status === "canceled"
+      )
+      .filter(item => {
+        if (!prioritiesQuery.trim()) return true;
+        const q = prioritiesQuery.toLowerCase();
+        return item.title.toLowerCase().includes(q) ||
+          (ACCOUNT_NAME[item.accountId] ?? "").toLowerCase().includes(q);
+      });
 
-    const all = getAllItems().filter(item =>
-      taskStatusFilter === "open" ? item.status === "open" : item.status === "done" || item.status === "canceled"
-    ).filter(item =>
-      !prioritiesQuery.trim() ||
-      item.title.toLowerCase().includes(prioritiesQuery.toLowerCase()) ||
-      (ACCOUNT_NAME[item.accountId] ?? "").toLowerCase().includes(prioritiesQuery.toLowerCase())
-    );
+    const map = new Map<string, typeof all>();
+    for (const item of all) {
+      const list = map.get(item.accountId) ?? [];
+      list.push(item);
+      map.set(item.accountId, list);
+    }
+
+    const groups = [...map.entries()].map(([accountId, items]) => ({
+      label: ACCOUNT_NAME[accountId] ?? accountId,
+      accountId,
+      items: [...items].sort((a, b) => dueSortKey(a.dueDate) - dueSortKey(b.dueDate)),
+    }));
 
     if (taskSortMode === "account") {
-      // Group by account name
-      const map = new Map<string, typeof all>();
-      for (const item of all) {
-        const list = map.get(item.accountId) ?? [];
-        list.push(item);
-        map.set(item.accountId, list);
-      }
-      return [...map.entries()]
-        .map(([accountId, items]) => ({
-          label: ACCOUNT_NAME[accountId] ?? accountId,
-          items: [...items].sort((a, b) => dueSortKey(a.dueDate) - dueSortKey(b.dueDate)),
-          accountId,
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label));
+      groups.sort((a, b) => a.label.localeCompare(b.label));
     } else {
-      // Group by due date bucket
-      const startOfTmrw = new Date(startOfDay.getTime() + 86_400_000);
-      const startOfNextWk = new Date(startOfDay.getTime() + 7 * 86_400_000);
-      const buckets: { label: string; items: typeof all }[] = [
-        { label: "Today", items: [] },
-        { label: "Tomorrow", items: [] },
-        { label: "This Week", items: [] },
-        { label: "Later", items: [] },
-      ];
-      for (const item of all) {
-        const t = dueSortKey(item.dueDate);
-        if (t < startOfTmrw.getTime()) buckets[0].items.push(item);
-        else if (t < startOfTmrw.getTime() + 86_400_000) buckets[1].items.push(item);
-        else if (t < startOfNextWk.getTime()) buckets[2].items.push(item);
-        else buckets[3].items.push(item);
-      }
-      return buckets.filter(b => b.items.length > 0);
+      groups.sort((a, b) => {
+        const aMin = Math.min(...a.items.map(i => dueSortKey(i.dueDate)));
+        const bMin = Math.min(...b.items.map(i => dueSortKey(i.dueDate)));
+        return aMin - bMin;
+      });
     }
-  }, [getAllItems, taskStatusFilter, taskSortMode, prioritiesQuery, mockAccounts]);
+    return groups;
+  }, [getAllItems, taskStatusFilter, taskSortMode, prioritiesQuery]);
 
   const topAccounts = useMemo(() =>
     [...mockAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
@@ -839,23 +830,7 @@ function CombinedPageContent() {
                 Accounts
               </motion.h1>
             )}
-            {mode === "priorities" && (
-              <motion.h1
-                key="priorities-title"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.18 }}
-                style={{
-                  fontFamily: "Roboto Slab, Georgia, serif",
-                  fontSize: 22, fontWeight: 500,
-                  color: "var(--color-text-primary)",
-                  margin: 0, lineHeight: 1.15, textAlign: "center",
-                }}
-              >
-                Top Priorities
-              </motion.h1>
-            )}
+            {/* priorities mode: title lives inside the body, not here */}
           </AnimatePresence>
         </div>
 
@@ -910,44 +885,6 @@ function CombinedPageContent() {
           </motion.div>
         )}
 
-        {mode === "priorities" && (
-          <motion.div
-            key="priorities-search-bar"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            className="flex items-center gap-2 h-11 px-3"
-            style={{
-              margin: "0 16px 12px",
-              borderRadius: 999,
-              background: "var(--color-dark-secondary)",
-              flexShrink: 0,
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-              <circle cx="7.5" cy="7.5" r="6" stroke="var(--color-text-muted)" strokeWidth="1.75" />
-              <path d="M12 12L16 16" stroke="var(--color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
-            </svg>
-            <input
-              ref={prioritiesInputRef}
-              type="text"
-              placeholder="Search priorities…"
-              value={prioritiesQuery}
-              onChange={(e) => setPrioritiesQuery(e.target.value)}
-              className="flex-1 bg-transparent text-[15px] outline-none"
-              style={{ color: "var(--color-text-primary)", caretColor: "var(--color-brand-coral)" }}
-            />
-            {prioritiesQuery && (
-              <button onClick={() => setPrioritiesQuery("")} className="active:opacity-60 flex-shrink-0">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="7" fill="var(--color-text-disabled)" />
-                  <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </button>
-            )}
-          </motion.div>
-        )}
       </AnimatePresence>
 
       {/* ── BODY ───────────────────────────────────────────────────────── */}
@@ -996,7 +933,7 @@ function CombinedPageContent() {
                   <div>
                     <div className="flex items-center justify-between px-4 py-2">
                       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
-                        Top Priorities
+                        All Items
                       </span>
                       <MiniSearchPill onClick={() => goToMode("priorities")} />
                     </div>
@@ -1095,7 +1032,7 @@ function CombinedPageContent() {
             </motion.div>
           )}
 
-          {/* PRIORITIES EXPANDED VIEW */}
+          {/* PRIORITIES EXPANDED VIEW — matches /tasks page exactly */}
           {mode === "priorities" && (
             <motion.div
               key="priorities"
@@ -1103,136 +1040,173 @@ function CombinedPageContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: 48 }}
+              style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}
             >
-              {/* Filter pills */}
-              <div className="flex items-center gap-2 px-4 pt-1 pb-3">
-                <FilterDropdown
-                  options={[
-                    { value: "open" as TaskStatusFilter, label: "Open" },
-                    { value: "done" as TaskStatusFilter, label: "Done" },
-                  ]}
-                  value={taskStatusFilter}
-                  onChange={setTaskStatusFilter}
-                />
-                <FilterDropdown
-                  options={[
-                    { value: "dueDate" as TaskSortMode, label: "Due Date" },
-                    { value: "account" as TaskSortMode, label: "Account" },
-                  ]}
-                  value={taskSortMode}
-                  onChange={setTaskSortMode}
-                />
+              {/* Pinned header (title + filters + search) */}
+              <div className="px-4 pb-3" style={{ flexShrink: 0, paddingTop: 8 }}>
+                <div className="flex items-end justify-between gap-3 mb-3">
+                  <h1 style={{
+                    color: "var(--color-text-primary)",
+                    fontFamily: "Roboto Slab, Georgia, serif",
+                    fontSize: 30, fontWeight: 700, lineHeight: "36px",
+                  }}>
+                    All Items
+                  </h1>
+                  <div className="flex items-center gap-2 pb-1">
+                    <FilterDropdown
+                      options={[
+                        { value: "open" as TaskStatusFilter, label: "Open" },
+                        { value: "done" as TaskStatusFilter, label: "Done" },
+                      ]}
+                      value={taskStatusFilter}
+                      onChange={setTaskStatusFilter}
+                    />
+                    <FilterDropdown
+                      options={[
+                        { value: "dueDate" as TaskSortMode, label: "Due Date" },
+                        { value: "account" as TaskSortMode, label: "Account" },
+                      ]}
+                      value={taskSortMode}
+                      onChange={setTaskSortMode}
+                    />
+                  </div>
+                </div>
+
+                {/* Search bar */}
+                <div
+                  className="flex items-center gap-2 h-11 px-3"
+                  style={{ borderRadius: 999, background: "var(--color-dark-secondary)" }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+                    <circle cx="7.5" cy="7.5" r="6" stroke="var(--color-text-muted)" strokeWidth="1.75" />
+                    <path d="M12 12L16 16" stroke="var(--color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
+                  </svg>
+                  <input
+                    ref={prioritiesInputRef}
+                    type="text"
+                    placeholder="Search items…"
+                    value={prioritiesQuery}
+                    onChange={(e) => setPrioritiesQuery(e.target.value)}
+                    className="flex-1 bg-transparent text-[15px] outline-none"
+                    style={{ color: "var(--color-text-primary)", caretColor: "var(--color-brand-coral)" }}
+                  />
+                  {prioritiesQuery && (
+                    <button onClick={() => setPrioritiesQuery("")} className="active:opacity-60 flex-shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="7" fill="var(--color-text-disabled)" />
+                        <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
 
-              {/* Groups */}
-              {taskGroups.length === 0 ? (
-                <div className="flex flex-col items-center gap-3 px-5 py-16">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center"
-                    style={{ background: "rgba(46,204,113,0.12)" }}>
-                    <Icon name="task_alt" size={20} style={{ color: "#2ECC71" }} />
+              {/* Scrollable groups */}
+              <div style={{ flex: 1, overflowY: "auto", paddingBottom: 48 }}>
+                {taskGroups.length === 0 ? (
+                  <div className="flex items-center justify-center py-20">
+                    <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>
+                      {prioritiesQuery.trim() ? "No matching items" : `No ${taskStatusFilter} items`}
+                    </p>
                   </div>
-                  <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
-                    {prioritiesQuery ? "No matching priorities" : taskStatusFilter === "done" ? "Nothing completed yet" : "All caught up!"}
-                  </p>
-                </div>
-              ) : (
-                taskGroups.map((group) => (
-                  <section key={group.label} className="mb-5">
-                    {/* Group label */}
-                    <div className="flex items-center gap-2 px-4 mb-1 mt-1">
-                      <span className="eyebrow-text" style={{ color: "var(--color-text-disabled)" }}>
-                        {group.label.toUpperCase()}
-                      </span>
-                      <span className="text-xs font-bold" style={{ color: "var(--color-brand-purple)" }}>
-                        {group.items.length}
-                      </span>
-                    </div>
+                ) : (
+                  taskGroups.map((group) => (
+                    <section key={group.accountId} className="mb-6">
+                      {/* Group header */}
+                      <div className="flex items-center gap-2 px-4 mb-1 mt-2">
+                        <span className="eyebrow-text" style={{ color: "var(--color-text-disabled)" }}>
+                          {group.label.toUpperCase()}
+                        </span>
+                        <span className="text-xs font-bold" style={{ color: "var(--color-brand-purple)" }}>
+                          {group.items.length}
+                        </span>
+                      </div>
 
-                    {/* Task rows */}
-                    <AnimatePresence mode="popLayout" initial={false}>
-                      {group.items.map((item, i) => {
-                        const isPending = item.id === pendingTaskId;
-                        const dueToday = !item.dueDate || item.dueDate.getTime() < new Date().setHours(24,0,0,0);
-                        return (
-                          <motion.div
-                            key={item.id}
-                            layout
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.28 }}
-                            className="flex items-center gap-3 px-4 relative"
-                          >
-                            {i < group.items.length - 1 && (
-                              <div className="absolute bottom-0 left-3 right-3"
-                                style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
-                            )}
-                            {/* Check circle */}
-                            <div className="py-3.5">
-                              <button
-                                onClick={() => {
-                                  if (pendingTaskId) return;
-                                  setPendingTaskId(item.id);
-                                  timerRef.current = setTimeout(() => {
-                                    updateItem(item.accountId, { ...item, status: "done" });
-                                    setPendingTaskId(null);
-                                  }, 5000);
-                                }}
-                                className="relative flex-shrink-0 w-5 h-5 rounded-full active:scale-90 transition-transform"
-                              >
-                                <div className="absolute inset-0 rounded-full transition-opacity duration-150"
-                                  style={{ border: "1.5px solid var(--color-text-disabled)", opacity: isPending ? 0 : 1 }} />
-                                <AnimatePresence>
-                                  {isPending && (
-                                    <motion.div
-                                      initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                                      exit={{ scale: 0, opacity: 0 }}
-                                      transition={{ type: "spring", stiffness: 500, damping: 28 }}
-                                      className="absolute inset-0 rounded-full flex items-center justify-center"
-                                      style={{ background: "#2ECC71" }}
-                                    >
-                                      <Icon name="check" size={12} style={{ color: "#fff" }} />
-                                    </motion.div>
-                                  )}
-                                </AnimatePresence>
-                              </button>
-                            </div>
-                            {/* Row content */}
-                            <Link href={`/accounts/${item.accountId}/action-items/${item.id}`}
-                              className="flex-1 flex items-center gap-3 py-3.5">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-[16px] font-semibold leading-snug mb-1"
-                                  style={{ color: "var(--color-text-primary)" }}>
-                                  {item.title}
-                                </p>
-                                <div className="flex items-center gap-3">
-                                  <div className="flex items-center gap-1">
-                                    <Icon name="calendar_today" size={12} style={{ color: "var(--color-brand-purple-dark)" }} />
-                                    <span className="text-xs font-medium" style={{ color: dueToday ? "var(--color-brand-coral)" : "var(--color-text-disabled)" }}>
-                                      {item.dueDate ? item.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Due Today"}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center gap-1">
-                                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                                      <path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-                                        stroke="var(--color-text-disabled)" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                    <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
-                                      {mockAccounts.find(a => a.id === item.accountId)?.name ?? item.accountId}
-                                    </span>
+                      {/* Task rows */}
+                      <AnimatePresence mode="popLayout" initial={false}>
+                        {group.items.map((item, i) => {
+                          const isPending = item.id === pendingTaskId;
+                          const dueToday = !item.dueDate || item.dueDate.getTime() < startOfToday.getTime() + 86_400_000;
+                          return (
+                            <motion.div
+                              key={item.id}
+                              layout
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.28 }}
+                              className="flex items-center gap-3 px-4 relative"
+                            >
+                              {i < group.items.length - 1 && (
+                                <div className="absolute bottom-0 left-3 right-3"
+                                  style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                              )}
+                              {/* Check circle */}
+                              <div className="py-3.5">
+                                <button
+                                  onClick={() => {
+                                    if (pendingTaskId) return;
+                                    setPendingTaskId(item.id);
+                                    timerRef.current = setTimeout(() => {
+                                      updateItem(item.accountId, { ...item, status: "done" });
+                                      setPendingTaskId(null);
+                                    }, 5000);
+                                  }}
+                                  className="relative flex-shrink-0 w-5 h-5 rounded-full active:scale-90 transition-transform"
+                                >
+                                  <div className="absolute inset-0 rounded-full transition-opacity duration-150"
+                                    style={{ border: "1.5px solid var(--color-text-disabled)", opacity: isPending ? 0 : 1 }} />
+                                  <AnimatePresence>
+                                    {isPending && (
+                                      <motion.div
+                                        initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                                        exit={{ scale: 0, opacity: 0 }}
+                                        transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                                        className="absolute inset-0 rounded-full flex items-center justify-center"
+                                        style={{ background: "#2ECC71" }}
+                                      >
+                                        <Icon name="check" size={12} style={{ color: "#fff" }} />
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+                                </button>
+                              </div>
+                              {/* Row content */}
+                              <Link href={`/accounts/${item.accountId}/action-items/${item.id}`}
+                                className="flex-1 flex items-center gap-3 py-3.5">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-[16px] font-semibold leading-snug mb-1"
+                                    style={{ color: "var(--color-text-primary)" }}>
+                                    {item.title}
+                                  </p>
+                                  <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-1">
+                                      <Icon name="calendar_today" size={12} style={{ color: "var(--color-brand-purple-dark)" }} />
+                                      <span className="text-xs font-medium" style={{ color: dueToday ? "var(--color-brand-coral)" : "var(--color-text-disabled)" }}>
+                                        {item.dueDate ? item.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Due Today"}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                                        <path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
+                                          stroke="var(--color-text-disabled)" strokeLinecap="round" strokeLinejoin="round" />
+                                      </svg>
+                                      <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+                                        {ACCOUNT_NAME[item.accountId] ?? item.accountId}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                              <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
-                            </Link>
-                          </motion.div>
-                        );
-                      })}
-                    </AnimatePresence>
-                  </section>
-                ))
-              )}
+                                <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
+                              </Link>
+                            </motion.div>
+                          );
+                        })}
+                      </AnimatePresence>
+                    </section>
+                  ))
+                )}
+              </div>
             </motion.div>
           )}
 
