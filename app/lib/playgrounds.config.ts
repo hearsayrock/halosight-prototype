@@ -60,6 +60,9 @@ export const PLAYGROUNDS: Playground[] = [
     author: "Nate",
     status: "exploring",
     startedAt: "2026-06-10",
+    routes: [
+      { label: "Accounts (search)", path: "/accounts" },
+    ],
   },
   {
     id: "playground/onboarding-flow",
