@@ -440,7 +440,7 @@ function DashboardGrid({
             }}>
               {openTaskCount}
             </p>
-            <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 3 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", marginTop: 3 }}>
               {openTaskCount === 1 ? "open task" : "open tasks"}
             </p>
           </div>
