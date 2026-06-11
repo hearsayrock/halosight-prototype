@@ -986,7 +986,7 @@ function CombinedPageContent() {
                   </div>
                   <div className="text-center">
                     <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Not in your accounts</p>
-                    <p className="text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
+                    <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
                   </div>
                   {systemState === "idle" && (
                     <button onClick={triggerSystemSearch}
