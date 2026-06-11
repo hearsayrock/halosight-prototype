@@ -25,7 +25,7 @@
  *   - System search: separate API endpoint, show CircularProgressIndicator
  */
 
-import { useState, useMemo, useEffect, useRef, Suspense } from "react";
+import { useState, useMemo, useEffect, useRef, Suspense, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,6 +47,7 @@ import type { HomeTask, HomeActivity } from "@/lib/mock-data/home";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
 import type { Account, SortOption } from "@/lib/types";
+import { formatLastVisited, formatDistance } from "@/lib/utils";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -348,129 +349,120 @@ function TaskStrip({
   );
 }
 
-// ── Dashboard grid ────────────────────────────────────────────────────────────
+// ── Dashboard card ────────────────────────────────────────────────────────────
 
 function DashboardGrid({
   openTaskCount,
-  nearestAccount,
+  suggestedAccount,
   onStartVisit,
 }: {
   openTaskCount: number;
-  nearestAccount: Account;
+  suggestedAccount: Account;
   onStartVisit: () => void;
 }) {
+  const { label: lastVisitedLabel } = formatLastVisited(suggestedAccount.lastVisited);
   const hasTasks = openTaskCount > 0;
 
   return (
     <div className="px-4 pb-5">
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div
+        className="relative overflow-hidden"
+        style={{
+          borderRadius: "var(--radius-xl)",
+          background: "var(--color-dark-primary)",
+          border: "1px solid rgba(139,146,255,0.2)",
+          padding: "18px 18px 16px",
+        }}
+      >
+        {/* Purple glow bloom — top right */}
+        <div style={{
+          position: "absolute", top: -50, right: -50,
+          width: 180, height: 180, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(139,146,255,0.16) 0%, transparent 65%)",
+          pointerEvents: "none",
+        }} />
 
-        {/* ── Large left card: log a visit — spans both rows ── */}
+        {/* Row 1: eyebrow label + tasks badge */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-1.5">
+            <Icon name="auto_awesome" size={13} style={{ color: "var(--color-brand-purple)" }} />
+            <span style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: "0.09em",
+              textTransform: "uppercase", color: "var(--color-brand-purple)",
+            }}>
+              Suggested visit
+            </span>
+          </div>
+
+          <Link href="/tasks">
+            <div
+              className="flex items-center gap-1.5 px-2.5 active:opacity-70 transition-opacity"
+              style={{
+                height: 26,
+                background: hasTasks ? "rgba(255,107,90,0.14)" : "var(--color-dark-tertiary)",
+                borderRadius: "var(--radius-full)",
+                border: hasTasks ? "1px solid rgba(255,107,90,0.28)" : "none",
+              }}
+            >
+              {hasTasks && (
+                <div style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--color-brand-coral)", flexShrink: 0 }} />
+              )}
+              <span style={{
+                fontSize: 12, fontWeight: 700,
+                color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-muted)",
+              }}>
+                {openTaskCount} {openTaskCount === 1 ? "task" : "tasks"}
+              </span>
+            </div>
+          </Link>
+        </div>
+
+        {/* Row 2: account name + meta — tappable to account detail */}
+        <Link href={`/accounts/${suggestedAccount.id}`}>
+          <div className="mb-5 active:opacity-80 transition-opacity">
+            <p style={{
+              fontFamily: "Roboto Slab, Georgia, serif",
+              fontSize: 21, fontWeight: 700,
+              color: "var(--color-text-primary)",
+              lineHeight: 1.2, marginBottom: 6,
+            }}>
+              {suggestedAccount.name}
+            </p>
+
+            <div className="flex items-center gap-3">
+              {/* Distance */}
+              <div className="flex items-center gap-1">
+                <Icon name="near_me" size={12} style={{ color: "var(--color-text-muted)" }} />
+                <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>
+                  {formatDistance(suggestedAccount.distanceMiles)}
+                  {suggestedAccount.city && ` · ${suggestedAccount.city}`}
+                </span>
+              </div>
+              {/* Last visited */}
+              <div className="flex items-center gap-1">
+                <Icon name="history" size={12} style={{ color: "var(--color-text-disabled)" }} />
+                <span style={{ fontSize: 12, color: "var(--color-text-disabled)" }}>
+                  {lastVisitedLabel}
+                </span>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* Row 3: CTA */}
         <button
           onClick={onStartVisit}
+          className="w-full flex items-center justify-center gap-2 active:opacity-85 transition-opacity"
           style={{
-            gridRow: "1 / 3",
-            position: "relative",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            alignItems: "flex-start",
-            padding: 16,
-            borderRadius: 20,
-            background: "linear-gradient(150deg, rgba(139,146,255,0.14) 0%, var(--color-dark-secondary) 65%)",
-            border: "1px solid rgba(139,146,255,0.22)",
-            minHeight: 158,
-            textAlign: "left",
-            cursor: "pointer",
-            overflow: "hidden",
+            height: 44,
+            background: "var(--color-brand-coral)",
+            borderRadius: "var(--radius-full)",
+            color: "var(--color-text-primary)",
           }}
-          className="active:scale-[0.97] transition-transform"
         >
-          {/* Soft glow bloom top-right */}
-          <div style={{
-            position: "absolute", top: -24, right: -24,
-            width: 110, height: 110, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(139,146,255,0.22) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }} />
-          {/* Icon badge — top-right */}
-          <div style={{
-            position: "absolute", top: 14, right: 14,
-            width: 42, height: 42, borderRadius: 13,
-            background: "rgba(139,146,255,0.18)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <Icon name="mic" size={20} style={{ color: "var(--color-brand-purple)" }} />
-          </div>
-          {/* Text — pinned bottom-left */}
-          <div>
-            <p style={{ fontSize: 16, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.2, margin: 0 }}>
-              Log a Visit
-            </p>
-            <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 4, margin: "4px 0 0" }}>
-              or take a note
-            </p>
-          </div>
+          <Icon name="mic" size={16} style={{ color: "var(--color-text-primary)" }} />
+          <span style={{ fontSize: 14, fontWeight: 700 }}>Log a Visit</span>
         </button>
-
-        {/* ── Top right: open tasks ── */}
-        <Link href="/tasks" style={{ display: "block" }}>
-          <div style={{
-            padding: "13px 14px 14px",
-            borderRadius: 20,
-            background: hasTasks
-              ? "linear-gradient(150deg, rgba(255,107,90,0.12) 0%, var(--color-dark-secondary) 70%)"
-              : "var(--color-dark-secondary)",
-            border: hasTasks ? "1px solid rgba(255,107,90,0.22)" : "1px solid var(--color-dark-tertiary)",
-          }}
-          className="active:scale-[0.97] transition-transform">
-            {/* Icon badge */}
-            <div style={{
-              width: 28, height: 28, borderRadius: 8,
-              background: hasTasks ? "rgba(255,107,90,0.18)" : "rgba(255,255,255,0.05)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              marginBottom: 10,
-            }}>
-              <Icon name="task_alt" size={15} style={{ color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-disabled)" }} />
-            </div>
-            <p style={{
-              fontSize: 26, fontWeight: 700, lineHeight: 1, margin: 0,
-              color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-secondary)",
-            }}>
-              {openTaskCount}
-            </p>
-            <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", marginTop: 3 }}>
-              {openTaskCount === 1 ? "open task" : "open tasks"}
-            </p>
-          </div>
-        </Link>
-
-        {/* ── Bottom right: nearest account ── */}
-        <Link href={`/accounts/${nearestAccount.id}`} style={{ display: "block" }}>
-          <div style={{
-            padding: "13px 14px 14px",
-            borderRadius: 20,
-            background: "var(--color-dark-secondary)",
-            border: "1px solid var(--color-dark-tertiary)",
-          }}
-          className="active:scale-[0.97] transition-transform">
-            {/* Icon badge */}
-            <div style={{
-              width: 28, height: 28, borderRadius: 8,
-              background: "rgba(38,198,190,0.12)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              marginBottom: 10,
-            }}>
-              <Icon name="near_me" size={15} style={{ color: "var(--color-brand-teal)" }} />
-            </div>
-            <p className="truncate" style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.2, margin: 0 }}>
-              {nearestAccount.name}
-            </p>
-            <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 3 }}>
-              {nearestAccount.distanceMiles} mi away
-            </p>
-          </div>
-        </Link>
 
       </div>
     </div>
@@ -957,7 +949,7 @@ function CombinedPageContent() {
                   {/* Dashboard */}
                   <DashboardGrid
                     openTaskCount={availableTasks.length}
-                    nearestAccount={nearestAccount}
+                    suggestedAccount={topAccounts[0]}
                     onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name)}
                   />
 
