@@ -28,9 +28,8 @@ interface Props {
 }
 
 export default function CreateAccountSheet({ initialName = "", onClose, onCreated }: Props) {
-  const [name, setName]       = useState(initialName);
-  const [contact, setContact] = useState("");
-  const [city, setCity]       = useState("");
+  const [name, setName] = useState(initialName);
+  const [city, setCity] = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -52,7 +51,6 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
       name: trimmed,
       type: "standalone",
       halosightType: "prospect",
-      contactName: contact.trim() || undefined,
       city: city.trim() || undefined,
       distanceMiles: 0,
       lastVisited: new Date(),
@@ -126,26 +124,6 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                   placeholder="e.g. Saddleback Fleet Services"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
-                  className="w-full text-[16px] outline-none px-4 py-3.5"
-                  style={{
-                    background: "var(--color-dark-secondary)",
-                    borderRadius: "var(--radius-xl)",
-                    color: "var(--color-text-primary)",
-                  }}
-                />
-              </div>
-
-              {/* ── Contact (optional) ───────────────────────────────────── */}
-              <div className="mb-4">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Contact
-                </p>
-                <input
-                  type="text"
-                  placeholder="e.g. Jane Smith"
-                  value={contact}
-                  onChange={(e) => setContact(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
                   className="w-full text-[16px] outline-none px-4 py-3.5"
                   style={{
