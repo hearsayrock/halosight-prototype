@@ -933,7 +933,7 @@ function CombinedPageContent() {
                   <div>
                     <div className="flex items-center justify-between px-4 py-2">
                       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
-                        All Items
+                        Action Items
                       </span>
                       <MiniSearchPill onClick={() => goToMode("priorities")} />
                     </div>
