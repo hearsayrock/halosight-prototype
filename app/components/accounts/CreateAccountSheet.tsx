@@ -28,8 +28,10 @@ interface Props {
 }
 
 export default function CreateAccountSheet({ initialName = "", onClose, onCreated }: Props) {
-  const [name, setName] = useState(initialName);
-  const [city, setCity] = useState("");
+  const [name, setName]       = useState(initialName);
+  const [address, setAddress] = useState("");
+  const [city, setCity]       = useState("");
+  const [state, setState]     = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -51,7 +53,9 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
       name: trimmed,
       type: "standalone",
       halosightType: "prospect",
+      address: address.trim() || undefined,
       city: city.trim() || undefined,
+      state: state.trim() || undefined,
       distanceMiles: 0,
       lastVisited: new Date(),
       taskCount: 0,
@@ -134,16 +138,16 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 />
               </div>
 
-              {/* ── City (optional) ──────────────────────────────────────── */}
-              <div className="mb-6">
+              {/* ── Address (optional) ──────────────────────────────────── */}
+              <div className="mb-4">
                 <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  City
+                  Address
                 </p>
                 <input
                   type="text"
-                  placeholder="e.g. Tucson"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="e.g. 4820 E Broadway Blvd"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
                   className="w-full text-[16px] outline-none px-4 py-3.5"
                   style={{
@@ -152,6 +156,43 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                     color: "var(--color-text-primary)",
                   }}
                 />
+              </div>
+
+              {/* ── City / State (optional) ──────────────────────────────── */}
+              <div className="mb-6">
+                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  City / State
+                </p>
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    placeholder="City"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
+                    className="text-[16px] outline-none px-4 py-3.5"
+                    style={{
+                      flex: 3,
+                      background: "var(--color-dark-secondary)",
+                      borderRadius: "var(--radius-xl)",
+                      color: "var(--color-text-primary)",
+                    }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="ST"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
+                    className="text-[16px] outline-none px-4 py-3.5 text-center"
+                    style={{
+                      flex: 1,
+                      background: "var(--color-dark-secondary)",
+                      borderRadius: "var(--radius-xl)",
+                      color: "var(--color-text-primary)",
+                    }}
+                  />
+                </div>
               </div>
 
               {/* ── CRM sync disclosure ──────────────────────────────────── */}
