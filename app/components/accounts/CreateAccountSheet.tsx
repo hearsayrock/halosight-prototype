@@ -20,6 +20,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import type { Account } from "@/lib/types";
 
+const US_STATES = [
+  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA",
+  "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
+  "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
+  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
+  "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY",
+];
+
 interface Props {
   /** Pre-fills the name field from the search query */
   initialName?: string;
@@ -163,35 +171,42 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
                   City / State
                 </p>
-                <div className="flex gap-3">
+                <div className="flex gap-3 w-full min-w-0">
                   <input
                     type="text"
                     placeholder="City"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
-                    className="text-[16px] outline-none px-4 py-3.5"
+                    className="text-[16px] outline-none px-4 py-3.5 min-w-0"
                     style={{
-                      flex: 3,
+                      flex: "1 1 0",
                       background: "var(--color-dark-secondary)",
                       borderRadius: "var(--radius-xl)",
                       color: "var(--color-text-primary)",
                     }}
                   />
-                  <input
-                    type="text"
-                    placeholder="ST"
+                  <select
                     value={state}
                     onChange={(e) => setState(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
-                    className="text-[16px] outline-none px-4 py-3.5 text-center"
+                    className="text-[16px] outline-none px-3 py-3.5"
                     style={{
-                      flex: 1,
+                      flex: "0 0 90px",
                       background: "var(--color-dark-secondary)",
                       borderRadius: "var(--radius-xl)",
-                      color: "var(--color-text-primary)",
+                      color: state ? "var(--color-text-primary)" : "var(--color-text-disabled)",
+                      appearance: "none",
+                      WebkitAppearance: "none",
+                      textAlign: "center",
+                      border: "none",
+                      cursor: "pointer",
                     }}
-                  />
+                  >
+                    <option value="" disabled>State</option>
+                    {US_STATES.map((s) => (
+                      <option key={s} value={s} style={{ background: "var(--color-dark-secondary)", color: "var(--color-text-primary)" }}>{s}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
