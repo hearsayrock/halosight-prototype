@@ -741,24 +741,15 @@ function CombinedPageContent() {
 
   const showSystemSection = systemState === "loading" || systemState === "done";
 
-  // ── Mini search pill (lives in section headers in home mode) ───────────────
+  // ── View all button (lives in section headers in home mode) ──────────────────
   function MiniSearchPill({ onClick }: { onClick: () => void }) {
     return (
       <button
         onClick={onClick}
-        style={{
-          display: "flex", alignItems: "center", gap: 5,
-          height: 28, paddingLeft: 9, paddingRight: 11,
-          borderRadius: 999,
-          background: "var(--color-dark-secondary)",
-          border: "1px solid var(--color-dark-tertiary)",
-          cursor: "pointer",
-        }}
+        className="active:opacity-50 transition-opacity"
+        style={{ fontSize: 13, fontWeight: 600, color: "var(--color-brand-purple)", cursor: "pointer" }}
       >
-        <Icon name="search" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
-        <span style={{ fontSize: 12, color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
-          Search
-        </span>
+        View all
       </button>
     );
   }
