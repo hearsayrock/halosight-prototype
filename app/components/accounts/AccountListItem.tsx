@@ -155,10 +155,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
           {/* Visited */}
           <p className="text-sm mt-0.5">
             <span style={{ color: "var(--color-text-disabled)" }}>Visited </span>
-            <span
-              className="font-semibold"
-              style={{ color: isToday ? "var(--color-brand-coral)" : "var(--color-text-muted)" }}
-            >
+            <span className="font-semibold" style={{ color: "var(--color-text-muted)" }}>
               {label}
             </span>
           </p>
