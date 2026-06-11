@@ -16,7 +16,7 @@
  *   #phone-overlay-root so it layers above the page content.
  *
  * ADVANCED SEARCH (same as before)
- *   Zero-result prompt → "Search all Halosight accounts" → system results
+ *   Zero-result prompt → "Search all Tomorrowland Innovations accounts" → system results
  *   + "Create new account" CTA at bottom.
  *
  * Flutter notes:
@@ -535,7 +535,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
             {query.trim() && <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
           </p>
           <p className="text-xs mt-0.5" style={{ color: "var(--color-text-secondary)" }}>
-            Add to Halosight and start capturing
+            Add to Tomorrowland Innovations and start capturing
           </p>
         </div>
       </button>
@@ -993,7 +993,7 @@ function CombinedPageContent() {
                       className="w-full h-10 rounded-xl font-semibold text-sm active:opacity-80 transition-opacity flex items-center justify-center gap-2"
                       style={{ background: "rgba(139,146,255,0.15)", border: "1px solid rgba(139,146,255,0.3)", color: "var(--color-brand-purple)" }}>
                       <Icon name="public" size={16} style={{ color: "var(--color-brand-purple)" }} />
-                      Search all Halosight accounts
+                      Search all Tomorrowland Innovations accounts
                     </button>
                   )}
                 </div>
@@ -1013,13 +1013,13 @@ function CombinedPageContent() {
                   <div className="mx-4 mb-1" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
                   {systemState === "loading" && (
                     <>
-                      <SectionHeader label="All Halosight Accounts" count={0} />
+                      <SectionHeader label="All Tomorrowland Innovations Accounts" count={0} />
                       <SystemSearchSkeleton />
                     </>
                   )}
                   {systemState === "done" && (
                     <>
-                      <SectionHeader label="All Halosight Accounts" count={systemResults.length} />
+                      <SectionHeader label="All Tomorrowland Innovations Accounts" count={systemResults.length} />
                       {systemResults.length > 0 ? (
                         <div className="flex flex-col">
                           {systemResults.map((account, i) => (
@@ -1034,7 +1034,7 @@ function CombinedPageContent() {
                         </div>
                       ) : (
                         <div className="px-4 py-6 text-center">
-                          <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>Not found anywhere in Halosight.</p>
+                          <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>Not found anywhere in Tomorrowland Innovations.</p>
                         </div>
                       )}
                       <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
