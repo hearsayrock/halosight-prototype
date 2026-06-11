@@ -118,7 +118,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               {/* ── Company name ─────────────────────────────────────────── */}
               <div className="mb-4">
                 <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Company Name
+                  Company Name <span style={{ color: "var(--color-brand-coral)" }}>*</span>
                 </p>
                 <input
                   ref={inputRef}
@@ -139,7 +139,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               {/* ── Contact (optional) ───────────────────────────────────── */}
               <div className="mb-4">
                 <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Contact <span style={{ color: "var(--color-text-disabled)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>— optional</span>
+                  Contact
                 </p>
                 <input
                   type="text"
@@ -159,7 +159,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               {/* ── City (optional) ──────────────────────────────────────── */}
               <div className="mb-6">
                 <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  City <span style={{ color: "var(--color-text-disabled)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>— optional</span>
+                  City
                 </p>
                 <input
                   type="text"
