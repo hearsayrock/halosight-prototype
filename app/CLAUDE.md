@@ -22,6 +22,12 @@ If the component exists, **use it**. Do not re-implement inline.
 - Both use: `var(--color-dark-tertiary)` bg, `var(--radius-xl)` border-radius, spring scale animation (stiffness 380, damping 22), `0 8px 32px rgba(0,0,0,0.6)` shadow
 - **Never** use `var(--color-dark-elevated)` or raw `borderRadius: 14` for menus
 
+## Accessibility — always enforced
+- **Body / supporting text minimum: `--color-text-muted` (#8B94A8)** — never use `--color-text-disabled` for readable content, only for placeholders and truly inactive controls
+- **`--color-text-disabled` (#5D667A) is for placeholders and disabled states only** — it does not pass WCAG AA contrast on dark surfaces and must not be used for descriptive or informational text
+- Before shipping any new text, mentally check: "Would this pass contrast?" — when in doubt, go one step lighter
+- Prefer `--color-text-secondary` (#C3CAD8) for secondary/supporting copy, `--color-text-muted` (#8B94A8) for de-emphasized but still readable text
+
 ## Flutter Handoff Comment
 Every component file must have the handoff comment block at the top:
 ```
