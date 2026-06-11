@@ -3,23 +3,22 @@
 /**
  * FLUTTER HANDOFF: CreateAccountSheet
  * Widget: StatefulWidget (bottom sheet)
- * State: name (string), halosightType ("prospect" | "account")
+ * State: name, contact, city (strings)
  * Tokens: --color-background, --color-dark-secondary, --color-dark-tertiary,
  *         --color-text-primary, --color-text-muted, --color-text-disabled,
- *         --color-brand-teal, --color-brand-coral, --color-brand-purple,
- *         --radius-xl, --radius-full, --radius-md
+ *         --color-brand-teal, --radius-xl, --radius-full, --radius-md
  *
  * Portals into #phone-overlay-root.
- * Opens from the "Create new account" CTA after a failed search.
- * halosightType defaults to "prospect" — the most common case.
- * Type is set once at creation and cannot be changed in-app.
+ * Opens from the "Add new company" CTA after a failed search.
+ * All new companies are created as halosightType "prospect" — syncs to CRM as a lead.
+ * Contact and city are optional fields.
  */
 
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
-import type { Account, HalosightAccountType } from "@/lib/types";
+import type { Account } from "@/lib/types";
 
 interface Props {
   /** Pre-fills the name field from the search query */
@@ -29,8 +28,9 @@ interface Props {
 }
 
 export default function CreateAccountSheet({ initialName = "", onClose, onCreated }: Props) {
-  const [name, setName] = useState(initialName);
-  const [halosightType, setHalosightType] = useState<HalosightAccountType>("prospect");
+  const [name, setName]       = useState(initialName);
+  const [contact, setContact] = useState("");
+  const [city, setCity]       = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -51,7 +51,9 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
       id: `hs-${Date.now()}`,
       name: trimmed,
       type: "standalone",
-      halosightType,
+      halosightType: "prospect",
+      contactName: contact.trim() || undefined,
+      city: city.trim() || undefined,
       distanceMiles: 0,
       lastVisited: new Date(),
       taskCount: 0,
@@ -110,49 +112,60 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 className="text-[22px] font-semibold mb-5"
                 style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
-                New Account
+                New Company
               </h2>
 
-              {/* ── Type picker ──────────────────────────────────────────── */}
-              <div className="mb-5">
+              {/* ── Company name ─────────────────────────────────────────── */}
+              <div className="mb-4">
                 <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Account Type
-                </p>
-                <div className="flex gap-3">
-                  <TypeOption
-                    selected={halosightType === "prospect"}
-                    onSelect={() => setHalosightType("prospect")}
-                    label="Prospect"
-                    description="Building a new relationship"
-                    icon="person_search"
-                    activeColor="var(--color-brand-teal)"
-                    activeBg="rgba(107, 157, 176, 0.15)"
-                    activeBorder="rgba(107, 157, 176, 0.4)"
-                  />
-                  <TypeOption
-                    selected={halosightType === "account"}
-                    onSelect={() => setHalosightType("account")}
-                    label="Account"
-                    description="An existing customer"
-                    icon="storefront"
-                    activeColor="var(--color-brand-purple)"
-                    activeBg="rgba(139, 146, 255, 0.12)"
-                    activeBorder="rgba(139, 146, 255, 0.35)"
-                  />
-                </div>
-              </div>
-
-              {/* ── Name input ───────────────────────────────────────────── */}
-              <div className="mb-6">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Name
+                  Company Name
                 </p>
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Account name"
+                  placeholder="e.g. Saddleback Fleet Services"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
+                  className="w-full text-[16px] outline-none px-4 py-3.5"
+                  style={{
+                    background: "var(--color-dark-secondary)",
+                    borderRadius: "var(--radius-xl)",
+                    color: "var(--color-text-primary)",
+                  }}
+                />
+              </div>
+
+              {/* ── Contact (optional) ───────────────────────────────────── */}
+              <div className="mb-4">
+                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  Contact <span style={{ color: "var(--color-text-disabled)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>— optional</span>
+                </p>
+                <input
+                  type="text"
+                  placeholder="e.g. Jane Smith"
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
+                  className="w-full text-[16px] outline-none px-4 py-3.5"
+                  style={{
+                    background: "var(--color-dark-secondary)",
+                    borderRadius: "var(--radius-xl)",
+                    color: "var(--color-text-primary)",
+                  }}
+                />
+              </div>
+
+              {/* ── City (optional) ──────────────────────────────────────── */}
+              <div className="mb-6">
+                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  City <span style={{ color: "var(--color-text-disabled)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>— optional</span>
+                </p>
+                <input
+                  type="text"
+                  placeholder="e.g. Tucson"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
                   className="w-full text-[16px] outline-none px-4 py-3.5"
                   style={{
@@ -177,16 +190,14 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 disabled={!name.trim()}
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center gap-2 transition-opacity"
                 style={{
-                  background: halosightType === "prospect"
-                    ? "var(--color-brand-teal)"
-                    : "var(--color-brand-purple)",
+                  background: "var(--color-brand-teal)",
                   color: "var(--color-text-primary)",
                   borderRadius: "var(--radius-full)",
                   opacity: name.trim() ? 1 : 0.4,
                 }}
               >
                 <Icon name="add" size={18} style={{ color: "var(--color-text-primary)" }} />
-                Add {halosightType === "prospect" ? "Prospect" : "Account"}
+                Add Company
               </button>
 
             </div>
@@ -196,75 +207,5 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
       )}
     </AnimatePresence>,
     overlayRoot
-  );
-}
-
-// ── Type option card ──────────────────────────────────────────────────────────
-
-function TypeOption({
-  selected,
-  onSelect,
-  label,
-  description,
-  icon,
-  activeColor,
-  activeBg,
-  activeBorder,
-}: {
-  selected: boolean;
-  onSelect: () => void;
-  label: string;
-  description: string;
-  icon: string;
-  activeColor: string;
-  activeBg: string;
-  activeBorder: string;
-}) {
-  return (
-    <button
-      onClick={onSelect}
-      className="relative flex-1 flex flex-col items-start gap-2 p-4 active:opacity-80 transition-all"
-      style={{
-        background: selected ? activeBg : "var(--color-dark-secondary)",
-        borderRadius: "var(--radius-md)",
-        border: selected ? `1.5px solid ${activeBorder}` : "1.5px solid transparent",
-        textAlign: "left",
-      }}
-    >
-      <div
-        className="w-8 h-8 rounded-full flex items-center justify-center"
-        style={{
-          background: selected ? `${activeBg}` : "var(--color-dark-tertiary)",
-        }}
-      >
-        <Icon
-          name={icon}
-          size={17}
-          style={{ color: selected ? activeColor : "var(--color-text-disabled)" }}
-        />
-      </div>
-      <div>
-        <p
-          className="text-[14px] font-semibold leading-tight mb-0.5"
-          style={{ color: selected ? activeColor : "var(--color-text-primary)" }}
-        >
-          {label}
-        </p>
-        <p
-          className="text-[12px] leading-snug"
-          style={{ color: "var(--color-text-muted)" }}
-        >
-          {description}
-        </p>
-      </div>
-      {selected && (
-        <div
-          className="absolute top-3 right-3 w-4 h-4 rounded-full flex items-center justify-center"
-          style={{ background: activeColor }}
-        >
-          <Icon name="check" size={10} style={{ color: "#fff" }} />
-        </div>
-      )}
-    </button>
   );
 }

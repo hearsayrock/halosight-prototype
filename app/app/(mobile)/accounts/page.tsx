@@ -555,7 +555,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
         </div>
         <div className="text-left">
           <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
-            Create new account
+            Add new company
             {query.trim() && <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
           </p>
           <p className="text-xs mt-0.5" style={{ color: "var(--color-text-secondary)" }}>
@@ -609,8 +609,7 @@ function CombinedPageContent() {
     setQuery("");
     setTypeFilter("all");
     goToMode("accounts");
-    const label = newAccount.halosightType === "prospect" ? "Prospect" : "Account";
-    setSuccessToast(`${label} added`);
+    setSuccessToast("Company added");
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     toastTimerRef.current = setTimeout(() => setSuccessToast(null), 3500);
   }
