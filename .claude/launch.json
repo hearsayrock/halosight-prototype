@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "halosight",
+      "name": "halosight-expo",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "cwd": "app",
+      "runtimeArgs": ["run", "web"],
+      "cwd": "expo",
       "port": 3000,
       "autoPort": false
     }
