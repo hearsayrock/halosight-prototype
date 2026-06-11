@@ -286,10 +286,10 @@ function TaskStrip({
         overflow: "hidden",
       }}>
         <AnimatePresence mode="popLayout" initial={false}>
-          {tasks.slice(0, 3).map((task, i) => {
+          {tasks.slice(0, 5).map((task, i) => {
             const isPending = task.id === pendingId;
             const isToday = task.dueDate === null;
-            const isLast = i === Math.min(tasks.length, 3) - 1;
+            const isLast = i === Math.min(tasks.length, 5) - 1;
             return (
               <motion.div
                 key={task.id}
@@ -945,12 +945,13 @@ function CombinedPageContent() {
               )}
               {!preview && (
                 <>
-                  {/* Dashboard */}
+                  {/* Dashboard — temporarily hidden; re-enable by uncommenting
                   <DashboardGrid
                     openTaskCount={availableTasks.length}
                     suggestedAccount={topAccounts[0]}
                     onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
                   />
+                  */}
 
                   {/* Accounts section */}
                   <div className="mb-3">
