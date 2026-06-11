@@ -39,6 +39,7 @@ import ErrorState from "@/components/ui/ErrorState";
 import CompletionToast from "@/components/ui/CompletionToast";
 import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
+import CreateAccountSheet from "@/components/accounts/CreateAccountSheet";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import { mockSystemAccounts, systemAccountReps } from "@/lib/mock-data/system-accounts";
 import { mockTasks, mockActivities } from "@/lib/mock-data/home";
@@ -548,10 +549,11 @@ function SystemSearchSkeleton() {
   );
 }
 
-function CreateAccountCTA({ query }: { query: string }) {
+function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void }) {
   return (
     <div className="px-4 py-5">
       <button
+        onClick={onOpen}
         className="w-full flex items-center gap-3 px-4 py-4 active:opacity-70 transition-opacity"
         style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-xl)", border: "1px dashed var(--color-dark-tertiary)" }}
       >
@@ -578,6 +580,7 @@ function CreateAccountCTA({ query }: { query: string }) {
 type SystemSearchState = "idle" | "loading" | "done";
 type TaskStatusFilter = "open" | "done";
 type TaskSortMode = "dueDate" | "account";
+type AccountTypeFilter = "all" | "prospect" | "account";
 
 type PageMode = "home" | "accounts" | "priorities";
 
@@ -602,9 +605,19 @@ function CombinedPageContent() {
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // Dynamic account list — starts with mock data, grows as user creates accounts
+  const [allAccounts, setAllAccounts] = useState<Account[]>(mockAccounts);
+  function handleAccountCreated(newAccount: Account) {
+    setAllAccounts((prev) => [newAccount, ...prev]);
+  }
+
+  // Create account sheet
+  const [showCreateSheet, setShowCreateSheet] = useState(false);
+
   // Accounts search (used in accounts mode)
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("alphabetical");
+  const [typeFilter, setTypeFilter] = useState<AccountTypeFilter>("all");
   const [systemState, setSystemState] = useState<SystemSearchState>("idle");
   const [systemResults, setSystemResults] = useState<Account[]>([]);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -663,7 +676,14 @@ function CombinedPageContent() {
     }
   }, [mode]);
 
-  const myFiltered = useMemo(() => sortAccounts(searchAccounts(mockAccounts, query), sort), [query, sort]);
+  const myFiltered = useMemo(() => {
+    const byType = typeFilter === "all"
+      ? allAccounts
+      : typeFilter === "prospect"
+        ? allAccounts.filter((a) => a.halosightType === "prospect")
+        : allAccounts.filter((a) => a.halosightType !== "prospect");
+    return sortAccounts(searchAccounts(byType, query), sort);
+  }, [allAccounts, query, sort, typeFilter]);
   // Priorities grouped by account — same logic as /tasks page
   const taskGroups = useMemo(() => {
     const all = getAllItems()
@@ -703,11 +723,11 @@ function CombinedPageContent() {
   }, [getAllItems, taskStatusFilter, taskSortMode, prioritiesQuery]);
 
   const topAccounts = useMemo(() =>
-    [...mockAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
-  []);
+    [...allAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
+  [allAccounts]);
   const nearestAccount = useMemo(() =>
-    [...mockAccounts].sort((a, b) => a.distanceMiles - b.distanceMiles)[0],
-  []);
+    [...allAccounts].sort((a, b) => a.distanceMiles - b.distanceMiles)[0],
+  [allAccounts]);
   const hasQuery = query.trim().length > 0;
 
   function triggerSystemSearch() {
@@ -884,7 +904,31 @@ function CombinedPageContent() {
             <SortMenu current={sort} onChange={setSort} />
           </motion.div>
         )}
+      </AnimatePresence>
 
+      {/* ── TYPE FILTER (accounts mode only) ───────────────────────────── */}
+      <AnimatePresence>
+        {mode === "accounts" && (
+          <motion.div
+            key="type-filter"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="flex items-center gap-2 px-4 pb-3"
+            style={{ flexShrink: 0 }}
+          >
+            <FilterDropdown
+              options={[
+                { value: "all" as AccountTypeFilter, label: "All Types" },
+                { value: "prospect" as AccountTypeFilter, label: "Prospects" },
+                { value: "account" as AccountTypeFilter, label: "Accounts" },
+              ]}
+              value={typeFilter}
+              onChange={setTypeFilter}
+            />
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* ── BODY ───────────────────────────────────────────────────────── */}
@@ -1024,7 +1068,7 @@ function CombinedPageContent() {
                           <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>Not found anywhere in Halosight.</p>
                         </div>
                       )}
-                      <CreateAccountCTA query={query} />
+                      <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
                     </>
                   )}
                 </div>
@@ -1215,6 +1259,15 @@ function CombinedPageContent() {
 
       {/* Engagements drawer */}
       <EngagementsDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+
+      {/* Create account sheet */}
+      {showCreateSheet && (
+        <CreateAccountSheet
+          initialName={query}
+          onClose={() => setShowCreateSheet(false)}
+          onCreated={handleAccountCreated}
+        />
+      )}
 
       {/* Completion toast */}
       <CompletionToast

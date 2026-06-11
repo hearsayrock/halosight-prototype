@@ -168,7 +168,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
         {/* Account name */}
         <h1
-          className="w-full text-center text-[26px] font-bold leading-tight px-10 mb-4"
+          className="w-full text-center text-[26px] font-bold leading-tight px-10 mb-2"
           style={{
             color: "var(--color-text-primary)",
             fontFamily: "Roboto Slab, Georgia, serif",
@@ -176,6 +176,21 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         >
           {account.name}
         </h1>
+
+        {/* Prospect badge — read-only, set at creation */}
+        {account.halosightType === "prospect" && (
+          <div className="flex justify-center mb-2">
+            <span
+              className="text-[12px] font-semibold px-3 py-1 rounded-full"
+              style={{
+                background: "rgba(107, 157, 176, 0.18)",
+                color: "var(--color-brand-teal)",
+              }}
+            >
+              Prospect
+            </span>
+          </div>
+        )}
 
         {/* Tabs */}
         <div

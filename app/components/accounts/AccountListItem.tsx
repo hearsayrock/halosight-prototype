@@ -15,6 +15,22 @@ import Link from "next/link";
 import type { Account, CrmAccountType } from "@/lib/types";
 import { formatLastVisited, formatDistance } from "@/lib/utils";
 
+// ── Prospect badge (Halosight-created) ───────────────────────────────────────
+
+function ProspectBadge() {
+  return (
+    <span
+      className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+      style={{
+        background: "rgba(107, 157, 176, 0.18)",
+        color: "var(--color-brand-teal)",
+      }}
+    >
+      Prospect
+    </span>
+  );
+}
+
 // ── CRM account type badge ────────────────────────────────────────────────────
 
 const CRM_LABEL: Record<CrmAccountType, string> = {
@@ -24,7 +40,7 @@ const CRM_LABEL: Record<CrmAccountType, string> = {
   "prospect":   "Prospect",
 };
 
-function AccountTypeBadge({ type }: { type: CrmAccountType }) {
+function CrmTypeBadge({ type }: { type: CrmAccountType }) {
   return (
     <span
       className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
@@ -150,10 +166,12 @@ export default function AccountListItem({ account, isLast = false }: Props) {
 
         {/* Right — badge top, task + assignee bottom */}
         <div className="flex flex-col items-end justify-between gap-2 flex-shrink-0" style={{ minHeight: 60 }}>
-          {/* CRM account type badge */}
-          {account.crmAccountType && (
-            <AccountTypeBadge type={account.crmAccountType} />
-          )}
+          {/* Prospect badge takes priority; fall back to CRM type badge */}
+          {account.halosightType === "prospect" ? (
+            <ProspectBadge />
+          ) : account.crmAccountType ? (
+            <CrmTypeBadge type={account.crmAccountType} />
+          ) : null}
 
           {/* Task indicator + assignee */}
           <div className="flex items-center gap-1.5">
