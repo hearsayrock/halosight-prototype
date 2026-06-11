@@ -244,7 +244,7 @@ function TypeOption({
         </p>
         <p
           className="text-[12px] leading-snug"
-          style={{ color: "var(--color-text-disabled)", opacity: 0.6 }}
+          style={{ color: "var(--color-text-muted)" }}
         >
           {description}
         </p>
