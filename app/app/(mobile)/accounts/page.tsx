@@ -548,7 +548,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
 type SystemSearchState = "idle" | "loading" | "done";
 type TaskStatusFilter = "open" | "done";
 type TaskSortMode = "dueDate" | "account";
-type AccountTypeFilter = "all" | "prospect" | "account";
+type AccountTypeFilter = "all" | "prospect" | "distributor" | "sold-to" | "shipped-to";
 
 type PageMode = "home" | "accounts" | "priorities";
 
@@ -660,7 +660,7 @@ function CombinedPageContent() {
       ? allAccounts
       : typeFilter === "prospect"
         ? allAccounts.filter((a) => a.halosightType === "prospect")
-        : allAccounts.filter((a) => a.halosightType !== "prospect");
+        : allAccounts.filter((a) => a.crmAccountType === typeFilter);
     return sortAccounts(searchAccounts(byType, query), sort);
   }, [allAccounts, query, sort, typeFilter]);
   // Priorities grouped by account — same logic as /tasks page
@@ -891,8 +891,10 @@ function CombinedPageContent() {
             <FilterDropdown
               options={[
                 { value: "all" as AccountTypeFilter, label: "All Types" },
-                { value: "prospect" as AccountTypeFilter, label: "Prospects" },
-                { value: "account" as AccountTypeFilter, label: "Accounts" },
+                { value: "prospect" as AccountTypeFilter, label: "Prospect" },
+                { value: "distributor" as AccountTypeFilter, label: "Distributor" },
+                { value: "sold-to" as AccountTypeFilter, label: "Sold-To" },
+                { value: "shipped-to" as AccountTypeFilter, label: "Shipped-To" },
               ]}
               value={typeFilter}
               onChange={setTypeFilter}
