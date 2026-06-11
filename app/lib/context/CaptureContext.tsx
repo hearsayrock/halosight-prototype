@@ -16,6 +16,7 @@ interface CaptureContextValue {
   accountId: string | null;
   accountName: string | null;
   startCapture: (accountId: string, accountName: string) => void;
+  switchAccount: (accountId: string, accountName: string) => void;
   finishCapture: () => void;
   readyCapture: () => void;
   dismissCapture: () => void;
@@ -34,6 +35,11 @@ export function CaptureProvider({ children }: { children: React.ReactNode }) {
     setStatus("recording");
   }, []);
 
+  const switchAccount  = useCallback((id: string, name: string) => {
+    setAccountId(id);
+    setAccountName(name);
+  }, []);
+
   const finishCapture  = useCallback(() => setStatus("finalizing"), []);
   const readyCapture   = useCallback(() => setStatus("ready"),      []);
   const dismissCapture = useCallback(() => {
@@ -43,7 +49,7 @@ export function CaptureProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <CaptureContext.Provider value={{ status, accountId, accountName, startCapture, finishCapture, readyCapture, dismissCapture }}>
+    <CaptureContext.Provider value={{ status, accountId, accountName, startCapture, switchAccount, finishCapture, readyCapture, dismissCapture }}>
       {children}
     </CaptureContext.Provider>
   );
