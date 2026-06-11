@@ -352,16 +352,13 @@ function TaskStrip({
 // ── Dashboard card ────────────────────────────────────────────────────────────
 
 function DashboardGrid({
-  openTaskCount,
   suggestedAccount,
   onStartVisit,
 }: {
-  openTaskCount: number;
   suggestedAccount: Account;
   onStartVisit: () => void;
 }) {
   const { label: lastVisitedLabel } = formatLastVisited(suggestedAccount.lastVisited);
-  const hasTasks = openTaskCount > 0;
 
   return (
     <div className="px-4 pb-5">
@@ -394,27 +391,6 @@ function DashboardGrid({
             </span>
           </div>
 
-          <Link href="/tasks">
-            <div
-              className="flex items-center gap-1.5 px-2.5 active:opacity-70 transition-opacity"
-              style={{
-                height: 26,
-                background: hasTasks ? "rgba(255,107,90,0.14)" : "var(--color-dark-tertiary)",
-                borderRadius: "var(--radius-full)",
-                border: hasTasks ? "1px solid rgba(255,107,90,0.28)" : "none",
-              }}
-            >
-              {hasTasks && (
-                <div style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--color-brand-coral)", flexShrink: 0 }} />
-              )}
-              <span style={{
-                fontSize: 12, fontWeight: 700,
-                color: hasTasks ? "var(--color-brand-coral)" : "var(--color-text-muted)",
-              }}>
-                {openTaskCount} {openTaskCount === 1 ? "task" : "tasks"}
-              </span>
-            </div>
-          </Link>
         </div>
 
         {/* Row 2: account name + meta — tappable to account detail */}
@@ -947,7 +923,6 @@ function CombinedPageContent() {
                 <>
                   {/* Dashboard */}
                   <DashboardGrid
-                    openTaskCount={availableTasks.length}
                     suggestedAccount={topAccounts[0]}
                     onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
                   />
