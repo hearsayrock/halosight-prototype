@@ -231,7 +231,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                       <li key={i} className="flex items-start gap-2.5">
                         <span
                           className="flex-shrink-0 w-1.5 h-1.5 rounded-full"
-                          style={{ background: "var(--color-text-muted)", marginTop: "0.375rem" }}
+                          style={{ background: "var(--color-text-muted)", marginTop: "0.5rem" }}
                         />
                         <span className="text-base leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
                           {idea}
