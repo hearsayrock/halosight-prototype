@@ -61,24 +61,40 @@ interface Props<T extends string> {
   options: FilterOption<T>[];
   value: T;
   onChange: (value: T) => void;
+  /** Value that represents "no filter active" — defaults to first option's value */
+  defaultValue?: T;
 }
 
-export default function FilterDropdown<T extends string>({ options, value, onChange }: Props<T>) {
+export default function FilterDropdown<T extends string>({ options, value, onChange, defaultValue }: Props<T>) {
   const [open, setOpen] = useState(false);
   const currentLabel = options.find((o) => o.value === value)?.label ?? value;
+  const baseValue = defaultValue ?? options[0]?.value;
+  const isFiltered = value !== baseValue;
 
   return (
     <div className="relative">
       {/* Pill trigger */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-0.5 h-8 px-3 text-sm font-semibold active:opacity-70 transition-opacity"
+        className="flex items-center h-8 px-3 text-sm font-semibold active:opacity-70 transition-opacity"
         style={{
-          background: open ? "var(--color-brand-purple)" : "var(--color-dark-secondary)",
+          gap: isFiltered ? 4 : 2,
+          background: open ? "var(--color-brand-purple)" : isFiltered ? "var(--color-dark-secondary)" : "var(--color-dark-secondary)",
           borderRadius: "var(--radius-full)",
           color: open ? "#fff" : "var(--color-text-primary)",
         }}
       >
+        {isFiltered && !open && (
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginRight: 1 }}>
+            <path
+              d="M3 8L6.5 11.5L13 5"
+              stroke="var(--color-brand-purple)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
         {currentLabel}
         <Icon
           name={open ? "keyboard_arrow_up" : "keyboard_arrow_down"}
