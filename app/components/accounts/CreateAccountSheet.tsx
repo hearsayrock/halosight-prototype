@@ -163,6 +163,14 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 />
               </div>
 
+              {/* ── CRM sync disclosure ──────────────────────────────────── */}
+              <div className="flex items-center gap-2 mb-5">
+                <Icon name="sync" size={14} style={{ color: "var(--color-text-disabled)", flexShrink: 0 }} />
+                <p className="text-[12px]" style={{ color: "var(--color-text-disabled)" }}>
+                  This will also create a record in your connected CRM.
+                </p>
+              </div>
+
               {/* ── Create button ────────────────────────────────────────── */}
               <button
                 onClick={handleCreate}

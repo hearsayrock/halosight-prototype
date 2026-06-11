@@ -607,8 +607,18 @@ function CombinedPageContent() {
 
   // Dynamic account list — starts with mock data, grows as user creates accounts
   const [allAccounts, setAllAccounts] = useState<Account[]>(mockAccounts);
+
+  // Success toast for account creation
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   function handleAccountCreated(newAccount: Account) {
     setAllAccounts((prev) => [newAccount, ...prev]);
+    goToMode("accounts");
+    const label = newAccount.halosightType === "prospect" ? "Prospect" : "Account";
+    setSuccessToast(`${label} added`);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setSuccessToast(null), 3500);
   }
 
   // Create account sheet
@@ -1259,6 +1269,38 @@ function CombinedPageContent() {
           onCreated={handleAccountCreated}
         />
       )}
+
+      {/* Account created success toast */}
+      <AnimatePresence>
+        {successToast && (
+          <motion.div
+            key="success-toast"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            className="absolute left-4 right-4 flex items-center gap-3 px-4 py-3.5"
+            style={{
+              bottom: 40,
+              background: "var(--color-dark-secondary)",
+              borderRadius: "var(--radius-xl)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+              border: "1px solid rgba(46, 204, 113, 0.25)",
+              zIndex: 50,
+            }}
+          >
+            <div
+              className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ background: "rgba(46, 204, 113, 0.15)" }}
+            >
+              <Icon name="check" size={15} style={{ color: "var(--color-semantic-success)" }} />
+            </div>
+            <p className="text-[14px] font-semibold" style={{ color: "var(--color-text-primary)" }}>
+              {successToast}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Completion toast */}
       <CompletionToast
