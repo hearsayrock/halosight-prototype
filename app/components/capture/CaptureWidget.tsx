@@ -268,7 +268,7 @@ function AccountPickerSheet({
 // ── Widget ────────────────────────────────────────────────────────────────────
 
 export default function CaptureWidget() {
-  const { status, accountId, accountName, switchAccount, finishCapture, readyCapture, dismissCapture } =
+  const { status, accountId, accountName, canSwitchAccount, switchAccount, finishCapture, readyCapture, dismissCapture } =
     useCapture();
   const router = useRouter();
   const [elapsed, setElapsed] = useState(0);
@@ -364,10 +364,13 @@ export default function CaptureWidget() {
                       <p style={{ fontSize: 17, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.2, marginBottom: 3 }}>
                         Taking notes
                       </p>
-                      <AccountButton
-                        name={accountName ?? ""}
-                        onPress={() => setShowPicker(true)}
-                      />
+                      {canSwitchAccount ? (
+                        <AccountButton name={accountName ?? ""} onPress={() => setShowPicker(true)} />
+                      ) : (
+                        <p className="truncate" style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text-secondary)" }}>
+                          {accountName}
+                        </p>
+                      )}
                     </div>
 
                     {/* Finish */}
@@ -405,11 +408,12 @@ export default function CaptureWidget() {
                     </div>
 
                     <div className="flex items-center justify-between gap-3">
-                      {status === "ready" ? (
-                        <AccountButton
-                          name={accountName ?? ""}
-                          onPress={() => setShowPicker(true)}
-                        />
+                      {status === "ready" && canSwitchAccount ? (
+                        <AccountButton name={accountName ?? ""} onPress={() => setShowPicker(true)} />
+                      ) : status === "ready" ? (
+                        <p className="truncate" style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text-secondary)" }}>
+                          {accountName}
+                        </p>
                       ) : (
                         <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
                           I'll let you know when it's ready.
@@ -444,11 +448,13 @@ export default function CaptureWidget() {
       {/* ── Account picker ──────────────────────────────────────────────── */}
       <AnimatePresence>
         {showPicker && (
-          <AccountPickerSheet
-            currentId={accountId}
-            onSelect={switchAccount}
-            onClose={() => setShowPicker(false)}
-          />
+          <div style={{ position: "absolute", inset: 0, pointerEvents: "auto" }}>
+            <AccountPickerSheet
+              currentId={accountId}
+              onSelect={switchAccount}
+              onClose={() => setShowPicker(false)}
+            />
+          </div>
         )}
       </AnimatePresence>
     </>,

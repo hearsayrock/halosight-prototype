@@ -950,7 +950,7 @@ function CombinedPageContent() {
                   <DashboardGrid
                     openTaskCount={availableTasks.length}
                     suggestedAccount={topAccounts[0]}
-                    onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name)}
+                    onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
                   />
 
                   {/* Accounts section */}
