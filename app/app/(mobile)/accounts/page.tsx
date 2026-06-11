@@ -614,6 +614,8 @@ function CombinedPageContent() {
 
   function handleAccountCreated(newAccount: Account) {
     setAllAccounts((prev) => [newAccount, ...prev]);
+    setQuery("");
+    setTypeFilter("all");
     goToMode("accounts");
     const label = newAccount.halosightType === "prospect" ? "Prospect" : "Account";
     setSuccessToast(`${label} added`);
