@@ -10,7 +10,7 @@
  * interrupting the recording session.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -107,7 +107,60 @@ function AccountPickerSheet({
   onSelect: (id: string, name: string) => void;
   onClose: () => void;
 }) {
-  const sorted = [...mockAccounts].sort((a, b) => a.name.localeCompare(b.name));
+  const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => searchRef.current?.focus(), 320);
+    return () => clearTimeout(t);
+  }, []);
+
+  const currentAccount = mockAccounts.find((a) => a.id === currentId) ?? null;
+  const q = query.toLowerCase().trim();
+
+  // When searching: flat filtered list. When not: current pinned, then rest alphabetically.
+  const isSearching = q.length > 0;
+  const allSorted = [...mockAccounts].sort((a, b) => a.name.localeCompare(b.name));
+
+  const filteredList = isSearching
+    ? allSorted.filter(
+        (a) =>
+          a.name.toLowerCase().includes(q) ||
+          a.city?.toLowerCase().includes(q) ||
+          a.state?.toLowerCase().includes(q)
+      )
+    : allSorted.filter((a) => a.id !== currentId);
+
+  function AccountRow({ account, showDivider }: { account: typeof mockAccounts[0]; showDivider: boolean }) {
+    const isSelected = account.id === currentId;
+    return (
+      <button
+        onClick={() => { onSelect(account.id, account.name); onClose(); }}
+        className="w-full flex items-center justify-between px-5 py-3.5 active:opacity-60 transition-opacity relative"
+        style={{ textAlign: "left" }}
+      >
+        {showDivider && (
+          <div className="absolute top-0 left-5 right-5" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+        )}
+        <div className="flex-1 min-w-0">
+          <p
+            className="font-semibold truncate"
+            style={{ fontSize: 15, color: isSelected ? "var(--color-brand-purple)" : "var(--color-text-primary)" }}
+          >
+            {account.name}
+          </p>
+          {(account.city || account.state) && (
+            <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
+              {[account.city, account.state].filter(Boolean).join(", ")}
+            </p>
+          )}
+        </div>
+        {isSelected && (
+          <Icon name="check" size={18} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+        )}
+      </button>
+    );
+  }
 
   return (
     <>
@@ -144,62 +197,68 @@ function AccountPickerSheet({
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-2 pb-4 flex-shrink-0">
-          <h3
-            style={{
-              fontFamily: "Roboto Slab, Georgia, serif",
-              fontSize: 18, fontWeight: 700,
-              color: "var(--color-text-primary)",
-            }}
-          >
+        <div className="flex items-center justify-between px-5 pt-2 pb-3 flex-shrink-0">
+          <h3 style={{ fontFamily: "Roboto Slab, Georgia, serif", fontSize: 18, fontWeight: 700, color: "var(--color-text-primary)" }}>
             Switch account
           </h3>
-          <button
-            onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center active:opacity-60 transition-opacity"
-            style={{ color: "var(--color-text-muted)" }}
-          >
+          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center active:opacity-60 transition-opacity">
             <Icon name="close" size={18} style={{ color: "var(--color-text-muted)" }} />
           </button>
         </div>
 
-        {/* Account list */}
+        {/* Search */}
+        <div
+          className="flex items-center gap-2 mx-5 mb-3 px-3 flex-shrink-0"
+          style={{
+            height: 40,
+            background: "var(--color-dark-secondary)",
+            borderRadius: "var(--radius-full)",
+          }}
+        >
+          <Icon name="search" size={16} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+          <input
+            ref={searchRef}
+            type="text"
+            placeholder="Search accounts…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="flex-1 bg-transparent text-sm outline-none"
+            style={{ color: "var(--color-text-primary)" }}
+          />
+          {query && (
+            <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
+              <Icon name="cancel" fill size={15} style={{ color: "var(--color-text-disabled)" }} />
+            </button>
+          )}
+        </div>
+
+        {/* List */}
         <div style={{ overflowY: "auto", paddingBottom: 40 }}>
-          {sorted.map((account, i) => {
-            const isSelected = account.id === currentId;
-            return (
-              <button
-                key={account.id}
-                onClick={() => { onSelect(account.id, account.name); onClose(); }}
-                className="w-full flex items-center justify-between px-5 py-3.5 active:opacity-60 transition-opacity relative"
-                style={{ textAlign: "left" }}
-              >
-                {/* Separator */}
-                {i > 0 && (
-                  <div className="absolute top-0 left-5 right-5" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
-                )}
-                <div className="flex-1 min-w-0">
-                  <p
-                    className="font-semibold truncate"
-                    style={{
-                      fontSize: 15,
-                      color: isSelected ? "var(--color-brand-purple)" : "var(--color-text-primary)",
-                    }}
-                  >
-                    {account.name}
-                  </p>
-                  {(account.city || account.state) && (
-                    <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
-                      {[account.city, account.state].filter(Boolean).join(", ")}
-                    </p>
-                  )}
-                </div>
-                {isSelected && (
-                  <Icon name="check" size={18} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
-                )}
-              </button>
-            );
-          })}
+
+          {/* Current account pinned at top (only when not searching) */}
+          {!isSearching && currentAccount && (
+            <>
+              <AccountRow account={currentAccount} showDivider={false} />
+              {filteredList.length > 0 && (
+                <div style={{ height: 1, background: "var(--color-dark-tertiary)", margin: "0 20px 4px" }} />
+              )}
+            </>
+          )}
+
+          {/* Rest of the list */}
+          {filteredList.map((account, i) => (
+            <AccountRow
+              key={account.id}
+              account={account}
+              showDivider={isSearching ? i > 0 : i > 0}
+            />
+          ))}
+
+          {filteredList.length === 0 && !currentAccount && (
+            <p className="text-sm text-center py-8" style={{ color: "var(--color-text-disabled)" }}>
+              No accounts match &quot;{query}&quot;
+            </p>
+          )}
         </div>
       </motion.div>
     </>
