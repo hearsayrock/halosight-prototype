@@ -478,7 +478,7 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
             {account.name}
           </p>
           <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 2 }}>
-            {[account.city && account.state ? `${account.city}, ${account.state}` : null,
+            {[account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null),
               account.distanceMiles < 999 ? `${account.distanceMiles} mi` : null]
               .filter(Boolean).join(" · ")}
           </p>
