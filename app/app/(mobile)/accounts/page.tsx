@@ -373,13 +373,26 @@ function DashboardGrid({
           padding: "18px 18px 16px",
         }}
       >
-        {/* Purple glow bloom — top right */}
-        <div style={{
-          position: "absolute", top: -50, right: -50,
-          width: 180, height: 180, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(139,146,255,0.16) 0%, transparent 65%)",
-          pointerEvents: "none",
-        }} />
+        {/* Purple glow bloom — drifts slowly around the card */}
+        <motion.div
+          animate={{
+            x: [0, -45, -20, 35, 10, 0],
+            y: [0, 25, 55, 30, -15, 0],
+            scale: [1, 1.12, 0.95, 1.08, 0.98, 1],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+            times: [0, 0.2, 0.4, 0.6, 0.8, 1],
+          }}
+          style={{
+            position: "absolute", top: -50, right: -50,
+            width: 180, height: 180, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(139,146,255,0.16) 0%, transparent 65%)",
+            pointerEvents: "none",
+          }}
+        />
 
         {/* Row 1: eyebrow label + tasks badge */}
         <div className="flex items-center justify-between mb-4">
