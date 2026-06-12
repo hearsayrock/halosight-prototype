@@ -1022,18 +1022,18 @@ function CombinedPageContent() {
                   </div>
                   {systemState === "idle" && (
                     <button onClick={triggerSystemSearch}
-                      className="w-full font-semibold active:opacity-75 transition-opacity flex items-center justify-between"
+                      className="w-full font-semibold active:opacity-80 transition-opacity flex items-center justify-center gap-2"
                       style={{
-                        padding: "14px 18px",
-                        borderRadius: "var(--radius-xl)",
-                        background: "var(--color-dark-primary)",
-                        border: "1px solid rgba(139,146,255,0.25)",
+                        padding: "13px 20px",
+                        borderRadius: "var(--radius-full)",
+                        background: "rgba(139,146,255,0.15)",
+                        border: "1px solid rgba(139,146,255,0.35)",
                         color: "var(--color-brand-purple)",
                         fontSize: 15,
-                        textAlign: "left",
+                        boxShadow: "0 0 18px rgba(139,146,255,0.12)",
                       }}>
-                      <span>Search all Tomorrowland<br />Innovations accounts</span>
-                      <Icon name="chevron_right" size={20} style={{ color: "rgba(139,146,255,0.5)", flexShrink: 0 }} />
+                      <Icon name="public" size={18} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+                      Search all Tomorrowland Innovations accounts
                     </button>
                   )}
                 </div>
