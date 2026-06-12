@@ -16,7 +16,7 @@
  *   #phone-overlay-root so it layers above the page content.
  *
  * ADVANCED SEARCH (same as before)
- *   Zero-result prompt → "Search all Tomorrowland Innovations accounts" → system results
+ *   Zero-result prompt → "Search all Tomorrowland Innovations" → system results
  *   + "Create new account" CTA at bottom.
  *
  * Flutter notes:
@@ -1032,7 +1032,7 @@ function CombinedPageContent() {
                         fontSize: 15,
                       }}>
                       <Icon name="public" size={18} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
-                      Search all Tomorrowland Innovations accounts
+                      Search all Tomorrowland Innovations
                     </button>
                   )}
                 </div>
