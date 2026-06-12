@@ -989,9 +989,17 @@ function CombinedPageContent() {
                   </div>
                   {systemState === "idle" && (
                     <button onClick={triggerSystemSearch}
-                      className="w-full h-10 rounded-xl font-semibold text-sm active:opacity-80 transition-opacity flex items-center justify-center gap-2"
-                      style={{ background: "rgba(139,146,255,0.15)", border: "1px solid rgba(139,146,255,0.3)", color: "var(--color-brand-purple)" }}>
-                      <Icon name="public" size={16} style={{ color: "var(--color-brand-purple)" }} />
+                      className="w-full font-semibold active:opacity-80 transition-opacity flex items-center justify-center gap-2.5"
+                      style={{
+                        padding: "13px 20px",
+                        borderRadius: "var(--radius-full)",
+                        background: "rgba(139,146,255,0.15)",
+                        border: "1px solid rgba(139,146,255,0.35)",
+                        color: "var(--color-brand-purple)",
+                        fontSize: 15,
+                        boxShadow: "0 0 18px rgba(139,146,255,0.12)",
+                      }}>
+                      <Icon name="public" size={18} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
                       Search all Tomorrowland Innovations accounts
                     </button>
                   )}
