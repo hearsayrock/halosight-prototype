@@ -70,7 +70,7 @@ export default function ActionItemEditPage({
 
   function handleDelete() {
     deleteItem(accountId, itemId);
-    router.back();
+    router.push(`/accounts/${accountId}`);
   }
 
   if (!item) {
@@ -86,7 +86,7 @@ export default function ActionItemEditPage({
 
       {/* Header */}
       <div className="flex items-start justify-between px-4 pt-10 pb-4">
-        <button onClick={() => router.back()} className="p-1 active:opacity-60 transition-opacity">
+        <button onClick={() => router.push(`/accounts/${accountId}`)} className="p-1 active:opacity-60 transition-opacity">
           <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
         </button>
         {saved && (

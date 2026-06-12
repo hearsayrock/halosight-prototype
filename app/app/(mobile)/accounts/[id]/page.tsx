@@ -155,7 +155,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     setDisqualifyPending(true);
     disqualifyTimerRef.current = setTimeout(() => {
       disqualify(id);
-      router.back();
+      router.push("/accounts");
     }, 5000);
   }
 
@@ -170,7 +170,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     if (disqualifyTimerRef.current) clearTimeout(disqualifyTimerRef.current);
     disqualifyTimerRef.current = null;
     disqualify(id);
-    router.back();
+    router.push("/accounts");
   }
   const isCapturing = captureStatus !== "idle" && capturingId === id;
 
@@ -194,7 +194,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     return (
       <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
         <div className="pt-10 px-4 pb-2">
-          <button onClick={() => router.back()} className="p-1 active:opacity-60 transition-opacity">
+          <button onClick={() => router.push("/accounts")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
         </div>
@@ -211,7 +211,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     return (
       <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
         <div className="pt-10 px-4 pb-2">
-          <button onClick={() => router.back()} className="p-1 active:opacity-60 transition-opacity">
+          <button onClick={() => router.push("/accounts")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
         </div>
@@ -231,7 +231,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
         {/* Back button row — assignee badge appears on the right for other reps' accounts */}
         <div className="flex items-center justify-between mb-3">
-          <button onClick={() => router.back()} className="p-1 active:opacity-60 transition-opacity">
+          <button onClick={() => router.push("/accounts")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
           {account.assignedInitial && account.assignedInitial !== "J" ? (

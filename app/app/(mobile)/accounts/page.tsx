@@ -609,7 +609,7 @@ function CombinedPageContent() {
     router.push(`/accounts?mode=${m}`, { scroll: false });
   }
   function goHome() {
-    router.back();
+    router.push("/home");
   }
 
   // Drawer
