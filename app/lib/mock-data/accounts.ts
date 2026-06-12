@@ -430,4 +430,46 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       { id: "rb-2", accountId: "riverbend-collision", date: at(400, 10, 30), type: "call", title: "Check-In Call",        summary: "Brief check-in. Tom mentioned they recently expanded their service bays — potential upsell opportunity.", durationMinutes: 12, hasTranscript: false, repName: "Jordan Mills" },
     ],
   },
+  "sys-happily-ever-after": {
+    id: "sys-happily-ever-after",
+    name: "Happily Ever After LLC",
+    type: "standalone",
+    crmAccountType: "prospect",
+    distanceMiles: 3.2,
+    lastVisited: daysAgo(18),
+    taskCount: 2,
+    city: "St. George",
+    state: "UT",
+    contactName: "Dana Whitfield",
+    contactTitle: "Owner",
+    crmId: "SF-113",
+    relatedAccountCount: 0,
+    lastVisitSummary:
+      "Stopped in unannounced while in the area. Dana was between events but gave me 20 minutes. They manage a large fleet of catering vans and party vehicles — currently buying supplies through a local distributor with inconsistent pricing. She seemed genuinely interested but wants to see numbers before committing to any conversation.",
+    ideasForThisTime: [
+      "Come in with a side-by-side comparison on pricing vs. their current supplier",
+      "Ask how many vehicles they're running and what the service intervals look like",
+      "Find out if Dana is the only decision maker or if there's a business partner involved",
+      "Mention the fleet account tier — volume discounts could be a real hook here",
+    ],
+    actionItems: [
+      { id: "hea-t1", title: "Send fleet pricing comparison",     dueDate: future(6, 10), status: "open" },
+      { id: "hea-t2", title: "Follow up with Dana on Q3 volume",  dueDate: future(6, 18), status: "open" },
+      { id: "hea-t3", title: "Confirm number of vehicles in fleet", dueDate: null,         status: "open" },
+    ],
+    recentActivity: [
+      {
+        id: "hea-1", accountId: "sys-happily-ever-after", date: at(18, 14, 30), type: "visit",
+        title: "Drop-In Visit",
+        summary: "Unannounced drop-in while passing through. Met Dana, the owner. Fleet of catering and event vehicles — real opportunity if pricing holds up. Not a current customer.",
+        durationMinutes: 22, hasTranscript: false, repName: "Jordan Mills",
+      },
+      {
+        id: "hea-2", accountId: "sys-happily-ever-after", date: at(22, 10, 0), type: "call",
+        title: "Intro Call",
+        summary: "Cold outreach. Dana picked up — was friendly but noncommittal. Agreed to an in-person visit when a rep was in the area.",
+        durationMinutes: 8, hasTranscript: false, repName: "Jordan Mills",
+      },
+    ],
+  },
 };
