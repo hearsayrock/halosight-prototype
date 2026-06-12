@@ -15,6 +15,8 @@ export interface HomeTask {
   completed: boolean;
   /** Name of the visit/call this item was generated from */
   originActivity?: string;
+  /** Activity id — links to /accounts/[accountId]/activity/[originActivityId] */
+  originActivityId?: string;
 }
 
 export interface HomeActivity {
@@ -48,6 +50,7 @@ export const mockTasks: HomeTask[] = [
     accountId: "walmart-corp",
     completed: false,
     originActivity: "Quarterly Review",
+    originActivityId: "wm-1",
   },
   {
     id: "task-2",
@@ -58,6 +61,7 @@ export const mockTasks: HomeTask[] = [
     accountId: "profleet-glendale-2",
     completed: false,
     originActivity: "Fleet Expansion",
+    originActivityId: "pg-1",
   },
   {
     id: "task-3",
@@ -68,6 +72,7 @@ export const mockTasks: HomeTask[] = [
     accountId: "innovative-tech-tucson",
     completed: false,
     originActivity: "Vendor Review",
+    originActivityId: "it-1",
   },
   {
     id: "task-4",
@@ -78,6 +83,7 @@ export const mockTasks: HomeTask[] = [
     accountId: "jacks-tire-elko",
     completed: false,
     originActivity: "Follow-Up Call",
+    originActivityId: "ja-6",
   },
   {
     id: "task-5",
@@ -88,6 +94,7 @@ export const mockTasks: HomeTask[] = [
     accountId: "profleet-corp",
     completed: false,
     originActivity: "Leadership Check-In",
+    originActivityId: "pf-1",
   },
   {
     id: "task-6",
@@ -98,6 +105,7 @@ export const mockTasks: HomeTask[] = [
     accountId: "walmart-corp",
     completed: false,
     originActivity: "Quarterly Review",
+    originActivityId: "wm-1",
   },
 ];
 

@@ -341,17 +341,18 @@ function TaskStrip({
                     <span style={{ fontSize: 11, color: "var(--color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {task.accountName}
                     </span>
-                    {task.originActivity && (
-                      <>
-                        <span style={{ fontSize: 11, color: "var(--color-text-disabled)", flexShrink: 0 }}>·</span>
-                        <Icon name="mic" size={11} style={{ color: "var(--color-brand-purple-dark)", flexShrink: 0 }} />
-                        <span style={{ fontSize: 11, color: "var(--color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {task.originActivity}
-                        </span>
-                      </>
-                    )}
                   </div>
                 </Link>
+                {/* Origin activity link — outside the content Link to avoid nested anchors */}
+                {task.originActivityId && (
+                  <Link
+                    href={`/accounts/${task.accountId}/activity/${task.originActivityId}`}
+                    className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
+                    style={{ width: 44, height: 44 }}
+                  >
+                    <Icon name="link" size={16} style={{ color: "var(--color-text-disabled)" }} />
+                  </Link>
+                )}
               </motion.div>
             );
           })}
