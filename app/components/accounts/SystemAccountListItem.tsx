@@ -65,12 +65,14 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
             )}
           </div>
 
-          {/* Assigned to */}
-          <p className="text-sm mt-0.5">
-            <span style={{ color: "var(--color-text-disabled)" }}>
-              {isUnassigned ? "Unassigned" : `Assigned to ${assignedRep}`}
-            </span>
-          </p>
+          {/* Assigned to — only shown when there's a named rep */}
+          {!isUnassigned && (
+            <p className="text-sm mt-0.5">
+              <span style={{ color: "var(--color-text-disabled)" }}>
+                Assigned to {assignedRep}
+              </span>
+            </p>
+          )}
         </div>
 
         {/* Right — "not mine" badge */}

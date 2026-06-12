@@ -197,11 +197,41 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       {/* Header */}
       <div className="pt-10 px-4 pb-4">
 
-        {/* Close button */}
-        <div className="mb-3">
+        {/* Back button row — assignee badge appears on the right for other reps' accounts */}
+        <div className="flex items-center justify-between mb-3">
           <button onClick={() => router.back()} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
+          {account.assignedInitial && account.assignedInitial !== "J" ? (
+            /* Assigned to a different rep */
+            <div className="flex items-center gap-2 pr-1">
+              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>Assigned to</span>
+              <div
+                className="flex items-center justify-center rounded-full text-[13px] font-semibold"
+                style={{
+                  width: 28,
+                  height: 28,
+                  background: "var(--color-dark-secondary)",
+                  color: "var(--color-text-muted)",
+                  border: "1.5px solid var(--color-dark-tertiary)",
+                }}
+              >
+                {account.assignedInitial}
+              </div>
+            </div>
+          ) : !account.assignedInitial ? (
+            /* No rep assigned */
+            <span
+              className="text-[11px] font-semibold px-2.5 py-1 rounded-full mr-1"
+              style={{
+                background: "rgba(139,146,255,0.1)",
+                color: "var(--color-brand-purple)",
+                border: "1px solid rgba(139,146,255,0.2)",
+              }}
+            >
+              Unassigned
+            </span>
+          ) : null}
         </div>
 
         {/* Account name */}
