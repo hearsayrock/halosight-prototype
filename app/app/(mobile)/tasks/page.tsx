@@ -325,7 +325,7 @@ export default function TasksPage() {
           onClick={() => router.back()}
           className="p-1 mb-3 active:opacity-60 transition-opacity"
         >
-          <Icon name="chevron_left" size={24} style={{ color: "var(--color-text-muted)" }} />
+          <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
         </button>
 
         <div className="flex items-end justify-between gap-3 mb-3">

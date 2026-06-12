@@ -31,7 +31,7 @@ export default function ProfilePage() {
           onClick={() => router.back()}
           className="p-1 active:opacity-60 transition-opacity"
         >
-          <Icon name="chevron_left" size={24} style={{ color: "var(--color-text-muted)" }} />
+          <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
         </button>
         <h1
           className="text-[18px] font-bold"

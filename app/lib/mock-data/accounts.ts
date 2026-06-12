@@ -320,7 +320,7 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       { id: "wm-1", accountId: "walmart-corp", date: at(3, 14, 20),  type: "visit", title: "Quarterly Review",      summary: "Discussed Q2 supply chain concerns. Tom mentioned potential for expanded order next quarter.", durationMinutes: 55,  hasTranscript: true,  repName: "Jordan Mills" },
       { id: "wm-2", accountId: "walmart-corp", date: at(17, 10, 0),  type: "visit", title: "Routine Check-In",      summary: "Reviewed current service satisfaction. No new opportunities surfaced — relationship in good standing.", durationMinutes: 30,  hasTranscript: true,  repName: "Jordan Mills" },
       { id: "wm-3", accountId: "walmart-corp", date: at(31, 9, 15),  type: "call",  title: "Shipment Follow-Up",   summary: "Follow-up call on delayed shipment. Issue resolved. Customer satisfied with resolution.", durationMinutes: 12,  hasTranscript: false, repName: "Jordan Mills" },
-      { id: "wm-4", accountId: "walmart-corp", date: at(45, 13, 30), type: "visit", title: "Product Demo",          summary: "Walked through new service tier options. Strong interest in the premium package — needs sign-off from procurement.", durationMinutes: 70, hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "wm-4", accountId: "walmart-corp", date: at(45, 13, 30), type: "visit", title: "Product Demo",          summary: "Walked through new service tier options. Strong interest in the premium package — needs sign-off from procurement.", durationMinutes: 70, hasTranscript: true,  repName: "Sarah Kim" },
       { id: "wm-5", accountId: "walmart-corp", date: at(60, 11, 0),  type: "email", title: "Contract Renewal",      summary: "Sent over renewal terms for annual contract. Awaiting internal review from their legal team.", durationMinutes: 8,   hasTranscript: false, repName: "Jordan Mills" },
     ],
   },
@@ -343,9 +343,9 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
     ],
     recentActivity: [
       { id: "pf-1", accountId: "profleet-corp", date: at(6, 10, 30),  type: "visit", title: "Leadership Check-In",  summary: "Met with ops leadership re: Q3 fleet expansion. Budget confirmed. Formal proposal requested.", durationMinutes: 60,  hasTranscript: true,  repName: "Jordan Mills" },
-      { id: "pf-2", accountId: "profleet-corp", date: at(20, 14, 0),  type: "call",  title: "Proposal Kick-Off",   summary: "Aligned on scope and pricing structure for the Q3 proposal. Key decision-makers identified.", durationMinutes: 40,  hasTranscript: false, repName: "Jordan Mills" },
-      { id: "pf-3", accountId: "profleet-corp", date: at(34, 9, 0),   type: "visit", title: "Annual Strategy",      summary: "Year-in-review meeting. Reviewed account health, flagged two underperforming branches for follow-up.", durationMinutes: 90, hasTranscript: true,  repName: "Jordan Mills" },
-      { id: "pf-4", accountId: "profleet-corp", date: at(50, 11, 45), type: "call",  title: "Issue Escalation",    summary: "Handled complaint about delayed parts delivery at Glendale 1 location. Resolved same day.", durationMinutes: 22,  hasTranscript: false, repName: "Jordan Mills" },
+      { id: "pf-2", accountId: "profleet-corp", date: at(20, 14, 0),  type: "call",  title: "Proposal Kick-Off",   summary: "Aligned on scope and pricing structure for the Q3 proposal. Key decision-makers identified.", durationMinutes: 40,  hasTranscript: false, repName: "Sarah Kim" },
+      { id: "pf-3", accountId: "profleet-corp", date: at(34, 9, 0),   type: "visit", title: "Annual Strategy",      summary: "Year-in-review meeting. Reviewed account health, flagged two underperforming branches for follow-up.", durationMinutes: 90, hasTranscript: true,  repName: "Sarah Kim" },
+      { id: "pf-4", accountId: "profleet-corp", date: at(50, 11, 45), type: "call",  title: "Issue Escalation",    summary: "Handled complaint about delayed parts delivery at Glendale 1 location. Resolved same day.", durationMinutes: 22,  hasTranscript: false, repName: "Sarah Kim" },
     ],
   },
   "profleet-glendale-2": {
@@ -365,8 +365,8 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
     ],
     recentActivity: [
       { id: "pg-1", accountId: "profleet-glendale-2", date: at(0, 9, 15),  type: "visit", title: "Fleet Expansion",     summary: "Q3 fleet expansion discussed. Budget confirmed. Strong opportunity for expanded contract.",         durationMinutes: 45,  hasTranscript: true,  repName: "Jordan Mills" },
-      { id: "pg-2", accountId: "profleet-glendale-2", date: at(14, 11, 0), type: "call",  title: "Invoice Follow-Up",  summary: "Checked on outstanding invoice from last month. Confirmed payment scheduled for this Friday.",       durationMinutes: 10,  hasTranscript: false, repName: "Jordan Mills" },
-      { id: "pg-3", accountId: "profleet-glendale-2", date: at(28, 14, 30), type: "visit", title: "Routine Visit",      summary: "Standard quarterly check-in. No major issues. Team satisfied with current service levels.",          durationMinutes: 30,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "pg-2", accountId: "profleet-glendale-2", date: at(14, 11, 0), type: "call",  title: "Invoice Follow-Up",  summary: "Checked on outstanding invoice from last month. Confirmed payment scheduled for this Friday.",       durationMinutes: 10,  hasTranscript: false, repName: "Sarah Kim" },
+      { id: "pg-3", accountId: "profleet-glendale-2", date: at(28, 14, 30), type: "visit", title: "Routine Visit",      summary: "Standard quarterly check-in. No major issues. Team satisfied with current service levels.",          durationMinutes: 30,  hasTranscript: true,  repName: "Sarah Kim" },
     ],
   },
   "innovative-tech-tucson": {
@@ -409,8 +409,8 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       { id: "pf-flag-t3", title: "Submit volume discount sheet", dueDate: future(6, 20), status: "open", originActivity: "On-site Visit", originActivityId: "pf-flagstaff-1" },
     ],
     recentActivity: [
-      { id: "pf-flagstaff-1", accountId: "profleet-flagstaff", date: at(4, 10, 45), type: "visit", title: "On-site Visit", summary: "Toured the Flagstaff facility and met the new ops manager. Discussed Q3 service needs and potential volume growth.", durationMinutes: 64, hasTranscript: true, repName: "Jordan Mills" },
-      { id: "pf-flagstaff-2", accountId: "profleet-flagstaff", date: at(25, 14, 0), type: "call",  title: "Intro Call",   summary: "First call with the incoming ops manager ahead of the on-site visit. Aligned on expectations and open items.", durationMinutes: 20, hasTranscript: false, repName: "Jordan Mills" },
+      { id: "pf-flagstaff-1", accountId: "profleet-flagstaff", date: at(4, 10, 45), type: "visit", title: "On-site Visit", summary: "Toured the Flagstaff facility and met the new ops manager. Discussed Q3 service needs and potential volume growth.", durationMinutes: 64, hasTranscript: true, repName: "Alex Chen" },
+      { id: "pf-flagstaff-2", accountId: "profleet-flagstaff", date: at(25, 14, 0), type: "call",  title: "Intro Call",   summary: "First call with the incoming ops manager ahead of the on-site visit. Aligned on expectations and open items.", durationMinutes: 20, hasTranscript: false, repName: "Alex Chen" },
     ],
   },
   "riverbend-collision": {

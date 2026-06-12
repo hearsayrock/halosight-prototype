@@ -87,7 +87,7 @@ export default function ActionItemEditPage({
       {/* Header */}
       <div className="flex items-start justify-between px-4 pt-10 pb-4">
         <button onClick={() => router.back()} className="p-1 active:opacity-60 transition-opacity">
-          <Icon name="chevron_left" size={24} style={{ color: "var(--color-text-muted)" }} />
+          <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
         </button>
         {saved && (
           <div className="flex items-center gap-1">

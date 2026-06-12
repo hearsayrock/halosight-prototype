@@ -53,14 +53,15 @@ function formatDuration(minutes: number): string {
   return m > 0 ? `${h}hr ${m} mins` : `${h}hr`;
 }
 
-function ActivityCard({ item, accountId }: { item: ActivityItem; accountId: string }) {
+function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; accountId: string; isExternal?: boolean }) {
   return (
     <Link href={`/accounts/${accountId}/activity/${item.id}`}>
     <div
       className="flex items-start gap-3 p-4 active:opacity-70 transition-opacity"
       style={{
-        background: "var(--color-dark-secondary)",
+        background: isExternal ? "var(--color-dark-primary)" : "var(--color-dark-secondary)",
         borderRadius: "var(--radius-md)",
+        border: isExternal ? "1px solid var(--color-dark-secondary)" : undefined,
       }}
     >
       <div className="flex-1 min-w-0">
@@ -79,7 +80,7 @@ function ActivityCard({ item, accountId }: { item: ActivityItem; accountId: stri
         >
           {item.summary}
         </p>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
             {formatActivityDate(item.date)}
           </span>
@@ -90,6 +91,35 @@ function ActivityCard({ item, accountId }: { item: ActivityItem; accountId: stri
                 {formatDuration(item.durationMinutes)}
               </span>
             </>
+          )}
+          {item.repName !== "Jordan Mills" && (
+            <>
+              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>•</span>
+              <div
+                className="flex items-center justify-center rounded-full text-[10px] font-bold flex-shrink-0"
+                style={{
+                  width: 18,
+                  height: 18,
+                  background: "var(--color-dark-tertiary)",
+                  color: "var(--color-text-muted)",
+                }}
+                title={item.repName}
+              >
+                {item.repName.charAt(0)}
+              </div>
+            </>
+          )}
+          {isExternal && (
+            <span
+              className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+              style={{
+                background: "rgba(139,146,255,0.10)",
+                color: "var(--color-brand-purple)",
+                border: "1px solid rgba(139,146,255,0.18)",
+              }}
+            >
+              Unassigned
+            </span>
           )}
         </div>
       </div>
@@ -149,6 +179,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   const detail = mockAccountDetails[id];
   const mockAccount = mockAccounts.find((a) => a.id === id);
+  // True for system/CRM accounts not in the rep's Halosight portfolio
+  const isExternalAccount = !mockAccount;
 
   // For just-created companies that aren't in mock data yet, build a shell account from URL params
   const account = detail ?? mockAccount ?? (justCreated && justCreatedName
@@ -450,7 +482,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           <div className="flex flex-col gap-3 px-4 pb-4">
             {detail?.recentActivity?.length ? (
               detail.recentActivity.map((item) => (
-                <ActivityCard key={item.id} item={item} accountId={id} />
+                <ActivityCard key={item.id} item={item} accountId={id} isExternal={isExternalAccount} />
               ))
             ) : (
               <div className="py-8 text-center">

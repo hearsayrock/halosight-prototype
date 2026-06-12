@@ -114,6 +114,7 @@ export default function ActivityDetailPage({
   const detail = mockAccountDetails[id];
   const account = detail ?? mockAccounts.find((a) => a.id === id);
   const activity = detail?.recentActivity.find((a) => a.id === activityId);
+  const isExternalAccount = !mockAccounts.some((a) => a.id === id);
 
   if (!account || !activity) {
     return (
@@ -128,16 +129,34 @@ export default function ActivityDetailPage({
 
       {/* Header */}
       <div className="pt-10 px-4 pb-4">
-        {/* Back + more buttons row */}
+        {/* Back + rep avatar / more row */}
         <div className="flex items-center justify-between mb-3">
           <Link href={`/accounts/${id}?tab=activity`}>
             <button className="p-1 active:opacity-60 transition-opacity">
-              <Icon name="chevron_left" size={24} style={{ color: "var(--color-text-muted)" }} />
+              <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
             </button>
           </Link>
-          <button className="p-1 active:opacity-60 transition-opacity">
-            <Icon name="more_horiz" size={22} style={{ color: "var(--color-text-muted)" }} />
-          </button>
+          {activity.repName !== "Jordan Mills" ? (
+            <div className="flex items-center gap-2 pr-1">
+              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>Captured by</span>
+              <div
+                className="flex items-center justify-center rounded-full text-[13px] font-semibold"
+                style={{
+                  width: 28,
+                  height: 28,
+                  background: "var(--color-dark-secondary)",
+                  color: "var(--color-text-muted)",
+                  border: "1.5px solid var(--color-dark-tertiary)",
+                }}
+              >
+                {activity.repName.charAt(0)}
+              </div>
+            </div>
+          ) : (
+            <button className="p-1 active:opacity-60 transition-opacity">
+              <Icon name="more_horiz" size={22} style={{ color: "var(--color-text-muted)" }} />
+            </button>
+          )}
         </div>
 
         {/* Account name — tappable to reassign */}
@@ -161,6 +180,22 @@ export default function ActivityDetailPage({
         <p className="text-center text-sm" style={{ color: "var(--color-text-disabled)" }}>
           {formatFullDate(activity.date)}
         </p>
+
+        {/* External account badge */}
+        {isExternalAccount && (
+          <div className="flex justify-center mt-2">
+            <span
+              className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+              style={{
+                background: "rgba(139,146,255,0.1)",
+                color: "var(--color-brand-purple)",
+                border: "1px solid rgba(139,146,255,0.2)",
+              }}
+            >
+              Not in your accounts
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Scrollable body */}
