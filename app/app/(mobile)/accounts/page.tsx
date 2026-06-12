@@ -584,10 +584,7 @@ function CombinedPageContent() {
     setAllAccounts((prev) => [newAccount, ...prev]);
     setQuery("");
     setTypeFilter("all");
-    goToMode("accounts");
-    setSuccessToast("Company added");
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    toastTimerRef.current = setTimeout(() => setSuccessToast(null), 3500);
+    router.push(`/accounts/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
   }
 
   // Create account sheet

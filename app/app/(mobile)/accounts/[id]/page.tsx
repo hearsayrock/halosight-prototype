@@ -114,8 +114,16 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   const { status: captureStatus, accountId: capturingId, startCapture } = useCapture();
   const isCapturing = captureStatus !== "idle" && capturingId === id;
 
+  const justCreated = searchParams.get("just_created") === "true";
+  const justCreatedName = searchParams.get("name") ?? "";
+
   const detail = mockAccountDetails[id];
-  const account = detail ?? mockAccounts.find((a) => a.id === id);
+  const mockAccount = mockAccounts.find((a) => a.id === id);
+
+  // For just-created companies that aren't in mock data yet, build a shell account from URL params
+  const account = detail ?? mockAccount ?? (justCreated && justCreatedName
+    ? { id, name: justCreatedName, type: "standalone" as const, halosightType: "prospect" as const, distanceMiles: 0, lastVisited: new Date(), taskCount: 0 }
+    : undefined);
 
   // ── Preview states ────────────────────────────────────────────────────────
   if (preview === "loading") return <AccountDetailSkeleton />;
@@ -192,8 +200,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           </div>
         )}
 
-        {/* Tabs */}
-        <div
+        {/* Tabs — hidden on just-created blank slate */}
+        {!justCreated && <div
           className="flex p-1 gap-1 mx-auto"
           style={{ width: 255, background: "var(--color-dark-primary)", borderRadius: "var(--radius-full)" }}
         >
@@ -211,11 +219,31 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
           ))}
-        </div>
+        </div>}
       </div>
 
+      {/* Just-created empty state — replaces tabs entirely */}
+      {justCreated && (
+        <div className="flex-1 flex flex-col items-center justify-center px-8 pb-24 text-center">
+          <Icon name="auto_awesome" size={32} style={{ color: "var(--color-brand-purple)", marginBottom: 20 }} />
+          <h2
+            style={{
+              fontFamily: "Roboto Slab, Georgia, serif",
+              fontSize: 22, fontWeight: 700,
+              color: "var(--color-text-primary)",
+              lineHeight: 1.25, marginBottom: 12,
+            }}
+          >
+            And just like that,<br />{account.name} exists.
+          </h2>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: "var(--color-text-muted)", maxWidth: 280 }}>
+            No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and the very eager button below.
+          </p>
+        </div>
+      )}
+
       {/* Tab content — pb accounts for capture button + BottomNav */}
-      <div className="flex-1 overflow-y-auto pb-24">
+      {!justCreated && <div className="flex-1 overflow-y-auto pb-24">
 
         {/* Overview */}
         {activeTab === "overview" && (
@@ -330,7 +358,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           </div>
         )}
 
-      </div>
+      </div>}
 
       {/* Capture Meeting CTA — hidden while a capture is active for this account */}
       {!isCapturing && (
