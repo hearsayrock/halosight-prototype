@@ -237,7 +237,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             And just like that,<br />{account.name} exists.
           </h2>
           <p style={{ fontSize: 15, lineHeight: 1.6, color: "var(--color-text-muted)", maxWidth: 280 }}>
-            No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and the very eager button below.
+            No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and nowhere to go but up.
           </p>
         </div>
       )}
