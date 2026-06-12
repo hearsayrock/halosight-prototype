@@ -1322,8 +1322,17 @@ function CombinedPageContent() {
                                     </div>
                                   </div>
                                 </div>
-                                <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
                               </Link>
+                              {/* Origin activity link icon — outside content Link to avoid nested anchors */}
+                              {item.originActivityId && (
+                                <Link
+                                  href={`/accounts/${item.accountId}/activity/${item.originActivityId}`}
+                                  className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
+                                  style={{ width: 44, height: 44 }}
+                                >
+                                  <Icon name="link" size={16} style={{ color: "var(--color-text-disabled)" }} />
+                                </Link>
+                              )}
                             </motion.div>
                           );
                         })}

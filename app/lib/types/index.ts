@@ -49,6 +49,7 @@ export interface ActionItem {
   status: ActionItemStatus;
   note?: string;          // optional completion note
   originActivity?: string; // name of the visit/call this item was generated from
+  originActivityId?: string; // links to /accounts/[accountId]/activity/[originActivityId]
 }
 
 export interface AccountDetail extends Account {

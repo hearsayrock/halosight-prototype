@@ -200,12 +200,12 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Confirm any pain points before they grow",
     ],
     actionItems: [
-      { id: "ja-t1", title: "Send Q2 pricing update",        dueDate: future(6, 5),  status: "open", originActivity: "Follow-Up Call" },
-      { id: "ja-t2", title: "On-site training for new team", dueDate: null,          status: "open", originActivity: "Client Presentation" },
-      { id: "ja-t3", title: "Provide weekly updates",        dueDate: future(6, 20), status: "open", originActivity: "Client Presentation" },
-      { id: "ja-t4", title: "Investigate account",           dueDate: future(6, 12), status: "open", originActivity: "Market Research" },
-      { id: "ja-t5", title: "Send intro deck",               dueDate: daysAgo(3),    status: "done", originActivity: "Discovery Call" },
-      { id: "ja-t6", title: "Confirm meeting with Marcus",   dueDate: daysAgo(7),    status: "done", originActivity: "Discovery Call" },
+      { id: "ja-t1", title: "Send Q2 pricing update",        dueDate: future(6, 5),  status: "open", originActivity: "Follow-Up Call",      originActivityId: "ja-6" },
+      { id: "ja-t2", title: "On-site training for new team", dueDate: null,          status: "open", originActivity: "Client Presentation",  originActivityId: "ja-4" },
+      { id: "ja-t3", title: "Provide weekly updates",        dueDate: future(6, 20), status: "open", originActivity: "Client Presentation",  originActivityId: "ja-4" },
+      { id: "ja-t4", title: "Investigate account",           dueDate: future(6, 12), status: "open", originActivity: "Market Research",      originActivityId: "ja-3" },
+      { id: "ja-t5", title: "Send intro deck",               dueDate: daysAgo(3),    status: "done", originActivity: "Discovery Call",       originActivityId: "ja-1" },
+      { id: "ja-t6", title: "Confirm meeting with Marcus",   dueDate: daysAgo(7),    status: "done", originActivity: "Discovery Call",       originActivityId: "ja-1" },
     ],
     recentActivity: [
       {
@@ -256,11 +256,11 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Mention the Cedar City distribution hub — proximity is a differentiator",
     ],
     actionItems: [
-      { id: "wc-t1", title: "Send pricing recap",              dueDate: future(6, 4),  status: "open", originActivity: "Discovery Call" },
-      { id: "wc-t2", title: "Follow up with procurement",      dueDate: future(6, 8),  status: "open", originActivity: "Discovery Call" },
-      { id: "wc-t3", title: "Confirm delivery SLA in writing", dueDate: future(6, 15), status: "open", originActivity: "Ops Check-In" },
-      { id: "wc-t4", title: "Schedule Q3 planning call",       dueDate: null,          status: "open", originActivity: "Ops Check-In" },
-      { id: "wc-t5", title: "Send updated contract draft",     dueDate: future(6, 20), status: "open", originActivity: "Contract Discussion" },
+      { id: "wc-t1", title: "Send pricing recap",              dueDate: future(6, 4),  status: "open", originActivity: "Discovery Call",      originActivityId: "wc-2" },
+      { id: "wc-t2", title: "Follow up with procurement",      dueDate: future(6, 8),  status: "open", originActivity: "Discovery Call",      originActivityId: "wc-2" },
+      { id: "wc-t3", title: "Confirm delivery SLA in writing", dueDate: future(6, 15), status: "open", originActivity: "Ops Check-In",        originActivityId: "wc-1" },
+      { id: "wc-t4", title: "Schedule Q3 planning call",       dueDate: null,          status: "open", originActivity: "Ops Check-In",        originActivityId: "wc-1" },
+      { id: "wc-t5", title: "Send updated contract draft",     dueDate: future(6, 20), status: "open", originActivity: "Contract Discussion", originActivityId: "wc-6" },
     ],
     recentActivity: [
       {
@@ -313,11 +313,11 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Confirm any pain points before they grow",
     ],
     actionItems: [
-      { id: "wm-t1", title: "Send Q2 pricing update",     dueDate: future(6, 5),  status: "open", originActivity: "Quarterly Review" },
-      { id: "wm-t2", title: "Schedule executive review",  dueDate: future(6, 18), status: "open", originActivity: "Quarterly Review" },
-      { id: "wm-t3", title: "Share turnaround SLA doc",   dueDate: future(6, 10), status: "open", originActivity: "Quarterly Review" },
-      { id: "wm-t4", title: "Send Q1 recap report",       dueDate: daysAgo(5),    status: "done", originActivity: "Routine Check-In" },
-      { id: "wm-t5", title: "Confirm Q2 site visit",      dueDate: daysAgo(10),   status: "done", originActivity: "Routine Check-In" },
+      { id: "wm-t1", title: "Send Q2 pricing update",     dueDate: future(6, 5),  status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1" },
+      { id: "wm-t2", title: "Schedule executive review",  dueDate: future(6, 18), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1" },
+      { id: "wm-t3", title: "Share turnaround SLA doc",   dueDate: future(6, 10), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1" },
+      { id: "wm-t4", title: "Send Q1 recap report",       dueDate: daysAgo(5),    status: "done", originActivity: "Routine Check-In", originActivityId: "wm-2" },
+      { id: "wm-t5", title: "Confirm Q2 site visit",      dueDate: daysAgo(10),   status: "done", originActivity: "Routine Check-In", originActivityId: "wm-2" },
     ],
     recentActivity: [
       { id: "wm-1", accountId: "walmart-corp", date: at(3, 14, 20),  type: "visit", title: "Quarterly Review",      summary: "Discussed Q2 supply chain concerns. Tom mentioned potential for expanded order next quarter.", durationMinutes: 55,  hasTranscript: true,  repName: "Jordan Mills" },
@@ -339,10 +339,10 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Check in on satisfaction across branch locations",
     ],
     actionItems: [
-      { id: "pf-t1", title: "Submit Q3 fleet proposal",      dueDate: future(5, 30), status: "open", originActivity: "Leadership Check-In" },
-      { id: "pf-t2", title: "Prepare volume discount sheet",  dueDate: future(6, 7),  status: "open", originActivity: "Leadership Check-In" },
-      { id: "pf-t3", title: "Check in on Glendale 1 branch",  dueDate: future(6, 14), status: "open", originActivity: "Annual Strategy" },
-      { id: "pf-t4", title: "Send annual contract renewal",   dueDate: daysAgo(4),    status: "done", originActivity: "Annual Strategy" },
+      { id: "pf-t1", title: "Submit Q3 fleet proposal",      dueDate: future(5, 30), status: "open", originActivity: "Leadership Check-In", originActivityId: "pf-1" },
+      { id: "pf-t2", title: "Prepare volume discount sheet",  dueDate: future(6, 7),  status: "open", originActivity: "Leadership Check-In", originActivityId: "pf-1" },
+      { id: "pf-t3", title: "Check in on Glendale 1 branch",  dueDate: future(6, 14), status: "open", originActivity: "Annual Strategy",      originActivityId: "pf-3" },
+      { id: "pf-t4", title: "Send annual contract renewal",   dueDate: daysAgo(4),    status: "done", originActivity: "Annual Strategy",      originActivityId: "pf-3" },
     ],
     recentActivity: [
       { id: "pf-1", accountId: "profleet-corp", date: at(6, 10, 30),  type: "visit", title: "Leadership Check-In",  summary: "Met with ops leadership re: Q3 fleet expansion. Budget confirmed. Formal proposal requested.", durationMinutes: 60,  hasTranscript: true,  repName: "Jordan Mills" },
@@ -363,8 +363,8 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Check on status of pending invoice from last month",
     ],
     actionItems: [
-      { id: "pg-t1", title: "Send expanded contract proposal", dueDate: future(6, 3),  status: "open", originActivity: "Fleet Expansion" },
-      { id: "pg-t2", title: "Resolve pending invoice",         dueDate: future(5, 30), status: "open", originActivity: "Invoice Follow-Up" },
+      { id: "pg-t1", title: "Send expanded contract proposal", dueDate: future(6, 3),  status: "open", originActivity: "Fleet Expansion",   originActivityId: "pg-1" },
+      { id: "pg-t2", title: "Resolve pending invoice",         dueDate: future(5, 30), status: "open", originActivity: "Invoice Follow-Up", originActivityId: "pg-2" },
     ],
     recentActivity: [
       { id: "pg-1", accountId: "profleet-glendale-2", date: at(0, 9, 15),  type: "visit", title: "Fleet Expansion",     summary: "Q3 fleet expansion discussed. Budget confirmed. Strong opportunity for expanded contract.",         durationMinutes: 45,  hasTranscript: true,  repName: "Jordan Mills" },
@@ -384,10 +384,10 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Ask about any remaining internal stakeholders to align",
     ],
     actionItems: [
-      { id: "it-t1", title: "Share implementation timeline",    dueDate: future(6, 2),  status: "open", originActivity: "Vendor Review" },
-      { id: "it-t2", title: "Intro call with CS lead",          dueDate: future(6, 9),  status: "open", originActivity: "Vendor Review" },
-      { id: "it-t3", title: "On-site training for new team",    dueDate: null,          status: "open", originActivity: "Vendor Review" },
-      { id: "it-t4", title: "Send phased rollout options doc",  dueDate: future(6, 6),  status: "open", originActivity: "Vendor Review" },
+      { id: "it-t1", title: "Share implementation timeline",    dueDate: future(6, 2),  status: "open", originActivity: "Vendor Review", originActivityId: "it-1" },
+      { id: "it-t2", title: "Intro call with CS lead",          dueDate: future(6, 9),  status: "open", originActivity: "Vendor Review", originActivityId: "it-1" },
+      { id: "it-t3", title: "On-site training for new team",    dueDate: null,          status: "open", originActivity: "Vendor Review", originActivityId: "it-1" },
+      { id: "it-t4", title: "Send phased rollout options doc",  dueDate: future(6, 6),  status: "open", originActivity: "Vendor Review", originActivityId: "it-1" },
     ],
     recentActivity: [
       { id: "it-1", accountId: "innovative-tech-tucson", date: at(30, 10, 0),  type: "visit", title: "Vendor Review",        summary: "Sandra shared that we're the frontrunner in their vendor evaluation. Budget approved, timeline is key concern.", durationMinutes: 50,  hasTranscript: true,  repName: "Jordan Mills" },
@@ -407,9 +407,9 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Confirm any outstanding support tickets",
     ],
     actionItems: [
-      { id: "pf-flag-t1", title: "Send Q3 service estimate",    dueDate: future(6, 10), status: "open", originActivity: "On-site Visit" },
-      { id: "pf-flag-t2", title: "Follow up with ops manager",  dueDate: future(6, 14), status: "open", originActivity: "On-site Visit" },
-      { id: "pf-flag-t3", title: "Submit volume discount sheet", dueDate: future(6, 20), status: "open", originActivity: "On-site Visit" },
+      { id: "pf-flag-t1", title: "Send Q3 service estimate",    dueDate: future(6, 10), status: "open", originActivity: "On-site Visit", originActivityId: "pf-flagstaff-1" },
+      { id: "pf-flag-t2", title: "Follow up with ops manager",  dueDate: future(6, 14), status: "open", originActivity: "On-site Visit", originActivityId: "pf-flagstaff-1" },
+      { id: "pf-flag-t3", title: "Submit volume discount sheet", dueDate: future(6, 20), status: "open", originActivity: "On-site Visit", originActivityId: "pf-flagstaff-1" },
     ],
     recentActivity: [
       { id: "pf-flagstaff-1", accountId: "profleet-flagstaff", date: at(4, 10, 45), type: "visit", title: "On-site Visit", summary: "Toured the Flagstaff facility and met the new ops manager. Discussed Q3 service needs and potential volume growth.", durationMinutes: 64, hasTranscript: true, repName: "Jordan Mills" },
@@ -428,8 +428,8 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Reconnect with Tom personally before pitching anything",
     ],
     actionItems: [
-      { id: "rb-t1", title: "Send re-engagement email", dueDate: future(6, 5),  status: "open", originActivity: "Re-engagement Visit" },
-      { id: "rb-t2", title: "Schedule demo call",       dueDate: future(6, 18), status: "open", originActivity: "Re-engagement Visit" },
+      { id: "rb-t1", title: "Send re-engagement email", dueDate: future(6, 5),  status: "open", originActivity: "Re-engagement Visit", originActivityId: "rb-1" },
+      { id: "rb-t2", title: "Schedule demo call",       dueDate: future(6, 18), status: "open", originActivity: "Re-engagement Visit", originActivityId: "rb-1" },
     ],
     recentActivity: [
       { id: "rb-1", accountId: "riverbend-collision", date: at(365, 14, 0), type: "visit", title: "Re-engagement Visit",  summary: "Reconnected with Tom after a long gap. Friendly conversation — not ready to move, but open to staying in touch.", durationMinutes: 25, hasTranscript: false, repName: "Jordan Mills" },
@@ -459,9 +459,9 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Mention the fleet account tier — volume discounts could be a real hook here",
     ],
     actionItems: [
-      { id: "hea-t1", title: "Send fleet pricing comparison",       dueDate: future(6, 10), status: "open", originActivity: "Drop-In Visit" },
-      { id: "hea-t2", title: "Follow up with Dana on Q3 volume",    dueDate: future(6, 18), status: "open", originActivity: "Drop-In Visit" },
-      { id: "hea-t3", title: "Confirm number of vehicles in fleet", dueDate: null,          status: "open", originActivity: "Drop-In Visit" },
+      { id: "hea-t1", title: "Send fleet pricing comparison",       dueDate: future(6, 10), status: "open", originActivity: "Drop-In Visit", originActivityId: "hea-1" },
+      { id: "hea-t2", title: "Follow up with Dana on Q3 volume",    dueDate: future(6, 18), status: "open", originActivity: "Drop-In Visit", originActivityId: "hea-1" },
+      { id: "hea-t3", title: "Confirm number of vehicles in fleet", dueDate: null,          status: "open", originActivity: "Drop-In Visit", originActivityId: "hea-1" },
     ],
     recentActivity: [
       {

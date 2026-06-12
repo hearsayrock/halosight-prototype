@@ -182,14 +182,6 @@ function TaskRow({
                 {accountName}
               </span>
             </div>
-            {item.originActivity && (
-              <div className="flex items-center gap-1">
-                <Icon name="mic" size={12} style={{ color: "var(--color-brand-purple-dark)" }} />
-                <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
-                  {item.originActivity}
-                </span>
-              </div>
-            )}
           </div>
         </div>
         <Icon
@@ -198,6 +190,17 @@ function TaskRow({
           style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }}
         />
       </Link>
+
+      {/* Origin activity link icon — outside content Link to avoid nested anchors */}
+      {item.originActivityId && (
+        <Link
+          href={`/accounts/${item.accountId}/activity/${item.originActivityId}`}
+          className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
+          style={{ width: 44, height: 44 }}
+        >
+          <Icon name="link" size={16} style={{ color: "var(--color-text-disabled)" }} />
+        </Link>
+      )}
     </motion.div>
   );
 }
