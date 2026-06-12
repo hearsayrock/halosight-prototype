@@ -12,6 +12,7 @@ const daysAgo = (n: number) => new Date(now.getTime() - n * 24 * 60 * 60 * 1000)
 
 /** Full rep names keyed by account id — shown as "Assigned to ___" */
 export const systemAccountReps: Record<string, string> = {
+  "sys-happily-ever-after":   "Unassigned",
   "sys-big-o-reno":         "Sarah K.",
   "sys-napa-elko":          "Sarah K.",
   "sys-oreilly-wendover":   "Sarah K.",
@@ -27,6 +28,17 @@ export const systemAccountReps: Record<string, string> = {
 };
 
 export const mockSystemAccounts: Account[] = [
+  {
+    id: "sys-happily-ever-after",
+    name: "Happily Ever After LLC",
+    type: "standalone",
+    crmAccountType: "prospect",
+    taskCount: 0,
+    distanceMiles: 3.2,
+    lastVisited: daysAgo(999),
+    crmId: "SF-113",
+    healthScore: 0,
+  },
   {
     id: "sys-big-o-reno",
     name: "Big O Tires",
