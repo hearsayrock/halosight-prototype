@@ -10,6 +10,10 @@
  *
  * Both sidebars are independently collapsible.
  * Press \ (backslash) or click the toggle above the phone to hide/show all panels.
+ *
+ * MOBILE BREAKPOINT (≤ 767px):
+ *   The phone frame chrome disappears entirely — the app fills the real
+ *   viewport exactly as it would on a native device.
  */
 
 import { useState, useEffect } from "react";
@@ -28,15 +32,24 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
   const [rightCollapsed, setRightCollapsed] = useState(true);
   // Sidebars hidden on this branch for user testing — flip to false to restore
   const [focusMode, setFocusMode]           = useState(true);
+  const [isMobile, setIsMobile]             = useState(false);
 
   const { width, height } = SIZES[deviceSize];
   const currentBranch = process.env.NEXT_PUBLIC_GIT_BRANCH ?? "local";
+
+  // Track real-device viewport
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   // Keyboard shortcut: \ toggles focus mode
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "\\" && !e.metaKey && !e.ctrlKey && !e.altKey) {
-        // Don't fire if typing in an input
         if (document.activeElement?.tagName === "INPUT" ||
             document.activeElement?.tagName === "TEXTAREA") return;
         setFocusMode(f => !f);
@@ -46,6 +59,27 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  const overlayRoot = (
+    <div
+      id="phone-overlay-root"
+      style={{ position: "absolute", inset: 0, zIndex: 100, pointerEvents: "none" }}
+    />
+  );
+
+  // ── Mobile: no frame chrome, app fills the real screen ───────────────────────
+  if (isMobile) {
+    return (
+      <div
+        className="phone-screen"
+        style={{ width: "100vw", height: "100dvh", position: "relative", background: "var(--color-background)" }}
+      >
+        {children}
+        {overlayRoot}
+      </div>
+    );
+  }
+
+  // ── Desktop: phone frame mockup ───────────────────────────────────────────────
   const showSidebars = !focusMode;
 
   return (
@@ -77,16 +111,7 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
       >
         <div className="phone-screen" style={{ position: "relative", overflow: "hidden" }}>
           {children}
-          {/* Overlay root — sheets/modals portal here to sit above PageTransition + BottomNav */}
-          <div
-            id="phone-overlay-root"
-            style={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 100,
-              pointerEvents: "none",
-            }}
-          />
+          {overlayRoot}
         </div>
       </div>
 
