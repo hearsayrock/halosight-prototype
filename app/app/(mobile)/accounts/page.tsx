@@ -1039,12 +1039,14 @@ function CombinedPageContent() {
               ) : null}
 
               {hasQuery && myFiltered.length > 0 && systemState === "idle" && (
-                <button onClick={triggerSystemSearch}
-                  className="mx-4 mt-2 mb-1 rounded-xl text-xs font-semibold active:opacity-70 transition-opacity flex items-center justify-center gap-1.5"
-                  style={{ background: "transparent", border: "1px solid var(--color-dark-tertiary)", color: "var(--color-text-muted)", padding: "10px 16px", width: "calc(100% - 32px)" }}>
-                  <Icon name="public" size={13} style={{ color: "var(--color-text-muted)" }} />
-                  Search all Tomorrowland Innovations
-                </button>
+                <div className="flex justify-center mt-2 mb-1">
+                  <button onClick={triggerSystemSearch}
+                    className="rounded-xl text-xs font-semibold active:opacity-70 transition-opacity flex items-center justify-center gap-1.5"
+                    style={{ background: "transparent", border: "1px solid var(--color-dark-tertiary)", color: "var(--color-text-muted)", padding: "10px 24px" }}>
+                    <Icon name="public" size={13} style={{ color: "var(--color-text-muted)" }} />
+                    Search all Tomorrowland Innovations
+                  </button>
+                </div>
               )}
 
               {showSystemSection && (
