@@ -39,6 +39,7 @@ import ErrorState from "@/components/ui/ErrorState";
 import CompletionToast from "@/components/ui/CompletionToast";
 import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
+import VisitedFilterDropdown, { type VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
 import CreateAccountSheet from "@/components/accounts/CreateAccountSheet";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import { mockSystemAccounts, systemAccountReps } from "@/lib/mock-data/system-accounts";
@@ -593,7 +594,10 @@ function CombinedPageContent() {
   // Accounts search (used in accounts mode)
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("alphabetical");
-  const [typeFilter, setTypeFilter] = useState<AccountTypeFilter>("all");
+  const [typeFilter, setTypeFilter]         = useState<AccountTypeFilter>("all");
+  const [visitedFilter, setVisitedFilter]   = useState<VisitedFilter>("all");
+  const [visitedFrom, setVisitedFrom]       = useState<Date | null>(null);
+  const [visitedTo, setVisitedTo]           = useState<Date | null>(null);
   const [systemState, setSystemState] = useState<SystemSearchState>("idle");
   const [systemResults, setSystemResults] = useState<Account[]>([]);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -658,8 +662,27 @@ function CombinedPageContent() {
       : typeFilter === "prospect"
         ? allAccounts.filter((a) => a.halosightType === "prospect")
         : allAccounts.filter((a) => a.crmAccountType === typeFilter);
-    return sortAccounts(searchAccounts(byType, query), sort);
-  }, [allAccounts, query, sort, typeFilter]);
+
+    const PRESET_DAYS: Record<string, number> = { "7d": 7, "14d": 14, "30d": 30, "90d": 90 };
+    const byVisited = visitedFilter === "all"
+      ? byType
+      : visitedFilter === "custom"
+        ? byType.filter((a) => {
+            const t = a.lastVisited.getTime();
+            if (visitedFrom && t < visitedFrom.getTime()) return false;
+            if (visitedTo) {
+              const end = new Date(visitedTo); end.setHours(23, 59, 59, 999);
+              if (t > end.getTime()) return false;
+            }
+            return true;
+          })
+        : byType.filter((a) => {
+            const cutoff = Date.now() - PRESET_DAYS[visitedFilter] * 86_400_000;
+            return a.lastVisited.getTime() >= cutoff;
+          });
+
+    return sortAccounts(searchAccounts(byVisited, query), sort);
+  }, [allAccounts, query, sort, typeFilter, visitedFilter, visitedFrom, visitedTo]);
   // Priorities grouped by account — same logic as /tasks page
   const taskGroups = useMemo(() => {
     const all = getAllItems()
@@ -895,6 +918,16 @@ function CombinedPageContent() {
               ]}
               value={typeFilter}
               onChange={setTypeFilter}
+            />
+            <VisitedFilterDropdown
+              value={visitedFilter}
+              customFrom={visitedFrom}
+              customTo={visitedTo}
+              onChange={(v, from, to) => {
+                setVisitedFilter(v);
+                setVisitedFrom(from ?? null);
+                setVisitedTo(to ?? null);
+              }}
             />
           </motion.div>
         )}
