@@ -26,7 +26,8 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
   const [deviceSize, setDeviceSize]         = useState<DeviceSize>("14");
   const [leftCollapsed, setLeftCollapsed]   = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(true);
-  const [focusMode, setFocusMode]           = useState(false);
+  // Sidebars hidden on this branch for user testing — flip to false to restore
+  const [focusMode, setFocusMode]           = useState(true);
 
   const { width, height } = SIZES[deviceSize];
   const currentBranch = process.env.NEXT_PUBLIC_GIT_BRANCH ?? "local";
