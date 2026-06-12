@@ -47,6 +47,7 @@ export interface ActionItem {
   title: string;
   dueDate: Date | null;   // null = TBD
   status: ActionItemStatus;
+  note?: string;          // optional completion note
 }
 
 export interface AccountDetail extends Account {

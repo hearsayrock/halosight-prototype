@@ -37,6 +37,7 @@ import Icon from "@/components/ui/Icon";
 import { AccountListSkeleton } from "@/components/ui/Skeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import CompletionToast from "@/components/ui/CompletionToast";
+import NoteSheet from "@/components/ui/NoteSheet";
 import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
 import VisitedFilterDropdown, { type VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
@@ -617,22 +618,51 @@ function CombinedPageContent() {
   const [completedTaskIds, setCompletedTaskIds] = useState<string[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Note sheet — shared by both home strip and priorities completions
+  const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+  const [pendingNoteInfo, setPendingNoteInfo] = useState<{
+    accountId: string;
+    itemId: string;
+    homeTaskId?: string; // only set for home task strip completions
+  } | null>(null);
+
   const availableTasks = mockTasks.filter((t) => !completedTaskIds.includes(t.id));
 
   function handleCheck(task: HomeTask) {
     if (pendingTaskId) return;
     setPendingTaskId(task.id);
+    setPendingNoteInfo({ accountId: task.accountId, itemId: task.itemId, homeTaskId: task.id });
     timerRef.current = setTimeout(() => {
       const item = getItems(task.accountId).find((i) => i.id === task.itemId);
       if (item) updateItem(task.accountId, { ...item, status: "done" });
       setCompletedTaskIds((prev) => [...prev, task.id]);
       setPendingTaskId(null);
-    }, 5000);
+      setPendingNoteInfo(null);
+    }, 8000);
   }
 
   function handleUndo() {
     if (timerRef.current) clearTimeout(timerRef.current);
     setPendingTaskId(null);
+    setPendingNoteInfo(null);
+  }
+
+  function handleAddNote() {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = null;
+    setNoteSheetOpen(true);
+  }
+
+  function handleNoteDone(note: string) {
+    if (pendingNoteInfo) {
+      const { accountId, itemId, homeTaskId } = pendingNoteInfo;
+      const item = getItems(accountId).find((i) => i.id === itemId);
+      if (item) updateItem(accountId, { ...item, status: "done", ...(note.trim() ? { note } : {}) });
+      if (homeTaskId) setCompletedTaskIds((prev) => [...prev, homeTaskId]);
+    }
+    setNoteSheetOpen(false);
+    setPendingTaskId(null);
+    setPendingNoteInfo(null);
   }
 
   // Reset system search when accounts query changes
@@ -1201,10 +1231,12 @@ function CombinedPageContent() {
                                   onClick={() => {
                                     if (pendingTaskId) return;
                                     setPendingTaskId(item.id);
+                                    setPendingNoteInfo({ accountId: item.accountId, itemId: item.id });
                                     timerRef.current = setTimeout(() => {
                                       updateItem(item.accountId, { ...item, status: "done" });
                                       setPendingTaskId(null);
-                                    }, 5000);
+                                      setPendingNoteInfo(null);
+                                    }, 8000);
                                   }}
                                   className="relative flex-shrink-0 w-5 h-5 rounded-full active:scale-90 transition-transform"
                                 >
@@ -1313,20 +1345,25 @@ function CombinedPageContent() {
 
       {/* Completion toast */}
       <CompletionToast
-        visible={pendingTaskId !== null}
+        visible={pendingTaskId !== null && !noteSheetOpen}
         bottom={24}
         onUndo={handleUndo}
+        onAddNote={handleAddNote}
         onDismiss={() => {
           if (timerRef.current) clearTimeout(timerRef.current);
-          const task = mockTasks.find((t) => t.id === pendingTaskId);
-          if (task) {
-            const item = getItems(task.accountId).find((i) => i.id === task.itemId);
-            if (item) updateItem(task.accountId, { ...item, status: "done" });
-            setCompletedTaskIds((prev) => [...prev, task.id]);
-            setPendingTaskId(null);
+          if (pendingNoteInfo) {
+            const { accountId, itemId, homeTaskId } = pendingNoteInfo;
+            const item = getItems(accountId).find((i) => i.id === itemId);
+            if (item) updateItem(accountId, { ...item, status: "done" });
+            if (homeTaskId) setCompletedTaskIds((prev) => [...prev, homeTaskId]);
           }
+          setPendingTaskId(null);
+          setPendingNoteInfo(null);
         }}
       />
+
+      {/* Note sheet */}
+      <NoteSheet visible={noteSheetOpen} onDone={handleNoteDone} />
     </div>
   );
 }

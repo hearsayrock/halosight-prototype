@@ -15,6 +15,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import CompletionToast from "@/components/ui/CompletionToast";
+import NoteSheet from "@/components/ui/NoteSheet";
 import FilterDropdown from "@/components/ui/FilterDropdown";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { mockAccounts } from "@/lib/mock-data/accounts";
@@ -207,11 +208,12 @@ export default function TasksPage() {
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
   const [pendingAccountId, setPendingAccountId] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [noteSheetOpen, setNoteSheetOpen] = useState(false);
 
   const commitCompletion = useCallback(
-    (itemId: string, accountId: string) => {
+    (itemId: string, accountId: string, note?: string) => {
       const item = getItems(accountId).find((i) => i.id === itemId);
-      if (item) updateItem(accountId, { ...item, status: "done" });
+      if (item) updateItem(accountId, { ...item, status: "done", ...(note?.trim() ? { note } : {}) });
       setPendingItemId(null);
       setPendingAccountId(null);
       timerRef.current = null;
@@ -223,7 +225,7 @@ export default function TasksPage() {
     if (pendingItemId) return; // one at a time
     setPendingItemId(itemId);
     setPendingAccountId(accountId);
-    timerRef.current = setTimeout(() => commitCompletion(itemId, accountId), 5000);
+    timerRef.current = setTimeout(() => commitCompletion(itemId, accountId), 8000);
   }
 
   function handleUndo() {
@@ -237,6 +239,19 @@ export default function TasksPage() {
     if (!pendingItemId || !pendingAccountId) return;
     if (timerRef.current) clearTimeout(timerRef.current);
     commitCompletion(pendingItemId, pendingAccountId);
+  }
+
+  function handleAddNote() {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = null;
+    setNoteSheetOpen(true);
+  }
+
+  function handleNoteDone(note: string) {
+    if (pendingItemId && pendingAccountId) {
+      commitCompletion(pendingItemId, pendingAccountId, note);
+    }
+    setNoteSheetOpen(false);
   }
 
   const groups = useMemo<Group[]>(() => {
@@ -410,11 +425,15 @@ export default function TasksPage() {
 
       {/* Toast — no bottom nav on this page */}
       <CompletionToast
-        visible={pendingItemId !== null}
+        visible={pendingItemId !== null && !noteSheetOpen}
         bottom={24}
         onUndo={handleUndo}
         onDismiss={handleDismissToast}
+        onAddNote={handleAddNote}
       />
+
+      {/* Note sheet */}
+      <NoteSheet visible={noteSheetOpen} onDone={handleNoteDone} />
 
     </div>
   );

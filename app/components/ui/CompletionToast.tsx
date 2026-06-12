@@ -1,9 +1,13 @@
 "use client";
 
 /**
- * CompletionToast — portaled "Item complete" banner with undo.
+ * CompletionToast — portaled "Item complete" banner with undo + optional note CTA.
  * Fades in when visible, fades + slides down on exit.
  * Portals into #phone-overlay-root so it sits above everything.
+ *
+ * Tokens: --color-dark-secondary (bg), --color-dark-tertiary (border),
+ *         --color-text-primary, --color-text-muted, --color-brand-purple,
+ *         --color-brand-teal, --radius-xl
  */
 
 import { createPortal } from "react-dom";
@@ -16,6 +20,8 @@ interface Props {
   bottom?: number;
   onUndo: () => void;
   onDismiss: () => void;
+  /** If provided, an "Add a note" row appears below the main row. */
+  onAddNote?: () => void;
 }
 
 export default function CompletionToast({
@@ -23,6 +29,7 @@ export default function CompletionToast({
   bottom = 24,
   onUndo,
   onDismiss,
+  onAddNote,
 }: Props) {
   const overlayRoot =
     typeof document !== "undefined"
@@ -50,48 +57,67 @@ export default function CompletionToast({
           }}
         >
           <div
-            className="flex items-center gap-3 px-4"
             style={{
-              height: 52,
               background: "var(--color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
               border: "1px solid var(--color-dark-tertiary)",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+              boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.3)",
+              padding: "12px 16px",
             }}
           >
-            {/* Green check circle */}
-            <div
-              className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
-              style={{ background: "#2ECC71" }}
-            >
-              <Icon name="check" size={14} style={{ color: "#fff" }} />
+            {/* Row 1: check icon + label + undo + dismiss */}
+            <div className="flex items-center gap-3">
+              {/* Green check circle */}
+              <div
+                className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
+                style={{ background: "#2ECC71" }}
+              >
+                <Icon name="check" size={14} style={{ color: "#fff" }} />
+              </div>
+
+              {/* Label */}
+              <span
+                className="flex-1 text-sm font-semibold"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                Item complete
+              </span>
+
+              {/* Undo */}
+              <button
+                onClick={onUndo}
+                className="text-sm font-semibold active:opacity-60 transition-opacity"
+                style={{ color: "var(--color-brand-purple)" }}
+              >
+                undo
+              </button>
+
+              {/* Dismiss */}
+              <button
+                onClick={onDismiss}
+                className="ml-1 flex items-center justify-center active:opacity-60 transition-opacity"
+                style={{ color: "var(--color-text-muted)" }}
+              >
+                <Icon name="close" size={18} />
+              </button>
             </div>
 
-            {/* Label */}
-            <span
-              className="flex-1 text-sm font-semibold"
-              style={{ color: "var(--color-text-primary)" }}
-            >
-              Item complete
-            </span>
-
-            {/* Undo */}
-            <button
-              onClick={onUndo}
-              className="text-sm font-semibold active:opacity-60 transition-opacity"
-              style={{ color: "var(--color-brand-purple)" }}
-            >
-              undo
-            </button>
-
-            {/* Dismiss */}
-            <button
-              onClick={onDismiss}
-              className="ml-1 flex items-center justify-center active:opacity-60 transition-opacity"
-              style={{ color: "var(--color-text-muted)" }}
-            >
-              <Icon name="close" size={18} />
-            </button>
+            {/* Row 2: Add a note CTA */}
+            {onAddNote && (
+              <button
+                onClick={onAddNote}
+                className="flex items-center gap-1.5 mt-2.5 active:opacity-60 transition-opacity"
+                style={{ paddingLeft: 36 }}
+              >
+                <Icon name="edit" size={13} style={{ color: "var(--color-brand-teal)" }} />
+                <span
+                  className="text-xs font-semibold"
+                  style={{ color: "var(--color-brand-teal)" }}
+                >
+                  Add a note
+                </span>
+              </button>
+            )}
           </div>
         </motion.div>
       )}
