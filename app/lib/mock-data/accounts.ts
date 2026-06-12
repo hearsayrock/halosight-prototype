@@ -87,7 +87,7 @@ export const mockAccounts: Account[] = [
     type: "branch",
     crmAccountType: "shipped-to",
     assignedInitial: "A",
-    taskCount: 3,
+    taskCount: 0,
     city: "Flagstaff",
     state: "AZ",
     distanceMiles: 845,
