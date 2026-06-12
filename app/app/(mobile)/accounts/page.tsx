@@ -473,9 +473,24 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
         {/* Right — task badge + chevron */}
         <div className="flex items-center gap-2 flex-shrink-0">
           {hasTask && (
-            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full"
-              style={{ background: "rgba(255,143,130,0.18)", fontSize: 11, fontWeight: 700, color: "var(--color-brand-coral-light)" }}>
-              {account.taskCount} open
+            <span
+              className="flex items-center gap-1 px-1.5 rounded-full"
+              style={{ background: "rgba(255, 143, 130, 0.20)", height: 20 }}
+            >
+              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
+                <path
+                  d="M4.5 6L5.5 7L7.5 5M2.5 1.5H9.5C10.0523 1.5 10.5 1.94772 10.5 2.5V9.5C10.5 10.0523 10.0523 10.5 9.5 10.5H2.5C1.94772 10.5 1.5 10.0523 1.5 9.5V2.5C1.5 1.94772 1.94772 1.5 2.5 1.5Z"
+                  stroke="var(--color-brand-coral-light)"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span
+                className="text-[11px] font-semibold"
+                style={{ color: "var(--color-brand-coral-light)", lineHeight: 1 }}
+              >
+                {account.taskCount}
+              </span>
             </span>
           )}
           <svg width="7" height="12" viewBox="0 0 7 12" fill="none">

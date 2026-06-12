@@ -147,7 +147,7 @@ export const mockAccounts: Account[] = [
     type: "standalone",
     halosightType: "prospect",
     assignedInitial: "N",
-    taskCount: 2,
+    taskCount: 0,
     city: "Mesa",
     state: "AZ",
     distanceMiles: 4.2,
