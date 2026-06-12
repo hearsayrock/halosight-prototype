@@ -1035,7 +1035,7 @@ function CombinedPageContent() {
                               account={account}
                               assignedRep={systemAccountReps[account.id] ?? "Unknown"}
                               isLast={i === systemResults.length - 1}
-                              onSelect={(a) => { window.location.href = `/accounts/${a.id}`; }}
+                              onSelect={(a) => router.push(`/accounts/${a.id}`)}
                             />
                           ))}
                         </div>
