@@ -1026,13 +1026,12 @@ function CombinedPageContent() {
                       style={{
                         padding: "13px 20px",
                         borderRadius: "var(--radius-full)",
-                        background: "rgba(139,146,255,0.15)",
-                        border: "1px solid rgba(139,146,255,0.35)",
-                        color: "var(--color-brand-purple)",
+                        background: "transparent",
+                        border: "1px solid var(--color-dark-tertiary)",
+                        color: "var(--color-text-muted)",
                         fontSize: 15,
-                        boxShadow: "0 0 18px rgba(139,146,255,0.12)",
                       }}>
-                      <Icon name="public" size={18} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+                      <Icon name="public" size={18} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
                       Search all Tomorrowland Innovations accounts
                     </button>
                   )}
