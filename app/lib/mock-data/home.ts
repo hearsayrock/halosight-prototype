@@ -13,6 +13,8 @@ export interface HomeTask {
   accountName: string;
   accountId: string;
   completed: boolean;
+  /** Name of the visit/call this item was generated from */
+  originActivity?: string;
 }
 
 export interface HomeActivity {
@@ -45,6 +47,7 @@ export const mockTasks: HomeTask[] = [
     accountName: "Acme Corporation",
     accountId: "walmart-corp",
     completed: false,
+    originActivity: "Quarterly Review",
   },
   {
     id: "task-2",
@@ -54,6 +57,7 @@ export const mockTasks: HomeTask[] = [
     accountName: "Reladyne",
     accountId: "profleet-glendale-2",
     completed: false,
+    originActivity: "Fleet Expansion",
   },
   {
     id: "task-3",
@@ -63,6 +67,7 @@ export const mockTasks: HomeTask[] = [
     accountName: "Innovative Tech",
     accountId: "innovative-tech-tucson",
     completed: false,
+    originActivity: "Vendor Review",
   },
   {
     id: "task-4",
@@ -72,6 +77,7 @@ export const mockTasks: HomeTask[] = [
     accountName: "Jack's Tire & Oil",
     accountId: "jacks-tire-elko",
     completed: false,
+    originActivity: "Follow-Up Call",
   },
   {
     id: "task-5",
@@ -81,6 +87,7 @@ export const mockTasks: HomeTask[] = [
     accountName: "ProFleet Maintenance",
     accountId: "profleet-corp",
     completed: false,
+    originActivity: "Leadership Check-In",
   },
   {
     id: "task-6",
@@ -90,6 +97,7 @@ export const mockTasks: HomeTask[] = [
     accountName: "Acme Corporation",
     accountId: "walmart-corp",
     completed: false,
+    originActivity: "Quarterly Review",
   },
 ];
 

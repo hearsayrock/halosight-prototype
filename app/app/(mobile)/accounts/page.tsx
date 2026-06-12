@@ -328,18 +328,28 @@ function TaskStrip({
                   <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.3 }}>
                     {task.title}
                   </p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
                     <span style={{
                       fontSize: 11,
                       color: isToday ? "var(--color-brand-coral)" : "var(--color-text-disabled)",
                       fontWeight: 500,
+                      flexShrink: 0,
                     }}>
                       {formatTaskDue(task.dueDate)}
                     </span>
-                    <span style={{ fontSize: 11, color: "var(--color-text-disabled)" }}>·</span>
+                    <span style={{ fontSize: 11, color: "var(--color-text-disabled)", flexShrink: 0 }}>·</span>
                     <span style={{ fontSize: 11, color: "var(--color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {task.accountName}
                     </span>
+                    {task.originActivity && (
+                      <>
+                        <span style={{ fontSize: 11, color: "var(--color-text-disabled)", flexShrink: 0 }}>·</span>
+                        <Icon name="mic" size={11} style={{ color: "var(--color-brand-purple-dark)", flexShrink: 0 }} />
+                        <span style={{ fontSize: 11, color: "var(--color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {task.originActivity}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </Link>
               </motion.div>

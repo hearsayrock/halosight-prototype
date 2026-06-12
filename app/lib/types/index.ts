@@ -48,6 +48,7 @@ export interface ActionItem {
   dueDate: Date | null;   // null = TBD
   status: ActionItemStatus;
   note?: string;          // optional completion note
+  originActivity?: string; // name of the visit/call this item was generated from
 }
 
 export interface AccountDetail extends Account {

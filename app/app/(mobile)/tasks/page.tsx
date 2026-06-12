@@ -158,7 +158,7 @@ function TaskRow({
           >
             {item.title}
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-center gap-1">
               <Icon
                 name="calendar_today"
@@ -182,6 +182,14 @@ function TaskRow({
                 {accountName}
               </span>
             </div>
+            {item.originActivity && (
+              <div className="flex items-center gap-1">
+                <Icon name="mic" size={12} style={{ color: "var(--color-brand-purple-dark)" }} />
+                <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+                  {item.originActivity}
+                </span>
+              </div>
+            )}
           </div>
         </div>
         <Icon
