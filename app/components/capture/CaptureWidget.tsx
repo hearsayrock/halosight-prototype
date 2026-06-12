@@ -10,13 +10,14 @@
  * interrupting the recording session.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useCapture } from "@/lib/context/CaptureContext";
-import { mockAccountDetails, mockAccounts } from "@/lib/mock-data/accounts";
+import { mockAccountDetails } from "@/lib/mock-data/accounts";
 import Icon from "@/components/ui/Icon";
+import AccountPickerSheet from "@/components/accounts/AccountPickerSheet";
 
 // ── Timer ─────────────────────────────────────────────────────────────────────
 
@@ -93,175 +94,6 @@ function AccountButton({
         style={{ color: "var(--color-text-muted)", flexShrink: 0 }}
       />
     </button>
-  );
-}
-
-// ── Account picker sheet ──────────────────────────────────────────────────────
-
-function AccountPickerSheet({
-  currentId,
-  onSelect,
-  onClose,
-}: {
-  currentId: string | null;
-  onSelect: (id: string, name: string) => void;
-  onClose: () => void;
-}) {
-  const [query, setQuery] = useState("");
-  const searchRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const t = setTimeout(() => searchRef.current?.focus(), 320);
-    return () => clearTimeout(t);
-  }, []);
-
-  const currentAccount = mockAccounts.find((a) => a.id === currentId) ?? null;
-  const q = query.toLowerCase().trim();
-
-  // When searching: flat filtered list. When not: current pinned, then rest alphabetically.
-  const isSearching = q.length > 0;
-  const allSorted = [...mockAccounts].sort((a, b) => a.name.localeCompare(b.name));
-
-  const filteredList = isSearching
-    ? allSorted.filter(
-        (a) =>
-          a.name.toLowerCase().includes(q) ||
-          a.city?.toLowerCase().includes(q) ||
-          a.state?.toLowerCase().includes(q)
-      )
-    : allSorted.filter((a) => a.id !== currentId);
-
-  function AccountRow({ account, showDivider }: { account: typeof mockAccounts[0]; showDivider: boolean }) {
-    const isSelected = account.id === currentId;
-    return (
-      <button
-        onClick={() => { onSelect(account.id, account.name); onClose(); }}
-        className="w-full flex items-center justify-between px-5 py-3.5 active:opacity-60 transition-opacity relative"
-        style={{ textAlign: "left" }}
-      >
-        {showDivider && (
-          <div className="absolute top-0 left-5 right-5" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
-        )}
-        <div className="flex-1 min-w-0">
-          <p
-            className="font-semibold truncate"
-            style={{ fontSize: 15, color: isSelected ? "var(--color-brand-purple)" : "var(--color-text-primary)" }}
-          >
-            {account.name}
-          </p>
-          {(account.city || account.state) && (
-            <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
-              {[account.city, account.state].filter(Boolean).join(", ")}
-            </p>
-          )}
-        </div>
-        {isSelected && (
-          <Icon name="check" size={18} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
-        )}
-      </button>
-    );
-  }
-
-  return (
-    <>
-      {/* Backdrop */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ background: "rgba(0,0,0,0.55)", zIndex: 60 }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={onClose}
-      />
-
-      {/* Sheet */}
-      <motion.div
-        className="absolute left-0 right-0 bottom-0"
-        style={{
-          zIndex: 61,
-          background: "var(--color-dark-primary)",
-          borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-          maxHeight: "72%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 380, damping: 38 }}
-      >
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full" style={{ background: "var(--color-dark-tertiary)" }} />
-        </div>
-
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-2 pb-3 flex-shrink-0">
-          <h3 style={{ fontFamily: "Roboto Slab, Georgia, serif", fontSize: 18, fontWeight: 700, color: "var(--color-text-primary)" }}>
-            Switch account
-          </h3>
-          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center active:opacity-60 transition-opacity">
-            <Icon name="close" size={18} style={{ color: "var(--color-text-muted)" }} />
-          </button>
-        </div>
-
-        {/* Search */}
-        <div
-          className="flex items-center gap-2 mx-5 mb-3 px-3 flex-shrink-0"
-          style={{
-            height: 40,
-            background: "var(--color-dark-secondary)",
-            borderRadius: "var(--radius-full)",
-          }}
-        >
-          <Icon name="search" size={16} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
-          <input
-            ref={searchRef}
-            type="text"
-            placeholder="Search accounts…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: "var(--color-text-primary)" }}
-          />
-          {query && (
-            <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-              <Icon name="cancel" fill size={15} style={{ color: "var(--color-text-disabled)" }} />
-            </button>
-          )}
-        </div>
-
-        {/* List */}
-        <div style={{ overflowY: "auto", paddingBottom: 40 }}>
-
-          {/* Current account pinned at top (only when not searching) */}
-          {!isSearching && currentAccount && (
-            <>
-              <AccountRow account={currentAccount} showDivider={false} />
-              {filteredList.length > 0 && (
-                <div style={{ height: 1, background: "var(--color-dark-tertiary)", margin: "0 20px 4px" }} />
-              )}
-            </>
-          )}
-
-          {/* Rest of the list */}
-          {filteredList.map((account, i) => (
-            <AccountRow
-              key={account.id}
-              account={account}
-              showDivider={isSearching ? i > 0 : i > 0}
-            />
-          ))}
-
-          {filteredList.length === 0 && !currentAccount && (
-            <p className="text-sm text-center py-8" style={{ color: "var(--color-text-disabled)" }}>
-              No accounts match &quot;{query}&quot;
-            </p>
-          )}
-        </div>
-      </motion.div>
-    </>
   );
 }
 

@@ -13,10 +13,13 @@
  */
 
 import { use, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
+import { AnimatePresence } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
+import AccountPickerSheet from "@/components/accounts/AccountPickerSheet";
 import { mockAccounts, mockAccountDetails } from "@/lib/mock-data/accounts";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import type { ActivityAISummary } from "@/lib/types";
@@ -102,6 +105,9 @@ export default function ActivityDetailPage({
 }) {
   const { id, activityId } = use(params);
   const [showAddSheet, setShowAddSheet] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
+  const [assignedAccountId, setAssignedAccountId] = useState(id);
+  const [assignedAccountName, setAssignedAccountName] = useState<string | null>(null);
   const { getItems } = useActionItems();
   const actionItems = getItems(id);
 
@@ -134,13 +140,22 @@ export default function ActivityDetailPage({
           </button>
         </div>
 
-        {/* Account name */}
-        <h1
-          className="w-full text-center text-[26px] font-bold leading-tight px-10"
-          style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
+        {/* Account name — tappable to reassign */}
+        <button
+          onClick={() => setShowPicker(true)}
+          className="w-full flex flex-col items-center active:opacity-70 transition-opacity"
         >
-          {account.name}
-        </h1>
+          <h1
+            className="text-center text-[26px] font-bold leading-tight px-10"
+            style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
+          >
+            {assignedAccountName ?? account.name}
+          </h1>
+          <div className="flex items-center gap-0.5 mt-0.5">
+            <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>Account</span>
+            <Icon name="expand_more" size={15} style={{ color: "var(--color-text-muted)" }} />
+          </div>
+        </button>
 
         {/* Date + time */}
         <p className="text-center text-sm" style={{ color: "var(--color-text-disabled)" }}>
@@ -227,6 +242,27 @@ export default function ActivityDetailPage({
       {showAddSheet && (
         <AddActionItemSheet accountId={id} onClose={() => setShowAddSheet(false)} />
       )}
+
+      {/* Account picker — portaled so it layers above everything */}
+      {typeof document !== "undefined" &&
+        document.getElementById("phone-overlay-root") &&
+        createPortal(
+          <AnimatePresence>
+            {showPicker && (
+              <div style={{ position: "absolute", inset: 0, pointerEvents: "auto" }}>
+                <AccountPickerSheet
+                  currentId={assignedAccountId}
+                  onSelect={(newId, newName) => {
+                    setAssignedAccountId(newId);
+                    setAssignedAccountName(newName);
+                  }}
+                  onClose={() => setShowPicker(false)}
+                />
+              </div>
+            )}
+          </AnimatePresence>,
+          document.getElementById("phone-overlay-root")!
+        )}
 
     </div>
   );
