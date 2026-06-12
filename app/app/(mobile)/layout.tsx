@@ -3,6 +3,7 @@ import PageTransition from "@/components/layout/PageTransition";
 import StaticBottomNav from "@/components/layout/StaticBottomNav";
 import { ActionItemsProvider } from "@/lib/context/ActionItemsContext";
 import { CaptureProvider } from "@/lib/context/CaptureContext";
+import { AccountStateProvider } from "@/lib/context/AccountStateContext";
 import CaptureWidget from "@/components/capture/CaptureWidget";
 
 /**
@@ -15,14 +16,16 @@ import CaptureWidget from "@/components/capture/CaptureWidget";
  */
 export default function MobileLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ActionItemsProvider>
-      <CaptureProvider>
-        <PhoneFrame>
-          <PageTransition>{children}</PageTransition>
-          <StaticBottomNav />
-          <CaptureWidget />
-        </PhoneFrame>
-      </CaptureProvider>
-    </ActionItemsProvider>
+    <AccountStateProvider>
+      <ActionItemsProvider>
+        <CaptureProvider>
+          <PhoneFrame>
+            <PageTransition>{children}</PageTransition>
+            <StaticBottomNav />
+            <CaptureWidget />
+          </PhoneFrame>
+        </CaptureProvider>
+      </ActionItemsProvider>
+    </AccountStateProvider>
   );
 }

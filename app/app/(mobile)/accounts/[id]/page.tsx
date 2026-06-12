@@ -20,9 +20,11 @@
  *   Not implemented in web prototype.
  */
 
-import { use, useState, Suspense } from "react";
+import { use, useState, useRef, Suspense } from "react";
+import { createPortal } from "react-dom";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
@@ -31,6 +33,7 @@ import ErrorState from "@/components/ui/ErrorState";
 import { mockAccounts, mockAccountDetails } from "@/lib/mock-data/accounts";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
+import { useAccountState } from "@/lib/context/AccountStateContext";
 import type { ActivityItem } from "@/lib/types";
 
 // ── Activity card ─────────────────────────────────────────────────────────────
@@ -112,6 +115,33 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   const actionItems = getItems(id);
 
   const { status: captureStatus, accountId: capturingId, startCapture } = useCapture();
+  const { disqualify, restore } = useAccountState();
+
+  // Disqualify flow — pending toast, then commit + navigate back
+  const [disqualifyPending, setDisqualifyPending] = useState(false);
+  const disqualifyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function handleDisqualify() {
+    setDisqualifyPending(true);
+    disqualifyTimerRef.current = setTimeout(() => {
+      disqualify(id);
+      router.back();
+    }, 5000);
+  }
+
+  function handleUndoDisqualify() {
+    if (disqualifyTimerRef.current) clearTimeout(disqualifyTimerRef.current);
+    disqualifyTimerRef.current = null;
+    restore(id);
+    setDisqualifyPending(false);
+  }
+
+  function handleConfirmDisqualify() {
+    if (disqualifyTimerRef.current) clearTimeout(disqualifyTimerRef.current);
+    disqualifyTimerRef.current = null;
+    disqualify(id);
+    router.back();
+  }
   const isCapturing = captureStatus !== "idle" && capturingId === id;
 
   const justCreated = searchParams.get("just_created") === "true";
@@ -220,6 +250,29 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             </div>
           );
         })()}
+
+        {/* Lead status + disqualify — prospects only, side by side */}
+        {account.halosightType === "prospect" && !justCreated && (
+          <div className="flex items-center justify-center gap-4 mb-3">
+            <div className="flex items-center gap-1.5">
+              <div
+                className="rounded-full flex-shrink-0"
+                style={{ width: 7, height: 7, background: "var(--color-brand-teal)" }}
+              />
+              <span className="text-sm font-semibold" style={{ color: "var(--color-brand-teal)" }}>
+                Lead
+              </span>
+            </div>
+            <div style={{ width: 1, height: 14, background: "var(--color-dark-tertiary)", flexShrink: 0 }} />
+            <button
+              onClick={handleDisqualify}
+              className="text-sm active:opacity-60 transition-opacity"
+              style={{ color: "var(--color-brand-coral)" }}
+            >
+              Disqualify
+            </button>
+          </div>
+        )}
 
         {/* Tabs — hidden on just-created blank slate */}
         {!justCreated && <div
@@ -405,6 +458,66 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       {/* Add Action Item Sheet */}
       {showAddSheet && (
         <AddActionItemSheet accountId={id} onClose={() => setShowAddSheet(false)} />
+      )}
+
+      {/* Disqualify toast */}
+      {typeof document !== "undefined" && document.getElementById("phone-overlay-root") && createPortal(
+        <AnimatePresence>
+          {disqualifyPending && (
+            <motion.div
+              key="disqualify-toast"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              style={{
+                position: "absolute",
+                bottom: 106,
+                left: 16,
+                right: 16,
+                zIndex: 60,
+                pointerEvents: "auto",
+              }}
+            >
+              <div
+                style={{
+                  background: "var(--color-dark-secondary)",
+                  borderRadius: "var(--radius-xl)",
+                  border: "1px solid var(--color-dark-tertiary)",
+                  boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.3)",
+                  padding: "12px 16px",
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
+                    style={{ background: "rgba(107, 157, 176, 0.20)" }}
+                  >
+                    <div className="w-2 h-2 rounded-full" style={{ background: "var(--color-brand-teal)" }} />
+                  </div>
+                  <span className="flex-1 text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                    Lead disqualified
+                  </span>
+                  <button
+                    onClick={handleUndoDisqualify}
+                    className="text-sm font-semibold active:opacity-60 transition-opacity"
+                    style={{ color: "var(--color-brand-purple)" }}
+                  >
+                    undo
+                  </button>
+                  <button
+                    onClick={handleConfirmDisqualify}
+                    className="ml-1 flex items-center justify-center active:opacity-60 transition-opacity"
+                    style={{ color: "var(--color-text-muted)" }}
+                  >
+                    <Icon name="close" size={18} />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.getElementById("phone-overlay-root")!
       )}
 
     </div>

@@ -48,6 +48,7 @@ import { mockTasks, mockActivities } from "@/lib/mock-data/home";
 import type { HomeTask, HomeActivity } from "@/lib/mock-data/home";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
+import { useAccountState } from "@/lib/context/AccountStateContext";
 import type { Account, SortOption } from "@/lib/types";
 import { formatLastVisited, formatDistance } from "@/lib/utils";
 
@@ -614,8 +615,14 @@ function CombinedPageContent() {
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const { isDisqualified } = useAccountState();
+
   // Dynamic account list — starts with mock data, grows as user creates accounts
   const [allAccounts, setAllAccounts] = useState<Account[]>(mockAccounts);
+
+  // Filter out disqualified leads from all account computations
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const visibleAccounts = useMemo(() => allAccounts.filter((a) => !isDisqualified(a.id)), [allAccounts, isDisqualified]);
 
   // Success toast for account creation
   const [successToast, setSuccessToast] = useState<string | null>(null);
@@ -727,10 +734,10 @@ function CombinedPageContent() {
 
   const myFiltered = useMemo(() => {
     const byType = typeFilter === "all"
-      ? allAccounts
+      ? visibleAccounts
       : typeFilter === "prospect"
-        ? allAccounts.filter((a) => a.halosightType === "prospect")
-        : allAccounts.filter((a) => a.crmAccountType === typeFilter);
+        ? visibleAccounts.filter((a) => a.halosightType === "prospect")
+        : visibleAccounts.filter((a) => a.crmAccountType === typeFilter);
 
     const PRESET_DAYS: Record<string, number> = { "7d": 7, "14d": 14, "30d": 30, "90d": 90 };
     const byVisited = visitedFilter === "all"
@@ -791,11 +798,11 @@ function CombinedPageContent() {
   }, [getAllItems, taskStatusFilter, taskSortMode, prioritiesQuery]);
 
   const topAccounts = useMemo(() =>
-    [...allAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
-  [allAccounts]);
+    [...visibleAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
+  [visibleAccounts]);
   const nearestAccount = useMemo(() =>
-    [...allAccounts].sort((a, b) => a.distanceMiles - b.distanceMiles)[0],
-  [allAccounts]);
+    [...visibleAccounts].sort((a, b) => a.distanceMiles - b.distanceMiles)[0],
+  [visibleAccounts]);
   const hasQuery = query.trim().length > 0;
 
   function triggerSystemSearch() {
