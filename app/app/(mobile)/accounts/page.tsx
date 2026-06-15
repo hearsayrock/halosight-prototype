@@ -759,7 +759,6 @@ function CombinedPageContent() {
 
     return sortAccounts(searchAccounts(byVisited, query), sort);
   }, [allAccounts, query, sort, typeFilter, visitedFilter, visitedFrom, visitedTo]);
-  // Priorities grouped by account — same logic as /tasks page
   const taskGroups = useMemo(() => {
     const all = getAllItems()
       .filter(item =>
@@ -772,28 +771,43 @@ function CombinedPageContent() {
           (ACCOUNT_NAME[item.accountId] ?? "").toLowerCase().includes(q);
       });
 
+    if (taskSortMode === "dueDate") {
+      const tomorrow = new Date(startOfToday.getTime() + 86400000);
+      const sorted = [...all].sort((a, b) => dueSortKey(a.dueDate) - dueSortKey(b.dueDate));
+      const bucketMap = new Map<string, typeof all>();
+      for (const item of sorted) {
+        let label: string;
+        if (!item.dueDate) {
+          label = "Today";
+        } else {
+          const d = new Date(item.dueDate); d.setHours(0, 0, 0, 0);
+          const t = d.getTime();
+          if (t < startOfToday.getTime()) label = "Overdue";
+          else if (t === startOfToday.getTime()) label = "Today";
+          else if (t === tomorrow.getTime()) label = "Tomorrow";
+          else label = item.dueDate.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+        }
+        const list = bucketMap.get(label) ?? [];
+        list.push(item);
+        bucketMap.set(label, list);
+      }
+      return Array.from(bucketMap.entries()).map(([label, items]) => ({ key: label, label, accountId: "", items }));
+    }
+
+    // Account mode
     const map = new Map<string, typeof all>();
     for (const item of all) {
       const list = map.get(item.accountId) ?? [];
       list.push(item);
       map.set(item.accountId, list);
     }
-
     const groups = [...map.entries()].map(([accountId, items]) => ({
+      key: accountId,
       label: ACCOUNT_NAME[accountId] ?? accountId,
       accountId,
       items: [...items].sort((a, b) => dueSortKey(a.dueDate) - dueSortKey(b.dueDate)),
     }));
-
-    if (taskSortMode === "account") {
-      groups.sort((a, b) => a.label.localeCompare(b.label));
-    } else {
-      groups.sort((a, b) => {
-        const aMin = Math.min(...a.items.map(i => dueSortKey(i.dueDate)));
-        const bMin = Math.min(...b.items.map(i => dueSortKey(i.dueDate)));
-        return aMin - bMin;
-      });
-    }
+    groups.sort((a, b) => a.label.localeCompare(b.label));
     return groups;
   }, [getAllItems, taskStatusFilter, taskSortMode, prioritiesQuery]);
 
@@ -1238,7 +1252,7 @@ function CombinedPageContent() {
                   </div>
                 ) : (
                   taskGroups.map((group) => (
-                    <section key={group.accountId} className="mb-6">
+                    <section key={group.key} className="mb-6">
                       {/* Group header */}
                       <div className="flex items-center gap-2 px-4 mb-1 mt-2">
                         <span className="eyebrow-text" style={{ color: "var(--color-text-disabled)" }}>

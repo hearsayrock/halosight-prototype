@@ -26,7 +26,7 @@ import type { ActionItem } from "@/lib/types";
 type StatusFilter = "open" | "done";
 type SortMode = "dueDate" | "account";
 type FlatItem = ActionItem & { accountId: string };
-type Group = { accountId: string; accountName: string; items: FlatItem[] };
+type Group = { key: string; label: string; items: FlatItem[] };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -268,7 +268,6 @@ export default function TasksPage() {
   const groups = useMemo<Group[]>(() => {
     const all = getAllItems();
 
-    // For "open" view: show open items, but keep the pending item visible (it's still "open")
     const filtered = all
       .filter((item) =>
         statusFilter === "open"
@@ -284,6 +283,45 @@ export default function TasksPage() {
         );
       });
 
+    if (sortMode === "dueDate") {
+      const tomorrow = new Date(startOfToday.getTime() + 86400000);
+
+      const sorted = [...filtered].sort(
+        (a, b) => dueSortKey(a.dueDate) - dueSortKey(b.dueDate)
+      );
+
+      const bucketMap = new Map<string, FlatItem[]>();
+      for (const item of sorted) {
+        let label: string;
+        if (!item.dueDate) {
+          label = "Today";
+        } else {
+          const d = new Date(item.dueDate);
+          d.setHours(0, 0, 0, 0);
+          const t = d.getTime();
+          if (t < startOfToday.getTime()) {
+            label = "Overdue";
+          } else if (t === startOfToday.getTime()) {
+            label = "Today";
+          } else if (t === tomorrow.getTime()) {
+            label = "Tomorrow";
+          } else {
+            label = item.dueDate.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+          }
+        }
+        const list = bucketMap.get(label) ?? [];
+        list.push(item);
+        bucketMap.set(label, list);
+      }
+
+      return Array.from(bucketMap.entries()).map(([label, items]) => ({
+        key: label,
+        label,
+        items,
+      }));
+    }
+
+    // Account mode
     const map = new Map<string, FlatItem[]>();
     for (const item of filtered) {
       const list = map.get(item.accountId) ?? [];
@@ -297,22 +335,13 @@ export default function TasksPage() {
         (a, b) => dueSortKey(a.dueDate) - dueSortKey(b.dueDate)
       );
       result.push({
-        accountId,
-        accountName: ACCOUNT_NAME[accountId] ?? accountId,
+        key: accountId,
+        label: ACCOUNT_NAME[accountId] ?? accountId,
         items: sorted,
       });
     }
 
-    if (sortMode === "account") {
-      result.sort((a, b) => a.accountName.localeCompare(b.accountName));
-    } else {
-      result.sort((a, b) => {
-        const aMin = Math.min(...a.items.map((i) => dueSortKey(i.dueDate)));
-        const bMin = Math.min(...b.items.map((i) => dueSortKey(i.dueDate)));
-        return aMin - bMin;
-      });
-    }
-
+    result.sort((a, b) => a.label.localeCompare(b.label));
     return result;
   }, [getAllItems, statusFilter, sortMode, query]);
 
@@ -398,14 +427,14 @@ export default function TasksPage() {
           </div>
         ) : (
           groups.map((group) => (
-            <section key={group.accountId} className="mb-6">
+            <section key={group.key} className="mb-6">
               {/* Group header */}
               <div className="flex items-center gap-2 px-4 mb-1 mt-2">
                 <span
                   className="eyebrow-text"
                   style={{ color: "var(--color-text-disabled)" }}
                 >
-                  {group.accountName.toUpperCase()}
+                  {group.label.toUpperCase()}
                 </span>
                 <span
                   className="text-xs font-bold"
@@ -421,11 +450,11 @@ export default function TasksPage() {
                   <TaskRow
                     key={item.id}
                     item={item}
-                    accountId={group.accountId}
-                    accountName={group.accountName}
+                    accountId={item.accountId}
+                    accountName={ACCOUNT_NAME[item.accountId] ?? item.accountId}
                     isLast={i === group.items.length - 1}
                     isPending={item.id === pendingItemId}
-                    onCheck={() => handleCheck(item.id, group.accountId)}
+                    onCheck={() => handleCheck(item.id, item.accountId)}
                   />
                 ))}
               </AnimatePresence>
