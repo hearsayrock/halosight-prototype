@@ -138,7 +138,7 @@ export const mockAccounts: Account[] = [
     address: "4820 E Grant Rd",
     city: "Tucson",
     state: "AZ",
-    distanceMiles: 75.2,
+    distanceMiles: 1.4,
     lastVisited: daysAgo(30),
     contactName: "Sandra Perez",
     contactTitle: "Operations Director",

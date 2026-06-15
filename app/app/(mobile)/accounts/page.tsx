@@ -568,8 +568,8 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
         style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-xl)", border: "1px dashed var(--color-dark-tertiary)" }}
       >
         <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: "color-mix(in srgb, var(--color-brand-coral) 15%, transparent)" }}>
-          <Icon name="add" size={18} style={{ color: "var(--color-brand-coral)" }} />
+          style={{ background: "color-mix(in srgb, var(--color-brand-purple) 15%, transparent)" }}>
+          <Icon name="add" size={18} style={{ color: "var(--color-brand-purple)" }} />
         </div>
         <div className="text-left">
           <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
@@ -984,17 +984,6 @@ function CombinedPageContent() {
             className="flex items-center gap-2 px-4 pb-3"
             style={{ flexShrink: 0 }}
           >
-            <FilterDropdown
-              options={[
-                { value: "all" as AccountTypeFilter, label: "All Types" },
-                { value: "prospect" as AccountTypeFilter, label: "Prospect" },
-                { value: "distributor" as AccountTypeFilter, label: "Distributor" },
-                { value: "sold-to" as AccountTypeFilter, label: "Sold-To" },
-                { value: "shipped-to" as AccountTypeFilter, label: "Shipped-To" },
-              ]}
-              value={typeFilter}
-              onChange={setTypeFilter}
-            />
             <VisitedFilterDropdown
               value={visitedFilter}
               customFrom={visitedFrom}
@@ -1093,7 +1082,9 @@ function CombinedPageContent() {
                     <Icon name="search_off" size={22} style={{ color: "var(--color-brand-purple)" }} />
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Not in your accounts</p>
+                    {systemState === "idle" && (
+                      <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Not in your accounts</p>
+                    )}
                     <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
                   </div>
                   {systemState === "idle" && (
@@ -1104,10 +1095,10 @@ function CombinedPageContent() {
                         borderRadius: "var(--radius-full)",
                         background: "transparent",
                         border: "1px solid var(--color-dark-tertiary)",
-                        color: "var(--color-text-muted)",
+                        color: "var(--color-text-primary)",
                         fontSize: 15,
                       }}>
-                      <Icon name="public" size={18} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+                      <Icon name="public" size={18} style={{ color: "var(--color-text-secondary)", flexShrink: 0 }} />
                       Search all Tomorrowland Innovations
                     </button>
                   )}
@@ -1115,11 +1106,18 @@ function CombinedPageContent() {
               ) : null}
 
               {hasQuery && myFiltered.length > 0 && systemState === "idle" && (
-                <div className="flex justify-center mt-2 mb-1">
+                <div className="mt-2 mb-1 px-5">
                   <button onClick={triggerSystemSearch}
-                    className="rounded-xl text-xs font-semibold active:opacity-70 transition-opacity flex items-center justify-center gap-1.5"
-                    style={{ background: "transparent", border: "1px solid var(--color-dark-tertiary)", color: "var(--color-text-muted)", padding: "10px 24px" }}>
-                    <Icon name="public" size={13} style={{ color: "var(--color-text-muted)" }} />
+                    className="w-full font-semibold active:opacity-80 transition-opacity flex items-center justify-center gap-2"
+                    style={{
+                      padding: "13px 20px",
+                      borderRadius: "var(--radius-full)",
+                      background: "transparent",
+                      border: "1px solid var(--color-dark-tertiary)",
+                      color: "var(--color-text-primary)",
+                      fontSize: 15,
+                    }}>
+                    <Icon name="public" size={18} style={{ color: "var(--color-text-secondary)", flexShrink: 0 }} />
                     Search all Tomorrowland Innovations
                   </button>
                 </div>
