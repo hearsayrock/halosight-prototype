@@ -113,7 +113,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-1",
     activityId: "ja-1",
-    title: "Discovery Call",
+    title: "Marcus outlined supplier pain points and confirmed openness to switching",
     description: "Initial discovery with Jack's Tire and Oil to understand their platform upgrade needs and timeline.",
     accountName: "Jack's Tire & Oil",
     accountId: "jacks-tire-elko",
@@ -123,7 +123,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-2",
     activityId: "wm-1",
-    title: "Market Research",
+    title: "Brake pad supply gaps discussed — Dave flagged expanded order potential for Q3",
     description: "Reviewed competitor platforms to identify feature gaps and opportunities for differentiation.",
     accountName: "Acme Co",
     accountId: "walmart-corp",
@@ -133,7 +133,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-3",
     activityId: "ja-4",
-    title: "Client Presentation",
+    title: "Walked Marcus through the proposal — strong interest, a few questions on SLA terms",
     description: "Presented initial project proposal and received feedback from Jack's Tire and Oil stakeholders.",
     accountName: "Jack's Tire & Oil",
     accountId: "jacks-tire-elko",
@@ -143,7 +143,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-4",
     activityId: "ja-3",
-    title: "Market Research",
+    title: "Competitive pricing review — our turnaround time flagged as a key differentiator",
     description: "Initial discovery with Jack's Tire and Oil to understand their platform upgrade needs and timeline.",
     accountName: "Jack's Tire & Oil",
     accountId: "jacks-tire-elko",
@@ -153,7 +153,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-5",
     activityId: "pf-1",
-    title: "Account Check-In",
+    title: "Ops leadership confirmed Q3 fleet expansion budget — formal proposal requested by end of month",
     description: "Routine quarterly check-in with ProFleet Maintenance. Discussed fleet growth plans and service satisfaction.",
     accountName: "ProFleet Maintenance",
     accountId: "profleet-corp",
@@ -163,7 +163,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-6",
     activityId: "pg-1",
-    title: "Contract Review",
+    title: "Q3 fleet expansion budget confirmed — strong opportunity for an expanded contract",
     description: "Walked through updated service contract terms with the Reladyne ops team. Minor revisions requested.",
     accountName: "Reladyne",
     accountId: "profleet-glendale-2",
@@ -173,7 +173,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-7",
     activityId: "rb-1",
-    title: "Upsell Conversation",
+    title: "Reconnected with Tom after a long gap — not ready to move but open to staying in touch",
     description: "Introduced premium tier options to Riverbend Collision. Strong interest in expanded coverage package.",
     accountName: "Riverbend Collision",
     accountId: "riverbend-collision",
@@ -183,7 +183,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-8",
     activityId: "pf-flagstaff-1",
-    title: "On-site Visit",
+    title: "Toured the Flagstaff facility and met the new ops manager — Q3 service needs discussed",
     description: "Visited ProFleet Flagstaff location. Toured facility, met new ops manager, discussed Q3 service needs.",
     accountName: "ProFleet Maintenance",
     accountId: "profleet-flagstaff",
@@ -193,7 +193,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-9",
     activityId: "it-2",
-    title: "Follow-Up Call",
+    title: "Mapped out current workflows and pain points with their existing parts solution",
     description: "Called Innovative Tech re: pending proposal. Budget approved internally — ready to move to contract stage.",
     accountName: "Innovative Tech",
     accountId: "innovative-tech-tucson",
@@ -203,7 +203,7 @@ export const mockActivities: HomeActivity[] = [
   {
     id: "act-home-10",
     activityId: "wm-2",
-    title: "Strategy Session",
+    title: "Checked in on service satisfaction — relationship in good standing, nothing new flagged",
     description: "Internal session to align on territory priorities, discuss pipeline health, and plan next 30-day outreach.",
     accountName: "Acme Co",
     accountId: "walmart-corp",
