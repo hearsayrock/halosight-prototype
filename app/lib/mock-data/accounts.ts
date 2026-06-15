@@ -6,7 +6,7 @@ const daysAgo = (n: number) => new Date(now.getTime() - n * 24 * 60 * 60 * 1000)
 export const mockAccounts: Account[] = [
   {
     id: "walmart-corp",
-    name: "Walmart",
+    name: "Acme Co",
     type: "corporate",
     crmAccountType: "distributor",
     assignedInitial: "J",
@@ -22,7 +22,7 @@ export const mockAccounts: Account[] = [
   },
   {
     id: "walmart-cedar-city",
-    name: "Branch of Walmart",
+    name: "Branch of Acme Co",
     type: "branch",
     crmAccountType: "shipped-to",
     assignedInitial: "J",
@@ -310,14 +310,29 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Confirm any pain points before they grow",
     ],
     actionItems: [
-      { id: "wm-t1", title: "Send Q2 pricing update",     dueDate: future(6, 5),  status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1" },
-      { id: "wm-t2", title: "Schedule executive review",  dueDate: future(6, 18), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1" },
-      { id: "wm-t3", title: "Share turnaround SLA doc",   dueDate: future(6, 10), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1" },
+      { id: "wm-t1", title: "Send Q2 pricing update", dueDate: future(6, 5), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1", description: "Dave asked for a revised pricing sheet reflecting the higher brake pad volumes they're now projecting. He wants to compare our Q2 rates against what their current supplier quoted before the back-order issues started." },
+      { id: "wm-t2", title: "Schedule executive review", dueDate: future(6, 18), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1", description: "Dave flagged that the ops director wants to be looped in before any vendor change is formalized. Setting up a 30-minute intro to walk through our reliability track record and distribution coverage." },
+      { id: "wm-t3", title: "Share turnaround SLA doc", dueDate: future(6, 10), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1", description: "Acme Co's biggest concern is lead time consistency. Dave specifically asked for a written SLA they can bring to procurement — needs to include restocking timelines and back-order escalation commitments." },
       { id: "wm-t4", title: "Send Q1 recap report",       dueDate: daysAgo(5),    status: "done", originActivity: "Routine Check-In", originActivityId: "wm-2" },
       { id: "wm-t5", title: "Confirm Q2 site visit",      dueDate: daysAgo(10),   status: "done", originActivity: "Routine Check-In", originActivityId: "wm-2" },
     ],
     recentActivity: [
-      { id: "wm-1", accountId: "walmart-corp", date: at(3, 14, 20),  type: "visit", title: "Quarterly Review",      summary: "Discussed Q2 supply chain concerns. Tom mentioned potential for expanded order next quarter.", durationMinutes: 55,  hasTranscript: true,  repName: "Jordan Mills" },
+      {
+        id: "wm-1", accountId: "walmart-corp", date: at(3, 14, 20), type: "visit", title: "Quarterly Review",
+        summary: "Discussed Q2 supply chain concerns. Tom mentioned potential for expanded order next quarter.",
+        durationMinutes: 55, hasTranscript: true, repName: "Jordan Mills",
+        aiSummary: {
+          title: "Brake pad demand surge creating supply pressure — Dave signaled expanded order potential for Q3",
+          tldr: "Sat down with Dave Mercer and the Acme Co fleet ops team to review Q2 performance and walk through an emerging brake pad shortage across their service locations. Acme has seen faster-than-expected wear rates on their mixed fleet this cycle, and their current supplier has been slow to respond. The conversation shifted toward what a deeper, more reliable supply partnership could look like heading into Q3.",
+          keyPoints: [
+            "**Brake pad wear rates** across the fleet are running **15–20% higher** than projected — ops team is feeling the pressure at multiple locations.",
+            "Current supplier has had **two back-order incidents** in the past 60 days, causing unplanned downtime on the floor.",
+            "Dave flagged Q3 as a **high-stakes window** — seasonal volume uptick means the fleet can't afford parts slowdowns.",
+            "He mentioned a **potential volume expansion** if we can demonstrate consistent availability and fast restocking turnaround.",
+            "Team is open to exploring a **vendor-managed inventory model** to reduce their own stock overhead.",
+          ],
+        },
+      },
       { id: "wm-2", accountId: "walmart-corp", date: at(17, 10, 0),  type: "visit", title: "Routine Check-In",      summary: "Reviewed current service satisfaction. No new opportunities surfaced — relationship in good standing.", durationMinutes: 30,  hasTranscript: true,  repName: "Jordan Mills" },
       { id: "wm-3", accountId: "walmart-corp", date: at(31, 9, 15),  type: "call",  title: "Shipment Follow-Up",   summary: "Follow-up call on delayed shipment. Issue resolved. Customer satisfied with resolution.", durationMinutes: 12,  hasTranscript: false, repName: "Jordan Mills" },
       { id: "wm-4", accountId: "walmart-corp", date: at(45, 13, 30), type: "visit", title: "Product Demo",          summary: "Walked through new service tier options. Strong interest in the premium package — needs sign-off from procurement.", durationMinutes: 70, hasTranscript: true,  repName: "Sarah Kim" },

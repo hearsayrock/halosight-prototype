@@ -190,7 +190,7 @@ const SCREENS: ScreenSpec[] = [
     ],
     interactions: [
       "Tab toggle: animated pill background slides between Overview and Activity",
-      "Capture Meeting CTA hides while a capture is in progress for this account",
+      "Log a Visit CTA hides while a capture is in progress for this account",
       "Add Action Item opens a bottom sheet (AddActionItemSheet) with a mini calendar date picker",
       "Pull-to-refresh: RefreshIndicator on the tab body ScrollView, re-call ViewModel.loadAccount(id)",
     ],
@@ -487,7 +487,7 @@ const COLOR_GROUPS: { label: string; tokens: { name: string; value: string; usag
     label: "Brand — Coral (action / alert)",
     tokens: [
       { name: "--color-brand-coral-light", value: "#FF8F82", usage: "Task indicators, urgent badges" },
-      { name: "--color-brand-coral",       value: "#FF6B5A", usage: "Capture Meeting CTA, primary destructive action" },
+      { name: "--color-brand-coral",       value: "#FF6B5A", usage: "Log a Visit CTA, primary destructive action" },
       { name: "--color-brand-coral-dark",  value: "#E64A37", usage: "Pressed state" },
     ],
   },

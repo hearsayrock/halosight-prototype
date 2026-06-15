@@ -12,14 +12,17 @@
  * Flutter equivalent: activity_detail_page.dart
  */
 
-import { use, useState } from "react";
+import { use, useState, useRef, useEffect, Suspense } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import AccountPickerSheet from "@/components/accounts/AccountPickerSheet";
+import CompletionToast from "@/components/ui/CompletionToast";
+import NoteSheet from "@/components/ui/NoteSheet";
 import { mockAccounts, mockAccountDetails } from "@/lib/mock-data/accounts";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import type { ActivityAISummary } from "@/lib/types";
@@ -72,7 +75,7 @@ function AISummaryCard({ summary, durationMinutes }: { summary: ActivityAISummar
       </p>
 
       {/* TL;DR */}
-      <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--color-text-muted)" }}>
+      <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--color-text-secondary)" }}>
         <span className="font-bold" style={{ color: "var(--color-text-primary)" }}>TL;DR: </span>
         {summary.tldr}
         {durationMinutes != null && (
@@ -85,8 +88,8 @@ function AISummaryCard({ summary, durationMinutes }: { summary: ActivityAISummar
       <ul className="flex flex-col gap-2">
         {summary.keyPoints.map((point, i) => (
           <li key={i} className="flex items-start gap-2">
-            <span className="flex-shrink-0 mt-[7px] w-1.5 h-1.5 rounded-full" style={{ background: "var(--color-text-disabled)" }} />
-            <span className="text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+            <span className="flex-shrink-0 mt-[7px] w-1.5 h-1.5 rounded-full" style={{ background: "var(--color-text-muted)" }} />
+            <span className="text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
               <Bold text={point} />
             </span>
           </li>
@@ -98,18 +101,66 @@ function AISummaryCard({ summary, durationMinutes }: { summary: ActivityAISummar
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-export default function ActivityDetailPage({
+function ActivityDetailPageContent({
   params,
 }: {
   params: Promise<{ id: string; activityId: string }>;
 }) {
   const { id, activityId } = use(params);
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [showAddSheet, setShowAddSheet] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [assignedAccountId, setAssignedAccountId] = useState(id);
   const [assignedAccountName, setAssignedAccountName] = useState<string | null>(null);
-  const { getItems } = useActionItems();
-  const actionItems = getItems(id);
+  const { getItems, updateItem } = useActionItems();
+  const [completedItemIds, setCompletedItemIds] = useState<string[]>([]);
+  const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+  const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+  const completionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const allActionItems = getItems(id);
+  const actionItems = allActionItems.filter((i) => !completedItemIds.includes(i.id));
+
+  function handleComplete(itemId: string) {
+    if (pendingItemId) return;
+    setPendingItemId(itemId);
+    completionTimerRef.current = setTimeout(() => {
+      const item = allActionItems.find((i) => i.id === itemId);
+      if (item) updateItem(id, { ...item, status: "done" });
+      setCompletedItemIds((prev) => [...prev, itemId]);
+      setPendingItemId(null);
+    }, 8000);
+  }
+
+  function handleUndoComplete() {
+    if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+    setPendingItemId(null);
+  }
+
+  function handleAddNote() {
+    if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+    completionTimerRef.current = null;
+    setNoteSheetOpen(true);
+  }
+
+  function handleNoteDone(note: string) {
+    const item = allActionItems.find((i) => i.id === pendingItemId);
+    if (item) updateItem(id, { ...item, status: "done", ...(note.trim() ? { note } : {}) });
+    if (pendingItemId) setCompletedItemIds((prev) => [...prev, pendingItemId]);
+    setNoteSheetOpen(false);
+    setPendingItemId(null);
+  }
+
+  // Trigger completion when returning from action item detail page
+  const justCompletedHandled = useRef(false);
+  useEffect(() => {
+    const justCompleted = searchParams.get("just_completed");
+    if (justCompleted && !justCompletedHandled.current) {
+      justCompletedHandled.current = true;
+      handleComplete(justCompleted);
+      router.replace(`/accounts/${id}/activity/${activityId}`);
+    }
+  }, []); // eslint-disable-line
 
   const detail = mockAccountDetails[id];
   const account = detail ?? mockAccounts.find((a) => a.id === id);
@@ -162,18 +213,15 @@ export default function ActivityDetailPage({
         {/* Account name — tappable to reassign */}
         <button
           onClick={() => setShowPicker(true)}
-          className="w-full flex flex-col items-center active:opacity-70 transition-opacity"
+          className="w-full flex items-center justify-center gap-1 active:opacity-70 transition-opacity px-10"
         >
           <h1
-            className="text-center text-[26px] font-bold leading-tight px-10"
+            className="text-center text-[26px] font-bold leading-tight"
             style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
           >
             {assignedAccountName ?? account.name}
           </h1>
-          <div className="flex items-center gap-0.5 mt-0.5">
-            <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>Account</span>
-            <Icon name="expand_more" size={15} style={{ color: "var(--color-text-muted)" }} />
-          </div>
+          <Icon name="expand_more" size={20} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
         </button>
 
         {/* Date + time */}
@@ -240,8 +288,8 @@ export default function ActivityDetailPage({
           {actionItems.length > 0 ? (
             <div className="flex flex-col gap-2">
               {actionItems.map((item) => (
-                <Link key={item.id} href={`/accounts/${id}/action-items/${item.id}`}>
-                  <ActionItemCard item={item} />
+                <Link key={item.id} href={`/accounts/${id}/action-items/${item.id}?from=activity&activityId=${activityId}`}>
+                  <ActionItemCard item={item} onComplete={() => handleComplete(item.id)} pending={pendingItemId === item.id} />
                 </Link>
               ))}
             </div>
@@ -278,6 +326,21 @@ export default function ActivityDetailPage({
         <AddActionItemSheet accountId={id} onClose={() => setShowAddSheet(false)} />
       )}
 
+      <CompletionToast
+        visible={pendingItemId !== null && !noteSheetOpen}
+        bottom={106}
+        onUndo={handleUndoComplete}
+        onAddNote={handleAddNote}
+        onDismiss={() => {
+          if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+          const item = allActionItems.find((i) => i.id === pendingItemId);
+          if (item) updateItem(id, { ...item, status: "done" });
+          if (pendingItemId) setCompletedItemIds((prev) => [...prev, pendingItemId]);
+          setPendingItemId(null);
+        }}
+      />
+      <NoteSheet visible={noteSheetOpen} onDone={handleNoteDone} />
+
       {/* Account picker — portaled so it layers above everything */}
       {typeof document !== "undefined" &&
         document.getElementById("phone-overlay-root") &&
@@ -300,5 +363,17 @@ export default function ActivityDetailPage({
         )}
 
     </div>
+  );
+}
+
+export default function ActivityDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string; activityId: string }>;
+}) {
+  return (
+    <Suspense>
+      <ActivityDetailPageContent params={params} />
+    </Suspense>
   );
 }

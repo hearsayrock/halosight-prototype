@@ -463,7 +463,7 @@ function DashboardGrid({
             color: "var(--color-text-primary)",
           }}
         >
-          <Icon name="mic" size={16} style={{ color: "var(--color-text-primary)" }} />
+          <Icon name="border_color" size={16} style={{ color: "var(--color-text-primary)" }} />
           <span style={{ fontSize: 14, fontWeight: 700 }}>Log a Visit</span>
         </button>
 

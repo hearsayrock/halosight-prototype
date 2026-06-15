@@ -20,7 +20,7 @@
  *   Not implemented in web prototype.
  */
 
-import { use, useState, useRef, Suspense } from "react";
+import { use, useState, useRef, useEffect, Suspense } from "react";
 import { createPortal } from "react-dom";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -28,6 +28,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
+import CompletionToast from "@/components/ui/CompletionToast";
+import NoteSheet from "@/components/ui/NoteSheet";
 import { AccountDetailSkeleton } from "@/components/ui/Skeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import { mockAccounts, mockAccountDetails } from "@/lib/mock-data/accounts";
@@ -141,8 +143,54 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   );
   const [showAddSheet, setShowAddSheet] = useState(false);
 
-  const { getItems } = useActionItems();
-  const actionItems = getItems(id);
+  const { getItems, updateItem } = useActionItems();
+  const [completedItemIds, setCompletedItemIds] = useState<string[]>([]);
+  const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+  const [noteSheetOpen, setNoteSheetOpen] = useState(false);
+  const completionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const allActionItems = getItems(id);
+  const actionItems = allActionItems.filter((i) => !completedItemIds.includes(i.id));
+
+  function handleComplete(itemId: string) {
+    if (pendingItemId) return;
+    setPendingItemId(itemId);
+    completionTimerRef.current = setTimeout(() => {
+      const item = allActionItems.find((i) => i.id === itemId);
+      if (item) updateItem(id, { ...item, status: "done" });
+      setCompletedItemIds((prev) => [...prev, itemId]);
+      setPendingItemId(null);
+    }, 8000);
+  }
+
+  function handleUndoComplete() {
+    if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+    setPendingItemId(null);
+  }
+
+  // Trigger completion when returning from action item detail page
+  const justCompletedHandled = useRef(false);
+  useEffect(() => {
+    const justCompleted = searchParams.get("just_completed");
+    if (justCompleted && !justCompletedHandled.current) {
+      justCompletedHandled.current = true;
+      handleComplete(justCompleted);
+      router.replace(`/accounts/${id}`);
+    }
+  }, []); // eslint-disable-line
+
+  function handleAddNote() {
+    if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+    completionTimerRef.current = null;
+    setNoteSheetOpen(true);
+  }
+
+  function handleNoteDone(note: string) {
+    const item = allActionItems.find((i) => i.id === pendingItemId);
+    if (item) updateItem(id, { ...item, status: "done", ...(note.trim() ? { note } : {}) });
+    if (pendingItemId) setCompletedItemIds((prev) => [...prev, pendingItemId]);
+    setNoteSheetOpen(false);
+    setPendingItemId(null);
+  }
 
   const { status: captureStatus, accountId: capturingId, startCapture } = useCapture();
   const { disqualify, restore } = useAccountState();
@@ -441,8 +489,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               {actionItems.length > 0 ? (
                 <div className="flex flex-col gap-2">
                   {actionItems.map((item) => (
-                    <Link key={item.id} href={`/accounts/${id}/action-items/${item.id}`}>
-                      <ActionItemCard item={item} />
+                    <Link key={item.id} href={`/accounts/${id}/action-items/${item.id}?from=account`}>
+                      <ActionItemCard item={item} onComplete={() => handleComplete(item.id)} pending={pendingItemId === item.id} />
                     </Link>
                   ))}
                 </div>
@@ -496,7 +544,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
       </div>}
 
-      {/* Capture Meeting CTA — hidden while a capture is active for this account */}
+      {/* Log a Visit CTA — hidden while a capture is active for this account */}
       {!isCapturing && (
         <div
           className="absolute left-0 right-0 flex justify-center px-4"
@@ -511,8 +559,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               borderRadius: "var(--radius-full)",
             }}
           >
-            <Icon name="edit" size={16} style={{ color: "var(--color-text-primary)" }} />
-            Capture Meeting
+            <Icon name="border_color" size={16} style={{ color: "var(--color-text-primary)" }} />
+            Log a Visit
           </button>
         </div>
       )}
@@ -521,6 +569,22 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       {showAddSheet && (
         <AddActionItemSheet accountId={id} onClose={() => setShowAddSheet(false)} />
       )}
+
+      {/* Completion toast */}
+      <CompletionToast
+        visible={pendingItemId !== null && !noteSheetOpen}
+        bottom={106}
+        onUndo={handleUndoComplete}
+        onAddNote={handleAddNote}
+        onDismiss={() => {
+          if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+          const item = allActionItems.find((i) => i.id === pendingItemId);
+          if (item) updateItem(id, { ...item, status: "done" });
+          if (pendingItemId) setCompletedItemIds((prev) => [...prev, pendingItemId]);
+          setPendingItemId(null);
+        }}
+      />
+      <NoteSheet visible={noteSheetOpen} onDone={handleNoteDone} />
 
       {/* Disqualify toast */}
       {typeof document !== "undefined" && document.getElementById("phone-overlay-root") && createPortal(

@@ -20,9 +20,11 @@ function formatDueDate(date: Date | null): string {
 
 interface Props {
   item: ActionItem;
+  onComplete?: () => void;
+  pending?: boolean;
 }
 
-export default function ActionItemCard({ item }: Props) {
+export default function ActionItemCard({ item, onComplete, pending = false }: Props) {
   return (
     <div
       className="flex items-center gap-3 px-4 py-3.5"
@@ -32,10 +34,17 @@ export default function ActionItemCard({ item }: Props) {
       }}
     >
       {/* Checkbox circle */}
-      <div
-        className="flex-shrink-0 w-5 h-5 rounded-full"
-        style={{ border: "1.5px solid var(--color-text-disabled)" }}
-      />
+      <button
+        className="flex-shrink-0 w-5 h-5 rounded-full transition-all flex items-center justify-center"
+        style={pending
+          ? { background: "#2ECC71", border: "1.5px solid #2ECC71" }
+          : { border: "1.5px solid var(--color-text-disabled)" }
+        }
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onComplete?.(); }}
+        aria-label="Complete item"
+      >
+        {pending && <Icon name="check" size={12} style={{ color: "#fff" }} />}
+      </button>
 
       {/* Content */}
       <div className="flex-1 min-w-0">

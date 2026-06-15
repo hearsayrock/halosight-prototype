@@ -542,7 +542,7 @@ export default function DesignSystemPage() {
               },
               {
                 label: "UI copy principles",
-                items: ["Actions over states — \"Capture Meeting\" not \"Meeting Recording\"", "Verbs lead buttons", "Errors explain what to do next", "AI outputs are always inspectable"],
+                items: ["Actions over states — \"Log a Visit\" not \"Visit Recording\"", "Verbs lead buttons", "Errors explain what to do next", "AI outputs are always inspectable"],
               },
               {
                 label: "AI output tone",
@@ -924,7 +924,7 @@ export default function DesignSystemPage() {
               <SubHeader title="Filled Button — Primary" />
               <div className="flex items-center gap-4 flex-wrap mb-3">
                 <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ background: "var(--color-brand-coral)", color: "var(--color-text-inverse)" }}>
-                  Capture Meeting
+                  Log a Visit
                 </button>
                 <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70 flex items-center gap-2" style={{ background: "var(--color-brand-coral)", color: "var(--color-text-inverse)" }}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--color-text-inverse)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--color-text-inverse)" strokeWidth="1.5" strokeLinecap="round"/></svg>
@@ -938,7 +938,7 @@ export default function DesignSystemPage() {
               {/* Small */}
               <div className="flex items-center gap-3 flex-wrap mt-4 mb-3">
                 <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ background: "var(--color-brand-coral)", color: "var(--color-text-inverse)" }}>
-                  Capture Meeting
+                  Log a Visit
                 </button>
                 <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70 flex items-center gap-1.5" style={{ background: "var(--color-brand-coral)", color: "var(--color-text-inverse)" }}>
                   <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--color-text-inverse)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--color-text-inverse)" strokeWidth="1.5" strokeLinecap="round"/></svg>
