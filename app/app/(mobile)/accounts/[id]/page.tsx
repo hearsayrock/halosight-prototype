@@ -20,7 +20,7 @@
  *   Not implemented in web prototype.
  */
 
-import { use, useState, useRef, Suspense } from "react";
+import { use, useState, useRef, useEffect, Suspense } from "react";
 import { createPortal } from "react-dom";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -129,6 +129,188 @@ function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; acc
   );
 }
 
+// ── Account AI overlay ────────────────────────────────────────────────────────
+
+function AccountAIOverlay({
+  account,
+  lastActivity,
+  actionItemCount,
+  onClose,
+}: {
+  account: { id: string; name: string; contactName?: string };
+  lastActivity?: { title: string; summary: string; date: Date };
+  actionItemCount: number;
+  onClose: () => void;
+}) {
+  const [messages, setMessages] = useState<{ role: "user" | "ai"; content: string }[]>([]);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const isConversing = messages.length > 0;
+
+  const name = account.name;
+  const contact = account.contactName;
+  const lastTitle = lastActivity?.title;
+  const lastSummary = lastActivity?.summary;
+
+  const prompts: { label: string; response: string }[] = [
+    {
+      label: "What should I focus on today?",
+      response: `Based on your history with ${name}, I'd prioritize checking in on any open follow-ups from your last visit${lastTitle ? ` ("${lastTitle}")` : ""}. ${actionItemCount > 0 ? `You have ${actionItemCount} open action item${actionItemCount > 1 ? "s" : ""} — worth reviewing before you walk in.` : "No open action items right now, so this is a good chance to set some."} Ask about their current pain points and where they see things heading next quarter.`,
+    },
+    {
+      label: `Recap my last visit`,
+      response: lastActivity
+        ? `Your last logged visit was "${lastTitle}" on ${lastActivity.date.toLocaleDateString("en-US", { month: "long", day: "numeric" })}. Summary: ${lastSummary}`
+        : `No logged visits yet for ${name}. This might be your first — a good chance to introduce yourself and learn what they care about most.`,
+    },
+    {
+      label: "Suggested talking points",
+      response: `A few angles worth hitting with ${name}:\n\n• Open with a recap of where things left off${lastTitle ? ` after "${lastTitle}"` : ""}\n• Ask what's changed on their end since your last conversation\n• Probe for any pressure points — budget cycles, new decision-makers, competitive activity\n${contact ? `• ${contact} responds well to specifics, so come with concrete examples or numbers` : "• Ask who else is involved in decisions you haven't met yet"}\n• Close by agreeing on a clear next step before you leave`,
+    },
+    {
+      label: "What questions should I ask?",
+      response: `Good questions to ask at ${name} right now:\n\n• "What's your biggest operational challenge heading into next quarter?"\n• "How are you currently handling [their core workflow area]?"\n• "Who else on your team is involved in evaluating this?"\n• "What would need to be true for us to move forward together?"\n• "Is there anything I can bring you next time that would be useful?"`,
+    },
+  ];
+
+  function send(text: string) {
+    if (!text.trim() || typing) return;
+    setMessages((prev) => [...prev, { role: "user", content: text.trim() }]);
+    setInput("");
+    setTyping(true);
+    const match = prompts.find((p) => p.label === text.trim());
+    const response = match?.response ?? `Good question. Based on what I know about ${name}, I'd approach that by focusing on the relationship history and any open threads from previous conversations. Want me to dig into something specific?`;
+    setTimeout(() => {
+      setTyping(false);
+      setMessages((prev) => [...prev, { role: "ai", content: response }]);
+    }, 1100);
+  }
+
+  useEffect(() => {
+    if (messages.length > 0 || typing) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, typing]);
+
+  return (
+    <motion.div
+      initial={{ y: "100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "100%" }}
+      transition={{ type: "spring", stiffness: 380, damping: 38 }}
+      style={{
+        position: "absolute", inset: 0,
+        background: "var(--color-background)",
+        display: "flex", flexDirection: "column",
+        pointerEvents: "auto", zIndex: 60,
+      }}
+    >
+      {/* Glow */}
+      <div style={{
+        position: "absolute", top: -60, left: "50%", transform: "translateX(-50%)",
+        width: 340, height: 340, borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(139,146,255,0.11) 0%, transparent 65%)",
+        pointerEvents: "none",
+      }} />
+
+      {/* Header */}
+      <div className="flex items-start justify-between px-4 pt-12 pb-3 flex-shrink-0">
+        <div>
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <Icon name="auto_awesome" size={13} style={{ color: "var(--color-brand-purple)" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--color-brand-purple)" }}>
+              Halosight AI
+            </span>
+          </div>
+          <p style={{ fontFamily: "Roboto Slab, Georgia, serif", fontSize: 20, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.2 }}>
+            {isConversing ? name : `Prepping for ${name}`}
+          </p>
+        </div>
+        <button
+          onClick={onClose}
+          className="flex items-center justify-center active:opacity-60 transition-opacity mt-1"
+          style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--color-dark-secondary)", flexShrink: 0 }}
+        >
+          <Icon name="close" size={18} style={{ color: "var(--color-text-muted)" }} />
+        </button>
+      </div>
+
+      {/* Chat body */}
+      <div className="flex flex-col flex-1 overflow-hidden px-4 pb-8">
+        {/* Messages */}
+        {isConversing && (
+          <div className="flex-1 flex flex-col gap-3 overflow-y-auto mb-4 -mr-1 pr-1">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                {m.role === "user" ? (
+                  <span className="px-3 py-2 text-sm leading-relaxed whitespace-pre-line"
+                    style={{ background: "var(--color-brand-purple)", color: "white", borderRadius: "16px 16px 4px 16px", maxWidth: "82%" }}>
+                    {m.content}
+                  </span>
+                ) : (
+                  <span className="px-3 py-2 text-sm leading-relaxed whitespace-pre-line"
+                    style={{ background: "rgba(255,255,255,0.06)", color: "var(--color-text-secondary)", borderRadius: "16px 16px 16px 4px", maxWidth: "92%" }}>
+                    {m.content}
+                  </span>
+                )}
+              </div>
+            ))}
+            {typing && (
+              <div className="flex justify-start">
+                <div className="px-4 py-3" style={{ background: "rgba(255,255,255,0.06)", borderRadius: "16px 16px 16px 4px" }}>
+                  <div className="flex gap-1 items-center">
+                    {[0, 1, 2].map((i) => (
+                      <motion.div key={i}
+                        style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--color-text-disabled)" }}
+                        animate={{ y: [0, -4, 0] }}
+                        transition={{ duration: 0.55, delay: i * 0.15, repeat: Infinity, ease: "easeInOut" }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
+        )}
+
+        {/* Input */}
+        <div className="flex items-center gap-2 px-3 flex-shrink-0"
+          style={{ background: "rgba(255,255,255,0.07)", borderRadius: "var(--radius-full)", height: 44 }}>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send(input)}
+            placeholder={isConversing ? "Ask a follow-up…" : "Ask anything about this account…"}
+            className="flex-1 bg-transparent text-sm outline-none"
+            style={{ color: "var(--color-text-primary)" }}
+          />
+          <button onClick={() => send(input)} disabled={!input.trim() || typing}
+            className="flex-shrink-0 active:opacity-60 transition-opacity disabled:opacity-30">
+            <Icon name="send" size={15} style={{ color: "var(--color-brand-purple)" }} />
+          </button>
+        </div>
+
+        {/* Subtle prompt suggestions */}
+        {!isConversing && (
+          <div className="grid grid-cols-2 gap-1.5 mt-3">
+            {prompts.map((p) => (
+              <button key={p.label} onClick={() => send(p.label)}
+                className="text-left px-2.5 py-2 active:opacity-50 transition-opacity"
+                style={{ background: "rgba(255,255,255,0.03)", borderRadius: "var(--radius-md)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <span style={{ fontSize: 11.5, color: "var(--color-text-disabled)", lineHeight: 1.35, display: "block" }}>
+                  {p.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> }) {
@@ -140,6 +322,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     searchParams.get("tab") === "activity" ? "activity" : "overview"
   );
   const [showAddSheet, setShowAddSheet] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
 
   const { getItems } = useActionItems();
   const actionItems = getItems(id);
@@ -517,9 +700,45 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         </div>
       )}
 
+      {/* AI prep FAB */}
+      <motion.button
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 380, damping: 22, delay: 0.15 }}
+        onClick={() => setAiOpen(true)}
+        className="flex items-center justify-center active:opacity-80 transition-opacity"
+        style={{
+          position: "absolute",
+          bottom: 28,
+          right: 16,
+          width: 48,
+          height: 48,
+          borderRadius: "50%",
+          background: "var(--color-brand-purple)",
+          boxShadow: "0 4px 18px rgba(139,146,255,0.45)",
+        }}
+      >
+        <Icon name="auto_awesome" size={20} style={{ color: "white" }} />
+      </motion.button>
+
       {/* Add Action Item Sheet */}
       {showAddSheet && (
         <AddActionItemSheet accountId={id} onClose={() => setShowAddSheet(false)} />
+      )}
+
+      {/* AI prep overlay */}
+      {typeof document !== "undefined" && document.getElementById("phone-overlay-root") && createPortal(
+        <AnimatePresence>
+          {aiOpen && (
+            <AccountAIOverlay
+              account={account}
+              lastActivity={detail?.recentActivity?.[0]}
+              actionItemCount={actionItems.length}
+              onClose={() => setAiOpen(false)}
+            />
+          )}
+        </AnimatePresence>,
+        document.getElementById("phone-overlay-root")!
       )}
 
       {/* Disqualify toast */}

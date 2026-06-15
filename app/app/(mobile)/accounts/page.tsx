@@ -365,6 +365,278 @@ function TaskStrip({
 
 // ── Dashboard card ────────────────────────────────────────────────────────────
 
+// ── AI Assistant Widget ───────────────────────────────────────────────────────
+
+const AI_PROMPTS: { label: string; response: string }[] = [
+  {
+    label: "Where should I visit today?",
+    response: "Innovative Tech is 1.4 mi away and you haven't stopped by in 30 days. Sandra Perez is your contact — last meeting was a strong vendor review where you came out as the frontrunner. Worth a drop-in.",
+  },
+  {
+    label: "What needs follow-up this week?",
+    response: "You've got 3 open action items: send the ProFleet pricing deck (overdue), follow up with Riverbend Collision on their fleet estimate, and check in with Pacific Glass on the Q3 renewal.",
+  },
+  {
+    label: "Prep me for my next meeting",
+    response: "ProFleet Tucson is your most active account right now — 4 visits in 90 days, fleet maintenance focus. Budget conversations are in progress. Sarah Kim captured the last two meetings, so loop her in.",
+  },
+  {
+    label: "Which accounts are overdue?",
+    response: "3 accounts are past due: Innovative Tech (30 days, 1.4 mi away), Riverbend Collision (22 days), and Pacific Glass Supply (45 days). Innovative Tech is your closest and the most time-sensitive.",
+  },
+];
+
+function AIChatBody({
+  messages,
+  typing,
+  input,
+  setInput,
+  onSend,
+  onPrompt,
+  bottomRef,
+  inputPlaceholder,
+}: {
+  messages: { role: "user" | "ai"; content: string }[];
+  typing: boolean;
+  input: string;
+  setInput: (v: string) => void;
+  onSend: (text: string) => void;
+  onPrompt: (text: string) => void;
+  bottomRef: React.RefObject<HTMLDivElement | null>;
+  inputPlaceholder: string;
+}) {
+  const isConversing = messages.length > 0;
+  return (
+    <>
+      {/* Conversing: message bubbles */}
+      {isConversing && (
+        <div className="flex-1 flex flex-col gap-3 overflow-y-auto mb-4 -mr-1 pr-1">
+          {messages.map((m, i) => (
+            <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              {m.role === "user" ? (
+                <span
+                  className="px-3 py-2 text-sm leading-relaxed"
+                  style={{
+                    background: "var(--color-brand-purple)",
+                    color: "white",
+                    borderRadius: "16px 16px 4px 16px",
+                    maxWidth: "82%",
+                  }}
+                >
+                  {m.content}
+                </span>
+              ) : (
+                <span
+                  className="px-3 py-2 text-sm leading-relaxed"
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    color: "var(--color-text-secondary)",
+                    borderRadius: "16px 16px 16px 4px",
+                    maxWidth: "92%",
+                  }}
+                >
+                  {m.content}
+                </span>
+              )}
+            </div>
+          ))}
+          {typing && (
+            <div className="flex justify-start">
+              <div className="px-4 py-3" style={{ background: "rgba(255,255,255,0.06)", borderRadius: "16px 16px 16px 4px" }}>
+                <div className="flex gap-1 items-center">
+                  {[0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--color-text-disabled)" }}
+                      animate={{ y: [0, -4, 0] }}
+                      transition={{ duration: 0.55, delay: i * 0.15, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={bottomRef} />
+        </div>
+      )}
+
+      {/* Input row */}
+      <div
+        className="flex items-center gap-2 px-3 flex-shrink-0"
+        style={{ background: "rgba(255,255,255,0.07)", borderRadius: "var(--radius-full)", height: 44 }}
+      >
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && onSend(input)}
+          placeholder={inputPlaceholder}
+          className="flex-1 bg-transparent text-sm outline-none"
+          style={{ color: "var(--color-text-primary)" }}
+        />
+        <button
+          onClick={() => onSend(input)}
+          disabled={!input.trim() || typing}
+          className="flex-shrink-0 active:opacity-60 transition-opacity disabled:opacity-30"
+        >
+          <Icon name="send" size={15} style={{ color: "var(--color-brand-purple)" }} />
+        </button>
+      </div>
+
+      {/* Subtle prompt suggestions below the input — only when idle */}
+      {!isConversing && (
+        <div className="grid grid-cols-2 gap-1.5 mt-3">
+          {AI_PROMPTS.map((p) => (
+            <button
+              key={p.label}
+              onClick={() => onPrompt(p.label)}
+              className="text-left px-2.5 py-2 active:opacity-50 transition-opacity"
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid rgba(255,255,255,0.05)",
+              }}
+            >
+              <span style={{ fontSize: 11.5, color: "var(--color-text-disabled)", lineHeight: 1.35, display: "block" }}>
+                {p.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+function AIAssistantWidget() {
+  const [messages, setMessages] = useState<{ role: "user" | "ai"; content: string }[]>([]);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  function send(text: string) {
+    if (!text.trim() || typing) return;
+    setMessages((prev) => [...prev, { role: "user", content: text.trim() }]);
+    setInput("");
+    setTyping(true);
+    const match = AI_PROMPTS.find((p) => p.label === text.trim());
+    const response = match?.response ?? "I'll look into that. Give me a moment based on your recent activity…";
+    setTimeout(() => {
+      setTyping(false);
+      setMessages((prev) => [...prev, { role: "ai", content: response }]);
+    }, 1100);
+  }
+
+  function handlePrompt(text: string) {
+    setExpanded(true);
+    send(text);
+  }
+
+  useEffect(() => {
+    if (messages.length > 0 || typing) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, typing]);
+
+  const isConversing = messages.length > 0;
+
+  return (
+    <>
+      {/* ── Collapsed widget on home ── */}
+      {/* ── FAB ── */}
+      <motion.button
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0 }}
+        transition={{ type: "spring", stiffness: 380, damping: 22 }}
+        onClick={() => setExpanded(true)}
+        className="flex items-center justify-center active:opacity-80 transition-opacity"
+        style={{
+          position: "absolute",
+          bottom: 20,
+          right: 16,
+          width: 52,
+          height: 52,
+          borderRadius: "50%",
+          background: "var(--color-brand-purple)",
+          boxShadow: "0 4px 20px rgba(139,146,255,0.45)",
+          zIndex: 10,
+        }}
+      >
+        <Icon name="auto_awesome" size={22} style={{ color: "white" }} />
+      </motion.button>
+
+      {/* ── Full-screen overlay ── */}
+      {typeof document !== "undefined" && document.getElementById("phone-overlay-root") &&
+        createPortal(
+          <AnimatePresence>
+            {expanded && (
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", stiffness: 380, damping: 38 }}
+                style={{
+                  position: "absolute", inset: 0,
+                  background: "var(--color-background)",
+                  display: "flex", flexDirection: "column",
+                  pointerEvents: "auto",
+                  zIndex: 50,
+                }}
+              >
+                {/* Glow bloom */}
+                <div style={{
+                  position: "absolute", top: -60, left: "50%", transform: "translateX(-50%)",
+                  width: 340, height: 340, borderRadius: "50%",
+                  background: "radial-gradient(circle, rgba(139,146,255,0.12) 0%, transparent 65%)",
+                  pointerEvents: "none",
+                }} />
+
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 pt-12 pb-4 flex-shrink-0">
+                  <div className="flex items-center gap-2">
+                    <Icon name="auto_awesome" size={16} style={{ color: "var(--color-brand-purple)" }} />
+                    <span style={{ fontSize: 16, fontWeight: 700, color: "var(--color-text-primary)" }}>Halosight AI</span>
+                  </div>
+                  <button
+                    onClick={() => setExpanded(false)}
+                    className="flex items-center justify-center active:opacity-60 transition-opacity"
+                    style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--color-dark-secondary)" }}
+                  >
+                    <Icon name="close" size={18} style={{ color: "var(--color-text-muted)" }} />
+                  </button>
+                </div>
+
+                {/* Chat body */}
+                <div className="flex flex-col flex-1 overflow-hidden px-4 pb-8">
+                  {!isConversing && (
+                    <p style={{ fontFamily: "Roboto Slab, Georgia, serif", fontSize: 22, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.25, marginBottom: 20 }}>
+                      {greeting()}, Jordan.
+                    </p>
+                  )}
+                  <AIChatBody
+                    messages={messages}
+                    typing={typing}
+                    input={input}
+                    setInput={setInput}
+                    onSend={send}
+                    onPrompt={(t) => send(t)}
+                    bottomRef={bottomRef}
+                    inputPlaceholder={isConversing ? "Ask a follow-up…" : "Ask anything…"}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.getElementById("phone-overlay-root")!
+        )
+      }
+    </>
+  );
+}
+
+// ── Suggested visit card ───────────────────────────────────────────────────────
+
 function DashboardGrid({
   suggestedAccount,
   onStartVisit,
@@ -1349,6 +1621,9 @@ function CombinedPageContent() {
           )}
 
         </AnimatePresence>
+
+        {/* AI FAB — visible on home mode only */}
+        {mode === "home" && <AIAssistantWidget />}
 
         {/* Sticky "Add new company" — floats above scroll when system search is active */}
         {mode === "accounts" && hasQuery && systemState === "done" && (
