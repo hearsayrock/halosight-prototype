@@ -8,9 +8,9 @@
  *
  * Key visual differences from AccountListItem:
  *  - No task indicator or last-visited date
- *  - "Assigned to [Rep]" or "Unassigned" shown in place of visited line
+ *  - "Assigned to [Rep]" shown below location
  *  - Muted color treatment throughout
- *  - "Not your account" pill badge instead of CRM type badge
+ *  - Assignee initial avatar on the right instead of a pill badge
  */
 
 import type { Account } from "@/lib/types";
@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default function SystemAccountListItem({ account, assignedRep, isLast = false, onSelect }: Props) {
-  const isUnassigned = assignedRep === "Unassigned";
+  const initial = assignedRep.charAt(0).toUpperCase();
 
   return (
     <button
@@ -65,28 +65,21 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
             )}
           </div>
 
-          {/* Assigned to — only shown when there's a named rep */}
-          {!isUnassigned && (
-            <p className="text-sm mt-0.5">
-              <span style={{ color: "var(--color-text-disabled)" }}>
-                Assigned to {assignedRep}
-              </span>
-            </p>
-          )}
         </div>
 
-        {/* Right — "not mine" badge */}
-        <div className="flex flex-col items-end justify-between flex-shrink-0" style={{ minHeight: 60 }}>
-          <span
-            className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+        {/* Right — assignee initial avatar */}
+        <div className="flex items-start pt-0.5 flex-shrink-0">
+          <div
+            className="flex items-center justify-center rounded-full text-[13px] font-semibold"
             style={{
-              background: "rgba(139,146,255,0.1)",
-              color: "var(--color-brand-purple)",
-              border: "1px solid rgba(139,146,255,0.2)",
+              width: 28,
+              height: 28,
+              background: "var(--color-dark-tertiary)",
+              color: "var(--color-text-muted)",
             }}
           >
-            {isUnassigned ? "Unassigned" : "Not mine"}
-          </span>
+            {initial}
+          </div>
         </div>
       </div>
     </button>

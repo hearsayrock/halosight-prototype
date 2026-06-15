@@ -1062,7 +1062,7 @@ function CombinedPageContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: 48 }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
             >
               {/* My accounts */}
               {showSystemSection && <SectionHeader label="Your Accounts" count={myFiltered.length} />}
@@ -1124,8 +1124,7 @@ function CombinedPageContent() {
               )}
 
               {showSystemSection && (
-                <div className="mt-4">
-                  <div className="mx-4 mb-1" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                <div style={{ marginTop: 16 }}>
                   {systemState === "loading" && (
                     <>
                       <SectionHeader label="All Tomorrowland Innovations Accounts" count={0} />
@@ -1136,7 +1135,8 @@ function CombinedPageContent() {
                     <>
                       <SectionHeader label="All Tomorrowland Innovations Accounts" count={systemResults.length} />
                       {systemResults.length > 0 ? (
-                        <div className="flex flex-col">
+                        <div className="flex flex-col mx-4 rounded-2xl overflow-hidden"
+                          style={{ border: "1px solid var(--color-dark-tertiary)" }}>
                           {systemResults.map((account, i) => (
                             <SystemAccountListItem
                               key={account.id}
@@ -1152,7 +1152,6 @@ function CombinedPageContent() {
                           <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>Not found anywhere in Tomorrowland Innovations.</p>
                         </div>
                       )}
-                      <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
                     </>
                   )}
                 </div>
@@ -1350,6 +1349,23 @@ function CombinedPageContent() {
           )}
 
         </AnimatePresence>
+
+        {/* Sticky "Add new company" — floats above scroll when system search is active */}
+        {mode === "accounts" && hasQuery && systemState === "done" && (
+          <div style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: "20px 16px 16px",
+            background: "linear-gradient(to bottom, transparent, var(--color-background) 40%)",
+            pointerEvents: "none",
+          }}>
+            <div style={{ pointerEvents: "auto" }}>
+              <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Engagements drawer */}
