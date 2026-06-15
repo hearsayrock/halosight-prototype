@@ -56,7 +56,7 @@ export const PLAYGROUNDS: Playground[] = [
     id: "board-meeeting-ai-brainstorm",
     name: "Board Meeting AI",
     description: "AI brainstorm exploration for board meeting concepts.",
-    url: "",
+    url: "https://halosight-prototype-git-board-b83846-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
     startedAt: "2026-06-15",
