@@ -30,7 +30,7 @@ const DEFAULT_NAV = [
   {
     group: "Root",
     routes: [
-      { label: "Home",      path: "/home" },
+      { label: "Home",      path: "/accounts" },
       { label: "Accounts",  path: "/accounts" },
       { label: "All Items", path: "/tasks" },
       { label: "Profile",   path: "/profile" },
@@ -95,7 +95,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
   function handleReset() {
     reset();
     dismissCapture();
-    router.push("/home");
+    router.push("/accounts");
   }
 
   // ── Collapsed strip ─────────────────────────────────────────────────────────
