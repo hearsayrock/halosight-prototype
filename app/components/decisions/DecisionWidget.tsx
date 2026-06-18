@@ -11,7 +11,7 @@
  */
 
 import { useState, useEffect, useRef } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { getSupabase } from "@/lib/supabase/client";
 
 interface Props {
   storyId: string;
@@ -22,15 +22,17 @@ interface Props {
 const BY_OPTIONS = ["Nate", "Ashleigh", "Both"];
 
 export default function DecisionWidget({ storyId, decisionKey, options }: Props) {
-  const [chosen, setChosen]     = useState<string | null>(null);
-  const [note, setNote]         = useState("");
+  const [chosen, setChosen]       = useState<string | null>(null);
+  const [note, setNote]           = useState("");
   const [decidedBy, setDecidedBy] = useState("Nate");
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-  const [loaded, setLoaded]     = useState(false);
+  const [loaded, setLoaded]       = useState(false);
   const noteTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    supabase
+    const sb = getSupabase();
+    if (!sb) { setLoaded(true); return; }
+    sb
       .from("decisions")
       .select("chosen_option, note, decided_by")
       .eq("story_id", storyId)
@@ -47,7 +49,9 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
   }, [storyId, decisionKey]);
 
   useEffect(() => {
-    const channel = supabase
+    const sb = getSupabase();
+    if (!sb) return;
+    const channel = sb
       .channel(`${storyId}-${decisionKey}`)
       .on(
         "postgres_changes",
@@ -62,12 +66,14 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
         }
       )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { sb.removeChannel(channel); };
   }, [storyId, decisionKey]);
 
   async function save(c: string | null, n: string, by: string) {
+    const sb = getSupabase();
+    if (!sb) return;
     setSaveStatus("saving");
-    await supabase.from("decisions").upsert(
+    await sb.from("decisions").upsert(
       { story_id: storyId, decision_key: decisionKey, chosen_option: c, note: n, decided_by: by, updated_at: new Date().toISOString() },
       { onConflict: "story_id,decision_key" }
     );
@@ -105,7 +111,6 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
       borderRadius: "var(--radius-sm)",
       transition: "border-color 0.15s, background 0.15s",
     }}>
-      {/* Option row */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
         <span style={{
           fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
@@ -160,7 +165,6 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
         )}
       </div>
 
-      {/* Note — only visible after a decision is made */}
       {decided && (
         <textarea
           value={note}
