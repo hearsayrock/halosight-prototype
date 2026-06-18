@@ -342,13 +342,13 @@ export default function Story4Page() {
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <a href="/handoff" style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", textDecoration: "none" }}>Halosight</a>
           <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          {["1","2","3"].map(n => (
-            <span key={n} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <a href={`/story-${n}`} style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story {n}</a>
-              <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-            </span>
-          ))}
-          <span style={{ fontSize: 14, color: "var(--color-text-primary)" }}>Story 4</span>
+          <a href="/story-1" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 1</a>
+          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
+          <a href="/story-2" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 2</a>
+          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
+          <a href="/story-3" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 3</a>
+          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)" }}>Story 4</span>
         </div>
         <a href="http://localhost:3000/accounts" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontWeight: 600, color: AMBER, textDecoration: "none", padding: "4px 12px", background: AMBER_BG, borderRadius: 20 }}>
           Open prototype ↗

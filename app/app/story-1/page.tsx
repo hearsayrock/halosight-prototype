@@ -387,9 +387,13 @@ export default function Story1Page() {
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <a href="/handoff" style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", textDecoration: "none" }}>Halosight</a>
           <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          <span style={{ fontSize: 14, color: "var(--color-text-muted)" }}>Story 1</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)" }}>Story 1</span>
           <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          <span style={{ fontSize: 14, color: "var(--color-text-primary)" }}>Customer List &amp; Search</span>
+          <a href="/story-2" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 2</a>
+          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
+          <a href="/story-3" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 3</a>
+          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
+          <a href="/story-4" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 4</a>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <a href={protoLink("/accounts")} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontWeight: 600, color: "var(--color-brand-purple)", textDecoration: "none", padding: "4px 12px", background: "rgba(139,146,255,0.1)", borderRadius: 20 }}>

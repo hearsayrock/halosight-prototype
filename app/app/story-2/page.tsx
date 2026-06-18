@@ -339,7 +339,11 @@ export default function Story2Page() {
           <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
           <a href="/story-1" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 1</a>
           <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          <span style={{ fontSize: 14, color: "var(--color-text-primary)" }}>Story 2</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)" }}>Story 2</span>
+          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
+          <a href="/story-3" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 3</a>
+          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
+          <a href="/story-4" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 4</a>
         </div>
         <a href="http://localhost:3000/accounts" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontWeight: 600, color: "var(--color-brand-teal)", textDecoration: "none", padding: "4px 12px", background: "rgba(72,209,204,0.1)", borderRadius: 20 }}>
           Open prototype ↗

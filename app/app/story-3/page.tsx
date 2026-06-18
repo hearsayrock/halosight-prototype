@@ -337,7 +337,9 @@ export default function Story3Page() {
           <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
           <a href="/story-2" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 2</a>
           <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          <span style={{ fontSize: 14, color: "var(--color-text-primary)" }}>Story 3</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)" }}>Story 3</span>
+          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
+          <a href="/story-4" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 4</a>
         </div>
         <a href="http://localhost:3000/accounts" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontWeight: 600, color: CORAL, textDecoration: "none", padding: "4px 12px", background: CORAL_BG, borderRadius: 20 }}>
           Open prototype ↗
