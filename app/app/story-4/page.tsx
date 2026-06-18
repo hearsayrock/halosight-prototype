@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from "react";
+import DecisionWidget from "@/components/decisions/DecisionWidget";
 
 // ─── Accent color for this story ──────────────────────────────────────────────
 // Story 1 = purple, Story 2 = teal, Story 3 = coral, Story 4 = amber/gold
@@ -443,6 +444,7 @@ export default function Story4Page() {
                   description="Top 1 optimizes for 'the single best visit right now' (e.g. strongly weights proximity). Top 4 uses a broader ranking that weights diversity or cadence."
                   note="More sophisticated, but adds two ranking algorithms to build and maintain. Defer to V2." />
               </div>
+              <DecisionWidget storyId="story-4" decisionKey="top1-vs-top4-model" options={["Option A — One model", "Option B — Separate models"]} />
             </div>
 
             {/* 3-4: Lead eligibility */}
@@ -466,6 +468,7 @@ export default function Story4Page() {
                   description="Leads are eligible but score lower than accounts by default. They only surface in recommendations when no stronger account options exist nearby."
                   note="Best of both worlds but requires a weight tuning decision. Good V2 option." />
               </div>
+              <DecisionWidget storyId="story-4" decisionKey="lead-eligibility" options={["Option A — Yes, eligible", "Option B — Excluded", "Option C — Weighted differently"]} />
             </div>
 
             {/* 5: Ranking signals */}
@@ -498,6 +501,7 @@ export default function Story4Page() {
                   ))}
                 </div>
               </div>
+              <DecisionWidget storyId="story-4" decisionKey="ranking-signals" options={["Approved as-is", "Needs changes"]} />
             </div>
 
             {/* 6-8: Location issues */}
@@ -514,6 +518,7 @@ export default function Story4Page() {
                   description="Never show an empty state because accounts are far. If the nearest account is 200 miles away, it still ranks #1 by proximity. Show the distance badge prominently so the rep knows."
                   note="An empty recommendation is always worse than a far-away recommendation." />
               </div>
+              <DecisionWidget storyId="story-4" decisionKey="location-handling" options={["Approved as-is", "Needs changes"]} />
             </div>
 
             {/* 9-10: Fewer than 4 / relevance threshold */}
@@ -527,6 +532,7 @@ export default function Story4Page() {
                   description="Only show a customer in recommendations if their score exceeds a minimum threshold. Below threshold, show an empty slot with a message like 'No strong match nearby.'"
                   note="Better UX at scale, but threshold tuning is product work. Defer to V2." />
               </div>
+              <DecisionWidget storyId="story-4" decisionKey="fewer-than-4" options={["Option A — Always populate", "Option B — Respect threshold"]} />
             </div>
 
             {/* 11: Only leads */}
@@ -540,6 +546,7 @@ export default function Story4Page() {
                   description="If no accounts exist, recommendations are empty with a CTA to import or create accounts."
                   note="Only valid if leads are excluded from recommendations. A new rep sees nothing — bad first-run experience." />
               </div>
+              <DecisionWidget storyId="story-4" decisionKey="leads-only-state" options={["Option A — Show leads in slots", "Option B — Empty state"]} />
             </div>
 
             {/* 12: Recommendation reason */}
@@ -559,6 +566,7 @@ export default function Story4Page() {
                   description="Cards show name, distance, and type chip only. Recommendations are trusted without explanation."
                   note="Simpler. Works if reps already know their accounts well. Risk: feels arbitrary to new reps." />
               </div>
+              <DecisionWidget storyId="story-4" decisionKey="recommendation-reason" options={["Option A — Show reason label", "Option B — No reason label"]} />
             </div>
 
             {/* 13-17: Action item sorting */}
@@ -581,6 +589,7 @@ export default function Story4Page() {
                   </div>
                 ))}
               </div>
+              <DecisionWidget storyId="story-4" decisionKey="action-sort-order" options={["Approved as-is", "Needs changes"]} />
             </div>
 
           </Section>

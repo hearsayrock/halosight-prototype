@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from "react";
+import DecisionWidget from "@/components/decisions/DecisionWidget";
 
 // ─── Accent color for this story ──────────────────────────────────────────────
 // Story 1 = purple, Story 2 = teal, Story 3 = coral
@@ -436,6 +437,7 @@ export default function Story3Page() {
                   description="Capture is strictly limited to owned accounts. Reps must request ownership transfer before capturing."
                   note="Creates a hard blocker for field ops. Not recommended for V1." />
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="capture-on-unowned" options={["Option A — Yes, with a warning", "Option B — Only with permission", "Option C — Never"]} />
             </div>
 
             {/* 2 — What can they see? */}
@@ -452,6 +454,7 @@ export default function Story3Page() {
                   description="Rep sees a minimal capture screen with just enough context to confirm they have the right account."
                   note="Too restrictive. Reps need context to write a meaningful note." />
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="unowned-visibility" options={["Option A — Full view", "Option B — Limited view", "Option C — Capture-only view"]} />
             </div>
 
             {/* 3 — What can they do? */}
@@ -482,6 +485,7 @@ export default function Story3Page() {
                   ))}
                 </div>
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="unowned-actions" options={["Approved as-is", "Needs changes"]} />
             </div>
 
             {/* 4 — Permission-restricted capture */}
@@ -496,6 +500,7 @@ export default function Story3Page() {
                   description="Capture button is disabled with an explanation: 'Your CRM doesn't allow notes on accounts you don't own.'"
                   note="Cleaner but loses the data. Not recommended unless the org explicitly requires it." />
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="permission-restricted-capture" options={["Option A — Save locally, explain", "Option B — Block entirely"]} />
             </div>
 
             {/* 5 — When does warning appear? */}
@@ -512,6 +517,7 @@ export default function Story3Page() {
                   description="A subtle banner on detail page + a confirmation sheet when capture is triggered. Belt and suspenders."
                   note="Best UX in most cases — the banner is informational, the sheet is a moment to confirm intent." />
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="warning-timing" options={["Option A — Persistent banner", "Option B — At capture trigger", "Option C — Both"]} />
             </div>
 
             {/* 6 — Attachment edit rules */}
@@ -546,6 +552,7 @@ export default function Story3Page() {
               <div style={{ padding: "12px 14px", borderRadius: 8, background: "rgba(245,166,35,0.06)", border: "1px solid rgba(245,166,35,0.2)", fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.6 }}>
                 <strong style={{ color: "#F5A623" }}>Recommended rule:</strong> Account attachment is locked after AI generation. Before generation, it can be changed with a confirmation. After CRM sync, it is never changeable from the app — that requires a CRM edit. This gives reps a reasonable correction window without introducing data inconsistency.
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="attachment-edit-rules" options={["Approved as-is", "Needs changes"]} />
             </div>
 
             {/* 7 — Hard no-switch rule */}
@@ -559,6 +566,7 @@ export default function Story3Page() {
                   description="Once recording ends, the account attachment is permanently locked. Simpler logic, no edge cases around re-generation."
                   note="Tighter but may frustrate reps who realize mid-recording they have the wrong account." />
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="no-switch-rule" options={["No — allow correction before generation", "Yes — lock immediately after recording"]} />
             </div>
 
             {/* 8 — CRM sync */}
@@ -572,6 +580,7 @@ export default function Story3Page() {
                   description="Before attempting sync, Halosight checks whether the rep has CRM write access to the account. If not, note is saved locally only."
                   note="Requires a permission-check API call. More complex but avoids failed sync attempts." />
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="crm-sync" options={["Option A — Attempt, handle rejection", "Option B — Check permission first"]} />
             </div>
 
             {/* 9 — CRM rejects sync */}
@@ -585,6 +594,7 @@ export default function Story3Page() {
                   description="When sync fails due to ownership, the UI offers: 'Send this note to Sarah Chen to log for you?' This triggers a notification to the owner."
                   note="Good UX addition for V2, but adds complexity and a cross-rep notification system to V1." />
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="crm-rejection" options={["Option A — Save locally with explanation", "Option B — Offer to reassign"]} />
             </div>
 
             {/* 10 — Note visibility */}
@@ -612,6 +622,7 @@ export default function Story3Page() {
                   ))}
                 </div>
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="note-visibility" options={["Approved as-is", "Needs changes"]} />
             </div>
 
             {/* 11 — Owner notification */}
@@ -628,6 +639,7 @@ export default function Story3Page() {
                   description="The note only appears in the capturing rep's history. The account owner doesn't see it unless they specifically search."
                   note="Not recommended — creates a hidden-data problem. Field notes should be shared context." />
               </div>
+              <DecisionWidget storyId="story-3" decisionKey="owner-notification" options={["Option A — Passive visibility", "Option B — Push notification", "Option C — No notification"]} />
             </div>
 
           </Section>

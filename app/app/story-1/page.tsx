@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from "react";
+import DecisionWidget from "@/components/decisions/DecisionWidget";
 
 const BASE = process.env.NODE_ENV === "production"
   ? "https://halosight-prototype.vercel.app"
@@ -527,6 +528,7 @@ export default function Story1Page() {
                   note="Better as a section concept than a UI label."
                 />
               </div>
+              <DecisionWidget storyId="story-1" decisionKey="umbrella-label" options={["Customers", "Companies", "Records", "Book of Business"]} />
             </div>
 
             {/* Decision 2: Together or separate */}
@@ -576,6 +578,7 @@ export default function Story1Page() {
                   </MockScreen>
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-1" decisionKey="unified-vs-tabbed" options={["Option A — One unified list", "Option B — Tabbed list"]} />
             </div>
 
             {/* Decision 3: Global search on by default */}
@@ -600,6 +603,7 @@ export default function Story1Page() {
                   note="More results but slower and noisier. Consider if reps have small books of business."
                 />
               </div>
+              <DecisionWidget storyId="story-1" decisionKey="global-search-default" options={["Option A — Hidden until triggered", "Option B — Always on"]} />
             </div>
 
             {/* Decision 4: Global search unavailable */}
@@ -637,6 +641,7 @@ export default function Story1Page() {
                   </MockScreen>
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-1" decisionKey="global-search-unavailable" options={["Option A — Disabled state with message", "Option B — Hide the button"]} />
             </div>
 
             {/* Decision 5: Permission-restricted results */}
@@ -671,6 +676,7 @@ export default function Story1Page() {
                   description="Restricted records are filtered out before the rep sees them. Simpler UI but may cause confusion when a rep knows a customer exists but can't find them."
                 />
               </div>
+              <DecisionWidget storyId="story-1" decisionKey="permission-restricted" options={["Option A — Show with lock", "Option B — Show grayed out", "Option C — Hide completely"]} />
             </div>
 
             {/* Decision 6: Metadata on cards */}
@@ -701,6 +707,7 @@ export default function Story1Page() {
                   ))}
                 </div>
               </div>
+              <DecisionWidget storyId="story-1" decisionKey="card-metadata" options={["Approved as-is", "Needs changes"]} />
             </div>
 
           </Section>

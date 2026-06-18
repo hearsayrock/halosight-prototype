@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from "react";
+import DecisionWidget from "@/components/decisions/DecisionWidget";
 
 // ─── Layout primitives ────────────────────────────────────────────────────────
 
@@ -432,6 +433,7 @@ export default function Story2Page() {
                   note="Not recommended for V1 — doubles the form, sync, and missing-fields logic.">
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="v1-lead-only" options={["Option A — Lead only", "Option B — Flexible"]} />
             </div>
 
             {/* 2 — Language */}
@@ -453,6 +455,7 @@ export default function Story2Page() {
                   <div style={{ padding: "10px 12px", background: "var(--color-dark-secondary)", borderRadius: 8, fontSize: 13, fontWeight: 600, color: "#F5A623" }}>+ Create lead</div>
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="create-language" options={["Option A — 'Create customer'", "Option B — 'Create lead'"]} />
             </div>
 
             {/* 3 — Save locally */}
@@ -469,6 +472,7 @@ export default function Story2Page() {
                   note="Not recommended — this is the failure mode the product is explicitly trying to prevent.">
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="save-locally" options={["Option A — Yes, save locally", "Option B — Sync required"]} />
             </div>
 
             {/* 4 — Create with name only */}
@@ -485,6 +489,7 @@ export default function Story2Page() {
                   note="Creates friction in the field. A rep who doesn't know the account's SIC code shouldn't be blocked from creating the record.">
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="name-only-creation" options={["Option A — Capture now, fill later", "Option B — All fields upfront"]} />
             </div>
 
             {/* 5 — Required fields */}
@@ -512,6 +517,7 @@ export default function Story2Page() {
                   ))}
                 </div>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="required-fields" options={["Approved as-is", "Needs changes"]} />
             </div>
 
             {/* 6 — Where to add missing fields */}
@@ -528,6 +534,7 @@ export default function Story2Page() {
                   note="Works but adds indirection. The rep has to find the action item to understand why the lead isn't synced.">
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="missing-fields-location" options={["Option A — Detail screen", "Option B — Notification"]} />
             </div>
 
             {/* 7 — Auto-retry */}
@@ -543,6 +550,7 @@ export default function Story2Page() {
                   note="Only useful if sync has a meaningful cost (slow API, rate limits). For most CRMs, auto-retry is fine.">
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="auto-retry" options={["Option A — Auto-retry", "Option B — Manual retry"]} />
             </div>
 
             {/* 8 — Sync success confirmation */}
@@ -559,6 +567,7 @@ export default function Story2Page() {
                   note="Too heavy for what is essentially background work.">
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="sync-success" options={["Option A — Toast + chip update", "Option B — Full confirmation screen"]} />
             </div>
 
             {/* 9 — Address match / duplicate */}
@@ -578,6 +587,7 @@ export default function Story2Page() {
                   note="Creates friction. A rep who knows it's a different location shouldn't be blocked.">
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="address-duplicate" options={["Option A — Inline warning", "Option B — Block creation"]} />
             </div>
 
             {/* 10 — Override duplicate */}
@@ -592,6 +602,7 @@ export default function Story2Page() {
                   note="One confirmation step is fine if the warning is clear. Two steps may be too much.">
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="override-duplicate" options={["Option A — Always overrideable", "Option B — Requires confirmation"]} />
             </div>
 
             {/* 11 — Contacts */}
@@ -612,6 +623,7 @@ export default function Story2Page() {
                   </div>
                 </OptionCard>
               </div>
+              <DecisionWidget storyId="story-2" decisionKey="contacts-scope" options={["Option A — Optional contact name", "Option B — Out of scope"]} />
             </div>
 
           </Section>
