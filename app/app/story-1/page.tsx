@@ -88,7 +88,7 @@ function MockHeader({ title }: { title: string }) {
   );
 }
 
-function MockSearchBar({ query = "", active = false, pill }: { query?: string; active?: boolean; pill?: string }) {
+function MockSearchBar({ query = "", active = false, pill, placeholder = "Search…" }: { query?: string; active?: boolean; pill?: string; placeholder?: string }) {
   return (
     <div style={{ padding: "8px 12px", display: "flex", alignItems: "center", gap: 8 }}>
       <div style={{
@@ -101,7 +101,7 @@ function MockSearchBar({ query = "", active = false, pill }: { query?: string; a
           <path d="M12 12L16 16" stroke={active ? "var(--color-brand-purple)" : "var(--color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" />
         </svg>
         <span style={{ fontSize: 14, color: query ? "var(--color-text-primary)" : "var(--color-text-disabled)", flex: 1 }}>
-          {query || "Search…"}
+          {query || placeholder}
         </span>
       </div>
       {pill && (
