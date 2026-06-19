@@ -325,41 +325,15 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           {account.name}
         </h1>
 
-        {/* Account metadata — address + customer type (always same layout) */}
-        {(() => {
-          const typeLabel = account.crmAccountType
-            ? account.crmAccountType.replace(/-/g, "‑").replace(/\b\w/g, (c) => c.toUpperCase())
-            : account.halosightType === "prospect"
-            ? "Prospect"
-            : null;
-          if (!account.address && !typeLabel) return null;
-          return (
-            <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
-              {account.address && (
-                <div className="flex items-center gap-1">
-                  <Icon name="location_on" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
-                  <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-                    {account.address}
-                  </span>
-                </div>
-              )}
-              {account.address && typeLabel && (
-                <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>·</span>
-              )}
-              {typeLabel && (
-                <span
-                  className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{
-                    background: "var(--color-dark-secondary)",
-                    color: "var(--color-text-muted)",
-                  }}
-                >
-                  {typeLabel}
-                </span>
-              )}
-            </div>
-          );
-        })()}
+        {/* Account metadata — address */}
+        {account.address && (
+          <div className="flex items-center justify-center gap-1 mb-3">
+            <Icon name="location_on" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+            <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+              {account.address}
+            </span>
+          </div>
+        )}
 
         {/* Lead status + disqualify — prospects only, side by side */}
         {account.halosightType === "prospect" && !justCreated && (

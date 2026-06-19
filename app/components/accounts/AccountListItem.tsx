@@ -171,12 +171,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
 
         {/* Right — badge top, task + assignee bottom */}
         <div className="flex flex-col items-end justify-between gap-2 flex-shrink-0" style={{ minHeight: 60 }}>
-          {/* Prospect badge takes priority; fall back to CRM type badge */}
-          {account.halosightType === "prospect" ? (
-            <ProspectBadge />
-          ) : account.crmAccountType ? (
-            <CrmTypeBadge type={account.crmAccountType} />
-          ) : null}
+          {account.halosightType === "prospect" && <ProspectBadge />}
 
           {/* Task indicator + assignee */}
           <div className="flex items-center gap-1.5">
