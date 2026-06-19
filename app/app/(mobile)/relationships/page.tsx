@@ -2,7 +2,7 @@
 
 /**
  * FLUTTER HANDOFF: CombinedHomeAccountsScreen
- * Route: /accounts
+ * Route: /relationships
  * Playground: account-prospecting — exploring a single home screen that
  *             merges today's tasks + accounts list, with a slide-in
  *             Engagements drawer replacing the bottom nav.
@@ -127,7 +127,7 @@ function EngagementRow({
 }) {
   return (
     <Link
-      href={`/accounts/${activity.accountId}/activity/${activity.activityId}`}
+      href={`/relationships/${activity.accountId}/activity/${activity.activityId}`}
       onClick={onClose}
     >
       <div
@@ -323,7 +323,7 @@ function TaskStrip({
                 </button>
                 {/* Task info */}
                 <Link
-                  href={`/accounts/${task.accountId}/action-items/${task.itemId}`}
+                  href={`/relationships/${task.accountId}/action-items/${task.itemId}`}
                   className="flex-1 min-w-0"
                 >
                   <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.3 }}>
@@ -347,7 +347,7 @@ function TaskStrip({
                 {/* Origin activity link — outside the content Link to avoid nested anchors */}
                 {task.originActivityId && (
                   <Link
-                    href={`/accounts/${task.accountId}/activity/${task.originActivityId}`}
+                    href={`/relationships/${task.accountId}/activity/${task.originActivityId}`}
                     className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
                     style={{ width: 44, height: 44 }}
                   >
@@ -421,7 +421,7 @@ function DashboardGrid({
         </div>
 
         {/* Row 2: account name + meta — tappable to account detail */}
-        <Link href={`/accounts/${suggestedAccount.id}`}>
+        <Link href={`/relationships/${suggestedAccount.id}`}>
           <div className="mb-5 active:opacity-80 transition-opacity">
             <p style={{
               fontFamily: "Roboto Slab, Georgia, serif",
@@ -477,7 +477,7 @@ function DashboardGrid({
 function CompactAccountRow({ account, isLast }: { account: Account; isLast: boolean }) {
   const hasTask = (account.taskCount ?? 0) > 0;
   return (
-    <Link href={`/accounts/${account.id}`}>
+    <Link href={`/relationships/${account.id}`}>
       <div className="flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity relative">
         {!isLast && (
           <div className="absolute bottom-0 left-4 right-4"
@@ -606,10 +606,10 @@ function CombinedPageContent() {
   const mode: PageMode = (modeParam === "accounts" || modeParam === "priorities") ? modeParam : "home";
 
   function goToMode(m: "accounts" | "priorities") {
-    router.push(`/accounts?mode=${m}`, { scroll: false });
+    router.push(`/relationships?mode=${m}`, { scroll: false });
   }
   function goHome() {
-    router.push("/accounts");
+    router.push("/relationships");
   }
 
   // Drawer
@@ -632,7 +632,7 @@ function CombinedPageContent() {
     setAllAccounts((prev) => [newAccount, ...prev]);
     setQuery("");
     setTypeFilter("all");
-    router.push(`/accounts/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
+    router.push(`/relationships/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
   }
 
   // Create account sheet
@@ -962,7 +962,7 @@ function CombinedPageContent() {
             <input
               ref={accountsInputRef}
               type="text"
-              placeholder={showSystemSection ? "Searching all accounts…" : "Search accounts…"}
+              placeholder={showSystemSection ? "Searching all relationships…" : "Search relationships…"}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="flex-1 bg-transparent text-[15px] outline-none"
@@ -1079,8 +1079,8 @@ function CombinedPageContent() {
               style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
             >
               {/* My accounts */}
-              {showSystemSection && <SectionHeader label="Your Accounts" count={myFiltered.length} />}
-              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Accounts" count={myFiltered.length} />}
+              {showSystemSection && <SectionHeader label="Your Relationships" count={myFiltered.length} />}
+              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Relationships" count={myFiltered.length} />}
 
               {myFiltered.length > 0 ? (
                 <div className="flex flex-col">
@@ -1141,13 +1141,13 @@ function CombinedPageContent() {
                 <div style={{ marginTop: 16 }}>
                   {systemState === "loading" && (
                     <>
-                      <SectionHeader label="All Tomorrowland Innovations Accounts" count={0} />
+                      <SectionHeader label="All Tomorrowland Innovations Relationships" count={0} />
                       <SystemSearchSkeleton />
                     </>
                   )}
                   {systemState === "done" && (
                     <>
-                      <SectionHeader label="All Tomorrowland Innovations Accounts" count={systemResults.length} />
+                      <SectionHeader label="All Tomorrowland Innovations Relationships" count={systemResults.length} />
                       {systemResults.length > 0 ? (
                         <div className="flex flex-col mx-4 rounded-2xl overflow-hidden"
                           style={{ border: "1px solid var(--color-dark-tertiary)" }}>
@@ -1157,7 +1157,7 @@ function CombinedPageContent() {
                               account={account}
                               assignedRep={systemAccountReps[account.id] ?? "Unknown"}
                               isLast={i === systemResults.length - 1}
-                              onSelect={(a) => router.push(`/accounts/${a.id}`)}
+                              onSelect={(a) => router.push(`/relationships/${a.id}`)}
                             />
                           ))}
                         </div>
@@ -1205,7 +1205,7 @@ function CombinedPageContent() {
                     <FilterDropdown
                       options={[
                         { value: "dueDate" as TaskSortMode, label: "Due Date" },
-                        { value: "account" as TaskSortMode, label: "Account" },
+                        { value: "account" as TaskSortMode, label: "Relationship" },
                       ]}
                       value={taskSortMode}
                       onChange={setTaskSortMode}
@@ -1315,7 +1315,7 @@ function CombinedPageContent() {
                                 </button>
                               </div>
                               {/* Row content */}
-                              <Link href={`/accounts/${item.accountId}/action-items/${item.id}`}
+                              <Link href={`/relationships/${item.accountId}/action-items/${item.id}`}
                                 className="flex-1 flex items-center gap-3 py-3.5">
                                 <div className="flex-1 min-w-0">
                                   <p className="text-[16px] font-semibold leading-snug mb-1"
@@ -1344,7 +1344,7 @@ function CombinedPageContent() {
                               {/* Origin activity link icon — outside content Link to avoid nested anchors */}
                               {item.originActivityId && (
                                 <Link
-                                  href={`/accounts/${item.accountId}/activity/${item.originActivityId}`}
+                                  href={`/relationships/${item.accountId}/activity/${item.originActivityId}`}
                                   className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
                                   style={{ width: 44, height: 44 }}
                                 >

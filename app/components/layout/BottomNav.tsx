@@ -40,8 +40,8 @@ function AccountsIcon({ active }: { active: boolean }) {
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const isAccounts = pathname.startsWith("/accounts");
-  const isHome = pathname === "/accounts" || pathname === "/";
+  const isAccounts = pathname.startsWith("/relationships");
+  const isHome = pathname === "/relationships" || pathname === "/";
 
   return (
     /* Outer wrapper: 32px padding on sides and bottom */
@@ -77,7 +77,7 @@ export default function BottomNav() {
 
         {/* Home */}
         <Link
-          href="/accounts"
+          href="/relationships"
           className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1 h-full"
         >
           <HomeIcon active={isHome} />
@@ -86,14 +86,14 @@ export default function BottomNav() {
           </span>
         </Link>
 
-        {/* Accounts */}
+        {/* Relationships */}
         <Link
-          href="/accounts"
+          href="/relationships"
           className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1 h-full"
         >
           <AccountsIcon active={isAccounts} />
           <span className="label-serif" style={{ color: isAccounts ? "var(--color-text-primary)" : "var(--color-text-muted)" }}>
-            Accounts
+            Relationships
           </span>
         </Link>
       </nav>

@@ -121,7 +121,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
   const { label, isToday } = formatLastVisited(account.lastVisited);
 
   return (
-    <Link href={`/accounts/${account.id}`}>
+    <Link href={`/relationships/${account.id}`}>
       <div
         className="flex items-start gap-3 px-4 py-3.5 active:opacity-70 transition-opacity relative"
       >

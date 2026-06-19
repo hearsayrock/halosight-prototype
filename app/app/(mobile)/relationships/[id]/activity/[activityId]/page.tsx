@@ -2,7 +2,7 @@
 
 /**
  * FLUTTER HANDOFF: ActivityDetailScreen
- * Route: /accounts/[id]/activity/[activityId]
+ * Route: /relationships/[id]/activity/[activityId]
  * Reached by tapping an activity card in the Account Detail → Activity tab.
  * Also the landing screen after completing a capture flow.
  * Widget: StatelessWidget
@@ -158,7 +158,7 @@ function ActivityDetailPageContent({
     if (justCompleted && !justCompletedHandled.current) {
       justCompletedHandled.current = true;
       handleComplete(justCompleted);
-      router.replace(`/accounts/${id}/activity/${activityId}`);
+      router.replace(`/relationships/${id}/activity/${activityId}`);
     }
   }, []); // eslint-disable-line
 
@@ -182,7 +182,7 @@ function ActivityDetailPageContent({
       <div className="pt-10 px-4 pb-4">
         {/* Back + rep avatar / more row */}
         <div className="flex items-center justify-between mb-3">
-          <Link href={`/accounts/${id}?tab=activity`}>
+          <Link href={`/relationships/${id}?tab=activity`}>
             <button className="p-1 active:opacity-60 transition-opacity">
               <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
             </button>
@@ -288,7 +288,7 @@ function ActivityDetailPageContent({
           {actionItems.length > 0 ? (
             <div className="flex flex-col gap-2">
               {actionItems.map((item) => (
-                <Link key={item.id} href={`/accounts/${id}/action-items/${item.id}?from=activity&activityId=${activityId}`}>
+                <Link key={item.id} href={`/relationships/${id}/action-items/${item.id}?from=activity&activityId=${activityId}`}>
                   <ActionItemCard item={item} onComplete={() => handleComplete(item.id)} pending={pendingItemId === item.id} />
                 </Link>
               ))}

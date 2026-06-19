@@ -50,7 +50,7 @@ export interface ActionItem {
   note?: string;          // optional completion note
   description?: string;   // why this action item was created
   originActivity?: string; // name of the visit/call this item was generated from
-  originActivityId?: string; // links to /accounts/[accountId]/activity/[originActivityId]
+  originActivityId?: string; // links to /relationships/[accountId]/activity/[originActivityId]
 }
 
 export interface AccountDetail extends Account {

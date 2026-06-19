@@ -128,7 +128,7 @@ export default function CaptureWidget() {
     if (!accountId) return;
     const detail = mockAccountDetails[accountId];
     const first = detail?.recentActivity?.[0];
-    router.push(first ? `/accounts/${accountId}/activity/${first.id}` : `/accounts/${accountId}`);
+    router.push(first ? `/relationships/${accountId}/activity/${first.id}` : `/relationships/${accountId}`);
     dismissCapture();
   }
 

@@ -148,7 +148,7 @@ function TaskRow({
 
       {/* Content + chevron — navigates to detail */}
       <Link
-        href={`/accounts/${accountId}/action-items/${item.id}`}
+        href={`/relationships/${accountId}/action-items/${item.id}`}
         className="flex-1 flex items-center gap-3 py-3.5"
       >
         <div className="flex-1 min-w-0">
@@ -194,7 +194,7 @@ function TaskRow({
       {/* Origin activity link icon — outside content Link to avoid nested anchors */}
       {item.originActivityId && (
         <Link
-          href={`/accounts/${item.accountId}/activity/${item.originActivityId}`}
+          href={`/relationships/${item.accountId}/activity/${item.originActivityId}`}
           className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
           style={{ width: 44, height: 44 }}
         >
@@ -381,7 +381,7 @@ export default function TasksPage() {
             <FilterDropdown
               options={[
                 { value: "dueDate" as SortMode, label: "Due Date" },
-                { value: "account" as SortMode, label: "Account" },
+                { value: "account" as SortMode, label: "Relationship" },
               ]}
               value={sortMode}
               onChange={setSortMode}

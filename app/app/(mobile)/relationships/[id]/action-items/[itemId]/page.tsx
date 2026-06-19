@@ -2,7 +2,7 @@
 
 /**
  * FLUTTER HANDOFF: ActionItemDetailScreen
- * Route: /accounts/[id]/action-items/[itemId]
+ * Route: /relationships/[id]/action-items/[itemId]
  * Widget: StatefulWidget
  * State: isEditing, title, status, dueDate — edit mode auto-saves on 800ms debounce
  * Flutter equivalent: action_item_detail_page.dart
@@ -77,14 +77,14 @@ function ActionItemDetailPageContent({
   function handleComplete() {
     if (!item) return;
     const backUrl = from === "activity" && fromActivityId
-      ? `/accounts/${accountId}/activity/${fromActivityId}?just_completed=${itemId}`
-      : `/accounts/${accountId}?just_completed=${itemId}`;
+      ? `/relationships/${accountId}/activity/${fromActivityId}?just_completed=${itemId}`
+      : `/relationships/${accountId}?just_completed=${itemId}`;
     router.push(backUrl);
   }
 
   function handleDelete() {
     deleteItem(accountId, itemId);
-    router.push(`/accounts/${accountId}`);
+    router.push(`/relationships/${accountId}`);
   }
 
   function handleDoneEditing() {
@@ -259,7 +259,7 @@ function ActionItemDetailPageContent({
 
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-10 pb-4">
-        <button onClick={() => router.push(`/accounts/${accountId}`)} className="p-1 active:opacity-60 transition-opacity">
+        <button onClick={() => router.push(`/relationships/${accountId}`)} className="p-1 active:opacity-60 transition-opacity">
           <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
         </button>
         <button
@@ -300,7 +300,7 @@ function ActionItemDetailPageContent({
         {/* Metadata chips */}
         <div className="flex flex-wrap gap-2 mb-7">
           {account && (
-            <Link href={`/accounts/${accountId}`}>
+            <Link href={`/relationships/${accountId}`}>
               <div
                 className="flex items-center gap-1.5 px-3 py-1.5 active:opacity-70 transition-opacity"
                 style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-full)" }}
@@ -311,7 +311,7 @@ function ActionItemDetailPageContent({
             </Link>
           )}
           {item.originActivity && item.originActivityId && (
-            <Link href={`/accounts/${accountId}/activity/${item.originActivityId}`}>
+            <Link href={`/relationships/${accountId}/activity/${item.originActivityId}`}>
               <div
                 className="flex items-center gap-1.5 px-3 py-1.5 active:opacity-70 transition-opacity"
                 style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-full)" }}

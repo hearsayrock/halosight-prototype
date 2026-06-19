@@ -494,7 +494,7 @@ export default function DesignSystemPage() {
             M3
           </span>
         </div>
-        <Link href="/accounts" className="text-[13px]" style={{ color: "var(--color-brand-purple)" }}>
+        <Link href="/relationships" className="text-[13px]" style={{ color: "var(--color-brand-purple)" }}>
           ← Back to app
         </Link>
       </div>

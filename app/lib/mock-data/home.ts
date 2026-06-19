@@ -6,7 +6,7 @@
 
 export interface HomeTask {
   id: string;
-  /** Links to /accounts/[accountId]/action-items/[itemId] */
+  /** Links to /relationships/[accountId]/action-items/[itemId] */
   itemId: string;
   title: string;
   dueDate: Date | null;   // null = due today
@@ -15,13 +15,13 @@ export interface HomeTask {
   completed: boolean;
   /** Name of the visit/call this item was generated from */
   originActivity?: string;
-  /** Activity id — links to /accounts/[accountId]/activity/[originActivityId] */
+  /** Activity id — links to /relationships/[accountId]/activity/[originActivityId] */
   originActivityId?: string;
 }
 
 export interface HomeActivity {
   id: string;
-  /** Links to /accounts/[accountId]/activity/[activityId] */
+  /** Links to /relationships/[accountId]/activity/[activityId] */
   activityId: string;
   title: string;
   description: string;

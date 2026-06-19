@@ -2,7 +2,7 @@
 
 /**
  * FLUTTER HANDOFF: AccountDetailScreen
- * Route: /accounts/[id]
+ * Route: /relationships/[id]
  * Widget: StatefulWidget
  * State: activeTab ("overview" | "activity"), pageState (loading|error|loaded)
  * Tokens: --color-background, --color-dark-primary, --color-dark-secondary,
@@ -57,7 +57,7 @@ function formatDuration(minutes: number): string {
 
 function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; accountId: string; isExternal?: boolean }) {
   return (
-    <Link href={`/accounts/${accountId}/activity/${item.id}`}>
+    <Link href={`/relationships/${accountId}/activity/${item.id}`}>
     <div
       className="flex items-start gap-3 p-4 active:opacity-70 transition-opacity"
       style={{
@@ -174,7 +174,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     if (justCompleted && !justCompletedHandled.current) {
       justCompletedHandled.current = true;
       handleComplete(justCompleted);
-      router.replace(`/accounts/${id}`);
+      router.replace(`/relationships/${id}`);
     }
   }, []); // eslint-disable-line
 
@@ -203,7 +203,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     setDisqualifyPending(true);
     disqualifyTimerRef.current = setTimeout(() => {
       disqualify(id);
-      router.push("/accounts");
+      router.push("/relationships");
     }, 5000);
   }
 
@@ -218,7 +218,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     if (disqualifyTimerRef.current) clearTimeout(disqualifyTimerRef.current);
     disqualifyTimerRef.current = null;
     disqualify(id);
-    router.push("/accounts");
+    router.push("/relationships");
   }
   const isCapturing = captureStatus !== "idle" && capturingId === id;
 
@@ -242,7 +242,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     return (
       <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
         <div className="pt-10 px-4 pb-2">
-          <button onClick={() => router.push("/accounts")} className="p-1 active:opacity-60 transition-opacity">
+          <button onClick={() => router.push("/relationships")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
         </div>
@@ -259,12 +259,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     return (
       <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
         <div className="pt-10 px-4 pb-2">
-          <button onClick={() => router.push("/accounts")} className="p-1 active:opacity-60 transition-opacity">
+          <button onClick={() => router.push("/relationships")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
         </div>
         <ErrorState
-          title="Account not found"
+          title="Relationship not found"
           message="This account doesn't exist or may have been removed."
         />
       </div>
@@ -279,7 +279,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
         {/* Back button row — assignee badge appears on the right for other reps' accounts */}
         <div className="flex items-center justify-between mb-3">
-          <button onClick={() => router.push("/accounts")} className="p-1 active:opacity-60 transition-opacity">
+          <button onClick={() => router.push("/relationships")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
           {account.assignedInitial && account.assignedInitial !== "J" ? (
@@ -489,7 +489,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               {actionItems.length > 0 ? (
                 <div className="flex flex-col gap-2">
                   {actionItems.map((item) => (
-                    <Link key={item.id} href={`/accounts/${id}/action-items/${item.id}?from=account`}>
+                    <Link key={item.id} href={`/relationships/${id}/action-items/${item.id}?from=account`}>
                       <ActionItemCard item={item} onComplete={() => handleComplete(item.id)} pending={pendingItemId === item.id} />
                     </Link>
                   ))}

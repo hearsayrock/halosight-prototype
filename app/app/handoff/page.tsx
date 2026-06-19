@@ -157,11 +157,11 @@ const SCREENS: ScreenSpec[] = [
   {
     name: "Home / Priority Hub",
     type: "screen",
-    route: "/accounts",
+    route: "/relationships",
     flutterFile: "accounts_page.dart",
     description: "The main daily hub. Three content sections: a suggested visit card (AI-curated, with a 'Log a Visit' CTA), a compact accounts list (top 4 scored by recency + open tasks + proximity), and an action items strip showing the top 4 open items. 'View all' next to Action Items transitions to the priorities mode of this same page. Hamburger top-left opens the Engagements drawer.",
     states: [
-      { label: "Home view", path: "/accounts", variant: "default" },
+      { label: "Home view", path: "/relationships", variant: "default" },
     ],
     interactions: [
       "Checking a task circle in the action items strip starts a pending completion — the circle fills green with a spring animation (stiffness 500, damping 28), CompletionToast appears, and the item exits after 8s",
@@ -196,37 +196,37 @@ const SCREENS: ScreenSpec[] = [
   {
     name: "Account Detail",
     type: "screen",
-    route: "/accounts/[id]",
+    route: "/relationships/[id]",
     flutterFile: "account_detail_page.dart",
     description: "Two-tab view (Overview / Activity) for a single account. The Overview tab shows action items for this account — each row has a completion circle, title, due date, and chevron to the detail page. A '+' button opens AddActionItemSheet. When an item is checked off here, CompletionToast appears over the bottom nav.",
     states: [
-      { label: "With action items", path: "/accounts/jacks-tire-elko", variant: "default" },
-      { label: "No data", path: "/accounts/profleet-glendale-1", variant: "default" },
-      { label: "Loading", path: "/accounts/jacks-tire-elko?preview=loading", variant: "loading" },
-      { label: "Error", path: "/accounts/jacks-tire-elko?preview=error", variant: "error" },
+      { label: "With action items", path: "/relationships/jacks-tire-elko", variant: "default" },
+      { label: "No data", path: "/relationships/profleet-glendale-1", variant: "default" },
+      { label: "Loading", path: "/relationships/jacks-tire-elko?preview=loading", variant: "loading" },
+      { label: "Error", path: "/relationships/jacks-tire-elko?preview=error", variant: "error" },
     ],
     interactions: [
       "Completion circle tap → pending state (green fill) → CompletionToast at bottom (above nav, bottom=106px)",
       "CompletionToast 'Add a note' → NoteSheet before committing",
       "When landing with ?just_completed=itemId in the URL, the page auto-triggers completion for that item and cleans the URL via router.replace()",
-      "Action item row tap navigates to /accounts/[id]/action-items/[itemId]?from=account",
+      "Action item row tap navigates to /relationships/[id]/action-items/[itemId]?from=account",
       "'Add action item' '+' icon → AddActionItemSheet bottom sheet",
     ],
   },
   {
     name: "Activity Detail",
     type: "screen",
-    route: "/accounts/[id]/activity/[activityId]",
+    route: "/relationships/[id]/activity/[activityId]",
     flutterFile: "activity_detail_page.dart",
     description: "AI-generated summary of a single field visit. Below the summary card is an Action Items section showing items linked to this activity. Completion works the same as Account Detail. The account name in the header is tappable to open AccountPickerSheet (reassign activity to a different account).",
     states: [
-      { label: "With AI summary", path: "/accounts/jacks-tire-elko/activity/ja-1", variant: "default" },
-      { label: "With action items", path: "/accounts/walmart-corp/activity/wm-1", variant: "default" },
+      { label: "With AI summary", path: "/relationships/jacks-tire-elko/activity/ja-1", variant: "default" },
+      { label: "With action items", path: "/relationships/walmart-corp/activity/wm-1", variant: "default" },
     ],
     interactions: [
       "Completion circle tap → pending state → CompletionToast (bottom=106px, above nav)",
       "Landing with ?just_completed=itemId triggers the same auto-completion + URL cleanup as Account Detail",
-      "Action item row tap navigates to /accounts/[id]/action-items/[itemId]?from=activity&activityId=[activityId]",
+      "Action item row tap navigates to /relationships/[id]/action-items/[itemId]?from=activity&activityId=[activityId]",
       "'+' button opens AddActionItemSheet when action items exist; empty state CTA opens it when list is empty",
       "Account name tap → AccountPickerSheet to reassign the activity to a different account",
     ],
@@ -235,21 +235,21 @@ const SCREENS: ScreenSpec[] = [
   {
     name: "Action Item Detail",
     type: "screen",
-    route: "/accounts/[id]/action-items/[itemId]",
+    route: "/relationships/[id]/action-items/[itemId]",
     flutterFile: "action_item_detail_page.dart",
     description: "Two modes controlled by a single isEditing boolean. Read-only mode (default): large serif title, metadata pill chips (account link, originating visit link, due date), optional 'Why this was created' description paragraph, and a teal 'Mark as Complete' CTA fixed at the bottom. Edit mode: same route, editable textarea title, status picker (Open / Done / Canceled), MiniCalendar date picker, and a Delete button with a confirmation modal.",
     states: [
-      { label: "Read-only", path: "/accounts/jacks-tire-elko/action-items/ja-t1", variant: "default" },
-      { label: "From activity", path: "/accounts/jacks-tire-elko/action-items/ja-t1?from=activity&activityId=ja-1", variant: "default" },
+      { label: "Read-only", path: "/relationships/jacks-tire-elko/action-items/ja-t1", variant: "default" },
+      { label: "From activity", path: "/relationships/jacks-tire-elko/action-items/ja-t1?from=activity&activityId=ja-1", variant: "default" },
     ],
     interactions: [
-      "Read-only back arrow → router.push('/accounts/[id]') always (not router.back())",
+      "Read-only back arrow → router.push('/relationships/[id]') always (not router.back())",
       "'Mark as Complete' → does NOT call updateItem here; instead navigates back to origin with ?just_completed=[itemId] appended so the parent page handles the completion state and shows the toast",
       "Origin is determined by ?from= and ?activityId= params passed in when navigating here",
       "'Edit' button top-right → sets isEditing=true, same URL",
       "Edit mode: title autosaves on 800ms debounce while typing; 'Saved' indicator appears briefly",
       "Edit mode back arrow / 'Done' button → flushes pending debounce immediately, sets isEditing=false",
-      "Delete → shows inline confirmation modal (not a sheet); confirmed → deleteItem() → router.push('/accounts/[id]')",
+      "Delete → shows inline confirmation modal (not a sheet); confirmed → deleteItem() → router.push('/relationships/[id]')",
       "Status picker: 3-segment control (Open / Done / Canceled) with colored dot indicators",
     ],
     notes: "The ?from=account and ?from=activity routing pattern is how the page knows where to send the user back after completion. Always pass these when navigating to this page.",
@@ -257,16 +257,16 @@ const SCREENS: ScreenSpec[] = [
   {
     name: "Engagements Drawer",
     type: "drawer",
-    route: "/accounts (hamburger icon)",
+    route: "/relationships (hamburger icon)",
     flutterFile: "engagements_drawer.dart",
     description: "Slides in from the left over the home view. Lists recently logged activities grouped into Today and Previous. Each row shows the account name and a purple dot indicator. Tapping a row navigates to that Activity Detail and closes the drawer. A scrim covers the rest of the page; tapping it closes the drawer.",
     states: [
-      { label: "Open drawer", path: "/accounts", variant: "default" },
+      { label: "Open drawer", path: "/relationships", variant: "default" },
     ],
     interactions: [
       "Hamburger icon tap → drawer slides in from left (x: -100% → 0, duration 0.28s, ease [0.32, 0, 0.18, 1])",
       "Scrim tap → drawer slides back out",
-      "Row tap → navigates to /accounts/[id]/activity/[activityId] and closes drawer",
+      "Row tap → navigates to /relationships/[id]/activity/[activityId] and closes drawer",
       "Portals into #phone-overlay-root so it layers above all page content",
     ],
   },
@@ -277,7 +277,7 @@ const SCREENS: ScreenSpec[] = [
     flutterFile: "completion_toast.dart",
     description: "Slide-up confirmation toast that appears whenever an action item is checked off. Shows a green checkmark, 'Item complete' label, a purple 'Undo' link, a coral 'Add a note' link, and an × dismiss. Auto-commits the completion after 8 seconds if not interacted with. Portals above the phone chrome.",
     states: [
-      { label: "Home view", path: "/accounts", variant: "default" },
+      { label: "Home view", path: "/relationships", variant: "default" },
     ],
     interactions: [
       "Appears with a spring slide-up (stiffness 400, damping 30)",
@@ -294,7 +294,7 @@ const SCREENS: ScreenSpec[] = [
     flutterFile: "note_bottom_sheet.dart",
     description: "Bottom sheet that appears after tapping 'Add a note' in the Completion Toast. A single multiline text field for entering a completion note. 'Done' commits the completion with the note attached to the action item. The timer is paused while this sheet is open.",
     states: [
-      { label: "From home strip", path: "/accounts", variant: "default" },
+      { label: "From home strip", path: "/relationships", variant: "default" },
     ],
     interactions: [
       "Slides up from bottom, soft scrim behind",
@@ -310,8 +310,8 @@ const SCREENS: ScreenSpec[] = [
     flutterFile: "add_action_item_bottom_sheet.dart",
     description: "Bottom sheet for creating a new action item linked to a specific account. Contains a text input for the title and a horizontal date picker strip. Date tiles show day abbreviation, date number, and month. Submitting adds the item to ActionItemsContext immediately (optimistic). The new item appears in the list on the parent screen.",
     states: [
-      { label: "From account detail", path: "/accounts/jacks-tire-elko", variant: "default" },
-      { label: "From activity detail", path: "/accounts/jacks-tire-elko/activity/ja-1", variant: "default" },
+      { label: "From account detail", path: "/relationships/jacks-tire-elko", variant: "default" },
+      { label: "From activity detail", path: "/relationships/jacks-tire-elko/activity/ja-1", variant: "default" },
     ],
     interactions: [
       "Slides up from bottom over the current screen",
@@ -411,7 +411,7 @@ const MODELS: { name: string; dartClass: string; note: string; code: string }[] 
   status: "open" | "done" | "canceled";
   description?: string;            // AI-generated 'why this was created' text
   originActivity?: string;         // display label for the source visit (e.g. "Quarterly Review")
-  originActivityId?: string;       // links to /accounts/[id]/activity/[activityId]
+  originActivityId?: string;       // links to /relationships/[id]/activity/[activityId]
   note?: string;                   // rep note added at completion time
 }`,
   },
@@ -801,7 +801,7 @@ export default function HandoffPage() {
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
           <Tag>Next Actions flow</Tag>
           <a
-            href={protoLink("/accounts")}
+            href={protoLink("/relationships")}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -856,7 +856,7 @@ export default function HandoffPage() {
               </p>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <a
-                  href={protoLink("/accounts")}
+                  href={protoLink("/relationships")}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{

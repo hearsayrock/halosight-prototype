@@ -397,7 +397,7 @@ export default function Story1Page() {
           <a href="/story-4" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 4</a>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <a href={protoLink("/accounts")} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontWeight: 600, color: "var(--color-brand-purple)", textDecoration: "none", padding: "4px 12px", background: "rgba(139,146,255,0.1)", borderRadius: 20 }}>
+          <a href={protoLink("/relationships")} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontWeight: 600, color: "var(--color-brand-purple)", textDecoration: "none", padding: "4px 12px", background: "rgba(139,146,255,0.1)", borderRadius: 20 }}>
             Open prototype ↗
           </a>
         </div>
@@ -750,7 +750,7 @@ export default function Story1Page() {
           <Section id="cards" title="Customer Cards">
 
             <div style={{ marginBottom: 32 }}>
-              <DeliverableHeading name="Account card" status="built" protoPath="/accounts" />
+              <DeliverableHeading name="Account card" status="built" protoPath="/relationships" />
               <p style={{ fontSize: 13, color: "var(--color-text-muted)", lineHeight: 1.6, marginBottom: 14 }}>
                 Largely built. Needs ownership chip and sync chip added to the existing row.
               </p>
