@@ -33,6 +33,7 @@ import NoteSheet from "@/components/ui/NoteSheet";
 import { AccountDetailSkeleton } from "@/components/ui/Skeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import { mockAccounts, mockAccountDetails } from "@/lib/mock-data/accounts";
+import { systemAccountReps } from "@/lib/mock-data/system-accounts";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
 import { useAccountState } from "@/lib/context/AccountStateContext";
@@ -277,41 +278,11 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       {/* Header */}
       <div className="pt-10 px-4 pb-4">
 
-        {/* Back button row — assignee badge appears on the right for other reps' accounts */}
-        <div className="flex items-center justify-between mb-3">
+        {/* Back button row */}
+        <div className="flex items-center mb-3">
           <button onClick={() => router.push("/relationships")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
-          {account.assignedInitial && account.assignedInitial !== "J" ? (
-            /* Assigned to a different rep */
-            <div className="flex items-center gap-2 pr-1">
-              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>Assigned to</span>
-              <div
-                className="flex items-center justify-center rounded-full text-[13px] font-semibold"
-                style={{
-                  width: 28,
-                  height: 28,
-                  background: "var(--color-dark-secondary)",
-                  color: "var(--color-text-muted)",
-                  border: "1.5px solid var(--color-dark-tertiary)",
-                }}
-              >
-                {account.assignedInitial}
-              </div>
-            </div>
-          ) : !account.assignedInitial ? (
-            /* No rep assigned */
-            <span
-              className="text-[11px] font-semibold px-2.5 py-1 rounded-full mr-1"
-              style={{
-                background: "rgba(139,146,255,0.1)",
-                color: "var(--color-brand-purple)",
-                border: "1px solid rgba(139,146,255,0.2)",
-              }}
-            >
-              Unassigned
-            </span>
-          ) : null}
         </div>
 
         {/* Account name */}
@@ -353,6 +324,29 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             </button>
           </div>
         )}
+
+        {/* Unowned account banner — shown for system/CRM accounts not owned by the current rep */}
+        {isExternalAccount && !justCreated && (() => {
+          const repName = systemAccountReps[account.id];
+          const message = repName
+            ? `You're viewing ${repName}'s account — notes you capture here will be visible to them.`
+            : "This account isn't assigned to a rep — notes you capture here will be visible to your team.";
+          return (
+            <div
+              className="flex items-start gap-2.5 px-3.5 py-3 mb-3 mx-1"
+              style={{
+                background: "rgba(139, 146, 255, 0.08)",
+                border: "1px solid rgba(139, 146, 255, 0.18)",
+                borderRadius: "var(--radius-md)",
+              }}
+            >
+              <Icon name="info" size={15} style={{ color: "var(--color-brand-purple)", flexShrink: 0, marginTop: 1 }} />
+              <span className="text-[12px] leading-snug" style={{ color: "var(--color-text-secondary)" }}>
+                {message}
+              </span>
+            </div>
+          );
+        })()}
 
         {/* Tabs — hidden on just-created blank slate */}
         {!justCreated && <div
