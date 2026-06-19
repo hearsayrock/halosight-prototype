@@ -14,6 +14,7 @@
 import Link from "next/link";
 import type { Account, CrmAccountType } from "@/lib/types";
 import { formatLastVisited, formatDistance } from "@/lib/utils";
+import Icon from "@/components/ui/Icon";
 
 // ── Prospect badge (Halosight-created) ───────────────────────────────────────
 
@@ -127,6 +128,16 @@ export default function AccountListItem({ account, isLast = false }: Props) {
       >
         {/* Separator — inset 12px each side, hidden on last item */}
         {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />}
+
+        {/* Type icon */}
+        <div className="flex-shrink-0 mt-[4px]">
+          {account.halosightType === "prospect" ? (
+            <Icon name="star" fill size={18} style={{ color: "var(--color-brand-purple)" }} />
+          ) : (
+            <Icon name="home" size={18} weight={300} style={{ color: "var(--color-text-disabled)" }} />
+          )}
+        </div>
+
         {/* Left — 3-line text stack */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">

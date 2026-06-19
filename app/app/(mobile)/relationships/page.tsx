@@ -483,6 +483,14 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
           <div className="absolute bottom-0 left-4 right-4"
             style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
         )}
+        {/* Type icon */}
+        <div className="flex-shrink-0">
+          {account.halosightType === "prospect" ? (
+            <Icon name="star" fill size={16} style={{ color: "var(--color-brand-purple)" }} />
+          ) : (
+            <Icon name="home" size={16} weight={300} style={{ color: "var(--color-text-disabled)" }} />
+          )}
+        </div>
         {/* Left — name + meta */}
         <div className="flex-1 min-w-0">
           <p style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.2 }}
