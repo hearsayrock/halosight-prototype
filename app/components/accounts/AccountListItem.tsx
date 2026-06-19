@@ -162,8 +162,8 @@ export default function AccountListItem({ account, isLast = false }: Props) {
           </p>
         </div>
 
-        {/* Right — badge top, task + assignee bottom */}
-        <div className="flex flex-col items-end justify-between gap-2 flex-shrink-0" style={{ minHeight: 60 }}>
+        {/* Right — badge top (leads only), task + assignee bottom */}
+        <div className={`flex flex-col items-end gap-2 flex-shrink-0 ${account.halosightType === "prospect" ? "justify-between" : "justify-end"}`} style={{ minHeight: 60 }}>
           {account.halosightType === "prospect" && <ProspectBadge />}
 
           {/* Task indicator + assignee */}
