@@ -26,7 +26,7 @@ function ProspectBadge() {
         color: "var(--color-brand-teal)",
       }}
     >
-      Prospect
+      Lead
     </span>
   );
 }
@@ -129,14 +129,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />}
         {/* Left — 3-line text stack */}
         <div className="flex-1 min-w-0">
-          {/* Account name — lead indicator dot for in-app created prospects */}
           <div className="flex items-center gap-1.5">
-            {account.halosightType === "prospect" && (
-              <div
-                className="flex-shrink-0 rounded-full"
-                style={{ width: 7, height: 7, background: "var(--color-brand-teal)", marginTop: 1 }}
-              />
-            )}
             <span
               className="text-[16px] font-semibold truncate"
               style={{ color: "var(--color-text-primary)" }}
