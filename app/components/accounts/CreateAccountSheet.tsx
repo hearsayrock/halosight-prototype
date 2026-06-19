@@ -122,7 +122,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 className="text-[22px] font-semibold mb-5"
                 style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
-                New Company
+                New Lead
               </h2>
 
               {/* ── Company name ─────────────────────────────────────────── */}

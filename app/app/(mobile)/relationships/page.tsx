@@ -573,7 +573,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
         </div>
         <div className="text-left">
           <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
-            Add new company
+            Add new lead
             {query.trim() && <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
           </p>
           <p className="text-xs mt-0.5" style={{ color: "var(--color-text-secondary)" }}>
@@ -1364,7 +1364,7 @@ function CombinedPageContent() {
 
         </AnimatePresence>
 
-        {/* Sticky "Add new company" — floats above scroll when system search is active */}
+        {/* Sticky "Add new lead" — floats above scroll when system search is active */}
         {mode === "accounts" && hasQuery && systemState === "done" && (
           <div style={{
             position: "absolute",
