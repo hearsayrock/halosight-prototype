@@ -528,7 +528,7 @@ export default function Story1Page() {
                   note="Better as a section concept than a UI label."
                 />
               </div>
-              <DecisionWidget storyId="story-1" decisionKey="umbrella-label" options={["Customers", "Companies", "Records", "Book of Business"]} />
+              <DecisionWidget storyId="story-1" decisionKey="umbrella-label" options={["Customers", "Companies", "Relationships", "Records", "Book of Business"]} />
             </div>
 
             {/* Decision 2: Together or separate */}
