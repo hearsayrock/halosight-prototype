@@ -335,19 +335,15 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           </div>
         )}
 
-        {/* Lead status + disqualify — prospects only, side by side */}
+        {/* Lead badge + disqualify — prospects only */}
         {account.halosightType === "prospect" && !justCreated && (
-          <div className="flex items-center justify-center gap-4 mb-3">
-            <div className="flex items-center gap-1.5">
-              <div
-                className="rounded-full flex-shrink-0"
-                style={{ width: 7, height: 7, background: "var(--color-brand-teal)" }}
-              />
-              <span className="text-sm font-semibold" style={{ color: "var(--color-brand-teal)" }}>
-                Lead
-              </span>
-            </div>
-            <div style={{ width: 1, height: 14, background: "var(--color-dark-tertiary)", flexShrink: 0 }} />
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <span
+              className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+              style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--color-brand-teal)" }}
+            >
+              Lead
+            </span>
             <button
               onClick={handleDisqualify}
               className="text-sm active:opacity-60 transition-opacity"
