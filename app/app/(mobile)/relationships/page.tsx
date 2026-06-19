@@ -927,7 +927,7 @@ function CombinedPageContent() {
                   margin: 0, lineHeight: 1.15, textAlign: "center",
                 }}
               >
-                Accounts
+                Relationships
               </motion.h1>
             )}
             {/* priorities mode: title lives inside the body, not here */}
@@ -1038,11 +1038,11 @@ function CombinedPageContent() {
                     onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
                   />
 
-                  {/* Accounts section */}
+                  {/* Relationships section */}
                   <div className="mb-3">
                     <div className="flex items-center justify-between px-4 py-2">
                       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
-                        Accounts
+                        Relationships
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
