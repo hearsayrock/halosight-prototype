@@ -1183,16 +1183,24 @@ function CombinedPageContent() {
                     <>
                       <SectionHeader label="All Tomorrowland Innovations Relationships" count={systemResults.length} />
                       {systemResults.length > 0 ? (
-                        <div className="flex flex-col mx-4 rounded-2xl overflow-hidden"
-                          style={{ border: "1px solid var(--color-dark-tertiary)" }}>
-                          {systemResults.map((account, i) => (
-                            <SystemAccountListItem
+                        <div className="flex flex-col mx-4 gap-2">
+                          {systemResults.map((account) => (
+                            <div
                               key={account.id}
-                              account={account}
-                              assignedRep={systemAccountReps[account.id] ?? "Unknown"}
-                              isLast={i === systemResults.length - 1}
-                              onSelect={(a) => router.push(`/relationships/${a.id}`)}
-                            />
+                              style={{
+                                background: "var(--color-dark-primary)",
+                                borderRadius: "var(--radius-xl)",
+                                border: "1px solid rgba(255,255,255,0.08)",
+                                overflow: "hidden",
+                              }}
+                            >
+                              <SystemAccountListItem
+                                account={account}
+                                assignedRep={systemAccountReps[account.id] ?? "Unknown"}
+                                isLast={true}
+                                onSelect={(a) => router.push(`/relationships/${a.id}`)}
+                              />
+                            </div>
                           ))}
                         </div>
                       ) : (
