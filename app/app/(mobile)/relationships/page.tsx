@@ -663,7 +663,7 @@ function CombinedPageContent() {
   const [visitedTo, setVisitedTo]           = useState<Date | null>(null);
   const [systemState, setSystemState] = useState<SystemSearchState>("idle");
   const [systemResults, setSystemResults] = useState<Account[]>([]);
-  const [systemQuery, setSystemQuery] = useState("");
+  const [globalMode, setGlobalMode] = useState(false);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accountsInputRef = useRef<HTMLInputElement>(null);
 
@@ -728,14 +728,22 @@ function CombinedPageContent() {
     setPendingNoteInfo(null);
   }
 
-  // Only reset global results when query is fully cleared
+  // In global mode, auto-search both locally and globally on every keystroke
   useEffect(() => {
     if (!query.trim()) {
       setSystemState("idle");
       setSystemResults([]);
-      setSystemQuery("");
+      return;
     }
-  }, [query]);
+    if (globalMode) {
+      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+      setSystemState("loading");
+      searchTimerRef.current = setTimeout(() => {
+        setSystemResults(searchAccounts(mockSystemAccounts, query));
+        setSystemState("done");
+      }, 500);
+    }
+  }, [query, globalMode]);
 
   // Auto-focus the right input when switching modes
   useEffect(() => {
@@ -744,11 +752,12 @@ function CombinedPageContent() {
     } else if (mode === "priorities") {
       setTimeout(() => prioritiesInputRef.current?.focus(), 280);
     } else {
-      // Clear searches when returning home
+      // Clear searches when returning home — also exit global mode
       setQuery("");
       setPrioritiesQuery("");
       setSystemState("idle");
       setSystemResults([]);
+      setGlobalMode(false);
     }
   }, [mode]);
 
@@ -840,9 +849,10 @@ function CombinedPageContent() {
   const hasQuery = query.trim().length > 0;
 
   function triggerSystemSearch() {
-    setSystemQuery(query.trim());
+    setGlobalMode(true);
     setSystemState("loading");
     setSystemResults([]);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
     searchTimerRef.current = setTimeout(() => {
       setSystemResults(searchAccounts(mockSystemAccounts, query));
       setSystemState("done");
@@ -850,8 +860,6 @@ function CombinedPageContent() {
   }
 
   const showSystemSection = systemState === "loading" || systemState === "done";
-  // Show "Search all" again if the user has typed something new since the last global search
-  const queryChangedSinceSearch = systemState === "done" && query.trim() !== systemQuery;
 
   // ── View all button (lives in section headers in home mode) ──────────────────
   function MiniSearchPill({ onClick }: { onClick: () => void }) {
@@ -1127,7 +1135,7 @@ function CombinedPageContent() {
                     )}
                     <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
                   </div>
-                  {(systemState === "idle" || queryChangedSinceSearch) && (
+                  {!globalMode && systemState === "idle" && (
                     <button onClick={triggerSystemSearch}
                       className="w-full font-semibold active:opacity-80 transition-opacity flex items-center justify-center gap-2"
                       style={{
@@ -1145,7 +1153,7 @@ function CombinedPageContent() {
                 </div>
               ) : null}
 
-              {hasQuery && myFiltered.length > 0 && (systemState === "idle" || queryChangedSinceSearch) && (
+              {hasQuery && myFiltered.length > 0 && !globalMode && systemState === "idle" && (
                 <div className="mt-2 mb-1 px-5">
                   <button onClick={triggerSystemSearch}
                     className="w-full font-semibold active:opacity-80 transition-opacity flex items-center justify-center gap-2"
