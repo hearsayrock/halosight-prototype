@@ -42,6 +42,7 @@ import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
 import VisitedFilterDropdown, { type VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
 import CreateAccountSheet from "@/components/accounts/CreateAccountSheet";
+import FeedbackWidget from "@/components/ui/FeedbackWidget";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import { mockSystemAccounts, systemAccountReps } from "@/lib/mock-data/system-accounts";
 import { mockTasks, mockActivities } from "@/lib/mock-data/home";
@@ -284,9 +285,10 @@ function TaskStrip({
   return (
     <div className="px-4 mb-4">
       <div style={{
-        background: "var(--color-dark-secondary)",
+        background: "var(--color-dark-primary)",
         borderRadius: 16,
         overflow: "hidden",
+        border: "1px solid rgba(255,255,255,0.08)",
       }}>
         <AnimatePresence mode="popLayout" initial={false}>
           {tasks.slice(0, 4).map((task, i) => {
@@ -305,7 +307,7 @@ function TaskStrip({
               >
                 {!isLast && (
                   <div className="absolute bottom-0 left-3 right-3"
-                    style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                    style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
                 )}
                 {/* Check circle */}
                 <button
@@ -483,7 +485,7 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
       <div className="flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity relative">
         {!isLast && (
           <div className="absolute bottom-0 left-4 right-4"
-            style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+            style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
         )}
         {/* Type icon */}
         <div className="flex-shrink-0">
@@ -1060,7 +1062,7 @@ function CombinedPageContent() {
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
-                    <div style={{ background: "var(--color-dark-secondary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16 }}>
+                    <div style={{ background: "var(--color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
                       {topAccounts.map((account, i) => (
                         <CompactAccountRow key={account.id} account={account} isLast={i === topAccounts.length - 1} />
                       ))}
@@ -1077,6 +1079,9 @@ function CombinedPageContent() {
                     </div>
                     <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
                   </div>
+
+                  {/* Feedback widget */}
+                  <FeedbackWidget />
                 </>
               )}
             </motion.div>
