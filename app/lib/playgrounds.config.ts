@@ -53,6 +53,15 @@ export const CURRENT_APP_URL = "https://halosight-prototype.vercel.app";
 
 export const PLAYGROUNDS: Playground[] = [
   {
+    id: "playground/lead-create-required-fields",
+    name: "Lead Create Required Fields",
+    description: "Explore the flow for having to fill out all required fields before the lead syncs to CRM.",
+    url: "",
+    author: "Nate",
+    status: "exploring",
+    startedAt: "2026-06-22",
+  },
+  {
     id: "playground/account-prospecting",
     name: "Account Prospecting",
     description: "Explore creating a new account and recording onto accounts that exist in the system but aren't assigned to the rep.",
