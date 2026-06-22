@@ -56,7 +56,7 @@ export const PLAYGROUNDS: Playground[] = [
     id: "playground/lead-create-required-fields",
     name: "Lead Create Required Fields",
     description: "Explore the flow for having to fill out all required fields before the lead syncs to CRM.",
-    url: "",
+    url: "https://halosight-prototype-git-playg-01d9b2-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
     startedAt: "2026-06-22",
