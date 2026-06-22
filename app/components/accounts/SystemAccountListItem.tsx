@@ -35,8 +35,8 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
         {/* Separator */}
         {!isLast && (
           <div
-            className="absolute bottom-0 left-3 right-3"
-            style={{ height: 1, background: "var(--color-dark-secondary)" }}
+            className="absolute bottom-0 left-0 right-0"
+            style={{ height: 1, background: "rgba(255,255,255,0.08)" }}
           />
         )}
 
