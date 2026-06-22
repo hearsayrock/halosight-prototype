@@ -1299,7 +1299,7 @@ function CombinedPageContent() {
                             >
                               {i < group.items.length - 1 && (
                                 <div className="absolute bottom-0 left-3 right-3"
-                                  style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                                  style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
                               )}
                               {/* Check circle */}
                               <div className="py-3.5">

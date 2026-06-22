@@ -130,7 +130,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         className="flex items-start gap-3 px-4 py-3.5 active:opacity-70 transition-opacity relative"
       >
         {/* Separator — inset 12px each side, hidden on last item */}
-        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />}
+        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />}
 
         {/* Type icon */}
         <div className="flex-shrink-0 mt-[4px]">
