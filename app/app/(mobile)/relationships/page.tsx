@@ -306,7 +306,7 @@ function TaskStrip({
                 className="flex items-center gap-3 px-3.5 py-3 relative"
               >
                 {!isLast && (
-                  <div className="absolute bottom-0 left-3 right-3"
+                  <div className="absolute bottom-0 left-0 right-0"
                     style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
                 )}
                 {/* Check circle */}
@@ -484,7 +484,7 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
     <Link href={`/relationships/${account.id}`}>
       <div className="flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity relative">
         {!isLast && (
-          <div className="absolute bottom-0 left-4 right-4"
+          <div className="absolute bottom-0 left-0 right-0"
             style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
         )}
         {/* Type icon */}
