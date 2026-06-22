@@ -476,6 +476,8 @@ function DashboardGrid({
 
 function CompactAccountRow({ account, isLast }: { account: Account; isLast: boolean }) {
   const hasTask = (account.taskCount ?? 0) > 0;
+  const { needsAttention } = useAccountState();
+  const showAttention = account.halosightType === "prospect" && needsAttention(account.id);
   return (
     <Link href={`/relationships/${account.id}`}>
       <div className="flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity relative">
@@ -503,8 +505,11 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
               .filter(Boolean).join(" · ")}
           </p>
         </div>
-        {/* Right — task badge + chevron */}
+        {/* Right — attention indicator + task badge + chevron */}
         <div className="flex items-center gap-2 flex-shrink-0">
+          {showAttention && (
+            <Icon name="error" fill size={15} style={{ color: "var(--color-warning)" }} />
+          )}
           {hasTask && (
             <span
               className="flex items-center gap-1 px-1.5 rounded-full"
@@ -623,7 +628,7 @@ function CombinedPageContent() {
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { isDisqualified } = useAccountState();
+  const { isDisqualified, markNeedsAttention } = useAccountState();
 
   // Dynamic account list — starts with mock data, grows as user creates accounts
   const [allAccounts, setAllAccounts] = useState<Account[]>(mockAccounts);
@@ -638,6 +643,7 @@ function CombinedPageContent() {
 
   function handleAccountCreated(newAccount: Account) {
     setAllAccounts((prev) => [newAccount, ...prev]);
+    markNeedsAttention(newAccount.id);
     setQuery("");
     setTypeFilter("all");
     router.push(`/relationships/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);

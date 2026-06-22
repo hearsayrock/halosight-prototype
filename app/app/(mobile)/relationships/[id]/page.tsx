@@ -194,7 +194,21 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   }
 
   const { status: captureStatus, accountId: capturingId, startCapture } = useCapture();
-  const { disqualify, restore } = useAccountState();
+  const { disqualify, restore, needsAttention, clearNeedsAttention, updateContact, getContactOverride } = useAccountState();
+
+  // Contact info for leads — form state for the Needs Attention banner
+  const [contactForm, setContactForm] = useState({ name: "", title: "", phone: "" });
+  const [contactSaved, setContactSaved] = useState(false);
+
+  function handleSaveContact() {
+    if (!contactForm.name.trim()) return;
+    updateContact(id, {
+      contactName: contactForm.name.trim(),
+      contactTitle: contactForm.title.trim() || undefined,
+      phone: contactForm.phone.trim() || undefined,
+    });
+    setContactSaved(true);
+  }
 
   // Disqualify flow — pending toast, then commit + navigate back
   const [disqualifyPending, setDisqualifyPending] = useState(false);
@@ -347,6 +361,73 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             </div>
           );
         })()}
+
+        {/* Needs Attention banner — contact info for newly created leads */}
+        {account.halosightType === "prospect" && needsAttention(id) && !contactSaved && (
+          <div
+            className="mx-1 mb-3 px-3.5 py-3"
+            style={{
+              background: "rgba(245,166,35,0.06)",
+              border: "1px solid rgba(245,166,35,0.25)",
+              borderRadius: "var(--radius-md)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2.5">
+              <Icon name="error" fill size={14} style={{ color: "var(--color-warning)", flexShrink: 0 }} />
+              <span className="text-[11px] font-semibold" style={{ color: "var(--color-warning)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                {justCreated ? "Who are you meeting with?" : "Missing contact info"}
+              </span>
+            </div>
+            <p className="text-[11px] mb-3" style={{ color: "var(--color-text-muted)" }}>
+              {justCreated
+                ? "This lead is synced to CRM. Add contact details when you know them — none of this is required right now."
+                : "Fill in contact details whenever you have them. This lead will sync without them."}
+            </p>
+            <div className="flex flex-col gap-2">
+              {[
+                { key: "name", placeholder: "Full name", label: "Name *" },
+                { key: "title", placeholder: "Job title", label: "Title" },
+                { key: "phone", placeholder: "Phone number", label: "Phone" },
+              ].map(({ key, placeholder, label }) => (
+                <div key={key}>
+                  <p className="text-[10px] font-semibold mb-1" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>{label}</p>
+                  <input
+                    type={key === "phone" ? "tel" : "text"}
+                    placeholder={placeholder}
+                    value={contactForm[key as keyof typeof contactForm]}
+                    onChange={(e) => setContactForm((f) => ({ ...f, [key]: e.target.value }))}
+                    className="w-full text-[14px] outline-none px-3 py-2"
+                    style={{
+                      background: "var(--color-dark-secondary)",
+                      borderRadius: "var(--radius-sm)",
+                      color: "var(--color-text-primary)",
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between mt-3">
+              <button
+                onClick={() => { clearNeedsAttention(id); setContactSaved(true); }}
+                className="text-[12px] active:opacity-60 transition-opacity"
+                style={{ color: "var(--color-text-muted)" }}
+              >
+                Skip for now
+              </button>
+              <button
+                onClick={handleSaveContact}
+                disabled={!contactForm.name.trim()}
+                className="h-8 px-4 text-[12px] font-semibold rounded-full transition-opacity active:opacity-70"
+                style={{
+                  background: contactForm.name.trim() ? "var(--color-brand-teal)" : "var(--color-dark-tertiary)",
+                  color: contactForm.name.trim() ? "var(--color-text-primary)" : "var(--color-text-disabled)",
+                }}
+              >
+                Save contact
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Tabs — hidden on just-created blank slate */}
         {!justCreated && <div

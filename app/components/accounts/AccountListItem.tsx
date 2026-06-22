@@ -15,6 +15,7 @@ import Link from "next/link";
 import type { Account, CrmAccountType } from "@/lib/types";
 import { formatLastVisited, formatDistance } from "@/lib/utils";
 import Icon from "@/components/ui/Icon";
+import { useAccountState } from "@/lib/context/AccountStateContext";
 
 // ── Prospect badge (Halosight-created) ───────────────────────────────────────
 
@@ -120,6 +121,8 @@ interface Props {
 
 export default function AccountListItem({ account, isLast = false }: Props) {
   const { label, isToday } = formatLastVisited(account.lastVisited);
+  const { needsAttention } = useAccountState();
+  const showAttention = account.halosightType === "prospect" && needsAttention(account.id);
 
   return (
     <Link href={`/relationships/${account.id}`}>
@@ -176,6 +179,14 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         {/* Right — badge top (leads only), task + assignee bottom */}
         <div className={`flex flex-col items-end gap-2 flex-shrink-0 ${account.halosightType === "prospect" ? "justify-between" : "justify-end"}`} style={{ minHeight: 60 }}>
           {account.halosightType === "prospect" && <ProspectBadge />}
+          {showAttention && (
+            <span
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
+              style={{ background: "rgba(245,166,35,0.15)", color: "var(--color-warning)", border: "1px solid rgba(245,166,35,0.3)" }}
+            >
+              Needs Info
+            </span>
+          )}
 
           {/* Task indicator + assignee */}
           <div className="flex items-center gap-1.5">
