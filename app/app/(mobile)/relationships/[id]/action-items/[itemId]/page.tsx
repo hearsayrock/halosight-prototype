@@ -12,6 +12,7 @@ import { use, useState, useEffect, useRef, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Icon from "@/components/ui/Icon";
+import { CompanyIcon } from "@/components/ui/CustomIcons";
 import MiniCalendar from "@/components/accounts/MiniCalendar";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { mockAccounts } from "@/lib/mock-data/accounts";
@@ -305,7 +306,7 @@ function ActionItemDetailPageContent({
                 className="flex items-center gap-1.5 px-3 py-1.5 active:opacity-70 transition-opacity"
                 style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-full)" }}
               >
-                <Icon name="domain" size={13} style={{ color: "var(--color-text-disabled)" }} />
+                <CompanyIcon size={13} style={{ color: "var(--color-text-disabled)" }} />
                 <span className="text-[13px] font-semibold" style={{ color: "var(--color-text-secondary)" }}>{account.name}</span>
               </div>
             </Link>

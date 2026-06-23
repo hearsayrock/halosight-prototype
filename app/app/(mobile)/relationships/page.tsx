@@ -15,8 +15,9 @@
  *   logged activities grouped by "Today" and "Previous." Portals into
  *   #phone-overlay-root so it layers above the page content.
  *
- * ADVANCED SEARCH (same as before)
- *   Zero-result prompt → "Search all Tomorrowland Innovations" → system results
+ * ADVANCED SEARCH
+ *   Global search is on by default — typing a query searches your relationships
+ *   and all system relationships at once (no separate "Search all" tap).
  *   + "Create new account" CTA at bottom.
  *
  * Flutter notes:
@@ -34,6 +35,7 @@ import AccountListItem from "@/components/accounts/AccountListItem";
 import SystemAccountListItem from "@/components/accounts/SystemAccountListItem";
 import SortMenu from "@/components/accounts/SortMenu";
 import Icon from "@/components/ui/Icon";
+import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
 import { AccountListSkeleton } from "@/components/ui/Skeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import CompletionToast from "@/components/ui/CompletionToast";
@@ -490,9 +492,9 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
         {/* Type icon */}
         <div className="flex-shrink-0">
           {account.halosightType === "prospect" ? (
-            <Icon name="star" fill size={16} style={{ color: "var(--color-brand-purple)" }} />
+            <LeadStarIcon size={16} style={{ color: "var(--color-brand-purple)" }} />
           ) : (
-            <Icon name="home" size={16} weight={300} style={{ color: "var(--color-text-disabled)" }} />
+            <CompanyIcon size={16} style={{ color: "var(--color-text-disabled)" }} />
           )}
         </div>
         {/* Left — name + meta */}
@@ -663,7 +665,9 @@ function CombinedPageContent() {
   const [visitedTo, setVisitedTo]           = useState<Date | null>(null);
   const [systemState, setSystemState] = useState<SystemSearchState>("idle");
   const [systemResults, setSystemResults] = useState<Account[]>([]);
-  const [globalMode, setGlobalMode] = useState(false);
+  // Global search is on by default — typing a query auto-searches all relationships,
+  // no separate "Search all" tap required.
+  const [globalMode] = useState(true);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accountsInputRef = useRef<HTMLInputElement>(null);
 
@@ -752,12 +756,11 @@ function CombinedPageContent() {
     } else if (mode === "priorities") {
       setTimeout(() => prioritiesInputRef.current?.focus(), 280);
     } else {
-      // Clear searches when returning home — also exit global mode
+      // Clear searches when returning home
       setQuery("");
       setPrioritiesQuery("");
       setSystemState("idle");
       setSystemResults([]);
-      setGlobalMode(false);
     }
   }, [mode]);
 
@@ -847,17 +850,6 @@ function CombinedPageContent() {
     [...visibleAccounts].sort((a, b) => a.distanceMiles - b.distanceMiles)[0],
   [visibleAccounts]);
   const hasQuery = query.trim().length > 0;
-
-  function triggerSystemSearch() {
-    setGlobalMode(true);
-    setSystemState("loading");
-    setSystemResults([]);
-    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    searchTimerRef.current = setTimeout(() => {
-      setSystemResults(searchAccounts(mockSystemAccounts, query));
-      setSystemState("done");
-    }, 700);
-  }
 
   const showSystemSection = systemState === "loading" || systemState === "done";
 
@@ -1135,41 +1127,8 @@ function CombinedPageContent() {
                     )}
                     <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
                   </div>
-                  {!globalMode && systemState === "idle" && (
-                    <button onClick={triggerSystemSearch}
-                      className="w-full font-semibold active:opacity-80 transition-opacity flex items-center justify-center gap-2"
-                      style={{
-                        padding: "13px 20px",
-                        borderRadius: "var(--radius-full)",
-                        background: "transparent",
-                        border: "1px solid var(--color-dark-tertiary)",
-                        color: "var(--color-text-primary)",
-                        fontSize: 15,
-                      }}>
-                      <Icon name="public" size={18} style={{ color: "var(--color-text-secondary)", flexShrink: 0 }} />
-                      Search all Tomorrowland Innovations
-                    </button>
-                  )}
                 </div>
               ) : null}
-
-              {hasQuery && myFiltered.length > 0 && !globalMode && systemState === "idle" && (
-                <div className="mt-2 mb-1 px-5">
-                  <button onClick={triggerSystemSearch}
-                    className="w-full font-semibold active:opacity-80 transition-opacity flex items-center justify-center gap-2"
-                    style={{
-                      padding: "13px 20px",
-                      borderRadius: "var(--radius-full)",
-                      background: "transparent",
-                      border: "1px solid var(--color-dark-tertiary)",
-                      color: "var(--color-text-primary)",
-                      fontSize: 15,
-                    }}>
-                    <Icon name="public" size={18} style={{ color: "var(--color-text-secondary)", flexShrink: 0 }} />
-                    Search all Tomorrowland Innovations
-                  </button>
-                </div>
-              )}
 
               {showSystemSection && (
                 <div style={{ marginTop: 16 }}>

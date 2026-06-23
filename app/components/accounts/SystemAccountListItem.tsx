@@ -25,6 +25,7 @@ interface Props {
 
 export default function SystemAccountListItem({ account, assignedRep, isLast = false, onSelect }: Props) {
   const initial = assignedRep.charAt(0).toUpperCase();
+  const location = account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null);
 
   return (
     <button
@@ -55,11 +56,11 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
             <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>
               {formatDistance(account.distanceMiles)}
             </span>
-            {account.city && account.state && (
+            {location && (
               <>
                 <span className="text-sm" style={{ color: "var(--color-text-disabled)" }}>•</span>
-                <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-                  {account.city}, {account.state}
+                <span className="text-sm truncate" style={{ color: "var(--color-text-muted)" }}>
+                  {location}
                 </span>
               </>
             )}

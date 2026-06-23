@@ -14,7 +14,7 @@
 import Link from "next/link";
 import type { Account, CrmAccountType } from "@/lib/types";
 import { formatLastVisited, formatDistance } from "@/lib/utils";
-import Icon from "@/components/ui/Icon";
+import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
 import { useAccountState } from "@/lib/context/AccountStateContext";
 
 // ── Prospect badge (Halosight-created) ───────────────────────────────────────
@@ -121,6 +121,7 @@ interface Props {
 
 export default function AccountListItem({ account, isLast = false }: Props) {
   const { label, isToday } = formatLastVisited(account.lastVisited);
+  const location = account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null);
   const { needsAttention } = useAccountState();
   const showAttention = account.halosightType === "prospect" && needsAttention(account.id);
 
@@ -135,9 +136,9 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         {/* Type icon */}
         <div className="flex-shrink-0 mt-[4px]">
           {account.halosightType === "prospect" ? (
-            <Icon name="star" fill size={18} style={{ color: "var(--color-brand-purple)" }} />
+            <LeadStarIcon size={18} style={{ color: "var(--color-brand-purple)" }} />
           ) : (
-            <Icon name="home" size={18} weight={300} style={{ color: "var(--color-text-disabled)" }} />
+            <CompanyIcon size={18} style={{ color: "var(--color-text-disabled)" }} />
           )}
         </div>
 
@@ -157,11 +158,11 @@ export default function AccountListItem({ account, isLast = false }: Props) {
             <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>
               {formatDistance(account.distanceMiles)}
             </span>
-            {account.city && account.state && (
+            {location && (
               <>
                 <span className="text-sm" style={{ color: "var(--color-text-disabled)" }}>•</span>
-                <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-                  {account.city}, {account.state}
+                <span className="text-sm truncate" style={{ color: "var(--color-text-muted)" }}>
+                  {location}
                 </span>
               </>
             )}
