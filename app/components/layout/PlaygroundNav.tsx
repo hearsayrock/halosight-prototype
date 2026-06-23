@@ -2,10 +2,10 @@
 
 /**
  * PlaygroundNav — left sidebar listing the current app + all registered
- * playgrounds. Collapses to a 48px icon rail.
+ * playgrounds + all other git branches. Collapses to a 48px icon rail.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { PLAYGROUNDS, CURRENT_APP_URL, type PlaygroundStatus } from "@/lib/playgrounds.config";
 
@@ -35,6 +35,10 @@ function relativeDate(iso: string): string {
 
 function authorInitial(name: string) {
   return name.charAt(0).toUpperCase();
+}
+
+function branchDisplayName(branch: string): string {
+  return branch.replace(/^playground\//, "");
 }
 
 // ── Shared sub-components ─────────────────────────────────────────────────────
@@ -383,6 +387,35 @@ function NavItem({
   );
 }
 
+// ── Bare branch row (unregistered branches) ───────────────────────────────────
+
+function BranchRow({ branch, isActive }: { branch: string; isActive: boolean }) {
+  return (
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 7,
+      padding: "7px 12px",
+      borderRadius: 8,
+      background: isActive ? "var(--color-dark-secondary)" : "transparent",
+      borderLeft: `3px solid ${isActive ? "var(--color-text-disabled)" : "transparent"}`,
+    }}>
+      <span style={{ fontSize: 9, color: "var(--color-text-disabled)", flexShrink: 0 }}>●</span>
+      <span style={{
+        fontSize: 13,
+        color: isActive ? "var(--color-text-secondary)" : "var(--color-text-disabled)",
+        flex: 1,
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+        fontFamily: "ui-monospace, 'Fira Code', monospace",
+      }}>
+        {branchDisplayName(branch)}
+      </span>
+    </div>
+  );
+}
+
 // ── Collapsed rail dot ────────────────────────────────────────────────────────
 
 function RailDot({
@@ -434,6 +467,19 @@ interface Props {
 export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Props) {
   const isMain = currentBranch === "main" || currentBranch === "local";
   const [showInstructions, setShowInstructions] = useState(false);
+  const [allBranches, setAllBranches] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/branches")
+      .then(r => r.json())
+      .then(data => setAllBranches(data.branches ?? []))
+      .catch(() => {});
+  }, []);
+
+  const registeredIds = new Set(PLAYGROUNDS.map(p => p.id));
+  const otherBranches = allBranches.filter(
+    b => b !== "main" && b !== "local" && !registeredIds.has(b)
+  );
 
   // ── Collapsed rail ──────────────────────────────────────────────────────────
   if (collapsed) {
@@ -477,6 +523,16 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               isActive={currentBranch === p.id}
               href={p.url + (p.routes?.[0]?.path ?? "")}
               title={p.name}
+            />
+          ))}
+          {otherBranches.map(b => (
+            <RailDot
+              key={b}
+              color="var(--color-text-disabled)"
+              icon="○"
+              isActive={currentBranch === b}
+              href="#"
+              title={branchDisplayName(b)}
             />
           ))}
         </div>
@@ -545,7 +601,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           <div style={{ height: 1, background: "var(--color-dark-tertiary)", margin: "6px 12px" }} />
         )}
 
-        {/* Playgrounds */}
+        {/* Registered playgrounds */}
         {PLAYGROUNDS.length === 0 ? (
           <p style={{
             fontSize: 13,
@@ -568,6 +624,26 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               href={p.url + (p.routes?.[0]?.path ?? "")}
             />
           ))
+        )}
+
+        {/* Other branches */}
+        {otherBranches.length > 0 && (
+          <>
+            <div style={{ height: 1, background: "var(--color-dark-tertiary)", margin: "6px 12px" }} />
+            <span style={{
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: "0.07em",
+              textTransform: "uppercase",
+              color: "var(--color-text-disabled)",
+              padding: "2px 15px 4px",
+            }}>
+              Other Branches
+            </span>
+            {otherBranches.map(b => (
+              <BranchRow key={b} branch={b} isActive={currentBranch === b} />
+            ))}
+          </>
         )}
 
         {/* Footer: new playground button */}
