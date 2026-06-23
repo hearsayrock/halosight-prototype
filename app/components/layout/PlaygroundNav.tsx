@@ -43,6 +43,7 @@ function branchDisplayName(branch: string): string {
 
 // ── Shared sub-components ─────────────────────────────────────────────────────
 
+
 function Code({ children }: { children: React.ReactNode }) {
   return (
     <code style={{
@@ -289,7 +290,7 @@ function NavItem({
   href,
 }: {
   label: string;
-  description: string;
+  description?: string;
   author?: string;
   status?: PlaygroundStatus;
   startedAt?: string;
@@ -348,18 +349,20 @@ function NavItem({
       </div>
 
       {/* Description */}
-      <p style={{
-        fontSize: 12,
-        color: "var(--color-text-muted)",
-        lineHeight: 1.45,
-        margin: "0 0 6px 17px",
-        display: "-webkit-box",
-        WebkitLineClamp: 2,
-        WebkitBoxOrient: "vertical",
-        overflow: "hidden",
-      }}>
-        {description}
-      </p>
+      {description && (
+        <p style={{
+          fontSize: 12,
+          color: "var(--color-text-muted)",
+          lineHeight: 1.45,
+          margin: "0 0 6px 17px",
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+        }}>
+          {description}
+        </p>
+      )}
 
       {/* Meta row */}
       {(status || startedAt) && (
@@ -384,35 +387,6 @@ function NavItem({
         </div>
       )}
     </a>
-  );
-}
-
-// ── Bare branch row (unregistered branches) ───────────────────────────────────
-
-function BranchRow({ branch, isActive }: { branch: string; isActive: boolean }) {
-  return (
-    <div style={{
-      display: "flex",
-      alignItems: "center",
-      gap: 7,
-      padding: "7px 12px",
-      borderRadius: 8,
-      background: isActive ? "var(--color-dark-secondary)" : "transparent",
-      borderLeft: `3px solid ${isActive ? "var(--color-text-disabled)" : "transparent"}`,
-    }}>
-      <span style={{ fontSize: 9, color: "var(--color-text-disabled)", flexShrink: 0 }}>●</span>
-      <span style={{
-        fontSize: 13,
-        color: isActive ? "var(--color-text-secondary)" : "var(--color-text-disabled)",
-        flex: 1,
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        fontFamily: "ui-monospace, 'Fira Code', monospace",
-      }}>
-        {branchDisplayName(branch)}
-      </span>
-    </div>
   );
 }
 
@@ -528,8 +502,8 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           {otherBranches.map(b => (
             <RailDot
               key={b}
-              color="var(--color-text-disabled)"
-              icon="○"
+              color="var(--color-brand-purple)"
+              icon="●"
               isActive={currentBranch === b}
               href="#"
               title={branchDisplayName(b)}
@@ -626,25 +600,14 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           ))
         )}
 
-        {/* Other branches */}
-        {otherBranches.length > 0 && (
-          <>
-            <div style={{ height: 1, background: "var(--color-dark-tertiary)", margin: "6px 12px" }} />
-            <span style={{
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: "0.07em",
-              textTransform: "uppercase",
-              color: "var(--color-text-disabled)",
-              padding: "2px 15px 4px",
-            }}>
-              Other Branches
-            </span>
-            {otherBranches.map(b => (
-              <BranchRow key={b} branch={b} isActive={currentBranch === b} />
-            ))}
-          </>
-        )}
+        {otherBranches.map(b => (
+          <NavItem
+            key={b}
+            label={branchDisplayName(b)}
+            isActive={currentBranch === b}
+            href="#"
+          />
+        ))}
 
         {/* Footer: new playground button */}
         <div style={{ marginTop: 12, paddingLeft: 4, paddingRight: 4 }}>
