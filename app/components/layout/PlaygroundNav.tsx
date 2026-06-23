@@ -2,10 +2,10 @@
 
 /**
  * PlaygroundNav — left sidebar listing the current app + all registered
- * playgrounds. Collapses to a 48px icon rail.
+ * playgrounds + all other git branches. Collapses to a 48px icon rail.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { PLAYGROUNDS, CURRENT_APP_URL, type PlaygroundStatus } from "@/lib/playgrounds.config";
 
@@ -37,7 +37,12 @@ function authorInitial(name: string) {
   return name.charAt(0).toUpperCase();
 }
 
+function branchDisplayName(branch: string): string {
+  return branch.replace(/^playground\//, "");
+}
+
 // ── Shared sub-components ─────────────────────────────────────────────────────
+
 
 function Code({ children }: { children: React.ReactNode }) {
   return (
@@ -285,7 +290,7 @@ function NavItem({
   href,
 }: {
   label: string;
-  description: string;
+  description?: string;
   author?: string;
   status?: PlaygroundStatus;
   startedAt?: string;
@@ -366,18 +371,20 @@ function NavItem({
       </div>
 
       {/* Description */}
-      <p style={{
-        fontSize: 12,
-        color: "var(--color-text-muted)",
-        lineHeight: 1.45,
-        margin: "0 0 6px 17px",
-        display: "-webkit-box",
-        WebkitLineClamp: 2,
-        WebkitBoxOrient: "vertical",
-        overflow: "hidden",
-      }}>
-        {description}
-      </p>
+      {description && (
+        <p style={{
+          fontSize: 12,
+          color: "var(--color-text-muted)",
+          lineHeight: 1.45,
+          margin: "0 0 6px 17px",
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+        }}>
+          {description}
+        </p>
+      )}
 
       {/* Meta row */}
       {(status || startedAt) && (
@@ -456,6 +463,19 @@ interface Props {
 export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Props) {
   const isMain = currentBranch === "main" || currentBranch === "local";
   const [showInstructions, setShowInstructions] = useState(false);
+  const [allBranches, setAllBranches] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/branches")
+      .then(r => r.json())
+      .then(data => setAllBranches(data.branches ?? []))
+      .catch(() => {});
+  }, []);
+
+  const registeredIds = new Set(PLAYGROUNDS.map(p => p.id));
+  const otherBranches = allBranches.filter(
+    b => b !== "main" && b !== "local" && !registeredIds.has(b)
+  );
 
   // ── Collapsed rail ──────────────────────────────────────────────────────────
   if (collapsed) {
@@ -499,6 +519,16 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               isActive={currentBranch === p.id}
               href={p.url + (p.routes?.[0]?.path ?? "")}
               title={p.name}
+            />
+          ))}
+          {otherBranches.map(b => (
+            <RailDot
+              key={b}
+              color="var(--color-brand-purple)"
+              icon="●"
+              isActive={currentBranch === b}
+              href="#"
+              title={branchDisplayName(b)}
             />
           ))}
         </div>
@@ -567,7 +597,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           <div style={{ height: 1, background: "var(--color-dark-tertiary)", margin: "6px 12px" }} />
         )}
 
-        {/* Playgrounds */}
+        {/* Registered playgrounds */}
         {PLAYGROUNDS.length === 0 ? (
           <p style={{
             fontSize: 13,
@@ -591,6 +621,15 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
             />
           ))
         )}
+
+        {otherBranches.map(b => (
+          <NavItem
+            key={b}
+            label={branchDisplayName(b)}
+            isActive={currentBranch === b}
+            href="#"
+          />
+        ))}
 
         {/* Footer: new playground button */}
         <div style={{ marginTop: 12, paddingLeft: 4, paddingRight: 4 }}>

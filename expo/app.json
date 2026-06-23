@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "HaloSight",
+    "slug": "halosight",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "halosight",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.halosight.app"
+    },
+    "android": {
+      "package": "com.halosight.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#111420"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
