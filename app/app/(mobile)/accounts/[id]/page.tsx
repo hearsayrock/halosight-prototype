@@ -587,8 +587,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                     {detail.ideasForThisTime.map((idea, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <span
-                          className="flex-shrink-0 mt-1 w-1.5 h-1.5 rounded-full"
-                          style={{ background: "var(--color-text-muted)" }}
+                          className="flex-shrink-0 w-1.5 h-1.5 rounded-full"
+                          style={{ background: "var(--color-text-muted)", marginTop: "0.625rem" }}
                         />
                         <span className="text-base leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
                           {idea}

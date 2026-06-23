@@ -53,13 +53,22 @@ export const CURRENT_APP_URL = "https://halosight-prototype.vercel.app";
 
 export const PLAYGROUNDS: Playground[] = [
   {
+    id: "playground/lead-create-required-fields",
+    name: "Lead Create Required Fields",
+    description: "Explore the flow for having to fill out all required fields needed for CRM sync.",
+    url: "https://halosight-prototype-git-playg-01d9b2-nate-natesdesigns-projects.vercel.app",
+    author: "Nate",
+    status: "exploring",
+    startedAt: "2026-06-22",
+  },
+  {
     id: "board-meeeting-ai-brainstorm",
     name: "Board Meeting AI",
-    description: "AI brainstorm exploration for board meeting concepts.",
+    description: "Explore adding an AI chat agent.",
     url: "https://halosight-prototype-git-board-b83846-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
-    startedAt: "2026-06-15",
+    startedAt: "2026-06-16",
   },
   {
     id: "playground/account-prospecting",
@@ -69,9 +78,6 @@ export const PLAYGROUNDS: Playground[] = [
     author: "Nate",
     status: "exploring",
     startedAt: "2026-06-10",
-    routes: [
-      { label: "Accounts (search)", path: "/accounts" },
-    ],
   },
   {
     id: "playground/onboarding-flow",
