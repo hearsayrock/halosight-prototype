@@ -21,7 +21,7 @@ export async function GET() {
     const branches = stdout
       .split("\n")
       .map(b => b.trim().replace(/^origin\//, ""))
-      .filter(b => b && !b.startsWith("HEAD"));
+      .filter(b => b && !b.startsWith("HEAD") && b !== "origin");
     return NextResponse.json({ branches });
   } catch {
     return NextResponse.json({ branches: [] });
