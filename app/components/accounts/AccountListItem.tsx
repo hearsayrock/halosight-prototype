@@ -8,53 +8,16 @@
  * State: none — purely presentational
  *
  * Layout: open card (no bg fill), border-bottom separator.
- * Right column: CRM account type badge (top) + task check + assignee initial (bottom).
+ * Title row:   name + account-type pill (aligned with the title).
+ * Visited row: "Visited …" + task indicator + open-opportunity indicator.
  */
 
 import Link from "next/link";
-import type { Account, CrmAccountType } from "@/lib/types";
+import type { Account } from "@/lib/types";
 import { formatLastVisited, formatDistance } from "@/lib/utils";
 import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
+import AccountTypeBadge from "@/components/accounts/AccountTypeBadge";
 import { useAccountState } from "@/lib/context/AccountStateContext";
-
-// ── Prospect badge (Halosight-created) ───────────────────────────────────────
-
-function ProspectBadge() {
-  return (
-    <span
-      className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
-      style={{
-        background: "rgba(107, 157, 176, 0.18)",
-        color: "var(--color-brand-teal)",
-      }}
-    >
-      Lead
-    </span>
-  );
-}
-
-// ── CRM account type badge ────────────────────────────────────────────────────
-
-const CRM_LABEL: Record<CrmAccountType, string> = {
-  "sold-to":    "Sold-To",
-  "shipped-to": "Shipped-To",
-  "distributor":"Distributor",
-  "prospect":   "Prospect",
-};
-
-function CrmTypeBadge({ type }: { type: CrmAccountType }) {
-  return (
-    <span
-      className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
-      style={{
-        background: "var(--color-dark-tertiary)",
-        color: "var(--color-text-muted)",
-      }}
-    >
-      {CRM_LABEL[type]}
-    </span>
-  );
-}
 
 // ── Task check icon ───────────────────────────────────────────────────────────
 
@@ -94,20 +57,46 @@ function TaskIndicator({ count }: { count: number }) {
   );
 }
 
-// ── Assignee initial circle ───────────────────────────────────────────────────
+// ── Open-opportunity indicator (lucide briefcase, indigo) ──────────────────────
 
-function AssigneeCircle({ initial }: { initial: string }) {
+function BriefcaseIcon({ color }: { color: string }) {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ flexShrink: 0 }}
+    >
+      <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+    </svg>
+  );
+}
+
+function OpportunityIndicator({ count }: { count: number }) {
+  if (count === 0) {
+    return <BriefcaseIcon color="var(--color-text-disabled)" />;
+  }
   return (
     <span
-      className="flex items-center justify-center rounded-full text-[11px] font-semibold flex-shrink-0"
+      className="flex items-center gap-1 px-1.5 rounded-full"
       style={{
-        width: 22,
-        height: 22,
-        background: "var(--color-dark-tertiary)",
-        color: "var(--color-text-muted)",
+        background: "rgba(139, 146, 255, 0.20)",
+        height: 20,
       }}
     >
-      {initial}
+      <BriefcaseIcon color="var(--color-brand-purple)" />
+      <span
+        className="text-[11px] font-semibold"
+        style={{ color: "var(--color-brand-purple)", lineHeight: 1 }}
+      >
+        {count}
+      </span>
     </span>
   );
 }
@@ -120,7 +109,7 @@ interface Props {
 }
 
 export default function AccountListItem({ account, isLast = false }: Props) {
-  const { label, isToday } = formatLastVisited(account.lastVisited);
+  const { label } = formatLastVisited(account.lastVisited);
   const location = account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null);
   const { needsAttention } = useAccountState();
   const showAttention = account.halosightType === "prospect" && needsAttention(account.id);
@@ -144,13 +133,23 @@ export default function AccountListItem({ account, isLast = false }: Props) {
 
         {/* Left — 3-line text stack */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5">
+          {/* Title row — name + account-type pill (aligned with the title) */}
+          <div className="flex items-center gap-2">
             <span
-              className="text-[16px] font-semibold truncate"
+              className="text-[16px] font-semibold truncate flex-1 min-w-0"
               style={{ color: "var(--color-text-primary)" }}
             >
               {account.name}
             </span>
+            {showAttention && (
+              <span
+                className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0"
+                style={{ background: "rgba(245,166,35,0.15)", color: "var(--color-warning)", border: "1px solid rgba(245,166,35,0.3)" }}
+              >
+                Needs Info
+              </span>
+            )}
+            <AccountTypeBadge account={account} />
           </div>
 
           {/* Distance • location */}
@@ -168,35 +167,18 @@ export default function AccountListItem({ account, isLast = false }: Props) {
             )}
           </div>
 
-          {/* Visited */}
-          <p className="text-sm mt-0.5">
-            <span style={{ color: "var(--color-text-disabled)" }}>Visited </span>
-            <span className="font-semibold" style={{ color: "var(--color-text-muted)" }}>
-              {label}
-            </span>
-          </p>
-        </div>
-
-        {/* Right — badge top (leads only), task + assignee bottom */}
-        <div className={`flex flex-col items-end gap-2 flex-shrink-0 ${account.halosightType === "prospect" ? "justify-between" : "justify-end"}`} style={{ minHeight: 60 }}>
-          {account.halosightType === "prospect" && <ProspectBadge />}
-          {showAttention && (
-            <span
-              className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
-              style={{ background: "rgba(245,166,35,0.15)", color: "var(--color-warning)", border: "1px solid rgba(245,166,35,0.3)" }}
-            >
-              Needs Info
-            </span>
-          )}
-
-          {/* Task indicator + assignee */}
-          <div className="flex items-center gap-1.5">
-            {account.taskCount !== undefined && (
-              <TaskIndicator count={account.taskCount} />
-            )}
-            {account.assignedInitial && (
-              <AssigneeCircle initial={account.assignedInitial} />
-            )}
+          {/* Visited + task / opportunity indicators (aligned on one line) */}
+          <div className="flex items-center justify-between gap-2 mt-0.5">
+            <p className="text-sm">
+              <span style={{ color: "var(--color-text-disabled)" }}>Visited </span>
+              <span className="font-semibold" style={{ color: "var(--color-text-muted)" }}>
+                {label}
+              </span>
+            </p>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {account.taskCount !== undefined && <TaskIndicator count={account.taskCount} />}
+              {account.openOpportunities !== undefined && <OpportunityIndicator count={account.openOpportunities} />}
+            </div>
           </div>
         </div>
       </div>

@@ -668,6 +668,10 @@ function CombinedPageContent() {
   // Global search is on by default — typing a query auto-searches all relationships,
   // no separate "Search all" tap required.
   const [globalMode] = useState(true);
+  // Bar controls temporarily hidden — flip to true to bring them back. State,
+  // handlers, and filter logic are all kept intact so re-adding is just the flag.
+  const SHOW_SORT_MENU = false;
+  const SHOW_VISITED_FILTER = false;
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accountsInputRef = useRef<HTMLInputElement>(null);
 
@@ -991,11 +995,6 @@ function CombinedPageContent() {
               className="flex-1 bg-transparent text-[15px] outline-none"
               style={{ color: "var(--color-text-primary)", caretColor: "var(--color-brand-coral)" }}
             />
-            {showSystemSection && (
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--color-brand-purple)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
-                ALL
-              </span>
-            )}
             {query && (
               <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -1004,14 +1003,14 @@ function CombinedPageContent() {
                 </svg>
               </button>
             )}
-            <SortMenu current={sort} onChange={setSort} />
+            {SHOW_SORT_MENU && <SortMenu current={sort} onChange={setSort} />}
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* ── TYPE FILTER (accounts mode only) ───────────────────────────── */}
       <AnimatePresence>
-        {mode === "accounts" && (
+        {SHOW_VISITED_FILTER && mode === "accounts" && (
           <motion.div
             key="type-filter"
             initial={{ opacity: 0 }}

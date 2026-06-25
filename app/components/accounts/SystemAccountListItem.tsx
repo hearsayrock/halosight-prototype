@@ -8,13 +8,13 @@
  *
  * Key visual differences from AccountListItem:
  *  - No task indicator or last-visited date
- *  - "Assigned to [Rep]" shown below location
+ *  - "Assigned to [Rep]" shown as the bottom line (no assignee avatar)
  *  - Muted color treatment throughout
- *  - Assignee initial avatar on the right instead of a pill badge
  */
 
 import type { Account } from "@/lib/types";
 import { formatDistance } from "@/lib/utils";
+import AccountTypeBadge from "@/components/accounts/AccountTypeBadge";
 
 interface Props {
   account: Account;
@@ -24,7 +24,6 @@ interface Props {
 }
 
 export default function SystemAccountListItem({ account, assignedRep, isLast = false, onSelect }: Props) {
-  const initial = assignedRep.charAt(0).toUpperCase();
   const location = account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null);
 
   return (
@@ -41,9 +40,8 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
           />
         )}
 
-        {/* Left — text stack */}
+        {/* Left — name + location */}
         <div className="flex-1 min-w-0">
-          {/* Account name */}
           <span
             className="text-[15px] font-semibold truncate block"
             style={{ color: "var(--color-text-secondary)" }}
@@ -65,22 +63,17 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
               </>
             )}
           </div>
-
         </div>
 
-        {/* Right — assignee initial avatar */}
-        <div className="flex items-start pt-0.5 flex-shrink-0">
-          <div
-            className="flex items-center justify-center rounded-full text-[13px] font-semibold"
-            style={{
-              width: 28,
-              height: 28,
-              background: "var(--color-dark-tertiary)",
-              color: "var(--color-text-muted)",
-            }}
-          >
-            {initial}
-          </div>
+        {/* Right — account-type pill + assigned rep beneath it, right-justified */}
+        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+          <AccountTypeBadge account={account} />
+          <p className="text-sm text-right whitespace-nowrap">
+            <span style={{ color: "var(--color-text-disabled)" }}>Assigned to </span>
+            <span className="font-semibold" style={{ color: "var(--color-text-muted)" }}>
+              {assignedRep}
+            </span>
+          </p>
         </div>
       </div>
     </button>

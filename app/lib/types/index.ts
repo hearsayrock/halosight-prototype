@@ -25,6 +25,7 @@ export interface Account {
   crmAccountType?: CrmAccountType;      // CRM classification shown on card badge
   assignedInitial?: string;             // team member initial shown on card (e.g. "A")
   taskCount?: number;              // open to-dos for this account
+  openOpportunities?: number;      // open opportunities/deals shown on card
   city?: string;
   state?: string;
   distanceMiles: number;
