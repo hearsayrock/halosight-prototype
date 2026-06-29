@@ -430,6 +430,25 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           </div>
         )}
 
+        {/* AI review ready banner — shown for accounts with a pending meeting review */}
+        {account.halosightType === "prospect" && id === "innovative-tech-tucson" && !justCreated && (
+          <button
+            onClick={() => router.push(`/relationships/${id}/review`)}
+            className="w-full flex items-center gap-2.5 px-3.5 py-3 mb-4 mx-0 active:opacity-70 transition-opacity text-left"
+            style={{
+              background: "rgba(139,146,255,0.08)",
+              border: "1px solid rgba(139,146,255,0.2)",
+              borderRadius: "var(--radius-md)",
+            }}
+          >
+            <Icon name="auto_awesome" size={15} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+            <span className="flex-1 text-[13px] font-medium" style={{ color: "var(--color-text-secondary)" }}>
+              AI found <span style={{ color: "var(--color-brand-purple)", fontWeight: 700 }}>3 CRM updates</span> from your last visit
+            </span>
+            <Icon name="arrow_forward" size={15} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+          </button>
+        )}
+
         {/* Tabs — hidden on just-created blank slate */}
         {!justCreated && <div
           className="flex p-1 gap-1 mx-auto"

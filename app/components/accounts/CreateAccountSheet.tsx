@@ -2,16 +2,17 @@
 
 /**
  * FLUTTER HANDOFF: CreateAccountSheet
- * Widget: StatefulWidget (bottom sheet)
- * State: name, contact, city (strings)
+ * Widget: StatefulWidget (bottom sheet, step: "form")
+ * State: name, contactName, phone, address, city, state, showDetails
  * Tokens: --color-background, --color-dark-secondary, --color-dark-tertiary,
  *         --color-text-primary, --color-text-muted, --color-text-disabled,
- *         --color-brand-teal, --radius-xl, --radius-full, --radius-md
+ *         --color-brand-teal, --color-brand-purple, --color-brand-coral,
+ *         --radius-xl, --radius-full, --radius-sm
  *
  * Portals into #phone-overlay-root.
- * Opens from the "Add new company" CTA after a failed search.
- * All new companies are created as halosightType "prospect" — syncs to CRM as a lead.
- * Contact and city are optional fields.
+ * Design: company name only upfront. AI disclosure explains required CRM fields
+ * will be populated after the first meeting. "More details" expands optional fields.
+ * All new companies created as halosightType "prospect" (CRM lead).
  */
 
 import { useState, useEffect, useRef } from "react";
@@ -29,23 +30,22 @@ const US_STATES = [
 ];
 
 interface Props {
-  /** Pre-fills the name field from the search query */
   initialName?: string;
   onClose: () => void;
   onCreated: (account: Account) => void;
 }
 
 export default function CreateAccountSheet({ initialName = "", onClose, onCreated }: Props) {
-  const [name, setName]       = useState(initialName);
-  const [address, setAddress] = useState("");
-  const [city, setCity]       = useState("");
-  const [state, setState]     = useState("");
-  const [isVisible, setIsVisible] = useState(true);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [name,         setName]         = useState(initialName);
+  const [contactName,  setContactName]  = useState("");
+  const [phone,        setPhone]        = useState("");
+  const [address,      setAddress]      = useState("");
+  const [city,         setCity]         = useState("");
+  const [stateVal,     setStateVal]     = useState("");
+  const [showDetails,  setShowDetails]  = useState(false);
+  const [isVisible,    setIsVisible]    = useState(true);
 
-  function handleClose() {
-    setIsVisible(false);
-  }
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const t = setTimeout(() => inputRef.current?.focus(), 320);
@@ -61,23 +61,23 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
       name: trimmed,
       type: "standalone",
       halosightType: "prospect",
+      contactName: contactName.trim() || undefined,
       address: address.trim() || undefined,
       city: city.trim() || undefined,
-      state: state.trim() || undefined,
+      state: stateVal.trim() || undefined,
       distanceMiles: 0,
       lastVisited: new Date(),
       taskCount: 0,
     };
 
     onCreated(newAccount);
-    handleClose();
+    setIsVisible(false);
   }
 
   const overlayRoot =
     typeof document !== "undefined"
       ? document.getElementById("phone-overlay-root")
       : null;
-
   if (!overlayRoot) return null;
 
   return createPortal(
@@ -93,7 +93,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={handleClose}
+            onClick={() => setIsVisible(false)}
           />
 
           {/* Sheet */}
@@ -117,108 +117,142 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
 
             <div className="px-5 pt-3 pb-10">
 
-              {/* Heading */}
               <h2
-                className="text-[22px] font-semibold mb-5"
+                className="text-[22px] font-semibold mb-1"
                 style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
                 New Lead
               </h2>
+              <p className="text-sm mb-5" style={{ color: "var(--color-text-muted)" }}>
+                What's the company name?
+              </p>
 
-              {/* ── Company name ─────────────────────────────────────────── */}
-              <div className="mb-4">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Company Name <span style={{ color: "var(--color-brand-coral)" }}>*</span>
+              {/* Company name — only required field */}
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="e.g. Saddleback Fleet Services"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter" && name.trim()) handleCreate(); }}
+                className="w-full text-[17px] outline-none px-4 py-4 mb-5"
+                style={{
+                  background: "var(--color-dark-secondary)",
+                  borderRadius: "var(--radius-xl)",
+                  color: "var(--color-text-primary)",
+                  fontWeight: 500,
+                }}
+              />
+
+              {/* AI disclosure */}
+              <div
+                className="flex items-start gap-2.5 px-3.5 py-3 mb-5"
+                style={{
+                  background: "rgba(139,146,255,0.07)",
+                  border: "1px solid rgba(139,146,255,0.16)",
+                  borderRadius: "var(--radius-md)",
+                }}
+              >
+                <Icon name="auto_awesome" size={14} style={{ color: "var(--color-brand-purple)", flexShrink: 0, marginTop: 1 }} />
+                <p className="text-[12px] leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
+                  AI will complete required CRM fields after your first visit — you don't need to fill them in now.
                 </p>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  placeholder="e.g. Saddleback Fleet Services"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
-                  className="w-full text-[16px] outline-none px-4 py-3.5"
-                  style={{
-                    background: "var(--color-dark-secondary)",
-                    borderRadius: "var(--radius-xl)",
-                    color: "var(--color-text-primary)",
-                  }}
-                />
               </div>
 
-              {/* ── Address (optional) ──────────────────────────────────── */}
-              <div className="mb-4">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Address
-                </p>
-                <input
-                  type="text"
-                  placeholder="e.g. 4820 E Broadway Blvd"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
-                  className="w-full text-[16px] outline-none px-4 py-3.5"
-                  style={{
-                    background: "var(--color-dark-secondary)",
-                    borderRadius: "var(--radius-xl)",
-                    color: "var(--color-text-primary)",
-                  }}
-                />
-              </div>
+              {/* More details toggle */}
+              <button
+                onClick={() => setShowDetails((s) => !s)}
+                className="flex items-center gap-1.5 mb-4 active:opacity-60 transition-opacity"
+              >
+                <motion.div
+                  animate={{ rotate: showDetails ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Icon name="expand_more" size={18} style={{ color: "var(--color-brand-purple)" }} />
+                </motion.div>
+                <span className="text-sm font-semibold" style={{ color: "var(--color-brand-purple)" }}>
+                  {showDetails ? "Hide details" : "Add more details"}
+                </span>
+                <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+                  (optional)
+                </span>
+              </button>
 
-              {/* ── City / State (optional) ──────────────────────────────── */}
-              <div className="mb-6">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  City / State
-                </p>
-                <div className="flex gap-3 w-full min-w-0">
-                  <input
-                    type="text"
-                    placeholder="City"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
-                    className="text-[16px] outline-none px-4 py-3.5 min-w-0"
-                    style={{
-                      flex: "1 1 0",
-                      background: "var(--color-dark-secondary)",
-                      borderRadius: "var(--radius-xl)",
-                      color: "var(--color-text-primary)",
-                    }}
-                  />
-                  <select
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    className="text-[16px] outline-none px-3 py-3.5"
-                    style={{
-                      flex: "0 0 90px",
-                      background: "var(--color-dark-secondary)",
-                      borderRadius: "var(--radius-xl)",
-                      color: state ? "var(--color-text-primary)" : "var(--color-text-disabled)",
-                      appearance: "none",
-                      WebkitAppearance: "none",
-                      textAlign: "center",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
+              <AnimatePresence>
+                {showDetails && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.22 }}
+                    className="overflow-hidden"
                   >
-                    <option value="" disabled>State</option>
-                    {US_STATES.map((s) => (
-                      <option key={s} value={s} style={{ background: "var(--color-dark-secondary)", color: "var(--color-text-primary)" }}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+                    <div className="flex flex-col gap-3 pb-5">
+                      <OptionalField
+                        label="Contact Name"
+                        placeholder="Who are you meeting with?"
+                        value={contactName}
+                        onChange={setContactName}
+                      />
+                      <OptionalField
+                        label="Phone"
+                        placeholder="Phone number"
+                        value={phone}
+                        onChange={setPhone}
+                        type="tel"
+                      />
+                      <OptionalField
+                        label="Address"
+                        placeholder="Street address"
+                        value={address}
+                        onChange={setAddress}
+                      />
+                      <div>
+                        <p className="text-[10px] font-semibold mb-1.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                          City / State
+                        </p>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="City"
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            className="flex-1 text-[14px] outline-none px-3 py-2.5 min-w-0"
+                            style={{
+                              background: "var(--color-dark-secondary)",
+                              borderRadius: "var(--radius-sm)",
+                              color: "var(--color-text-primary)",
+                            }}
+                          />
+                          <select
+                            value={stateVal}
+                            onChange={(e) => setStateVal(e.target.value)}
+                            className="text-[14px] outline-none px-2 py-2.5"
+                            style={{
+                              width: 80,
+                              background: "var(--color-dark-secondary)",
+                              borderRadius: "var(--radius-sm)",
+                              color: stateVal ? "var(--color-text-primary)" : "var(--color-text-disabled)",
+                              appearance: "none",
+                              WebkitAppearance: "none",
+                              textAlign: "center",
+                              border: "none",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <option value="" disabled>State</option>
+                            {US_STATES.map((s) => (
+                              <option key={s} value={s} style={{ background: "var(--color-dark-secondary)", color: "var(--color-text-primary)" }}>{s}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-              {/* ── CRM sync disclosure ──────────────────────────────────── */}
-              <div className="flex items-center gap-2 mb-5">
-                <Icon name="sync" size={14} style={{ color: "var(--color-text-disabled)", flexShrink: 0 }} />
-                <p className="text-[12px]" style={{ color: "var(--color-text-muted)" }}>
-                  This will also create a record in your connected CRM.
-                </p>
-              </div>
-
-              {/* ── Create button ────────────────────────────────────────── */}
+              {/* Create Lead CTA */}
               <button
                 onClick={handleCreate}
                 disabled={!name.trim()}
@@ -231,7 +265,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 }}
               >
                 <Icon name="add" size={18} style={{ color: "var(--color-text-primary)" }} />
-                Add Company
+                Create Lead
               </button>
 
             </div>
@@ -241,5 +275,35 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
       )}
     </AnimatePresence>,
     overlayRoot
+  );
+}
+
+function OptionalField({
+  label, placeholder, value, onChange, type = "text",
+}: {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+}) {
+  return (
+    <div>
+      <p className="text-[10px] font-semibold mb-1.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+        {label}
+      </p>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full text-[14px] outline-none px-3 py-2.5"
+        style={{
+          background: "var(--color-dark-secondary)",
+          borderRadius: "var(--radius-sm)",
+          color: "var(--color-text-primary)",
+        }}
+      />
+    </div>
   );
 }
