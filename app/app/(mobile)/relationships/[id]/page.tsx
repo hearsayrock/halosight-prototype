@@ -319,25 +319,25 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           {account.name}
         </h1>
 
-        {/* Account metadata — address */}
-        {account.address && (
-          <div className="flex items-center justify-center gap-1 mb-3">
-            <Icon name="location_on" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
-            <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-              {account.address}
-            </span>
-          </div>
-        )}
-
-        {/* Lead badge — prospects only */}
-        {account.halosightType === "prospect" && !justCreated && (
-          <div className="flex items-center justify-center mb-3">
-            <span
-              className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
-              style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--color-brand-teal)" }}
-            >
-              Lead
-            </span>
+        {/* Lead badge + address row */}
+        {(account.address || (account.halosightType === "prospect" && !justCreated)) && (
+          <div className="flex items-center justify-center gap-2 mb-3">
+            {account.halosightType === "prospect" && !justCreated && (
+              <span
+                className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+                style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--color-brand-teal)" }}
+              >
+                Lead
+              </span>
+            )}
+            {account.address && (
+              <div className="flex items-center gap-1">
+                <Icon name="location_on" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+                <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+                  {account.address}
+                </span>
+              </div>
+            )}
           </div>
         )}
 
