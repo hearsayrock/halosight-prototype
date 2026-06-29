@@ -8,6 +8,9 @@
  * Account switcher: tapping the account name in recording OR ready state opens
  * a picker sheet. Selecting any account calls switchAccount() without
  * interrupting the recording session.
+ *
+ * After finalizing, AIReviewOverlay slides up for the post-meeting AI conversation.
+ * Accepting or discarding in the overlay transitions to "ready".
  */
 
 import { useEffect, useState } from "react";
@@ -18,6 +21,7 @@ import { useCapture } from "@/lib/context/CaptureContext";
 import { mockAccountDetails } from "@/lib/mock-data/accounts";
 import Icon from "@/components/ui/Icon";
 import AccountPickerSheet from "@/components/accounts/AccountPickerSheet";
+import AIReviewOverlay from "@/components/capture/AIReviewOverlay";
 
 // ── Timer ─────────────────────────────────────────────────────────────────────
 
@@ -69,30 +73,17 @@ function BlobBackground({ active }: { active: boolean }) {
 
 // ── Account name button — tappable in both recording and ready states ─────────
 
-function AccountButton({
-  name,
-  onPress,
-}: {
-  name: string;
-  onPress: () => void;
-}) {
+function AccountButton({ name, onPress }: { name: string; onPress: () => void }) {
   return (
     <button
       onClick={onPress}
       className="flex items-center gap-1 active:opacity-60 transition-opacity"
       style={{ maxWidth: "100%" }}
     >
-      <span
-        className="truncate font-semibold"
-        style={{ fontSize: 15, color: "var(--color-text-secondary)" }}
-      >
+      <span className="truncate font-semibold" style={{ fontSize: 15, color: "var(--color-text-secondary)" }}>
         {name}
       </span>
-      <Icon
-        name="expand_more"
-        size={16}
-        style={{ color: "var(--color-text-muted)", flexShrink: 0 }}
-      />
+      <Icon name="expand_more" size={16} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
     </button>
   );
 }
@@ -100,8 +91,10 @@ function AccountButton({
 // ── Widget ────────────────────────────────────────────────────────────────────
 
 export default function CaptureWidget() {
-  const { status, accountId, accountName, canSwitchAccount, switchAccount, finishCapture, readyCapture, dismissCapture } =
-    useCapture();
+  const {
+    status, accountId, accountName, canSwitchAccount,
+    switchAccount, finishCapture, reviewCapture, readyCapture, dismissCapture,
+  } = useCapture();
   const router = useRouter();
   const [elapsed, setElapsed] = useState(0);
   const [showPicker, setShowPicker] = useState(false);
@@ -113,20 +106,22 @@ export default function CaptureWidget() {
     return () => clearInterval(id);
   }, [status]);
 
+  // After 3 seconds of finalizing, open the AI review overlay
   useEffect(() => {
     if (status !== "finalizing") return;
-    const t = setTimeout(readyCapture, 3000);
+    const t = setTimeout(reviewCapture, 3000);
     return () => clearTimeout(t);
-  }, [status, readyCapture]);
+  }, [status, reviewCapture]);
 
-  // Close picker if widget is dismissed
   useEffect(() => {
     if (status === "idle") setShowPicker(false);
   }, [status]);
 
-  function handleReview() {
+  function handleViewNote() {
     if (!accountId) return;
-    router.push(`/relationships/${accountId}/review`);
+    const detail = mockAccountDetails[accountId];
+    const first = detail?.recentActivity?.[0];
+    router.push(first ? `/relationships/${accountId}/activity/${first.id}` : `/relationships/${accountId}`);
     dismissCapture();
   }
 
@@ -139,7 +134,10 @@ export default function CaptureWidget() {
 
   return createPortal(
     <>
-      {/* ── Capture widget ──────────────────────────────────────────────── */}
+      {/* ── AI Review Overlay — slides up after finalizing ─────────────── */}
+      <AIReviewOverlay />
+
+      {/* ── Capture widget bar ──────────────────────────────────────────── */}
       <AnimatePresence>
         {status !== "idle" && (
           <motion.div
@@ -168,7 +166,7 @@ export default function CaptureWidget() {
             >
               <AnimatePresence mode="wait" initial={false}>
 
-                {/* ── Recording ──────────────────────────────────────── */}
+                {/* ── Recording ────────────────────────────────────────── */}
                 {status === "recording" && (
                   <motion.div
                     key="recording"
@@ -178,7 +176,6 @@ export default function CaptureWidget() {
                     transition={{ duration: 0.2 }}
                     className="flex items-center gap-3 px-4 pt-4 pb-7"
                   >
-                    {/* Timer */}
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className="w-2 h-2 rounded-full" style={{ background: "#ff4444" }} />
                       <span
@@ -189,7 +186,6 @@ export default function CaptureWidget() {
                       </span>
                     </div>
 
-                    {/* Label + account */}
                     <div className="flex-1 min-w-0">
                       <p style={{ fontSize: 17, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.2, marginBottom: 3 }}>
                         Taking notes
@@ -203,7 +199,6 @@ export default function CaptureWidget() {
                       )}
                     </div>
 
-                    {/* Finish */}
                     <button
                       onClick={finishCapture}
                       className="flex-shrink-0 h-9 px-4 font-bold rounded-full active:opacity-70 transition-opacity"
@@ -214,8 +209,8 @@ export default function CaptureWidget() {
                   </motion.div>
                 )}
 
-                {/* ── Finalizing / Ready ──────────────────────────────── */}
-                {(status === "finalizing" || status === "ready") && (
+                {/* ── Finalizing (AI processing) ────────────────────────── */}
+                {status === "finalizing" && (
                   <motion.div
                     key="finalizing"
                     initial={{ opacity: 0 }}
@@ -224,9 +219,28 @@ export default function CaptureWidget() {
                     transition={{ duration: 0.2 }}
                     className="px-4 pt-4 pb-7"
                   >
+                    <p className="text-sm font-bold mb-1" style={{ color: "var(--color-text-primary)" }}>
+                      Analyzing your meeting…
+                    </p>
+                    <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+                      I'll surface any CRM updates in just a moment.
+                    </p>
+                  </motion.div>
+                )}
+
+                {/* ── Ready (post-review) ───────────────────────────────── */}
+                {status === "ready" && (
+                  <motion.div
+                    key="ready"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="px-4 pt-4 pb-7"
+                  >
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <p className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>
-                        {status === "ready" ? "Note is ready! 🎉" : "Finalizing your note…"}
+                        Note is ready! 🎉
                       </p>
                       <button
                         onClick={dismissCapture}
@@ -238,33 +252,23 @@ export default function CaptureWidget() {
                     </div>
 
                     <div className="flex items-center justify-between gap-3">
-                      {status === "ready" && canSwitchAccount ? (
+                      {canSwitchAccount ? (
                         <AccountButton name={accountName ?? ""} onPress={() => setShowPicker(true)} />
-                      ) : status === "ready" ? (
+                      ) : (
                         <p className="truncate" style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text-secondary)" }}>
                           {accountName}
                         </p>
-                      ) : (
-                        <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-                          I'll let you know when it's ready.
-                        </p>
                       )}
-
-                      <AnimatePresence>
-                        {status === "ready" && (
-                          <motion.button
-                            initial={{ opacity: 0, scale: 0.85 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.85 }}
-                            transition={{ duration: 0.2 }}
-                            onClick={handleReview}
-                            className="flex-shrink-0 h-8 px-4 text-sm font-bold rounded-full active:opacity-70 transition-opacity"
-                            style={{ background: "var(--color-brand-purple)", color: "var(--color-text-primary)" }}
-                          >
-                            Review
-                          </motion.button>
-                        )}
-                      </AnimatePresence>
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0.85 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2 }}
+                        onClick={handleViewNote}
+                        className="flex-shrink-0 h-8 px-4 text-sm font-bold rounded-full active:opacity-70 transition-opacity"
+                        style={{ background: "var(--color-brand-purple)", color: "var(--color-text-primary)" }}
+                      >
+                        View Note
+                      </motion.button>
                     </div>
                   </motion.div>
                 )}
