@@ -27,6 +27,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import KebabMenu from "@/components/ui/KebabMenu";
+import ConvertToAccountSheet from "@/components/accounts/ConvertToAccountSheet";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
@@ -211,6 +212,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     setContactSaved(true);
   }
 
+  const [showConvertSheet, setShowConvertSheet] = useState(false);
+
   // Disqualify flow — pending toast, then commit + navigate back
   const [disqualifyPending, setDisqualifyPending] = useState(false);
   const disqualifyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -294,14 +297,22 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       <div className="pt-10 px-4 pb-4">
 
         {/* Back button row */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="relative flex items-center justify-between mb-3">
           <button onClick={() => router.push("/relationships")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
           {account.halosightType === "prospect" && !justCreated && (
+            <span
+              className="absolute left-1/2 -translate-x-1/2 text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+              style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--color-brand-teal)" }}
+            >
+              Lead
+            </span>
+          )}
+          {account.halosightType === "prospect" && !justCreated && (
             <KebabMenu
               items={[
-                { label: "Convert to Account", onClick: () => {} },
+                { label: "Convert to Account", onClick: () => setShowConvertSheet(true) },
                 { label: "Disqualify", onClick: handleDisqualify, destructive: true },
               ]}
             />
@@ -319,25 +330,13 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           {account.name}
         </h1>
 
-        {/* Lead badge + address row */}
-        {(account.address || (account.halosightType === "prospect" && !justCreated)) && (
-          <div className="flex items-center justify-center gap-2 mb-3">
-            {account.halosightType === "prospect" && !justCreated && (
-              <span
-                className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
-                style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--color-brand-teal)" }}
-              >
-                Lead
-              </span>
-            )}
-            {account.address && (
-              <div className="flex items-center gap-1">
-                <Icon name="location_on" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
-                <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-                  {account.address}
-                </span>
-              </div>
-            )}
+        {/* Account metadata — address */}
+        {account.address && (
+          <div className="flex items-center justify-center gap-1 mb-3">
+            <Icon name="location_on" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+            <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+              {account.address}
+            </span>
           </div>
         )}
 
@@ -615,6 +614,20 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       {/* Add Action Item Sheet */}
       {showAddSheet && (
         <AddActionItemSheet accountId={id} onClose={() => setShowAddSheet(false)} />
+      )}
+
+      {/* Convert to Account Sheet */}
+      {showConvertSheet && (
+        <ConvertToAccountSheet
+          accountName={account.name}
+          initialContact={{
+            name:  getContactOverride(id)?.contactName  ?? mockAccount?.contactName  ?? "",
+            title: getContactOverride(id)?.contactTitle ?? mockAccount?.contactTitle ?? "",
+            phone: getContactOverride(id)?.phone        ?? "",
+          }}
+          onClose={() => setShowConvertSheet(false)}
+          onConverted={() => router.push("/relationships")}
+        />
       )}
 
       {/* Completion toast */}
