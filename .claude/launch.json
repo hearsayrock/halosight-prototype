@@ -2,6 +2,14 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "halosight-nextjs",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "app",
+      "port": 3000,
+      "autoPort": false
+    },
+    {
       "name": "halosight-expo",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "web"],
