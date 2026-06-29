@@ -26,6 +26,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
+import KebabMenu from "@/components/ui/KebabMenu";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
@@ -293,10 +294,18 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       <div className="pt-10 px-4 pb-4">
 
         {/* Back button row */}
-        <div className="flex items-center mb-3">
+        <div className="flex items-center justify-between mb-3">
           <button onClick={() => router.push("/relationships")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
+          {account.halosightType === "prospect" && !justCreated && (
+            <KebabMenu
+              items={[
+                { label: "Convert to Account", onClick: () => {} },
+                { label: "Disqualify", onClick: handleDisqualify, destructive: true },
+              ]}
+            />
+          )}
         </div>
 
         {/* Account name */}
@@ -320,22 +329,15 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           </div>
         )}
 
-        {/* Lead badge + disqualify — prospects only */}
+        {/* Lead badge — prospects only */}
         {account.halosightType === "prospect" && !justCreated && (
-          <div className="flex items-center justify-center gap-3 mb-3">
+          <div className="flex items-center justify-center mb-3">
             <span
               className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
               style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--color-brand-teal)" }}
             >
               Lead
             </span>
-            <button
-              onClick={handleDisqualify}
-              className="text-sm active:opacity-60 transition-opacity"
-              style={{ color: "var(--color-brand-coral)" }}
-            >
-              Disqualify
-            </button>
           </div>
         )}
 
