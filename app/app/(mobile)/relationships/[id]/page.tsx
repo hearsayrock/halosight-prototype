@@ -485,9 +485,30 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           >
             And just like that,<br />{account.name} exists.
           </h2>
-          <p style={{ fontSize: 15, lineHeight: 1.6, color: "var(--color-text-muted)", maxWidth: 280 }}>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: "var(--color-text-muted)", maxWidth: 280, marginBottom: 32 }}>
             No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and nowhere to go but up.
           </p>
+
+          <button
+            onClick={() => startCapture(id, account.name)}
+            className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
+            style={{
+              border: "1.5px dashed rgba(139,146,255,0.45)",
+              borderRadius: "var(--radius-xl)",
+              background: "rgba(139,146,255,0.04)",
+            }}
+          >
+            <Icon name="auto_awesome" size={20} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-[15px] font-bold leading-snug mb-1" style={{ color: "var(--color-brand-purple)" }}>
+                Take your first note to populate this lead
+              </p>
+              <p className="text-[13px]" style={{ color: "var(--color-text-muted)" }}>
+                We'll fill the Salesforce fields automatically.
+              </p>
+            </div>
+            <Icon name="chevron_right" size={18} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+          </button>
         </div>
       )}
 
