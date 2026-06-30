@@ -58,9 +58,9 @@ function formatDuration(minutes: number): string {
   return m > 0 ? `${h}hr ${m} mins` : `${h}hr`;
 }
 
-function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; accountId: string; isExternal?: boolean }) {
+function ActivityCard({ item, accountId, isExternal, href }: { item: ActivityItem; accountId: string; isExternal?: boolean; href?: string }) {
   return (
-    <Link href={`/relationships/${accountId}/activity/${item.id}`}>
+    <Link href={href ?? `/relationships/${accountId}/activity/${item.id}`}>
     <div
       className="flex items-start gap-3 p-4 active:opacity-70 transition-opacity"
       style={{
@@ -243,6 +243,16 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   const justCreated = searchParams.get("just_created") === "true";
   const justCreatedName = searchParams.get("name") ?? "";
+  const capturedParam = searchParams.get("captured") === "true";
+
+  const DEMO_CAPTURE_OVERVIEW = {
+    lastVisitSummary: "Sandra confirmed they're moving forward with the partnership and asked for a formal proposal by end of next week. A competitor came in 15% lower, but our support model stood out as the differentiator.",
+    ideasForThisTime: [
+      "Send Marcus (IT lead) an intro email and loop him into the proposal process",
+      "Deliver the formal proposal by Friday — price, timeline, and onboarding plan",
+      "Follow up on the competitor quote gap with a support-tier comparison",
+    ],
+  };
 
   const detail = mockAccountDetails[id];
   const mockAccount = mockAccounts.find((a) => a.id === id);
@@ -253,6 +263,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   const account = detail ?? mockAccount ?? (justCreated && justCreatedName
     ? { id, name: justCreatedName, type: "standalone" as const, halosightType: "prospect" as const, distanceMiles: 0, lastVisited: new Date(), taskCount: 0 }
     : undefined);
+
+  // When capture is ready (or was just completed) for a new lead, transition out of "just created" empty state
+  const captureJustCompleted =
+    (captureStatus === "ready" && capturingId === id && !detail) ||
+    (capturedParam && !detail);
+  const effectiveJustCreated = justCreated && !captureJustCompleted;
 
   // ── Preview states ────────────────────────────────────────────────────────
   if (preview === "loading") return <AccountDetailSkeleton />;
@@ -301,7 +317,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           <button onClick={() => router.push("/relationships")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
           </button>
-          {account.halosightType === "prospect" && !justCreated && (
+          {account.halosightType === "prospect" && !effectiveJustCreated && (
             <span
               className="absolute left-1/2 -translate-x-1/2 text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
               style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--color-brand-teal)" }}
@@ -309,7 +325,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               Lead
             </span>
           )}
-          {account.halosightType === "prospect" && !justCreated && (
+          {account.halosightType === "prospect" && !effectiveJustCreated && (
             <KebabMenu
               items={[
                 { label: "Convert to Account", onClick: () => setShowConvertSheet(true) },
@@ -363,8 +379,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           );
         })()}
 
-        {/* Needs Attention banner — contact info for newly created leads */}
-        {account.halosightType === "prospect" && needsAttention(id) && !contactSaved && (
+        {/* Needs Attention banner — contact info for existing leads missing contact info */}
+        {account.halosightType === "prospect" && needsAttention(id) && !contactSaved && !effectiveJustCreated && !captureJustCompleted && (
           <div
             className="mx-1 mb-3 px-3.5 py-3"
             style={{
@@ -431,7 +447,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         )}
 
         {/* AI review ready banner — shown for accounts with a pending meeting review */}
-        {account.halosightType === "prospect" && id === "innovative-tech-tucson" && !justCreated && (
+        {account.halosightType === "prospect" && id === "innovative-tech-tucson" && !effectiveJustCreated && (
           <button
             onClick={() => router.push(`/relationships/${id}/review`)}
             className="w-full flex items-center gap-2.5 px-3.5 py-3 mb-4 mx-0 active:opacity-70 transition-opacity text-left"
@@ -450,7 +466,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         )}
 
         {/* Tabs — hidden on just-created blank slate */}
-        {!justCreated && <div
+        {!effectiveJustCreated && <div
           className="flex p-1 gap-1 mx-auto"
           style={{ width: 255, background: "var(--color-dark-primary)", borderRadius: "var(--radius-full)" }}
         >
@@ -472,7 +488,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       </div>
 
       {/* Just-created empty state — replaces tabs entirely */}
-      {justCreated && (
+      {effectiveJustCreated && (
         <div className="flex-1 flex flex-col items-center justify-center px-8 pb-24 text-center">
           <Icon name="auto_awesome" size={32} style={{ color: "var(--color-brand-purple)", marginBottom: 20 }} />
           <h2
@@ -513,20 +529,20 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       )}
 
       {/* Tab content — pb accounts for capture button + BottomNav */}
-      {!justCreated && <div className="flex-1 overflow-y-auto pb-24">
+      {!effectiveJustCreated && <div className="flex-1 overflow-y-auto pb-24">
 
         {/* Overview */}
         {activeTab === "overview" && (
           <div className="px-4 pb-4">
             {/* Detail-only sections */}
-            {detail ? (
+            {(detail || captureJustCompleted) ? (
               <>
                 <section className="mb-6">
                   <h2 className="heading-6 mb-2" style={{ color: "var(--color-text-primary)" }}>
                     Last Time
                   </h2>
                   <p className="text-base leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
-                    {detail.lastVisitSummary}
+                    {detail?.lastVisitSummary ?? DEMO_CAPTURE_OVERVIEW.lastVisitSummary}
                   </p>
                 </section>
 
@@ -535,7 +551,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                     Ideas for this Time
                   </h2>
                   <ul className="flex flex-col gap-2.5">
-                    {detail.ideasForThisTime.map((idea, i) => (
+                    {(detail?.ideasForThisTime ?? DEMO_CAPTURE_OVERVIEW.ideasForThisTime).map((idea, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <span
                           className="flex-shrink-0 mt-[10px] w-1.5 h-1.5 rounded-full"
@@ -614,9 +630,18 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         {/* Activity */}
         {activeTab === "activity" && (
           <div className="flex flex-col gap-3 px-4 pb-4">
-            {detail?.recentActivity?.length ? (
-              detail.recentActivity.map((item) => (
-                <ActivityCard key={item.id} item={item} accountId={id} isExternal={isExternalAccount} />
+            {(detail?.recentActivity?.length || captureJustCompleted) ? (
+              (detail?.recentActivity ?? [{ id: "new-capture", accountId: "new-capture", title: "Sandra confirmed we're the frontrunner for the contract", summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.", date: new Date(), durationMinutes: 28, hasTranscript: true, repName: "Jordan Mills", type: "visit" as const }]).map((item) => (
+                <ActivityCard
+                  key={item.id}
+                  item={item}
+                  accountId={id}
+                  isExternal={isExternalAccount}
+                  isExternal={item.id === "new-capture" ? false : isExternalAccount}
+                  href={item.id === "new-capture"
+                    ? `/relationships/${id}/activity/new-capture?name=${encodeURIComponent(account.name)}`
+                    : undefined}
+                />
               ))
             ) : (
               <div className="py-8 text-center">

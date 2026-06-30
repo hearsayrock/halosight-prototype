@@ -121,7 +121,12 @@ export default function CaptureWidget() {
     if (!accountId) return;
     const detail = mockAccountDetails[accountId];
     const first = detail?.recentActivity?.[0];
-    router.push(first ? `/relationships/${accountId}/activity/${first.id}` : `/relationships/${accountId}`);
+    if (first) {
+      router.push(`/relationships/${accountId}/activity/${first.id}`);
+    } else {
+      const nameParam = accountName ? `?name=${encodeURIComponent(accountName)}` : "";
+      router.push(`/relationships/${accountId}/activity/new-capture${nameParam}`);
+    }
     dismissCapture();
   }
 

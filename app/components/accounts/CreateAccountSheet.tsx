@@ -2,17 +2,16 @@
 
 /**
  * FLUTTER HANDOFF: CreateAccountSheet
- * Widget: StatefulWidget (bottom sheet, step: "form")
+ * Widget: StatefulWidget (bottom sheet)
  * State: name, contactName, phone, address, city, state, showDetails
  * Tokens: --color-background, --color-dark-secondary, --color-dark-tertiary,
  *         --color-text-primary, --color-text-muted, --color-text-disabled,
- *         --color-brand-teal, --color-brand-purple, --color-brand-coral,
+ *         --color-brand-purple, --color-brand-coral,
  *         --radius-xl, --radius-full, --radius-sm
  *
  * Portals into #phone-overlay-root.
- * Design: company name only upfront. AI disclosure explains required CRM fields
- * will be populated after the first meeting. "More details" expands optional fields.
- * All new companies created as halosightType "prospect" (CRM lead).
+ * Design: company name only upfront; AI pill hint; purple CTA.
+ * "Add more details" expands optional contact/address fields below the CTA.
  */
 
 import { useState, useEffect, useRef } from "react";
@@ -36,14 +35,15 @@ interface Props {
 }
 
 export default function CreateAccountSheet({ initialName = "", onClose, onCreated }: Props) {
-  const [name,         setName]         = useState(initialName);
-  const [contactName,  setContactName]  = useState("");
-  const [phone,        setPhone]        = useState("");
-  const [address,      setAddress]      = useState("");
-  const [city,         setCity]         = useState("");
-  const [stateVal,     setStateVal]     = useState("");
-  const [showDetails,  setShowDetails]  = useState(false);
-  const [isVisible,    setIsVisible]    = useState(true);
+  const [name,        setName]        = useState(initialName);
+  const [contactName, setContactName] = useState("");
+  const [phone,       setPhone]       = useState("");
+  const [address,     setAddress]     = useState("");
+  const [city,        setCity]        = useState("");
+  const [stateVal,    setStateVal]    = useState("");
+  const [showDetails, setShowDetails] = useState(false);
+  const [isVisible,   setIsVisible]   = useState(true);
+  const [focused,     setFocused]     = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -55,8 +55,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
   function handleCreate() {
     const trimmed = name.trim();
     if (!trimmed) return;
-
-    const newAccount: Account = {
+    onCreated({
       id: `hs-${Date.now()}`,
       name: trimmed,
       type: "standalone",
@@ -68,9 +67,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
       distanceMiles: 0,
       lastVisited: new Date(),
       taskCount: 0,
-    };
-
-    onCreated(newAccount);
+    });
     setIsVisible(false);
   }
 
@@ -115,157 +112,72 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               <div className="w-10 h-1 rounded-full" style={{ background: "var(--color-dark-tertiary)" }} />
             </div>
 
-            <div className="px-5 pt-3 pb-10">
+            <div className="px-5 pt-4 pb-10">
 
+              {/* Title */}
               <h2
-                className="text-[22px] font-semibold mb-1"
+                className="text-[28px] font-bold mb-6"
                 style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
                 New Lead
               </h2>
-              <p className="text-sm mb-5" style={{ color: "var(--color-text-muted)" }}>
-                What's the company name?
-              </p>
 
-              {/* Company name — only required field */}
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="e.g. Saddleback Fleet Services"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && name.trim()) handleCreate(); }}
-                className="w-full text-[17px] outline-none px-4 py-4 mb-5"
-                style={{
-                  background: "var(--color-dark-secondary)",
-                  borderRadius: "var(--radius-xl)",
-                  color: "var(--color-text-primary)",
-                  fontWeight: 500,
-                }}
-              />
-
-              {/* AI disclosure */}
-              <div
-                className="flex items-start gap-2.5 px-3.5 py-3 mb-5"
-                style={{
-                  background: "rgba(139,146,255,0.07)",
-                  border: "1px solid rgba(139,146,255,0.16)",
-                  borderRadius: "var(--radius-md)",
-                }}
-              >
-                <Icon name="auto_awesome" size={14} style={{ color: "var(--color-brand-purple)", flexShrink: 0, marginTop: 1 }} />
-                <p className="text-[12px] leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
-                  AI will complete required CRM fields after your first visit — you don't need to fill them in now.
+              {/* Company field */}
+              <div className="mb-3">
+                <p
+                  className="text-[11px] font-semibold mb-2"
+                  style={{ color: "var(--color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
+                >
+                  Company
                 </p>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  placeholder="e.g. Saddleback Fleet Services"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setFocused(false)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && name.trim()) handleCreate(); }}
+                  className="w-full text-[17px] font-medium outline-none px-4 py-4"
+                  style={{
+                    background: "var(--color-dark-secondary)",
+                    borderRadius: "var(--radius-lg)",
+                    color: "var(--color-text-primary)",
+                    border: `1.5px solid ${focused ? "rgba(139,146,255,0.55)" : "rgba(255,255,255,0.08)"}`,
+                    transition: "border-color 0.15s",
+                  }}
+                />
               </div>
 
-              {/* More details toggle */}
-              <button
-                onClick={() => setShowDetails((s) => !s)}
-                className="flex items-center gap-1.5 mb-4 active:opacity-60 transition-opacity"
+              {/* AI hint — informational only, not a field */}
+              <div
+                className="flex items-center gap-2.5 px-4 py-3 mb-5"
+                style={{
+                  background: "var(--color-alpha-purple-10)",
+                  borderRadius: "var(--radius-lg)",
+                }}
               >
-                <motion.div
-                  animate={{ rotate: showDetails ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Icon name="expand_more" size={18} style={{ color: "var(--color-brand-purple)" }} />
-                </motion.div>
-                <span className="text-sm font-semibold" style={{ color: "var(--color-brand-purple)" }}>
-                  {showDetails ? "Hide details" : "Add more details"}
+                <Icon name="auto_awesome" size={15} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+                <span className="text-[13px] font-medium" style={{ color: "var(--color-brand-purple)" }}>
+                  Name it — AI fills the rest.
                 </span>
-                <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
-                  (optional)
-                </span>
-              </button>
+              </div>
 
-              <AnimatePresence>
-                {showDetails && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.22 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="flex flex-col gap-3 pb-5">
-                      <OptionalField
-                        label="Contact Name"
-                        placeholder="Who are you meeting with?"
-                        value={contactName}
-                        onChange={setContactName}
-                      />
-                      <OptionalField
-                        label="Phone"
-                        placeholder="Phone number"
-                        value={phone}
-                        onChange={setPhone}
-                        type="tel"
-                      />
-                      <OptionalField
-                        label="Address"
-                        placeholder="Street address"
-                        value={address}
-                        onChange={setAddress}
-                      />
-                      <div>
-                        <p className="text-[10px] font-semibold mb-1.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                          City / State
-                        </p>
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            placeholder="City"
-                            value={city}
-                            onChange={(e) => setCity(e.target.value)}
-                            className="flex-1 text-[14px] outline-none px-3 py-2.5 min-w-0"
-                            style={{
-                              background: "var(--color-dark-secondary)",
-                              borderRadius: "var(--radius-sm)",
-                              color: "var(--color-text-primary)",
-                            }}
-                          />
-                          <select
-                            value={stateVal}
-                            onChange={(e) => setStateVal(e.target.value)}
-                            className="text-[14px] outline-none px-2 py-2.5"
-                            style={{
-                              width: 80,
-                              background: "var(--color-dark-secondary)",
-                              borderRadius: "var(--radius-sm)",
-                              color: stateVal ? "var(--color-text-primary)" : "var(--color-text-disabled)",
-                              appearance: "none",
-                              WebkitAppearance: "none",
-                              textAlign: "center",
-                              border: "none",
-                              cursor: "pointer",
-                            }}
-                          >
-                            <option value="" disabled>State</option>
-                            {US_STATES.map((s) => (
-                              <option key={s} value={s} style={{ background: "var(--color-dark-secondary)", color: "var(--color-text-primary)" }}>{s}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Create Lead CTA */}
+              {/* Create CTA */}
               <button
                 onClick={handleCreate}
                 disabled={!name.trim()}
-                className="w-full h-12 font-semibold text-[15px] flex items-center justify-center gap-2 transition-opacity"
+                className="w-full font-semibold text-[16px] transition-opacity"
                 style={{
-                  background: "var(--color-brand-teal)",
+                  height: 52,
+                  background: "var(--color-brand-purple)",
                   color: "var(--color-text-primary)",
                   borderRadius: "var(--radius-full)",
                   opacity: name.trim() ? 1 : 0.4,
                 }}
               >
-                <Icon name="add" size={18} style={{ color: "var(--color-text-primary)" }} />
-                Create Lead
+                Create a lead
               </button>
 
             </div>
@@ -278,14 +190,8 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
   );
 }
 
-function OptionalField({
-  label, placeholder, value, onChange, type = "text",
-}: {
-  label: string;
-  placeholder: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
+function OptionalField({ label, placeholder, value, onChange, type = "text" }: {
+  label: string; placeholder: string; value: string; onChange: (v: string) => void; type?: string;
 }) {
   return (
     <div>
@@ -298,11 +204,7 @@ function OptionalField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full text-[14px] outline-none px-3 py-2.5"
-        style={{
-          background: "var(--color-dark-secondary)",
-          borderRadius: "var(--radius-sm)",
-          color: "var(--color-text-primary)",
-        }}
+        style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-sm)", color: "var(--color-text-primary)" }}
       />
     </div>
   );

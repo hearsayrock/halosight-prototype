@@ -25,7 +25,7 @@ import CompletionToast from "@/components/ui/CompletionToast";
 import NoteSheet from "@/components/ui/NoteSheet";
 import { mockAccounts, mockAccountDetails } from "@/lib/mock-data/accounts";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
-import type { ActivityAISummary } from "@/lib/types";
+import type { ActivityAISummary, ActivityItem, ActionItem } from "@/lib/types";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -99,6 +99,52 @@ function AISummaryCard({ summary, durationMinutes }: { summary: ActivityAISummar
   );
 }
 
+// ── Demo data for newly-captured leads ────────────────────────────────────────
+
+const DEMO_ACTION_ITEMS: ActionItem[] = [
+  {
+    id: "demo-ai-1",
+    title: "Send Sandra the formal proposal",
+    dueDate: null,
+    status: "pending",
+    description: "Price, timeline, and onboarding plan — she asked for it by end of next week.",
+    originActivity: "Sandra confirmed we're the frontrunner for the contract",
+    originActivityId: "new-capture",
+  },
+  {
+    id: "demo-ai-2",
+    title: "Intro email to Marcus (IT lead)",
+    dueDate: null,
+    status: "pending",
+    description: "Loop him in before final sign-off.",
+    originActivity: "Sandra confirmed we're the frontrunner for the contract",
+    originActivityId: "new-capture",
+  },
+];
+
+const DEMO_CAPTURE_ACTIVITY: ActivityItem = {
+  id: "new-capture",
+  accountId: "new-capture",
+  title: "Sandra confirmed we're the frontrunner for the contract",
+  summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.",
+  date: new Date(),
+  durationMinutes: 28,
+  hasTranscript: true,
+  repName: "Jordan Mills",
+  type: "visit",
+  aiSummary: {
+    title: "Sandra confirmed we're the frontrunner for the contract",
+    tldr: "Sandra confirmed they're moving forward and asked for a formal proposal by end of next week. A competitor came in 15% lower, but she said our support model was the differentiator.",
+    keyPoints: [
+      "Sandra confirmed the company is **ready to move forward** with the partnership.",
+      "She asked for a **formal proposal by Friday** — price, timeline, and onboarding plan.",
+      "Mentioned a competitor quote came in **15% lower**, but our support model was the differentiator.",
+      "Their IT lead (Marcus) needs to be looped in before final sign-off.",
+      "Follow up with an intro email to Marcus this week.",
+    ],
+  },
+};
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 function ActivityDetailPageContent({
@@ -163,9 +209,14 @@ function ActivityDetailPageContent({
   }, []); // eslint-disable-line
 
   const detail = mockAccountDetails[id];
-  const account = detail ?? mockAccounts.find((a) => a.id === id);
-  const activity = detail?.recentActivity.find((a) => a.id === activityId);
-  const isExternalAccount = !mockAccounts.some((a) => a.id === id);
+  const isNewCapture = activityId === "new-capture";
+  const account = detail
+    ?? mockAccounts.find((a) => a.id === id)
+    ?? (isNewCapture
+      ? { id, name: searchParams.get("name") ?? "New Lead", type: "standalone" as const, halosightType: "prospect" as const, distanceMiles: 0, lastVisited: new Date(), taskCount: 0 }
+      : undefined);
+  const activity = detail?.recentActivity.find((a) => a.id === activityId) ?? (isNewCapture ? DEMO_CAPTURE_ACTIVITY : undefined);
+  const isExternalAccount = !mockAccounts.some((a) => a.id === id) && !isNewCapture;
 
   if (!account || !activity) {
     return (
@@ -182,7 +233,9 @@ function ActivityDetailPageContent({
       <div className="pt-10 px-4 pb-4">
         {/* Back + rep avatar / more row */}
         <div className="flex items-center justify-between mb-3">
-          <Link href={`/relationships/${id}?tab=activity`}>
+          <Link href={isNewCapture
+            ? `/relationships/${id}?just_created=true&name=${encodeURIComponent(searchParams.get("name") ?? "")}&captured=true&tab=activity`
+            : `/relationships/${id}?tab=activity`}>
             <button className="p-1 active:opacity-60 transition-opacity">
               <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
             </button>
@@ -278,20 +331,25 @@ function ActivityDetailPageContent({
             <h2 className="heading-6" style={{ color: "var(--color-text-primary)" }}>
               Action Items
             </h2>
-            {actionItems.length > 0 && (
+            {(isNewCapture ? DEMO_ACTION_ITEMS : actionItems).length > 0 && (
               <button onClick={() => setShowAddSheet(true)} className="active:opacity-60 transition-opacity">
                 <Icon name="add" size={20} style={{ color: "var(--color-text-primary)" }} />
               </button>
             )}
           </div>
 
-          {actionItems.length > 0 ? (
+          {(isNewCapture ? DEMO_ACTION_ITEMS : actionItems).length > 0 ? (
             <div className="flex flex-col gap-2">
-              {actionItems.map((item) => (
-                <Link key={item.id} href={`/relationships/${id}/action-items/${item.id}?from=activity&activityId=${activityId}`}>
-                  <ActionItemCard item={item} onComplete={() => handleComplete(item.id)} pending={pendingItemId === item.id} />
-                </Link>
-              ))}
+              {isNewCapture
+                ? DEMO_ACTION_ITEMS.map((item) => (
+                    <ActionItemCard key={item.id} item={item} onComplete={() => {}} pending={false} />
+                  ))
+                : actionItems.map((item) => (
+                    <Link key={item.id} href={`/relationships/${id}/action-items/${item.id}?from=activity&activityId=${activityId}`}>
+                      <ActionItemCard item={item} onComplete={() => handleComplete(item.id)} pending={pendingItemId === item.id} />
+                    </Link>
+                  ))
+              }
             </div>
           ) : (
             <button

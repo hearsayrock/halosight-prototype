@@ -3,100 +3,361 @@
 /**
  * FLUTTER HANDOFF: AIReviewOverlay
  * Widget: StatefulWidget (full-screen overlay, portaled)
- * Trigger: CaptureStatus === "reviewing" (after finalizing completes)
+ * Trigger: CaptureStatus === "reviewing"
  * Props: none — reads from CaptureContext
  *
- * Post-meeting AI conversation. Slides up over everything immediately after
- * capture finalizes. Rep reviews field suggestions, corrects via text, then
- * applies or discards. Dismissing transitions CaptureContext → "ready".
+ * Shows AI-extracted CRM fields after capture. Rep can hold mic to speak
+ * corrections in real time. Field cards update live (green on confirm).
+ * "Looks good" / "Use defaults" → readyCapture().
  *
- * Tokens: --color-background, --color-dark-secondary, --color-dark-tertiary,
- *         --color-text-primary, --color-text-secondary, --color-text-muted,
- *         --color-text-disabled, --color-brand-purple, --color-brand-purple-dark,
- *         --color-brand-teal, --color-brand-coral, --color-warning,
- *         --color-alpha-purple-10, --radius-xl, --radius-md, --radius-sm, --radius-full
+ * Tokens: --color-background, --color-dark-secondary, --color-text-primary,
+ *         --color-text-muted, --color-text-disabled, --color-brand-purple,
+ *         --color-semantic-success, --radius-lg, --radius-full
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import Icon from "@/components/ui/Icon";
 import { useCapture } from "@/lib/context/CaptureContext";
-import {
-  buildSuggestions,
-  getAIResponse,
-  type Suggestion,
-  type ChatMessage,
-} from "@/lib/ai-review-utils";
+import Icon from "@/components/ui/Icon";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+type FieldConf = "high" | "uncertain" | "confirmed";
+
+interface CRMField {
+  id: string;
+  label: string;
+  value: string;
+  conf: FieldConf;
+  isDropdown?: boolean;
+  multiLine?: boolean;
+  /** Demo-only field, hidden by default — revealed via the secret tap toggle to show off scroll behavior */
+  demo?: boolean;
+}
+
+// ── Demo listen sequence ──────────────────────────────────────────────────────
+
+const LISTEN_STEPS: Array<{
+  delay: number;
+  transcript: string;
+  confirmId?: string;
+  newValue?: string;
+}> = [
+  { delay: 600,  transcript: "Phone is" },
+  { delay: 1100, transcript: "Phone is 5-2-0… 5-5-5… 0-1-4-7" },
+  { delay: 2200, transcript: "Phone is 5-2-0… 5-5-5… 0-1-4-7", confirmId: "phone", newValue: "(520) 555-0147" },
+  { delay: 3300, transcript: "Lead status, prospect." },
+  { delay: 4200, transcript: "Lead status, prospect.", confirmId: "leadStatus", newValue: "Prospect" },
+];
+
+// ── Live caption — words enter the DOM one at a time so justify-center
+//    physically recenters on each addition; layout-prop FLIP slides existing
+//    words left as new ones materialise on the right. ────────────────────────
+
+function LiveCaption({ text }: { text: string }) {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  const sentenceKey = words[0] ?? "";
+
+  const [shownCount, setShownCount] = useState(0);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const prevSentenceKey = useRef("");
+  const prevShownCount = useRef(0);
+
+  useEffect(() => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+
+    const isNewSentence = sentenceKey !== prevSentenceKey.current;
+    prevSentenceKey.current = sentenceKey;
+
+    // New sentence: clear immediately; same sentence growing: pick up where we left off
+    const startFrom = isNewSentence ? 0 : prevShownCount.current;
+    if (isNewSentence) {
+      setShownCount(0);
+      prevShownCount.current = 0;
+    }
+
+    let delay = 0;
+    for (let i = startFrom; i < words.length; i++) {
+      const idx = i;
+      timers.current.push(
+        setTimeout(() => {
+          setShownCount(idx + 1);
+          prevShownCount.current = idx + 1;
+        }, delay)
+      );
+      delay += 115;
+    }
+
+    return () => timers.current.forEach(clearTimeout);
+  }, [text]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const visible = words.slice(0, shownCount);
+
+  return (
+    <div
+      className="w-full overflow-hidden"
+      style={{
+        maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+        WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+      }}
+    >
+      <div className="flex items-center justify-center gap-[5px]">
+        {visible.map((word, i) => (
+          <motion.span
+            key={`${sentenceKey}-${i}`}
+            initial={{ opacity: 0, filter: "blur(8px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="shrink-0 text-[15px] italic"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            {word}
+          </motion.span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Waveform ──────────────────────────────────────────────────────────────────
+
+function WaveformBars() {
+  const scales = [0.45, 0.8, 1, 0.7, 0.38];
+  return (
+    <div className="flex items-end justify-center gap-[5px]" style={{ height: 52 }}>
+      {scales.map((s, i) => (
+        <motion.div
+          key={i}
+          style={{ width: 4, borderRadius: 2, background: "var(--color-brand-purple)" }}
+          animate={{ height: [10 * s, 44 * s, 7 * s, 40 * s, 10 * s] }}
+          transition={{ duration: 0.85 + i * 0.14, repeat: Infinity, ease: "easeInOut", delay: i * 0.11 }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ── Field card — always-editable, input styled as text when blurred ───────────
+
+interface FieldCardProps {
+  field: CRMField;
+  onSave: (id: string, value: string) => void;
+}
+
+function FieldCard({ field, onSave }: FieldCardProps) {
+  const isHigh      = field.conf === "high";
+  const isUncertain = field.conf === "uncertain";
+  const isConfirmed = field.conf === "confirmed";
+  const isEmpty     = field.value === "Unknown" || field.value === "Select…";
+
+  const [focused, setFocused] = useState(false);
+  const [inputVal, setInputVal] = useState(isEmpty ? "" : field.value);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Sync when voice-listen fills this field
+  useEffect(() => {
+    if (!focused) setInputVal(isEmpty ? "" : field.value);
+  }, [field.value, isEmpty, focused]);
+
+  const border = focused
+    ? "1.5px solid rgba(139,146,255,0.6)"
+    : isConfirmed
+    ? "1px solid rgba(46,204,113,0.45)"
+    : isUncertain
+    ? "2px dashed rgba(139,146,255,0.65)"
+    : "1px solid rgba(139,146,255,0.28)";
+
+  const bg = isConfirmed && !focused ? "rgba(46,204,113,0.05)" : "var(--color-dark-secondary)";
+
+  const idleValueColor = isConfirmed
+    ? "var(--color-text-primary)"
+    : isHigh
+    ? "var(--color-brand-purple)"
+    : "var(--color-text-muted)";
+
+  function focusInput() {
+    setFocused(true);
+  }
+
+  // Autofocus the input once it mounts (idle state renders a plain span instead)
+  useEffect(() => {
+    if (focused) inputRef.current?.focus();
+  }, [focused]);
+
+  function handleBlur() {
+    setFocused(false);
+    onSave(field.id, inputVal);
+  }
+
+  return (
+    <div
+      onClick={focusInput}
+      className="cursor-text"
+      style={{ border, background: bg, borderRadius: "var(--radius-lg)", padding: "13px 14px", transition: "border-color 0.15s, background 0.15s" }}
+    >
+      {field.multiLine ? (
+        <>
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[13px]" style={{ color: "var(--color-text-muted)" }}>{field.label}</span>
+            {isHigh && !focused && <Icon name="auto_awesome" size={14} style={{ color: "var(--color-brand-purple)" }} />}
+            {isConfirmed && !focused && <span className="text-[15px] font-bold" style={{ color: "var(--color-semantic-success)" }}>✓</span>}
+          </div>
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputVal}
+            placeholder={`Enter ${field.label.toLowerCase()}…`}
+            onChange={(e) => setInputVal(e.target.value)}
+            onFocus={() => setFocused(true)}
+            onBlur={handleBlur}
+            onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full text-[15px] outline-none bg-transparent"
+            style={{
+              color: focused ? "var(--color-text-primary)" : idleValueColor,
+              fontWeight: focused ? 400 : 600,
+              transition: "color 0.15s",
+            }}
+          />
+        </>
+      ) : (
+        <motion.div layout="position" className={`flex items-center gap-3 ${focused ? "justify-start" : "justify-between"}`}>
+          <AnimatePresence initial={false}>
+            {!focused && (
+              <motion.span
+                key="label"
+                layout="position"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.12 }}
+                className="text-[13px] flex-shrink-0"
+                style={{ color: "var(--color-text-muted)" }}
+              >
+                {field.label}
+              </motion.span>
+            )}
+          </AnimatePresence>
+
+          <motion.div layout="position" className={`flex items-center gap-2 min-w-0 ${focused ? "flex-1" : ""}`}>
+            <AnimatePresence initial={false}>
+              {!focused && isHigh && (
+                <motion.span key="sparkle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}>
+                  <Icon name="auto_awesome" size={14} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+                </motion.span>
+              )}
+              {!focused && isConfirmed && (
+                <motion.span key="check" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }} className="text-[15px] font-bold flex-shrink-0" style={{ color: "var(--color-semantic-success)" }}>
+                  ✓
+                </motion.span>
+              )}
+            </AnimatePresence>
+            {focused ? (
+              <motion.input
+                layout
+                ref={inputRef}
+                type={field.id === "phone" ? "tel" : "text"}
+                value={inputVal}
+                placeholder=""
+                onChange={(e) => setInputVal(e.target.value)}
+                onBlur={handleBlur}
+                onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+                onClick={(e) => e.stopPropagation()}
+                className="outline-none bg-transparent min-w-0 w-full"
+                style={{ fontSize: 15, fontWeight: 400, color: "var(--color-text-primary)", textAlign: "left" }}
+              />
+            ) : (
+              <motion.span
+                layout
+                onClick={(e) => { e.stopPropagation(); focusInput(); }}
+                className="truncate"
+                style={{ fontSize: 15, fontWeight: 600, color: idleValueColor }}
+              >
+                {isEmpty ? "Add…" : inputVal}
+              </motion.span>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+// ── Overlay ───────────────────────────────────────────────────────────────────
 
 export default function AIReviewOverlay() {
-  const { status, accountId, accountName, readyCapture } = useCapture();
+  const { status, accountName, readyCapture } = useCapture();
 
-  const [suggestions,  setSuggestions]  = useState<Suggestion[]>([]);
-  const [messages,     setMessages]     = useState<ChatMessage[]>([]);
-  const [inputText,    setInputText]    = useState("");
-  const [isThinking,   setIsThinking]   = useState(false);
-  const [applyDone,    setApplyDone]    = useState(false);
+  const [fields,     setFields]     = useState<CRMField[]>([]);
+  const [listening,  setListening]  = useState(false);
+  const [transcript, setTranscript] = useState("");
+  // Secret demo toggle — tap "What we learned" to show/hide extra fields for scroll demos
+  const [showExtra,  setShowExtra]  = useState(false);
 
-  const inputRef  = useRef<HTMLInputElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const visibleFields = fields.filter((f) => showExtra || !f.demo);
 
-  // Reset state when a new review session begins
+  // Reset fields when a new review session begins
   useEffect(() => {
-    if (status === "reviewing") {
-      setSuggestions(buildSuggestions(accountId ?? ""));
-      setMessages([]);
-      setInputText("");
-      setIsThinking(false);
-      setApplyDone(false);
-      setTimeout(() => inputRef.current?.focus(), 500);
-    }
-  }, [status, accountId]);
+    if (status !== "reviewing") return;
+    setListening(false);
+    setTranscript("");
+    setShowExtra(false);
+    setFields([
+      { id: "firstName",  label: "First name",      value: "Sandra",                conf: "high" },
+      { id: "lastName",   label: "Last name",        value: "Perez",                 conf: "high" },
+      { id: "title",      label: "Title",            value: "Operations Director",   conf: "high" },
+      { id: "segment",    label: "Market segment",   value: "Commercial Fleet",      conf: "high" },
+      { id: "address",    label: "Address",          value: "4820 E Grant Rd, Tucson, AZ 85711", conf: "high", multiLine: true },
+      { id: "phone",      label: "Phone",            value: "Unknown",               conf: "uncertain" },
+      { id: "leadStatus", label: "Lead status",      value: "Select…",               conf: "uncertain", isDropdown: true },
+      { id: "email",      label: "Email",            value: "Unknown",               conf: "uncertain", demo: true },
+      { id: "fleetSize",  label: "Fleet size",       value: "42 vehicles",           conf: "high",       demo: true },
+      { id: "renewal",    label: "Renewal date",     value: "Select…",               conf: "uncertain", demo: true },
+      { id: "budget",     label: "Budget approved",  value: "Yes",                   conf: "high",       demo: true },
+      { id: "competitor", label: "Competitor",       value: "Select…",               conf: "uncertain", demo: true },
+    ]);
+  }, [status]);
 
-  // Auto-scroll when messages or thinking state changes
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, isThinking]);
+  function startListening() {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    setListening(true);
+    setTranscript("");
 
-  const isVisible      = status === "reviewing";
-  const activeSuggestions = suggestions.filter((s) => !s.dismissed);
-  const selectedCount  = activeSuggestions.filter((s) => s.selected).length;
-  const highCount      = activeSuggestions.filter((s) => s.confidence === "high" && s.selected).length;
+    LISTEN_STEPS.forEach((step) => {
+      const t = setTimeout(() => {
+        setTranscript(step.transcript);
+        if (step.confirmId && step.newValue) {
+          setFields((prev) =>
+            prev.map((f) =>
+              f.id === step.confirmId
+                ? { ...f, value: step.newValue!, conf: "confirmed" }
+                : f
+            )
+          );
+        }
+      }, step.delay);
+      timers.current.push(t);
+    });
+  }
 
-  function toggleSuggestion(id: string) {
-    setSuggestions((prev) =>
-      prev.map((s) => (s.id === id && s.confidence !== "unknown" ? { ...s, selected: !s.selected } : s))
+  function stopListening() {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    setListening(false);
+    setTranscript("");
+  }
+
+  const handleFieldSave = useCallback((id: string, value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    setFields((prev) =>
+      prev.map((f) => f.id === id ? { ...f, value: trimmed, conf: "confirmed" } : f)
     );
-  }
-
-  function handleSend() {
-    const text = inputText.trim();
-    if (!text || isThinking) return;
-    setInputText("");
-
-    const repMsg: ChatMessage = { id: `msg-${Date.now()}`, role: "rep", text };
-    setMessages((prev) => [...prev, repMsg]);
-    setIsThinking(true);
-
-    setTimeout(() => {
-      const { text: aiText, updatedSuggestions } = getAIResponse(text, suggestions);
-      setSuggestions(updatedSuggestions);
-      const aiMsg: ChatMessage = { id: `msg-${Date.now()}-ai`, role: "ai", text: aiText };
-      setMessages((prev) => [...prev, aiMsg]);
-      setIsThinking(false);
-    }, 800 + Math.random() * 400);
-  }
-
-  function handleApply() {
-    setApplyDone(true);
-    setTimeout(readyCapture, 1200);
-  }
-
-  function handleDiscard() {
-    readyCapture();
-  }
+  }, []);
 
   const overlayRoot =
     typeof document !== "undefined"
@@ -106,229 +367,192 @@ export default function AIReviewOverlay() {
 
   return createPortal(
     <AnimatePresence>
-      {isVisible && (
+      {status === "reviewing" && (
         <motion.div
+          key="ai-review"
           className="absolute inset-0 flex flex-col"
-          style={{ background: "var(--color-background)", zIndex: 100 }}
+          style={{ background: "var(--color-background)", zIndex: 100, pointerEvents: "auto" }}
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
           transition={{ type: "spring", stiffness: 300, damping: 36 }}
         >
-          {/* ── Success flash ──────────────────────────────────────────── */}
-          <AnimatePresence>
-            {applyDone && (
-              <motion.div
-                className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10"
-                style={{ background: "var(--color-background)" }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
+          {/* ── Fixed header — never scrolls ─────────────────────────────── */}
+          <div className="flex-shrink-0 px-5 pt-12">
+            <AnimatePresence mode="wait">
+              {!listening ? (
                 <motion.div
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 280, damping: 20 }}
-                  className="w-16 h-16 rounded-full flex items-center justify-center"
-                  style={{ background: "rgba(107,157,176,0.12)" }}
+                  key="header-idle"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  className="mb-6"
                 >
-                  <Icon name="cloud_done" fill size={34} style={{ color: "var(--color-brand-teal)" }} />
+                  <motion.p
+                    onClick={() => setShowExtra((v) => !v)}
+                    whileTap={{ scale: 0.94 }}
+                    className="text-[11px] font-semibold mb-1 w-fit"
+                    style={{ color: "var(--color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
+                  >
+                    What we learned
+                  </motion.p>
+                  <h2
+                    className="text-[26px] font-bold leading-tight"
+                    style={{ fontFamily: "Roboto Slab, Georgia, serif", color: "var(--color-text-primary)" }}
+                  >
+                    Here's the read on {accountName ?? "this lead"}
+                  </h2>
                 </motion.div>
-                <p className="text-[15px] font-semibold" style={{ color: "var(--color-text-primary)" }}>
-                  {selectedCount} field{selectedCount !== 1 ? "s" : ""} synced to Salesforce
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              ) : (
+                <motion.div
+                  key="header-listening"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  className="mb-5"
+                >
+                  <WaveformBars />
 
-          {/* ── Header ─────────────────────────────────────────────────── */}
-          <div className="flex items-center justify-between px-5 pt-10 pb-3 flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center"
-                style={{ background: "var(--color-alpha-purple-10)", border: "1px solid rgba(139,146,255,0.2)" }}
-              >
-                <Icon name="auto_awesome" size={14} style={{ color: "var(--color-brand-purple)" }} />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold" style={{ color: "var(--color-brand-purple-dark)", letterSpacing: "0.05em" }}>
-                  HALOSIGHT AI
-                </p>
-                {accountName && (
-                  <p className="text-[12px]" style={{ color: "var(--color-text-muted)" }}>
-                    {accountName}
-                  </p>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={handleDiscard}
-              className="text-sm font-medium active:opacity-60 transition-opacity px-1"
-              style={{ color: "var(--color-text-muted)" }}
-            >
-              Skip
-            </button>
-          </div>
-
-          {/* ── Scrollable conversation ─────────────────────────────────── */}
-          <div
-            ref={scrollRef}
-            className="flex-1 overflow-y-auto px-4 pb-2"
-            style={{ overscrollBehavior: "contain" }}
-          >
-            <div className="flex flex-col gap-3 pb-2">
-
-              {/* AI opening message */}
-              <div
-                className="px-4 py-4 rounded-2xl"
-                style={{ background: "var(--color-dark-secondary)" }}
-              >
-                <p className="text-[14px] mb-4" style={{ color: "var(--color-text-secondary)", lineHeight: 1.65 }}>
-                  {activeSuggestions.length > 0
-                    ? `I found ${highCount > 0 ? `${highCount} confirmed update${highCount !== 1 ? "s" : ""}` : "a few things"} from today's meeting. Review what looks right before I sync to Salesforce.`
-                    : "I wasn't able to pull any CRM fields from this recording. You can add details manually from the account page."
-                  }
-                </p>
-
-                {/* Suggestion rows */}
-                {activeSuggestions.length > 0 && (
-                  <div className="flex flex-col gap-1.5 mb-4">
-                    {activeSuggestions.map((s) => (
-                      <SuggestionRow
-                        key={s.id}
-                        suggestion={s}
-                        onToggle={() => toggleSuggestion(s.id)}
-                      />
-                    ))}
+                  {/* Live transcript line */}
+                  <div style={{ minHeight: 40 }} className="flex items-center mt-3 mb-3">
+                    <AnimatePresence mode="wait">
+                      {transcript ? (
+                        <motion.div
+                          key="caption"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="w-full"
+                        >
+                          <LiveCaption text={transcript} />
+                        </motion.div>
+                      ) : (
+                        <motion.p
+                          key="empty"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="text-center text-[13px] w-full"
+                          style={{ color: "var(--color-text-disabled)" }}
+                        >
+                          Listening…
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
                   </div>
-                )}
 
-                <p className="text-[13px]" style={{ color: "var(--color-text-muted)", lineHeight: 1.6 }}>
-                  Anything you'd like to change or add before I update CRM?
-                </p>
-              </div>
-
-              {/* Conversation thread */}
-              <AnimatePresence>
-                {messages.map((msg) => (
-                  <motion.div
-                    key={msg.id}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2 }}
+                  <p
+                    className="text-[11px] font-semibold mb-3"
+                    style={{ color: "var(--color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
                   >
-                    {msg.role === "rep"
-                      ? <RepMessage text={msg.text} />
-                      : <AIMessage text={msg.text} />
-                    }
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-
-              {/* Thinking dots */}
-              <AnimatePresence>
-                {isThinking && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex items-start gap-2.5"
-                  >
-                    <div
-                      className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: "var(--color-alpha-purple-10)", border: "1px solid rgba(139,146,255,0.2)" }}
-                    >
-                      <Icon name="auto_awesome" size={14} style={{ color: "var(--color-brand-purple)" }} />
-                    </div>
-                    <div
-                      className="px-4 py-3 rounded-2xl rounded-tl-sm"
-                      style={{ background: "var(--color-dark-secondary)" }}
-                    >
-                      <ThinkingDots />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-            </div>
+                    After you speak
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* ── Sticky footer ───────────────────────────────────────────── */}
-          <div
-            className="flex-shrink-0 px-4 pt-3 pb-8"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
-          >
-            {/* Tell Me More — styled like Log a Visit */}
-            <button
-              className="w-full flex items-center justify-center gap-2 h-12 mb-3 font-semibold text-[15px] active:opacity-70 transition-opacity"
-              style={{
-                background: "rgba(255,107,90,0.12)",
-                border: "1px solid rgba(255,107,90,0.25)",
-                borderRadius: "var(--radius-full)",
-                color: "var(--color-brand-coral)",
-              }}
-            >
-              <Icon name="mic" size={18} style={{ color: "var(--color-brand-coral)" }} />
-              Tell Me More
-            </button>
+          {/* ── Scrollable field list ─────────────────────────────────── */}
+          <div className="flex-1 overflow-y-auto px-5" style={{ overscrollBehavior: "contain" }}>
+            <div className="flex flex-col gap-2.5">
+              {visibleFields.map((f) => (
+                <FieldCard key={f.id} field={f} onSave={handleFieldSave} />
+              ))}
+            </div>
+            {/* Spacer so the last field can clear the glossy bottom bar */}
+            <div style={{ height: 132 }} />
+          </div>
 
-            {/* Text input row */}
+          {/* ── Bottom bar — glossy backdrop, fields scroll behind it ────── */}
+          <div className="flex-shrink-0 relative" style={{ marginTop: -96 }}>
             <div
-              className="flex items-center gap-2 mb-3 px-3.5 py-2"
+              className="absolute inset-x-0 bottom-0 pointer-events-none"
               style={{
-                background: "var(--color-dark-secondary)",
-                borderRadius: "var(--radius-full)",
+                top: 0,
+                background: "linear-gradient(to bottom, transparent 0%, color-mix(in srgb, var(--color-background) 60%, transparent) 35%, var(--color-background) 75%)",
+                backdropFilter: "blur(14px)",
+                WebkitBackdropFilter: "blur(14px)",
               }}
+            />
+            <div
+              className="relative pt-4 pb-10 grid items-center"
+              style={{ gridTemplateColumns: "1fr auto 1fr" }}
             >
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder='e.g. "His title is actually Service Manager"'
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") handleSend(); }}
-                className="flex-1 text-[14px] outline-none bg-transparent"
-                style={{ color: "var(--color-text-primary)" }}
+            {/* Use defaults — centered between left edge and mic */}
+            <div className="flex justify-center">
+              <SideButton
+                icon="block"
+                label="Use defaults"
+                onPress={readyCapture}
               />
-              <button
-                onClick={handleSend}
-                disabled={!inputText.trim() || isThinking}
-                className="transition-opacity"
-                style={{ opacity: inputText.trim() && !isThinking ? 1 : 0.3 }}
-              >
-                <Icon name="arrow_upward" size={20} style={{ color: "var(--color-brand-purple)" }} />
-              </button>
             </div>
 
-            {/* Apply / Discard */}
-            <div className="flex gap-2">
-              <button
-                onClick={handleApply}
-                disabled={selectedCount === 0 || applyDone}
-                className="flex-1 h-12 font-semibold text-[15px] transition-opacity"
+            {/* Mic — hold to talk */}
+            <div className="flex flex-col items-center gap-2">
+              {/* Button wrapper — rings positioned relative to this so they're always perfectly centered */}
+              <div className="relative w-20 h-20">
+                <AnimatePresence>
+                  {listening && (
+                    <>
+                      {/* Outer ring */}
+                      <motion.div
+                        key="ring-outer"
+                        className="absolute rounded-full pointer-events-none"
+                        style={{ inset: "-8px", background: "rgba(139,146,255,0.22)" }}
+                        initial={{ scale: 1.08 }}
+                        animate={{ scale: [1.08, 1.28, 1.08] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      />
+                      {/* Inner ring — higher min scale so it doesn't shrink as much */}
+                      <motion.div
+                        key="ring-inner"
+                        className="absolute inset-0 rounded-full pointer-events-none"
+                        style={{ background: "rgba(139,146,255,0.22)" }}
+                        initial={{ scale: 1.16 }}
+                        animate={{ scale: [1.16, 1.28, 1.16] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      />
+                    </>
+                  )}
+                </AnimatePresence>
+
+              <motion.button
+                className="absolute inset-0 rounded-full flex items-center justify-center z-10"
                 style={{
-                  background: "var(--color-brand-teal)",
-                  color: "var(--color-text-primary)",
-                  borderRadius: "var(--radius-full)",
-                  opacity: selectedCount > 0 && !applyDone ? 1 : 0.35,
+                  background: "var(--color-brand-purple)",
+                  boxShadow: "0 4px 20px rgba(139,146,255,0.3)",
                 }}
+                onPointerDown={startListening}
+                onPointerUp={stopListening}
+                onPointerLeave={() => { if (listening) stopListening(); }}
+                whileTap={{ scale: 0.93 }}
               >
-                Apply {selectedCount > 0 ? selectedCount : ""} Update{selectedCount !== 1 ? "s" : ""}
-              </button>
-              <button
-                onClick={handleDiscard}
-                className="h-12 px-5 font-semibold text-[15px] active:opacity-60 transition-opacity"
-                style={{
-                  background: "var(--color-dark-secondary)",
-                  color: "var(--color-text-muted)",
-                  borderRadius: "var(--radius-full)",
-                }}
+                <Icon name="mic" size={34} style={{ color: "#fff" }} />
+              </motion.button>
+              </div>{/* end button wrapper */}
+
+              <span
+                className="text-[12px] font-semibold"
+                style={{ color: listening ? "var(--color-brand-purple)" : "var(--color-text-primary)" }}
               >
-                Discard
-              </button>
+                {listening ? "Listening…" : "Hold to talk"}
+              </span>
+            </div>
+
+            {/* Looks good — centered between mic and right edge */}
+            <div className="flex justify-center">
+              <SideButton
+                icon="check"
+                label="Save"
+                onPress={readyCapture}
+                variant="purple"
+              />
+            </div>
             </div>
           </div>
-
         </motion.div>
       )}
     </AnimatePresence>,
@@ -336,138 +560,36 @@ export default function AIReviewOverlay() {
   );
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
+// ── Side button ───────────────────────────────────────────────────────────────
 
-function SuggestionRow({ suggestion: s, onToggle }: { suggestion: Suggestion; onToggle: () => void }) {
-  const isUnknown = s.confidence === "unknown";
-  const isHigh    = s.confidence === "high";
-
+function SideButton({
+  icon,
+  label,
+  onPress,
+  variant = "neutral",
+}: {
+  icon: string;
+  label: string;
+  onPress: () => void;
+  variant?: "neutral" | "purple";
+}) {
+  const isPurple = variant === "purple";
   return (
     <button
-      onClick={isUnknown ? undefined : onToggle}
-      className="w-full text-left"
-      style={{ cursor: isUnknown ? "default" : "pointer" }}
+      onClick={onPress}
+      className="flex flex-col items-center gap-1.5 active:opacity-60 transition-opacity"
+      style={{ minWidth: 68 }}
     >
       <div
-        className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl transition-colors"
+        className="w-12 h-12 rounded-full flex items-center justify-center"
         style={{
-          background: s.selected
-            ? "rgba(107,157,176,0.1)"
-            : isUnknown ? "transparent" : "rgba(255,255,255,0.03)",
-          border: s.selected
-            ? "1px solid rgba(107,157,176,0.2)"
-            : "1px solid transparent",
+          background: isPurple ? "var(--color-alpha-purple-10)" : "var(--color-dark-secondary)",
+          border: isPurple ? "1.5px solid var(--color-brand-purple)" : "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        {/* Confidence icon */}
-        <div className="flex-shrink-0 mt-0.5">
-          {isHigh && (
-            <Icon name="check_circle" fill size={15}
-              style={{ color: s.selected ? "var(--color-brand-teal)" : "var(--color-text-disabled)" }} />
-          )}
-          {s.confidence === "medium" && (
-            <Icon name="warning" fill size={15}
-              style={{ color: s.selected ? "var(--color-warning)" : "var(--color-text-disabled)" }} />
-          )}
-          {isUnknown && (
-            <Icon name="help" fill size={15} style={{ color: "var(--color-text-disabled)", opacity: 0.5 }} />
-          )}
-        </div>
-
-        {/* Label + value */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-[11px] font-semibold" style={{ color: "var(--color-text-disabled)" }}>
-              {s.label}
-            </span>
-            {isUnknown ? (
-              <span className="text-[13px]" style={{ color: "var(--color-text-disabled)" }}>Not captured</span>
-            ) : (
-              <span className="text-[13px] font-medium" style={{ color: "var(--color-text-primary)" }}>
-                {s.value}
-              </span>
-            )}
-          </div>
-          {s.evidence && (
-            <p className="text-[11px] mt-0.5 leading-relaxed" style={{ color: "var(--color-text-disabled)" }}>
-              {s.evidence}
-            </p>
-          )}
-        </div>
-
-        {/* Checkbox */}
-        {!isUnknown && (
-          <div
-            className="flex-shrink-0 w-4 h-4 rounded-full border mt-0.5 flex items-center justify-center"
-            style={{
-              borderColor: s.selected
-                ? isHigh ? "var(--color-brand-teal)" : "var(--color-warning)"
-                : "var(--color-text-disabled)",
-              background: s.selected
-                ? isHigh ? "var(--color-brand-teal)" : "var(--color-warning)"
-                : "transparent",
-            }}
-          >
-            {s.selected && (
-              <Icon name="check" size={10} style={{ color: "var(--color-text-primary)" }} />
-            )}
-          </div>
-        )}
+        <Icon name={icon} size={22} style={{ color: isPurple ? "var(--color-brand-purple)" : "var(--color-text-muted)" }} />
       </div>
+      <span className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>{label}</span>
     </button>
-  );
-}
-
-function AIMessage({ text }: { text: string }) {
-  return (
-    <div className="flex items-start gap-2.5">
-      <div
-        className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-        style={{ background: "var(--color-alpha-purple-10)", border: "1px solid rgba(139,146,255,0.2)" }}
-      >
-        <Icon name="auto_awesome" size={14} style={{ color: "var(--color-brand-purple)" }} />
-      </div>
-      <div
-        className="max-w-[82%] px-3.5 py-2.5 rounded-2xl rounded-tl-sm"
-        style={{ background: "var(--color-dark-secondary)" }}
-      >
-        {text.split("\n").map((line, i) => (
-          <p key={i} className="text-[13px] leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
-            {line}
-          </p>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function RepMessage({ text }: { text: string }) {
-  return (
-    <div className="flex justify-end">
-      <div
-        className="max-w-[78%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm"
-        style={{ background: "rgba(139,146,255,0.12)", border: "1px solid rgba(139,146,255,0.15)" }}
-      >
-        <p className="text-[13px] leading-relaxed" style={{ color: "var(--color-text-primary)" }}>
-          {text}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function ThinkingDots() {
-  return (
-    <div className="flex items-center gap-1 py-0.5">
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          className="w-1.5 h-1.5 rounded-full"
-          style={{ background: "var(--color-text-muted)" }}
-          animate={{ opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
-        />
-      ))}
-    </div>
   );
 }
