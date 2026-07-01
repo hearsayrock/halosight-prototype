@@ -56,7 +56,7 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
         justifyContent: "center",
         gap: showSidebars ? 40 : 0,
         padding: 32,
-        background: "var(--color-dark-base)",
+        background: "var(--md-sys-color-dark-base)",
         transition: "gap 0.2s ease",
       }}
     >

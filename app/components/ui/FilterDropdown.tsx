@@ -48,7 +48,7 @@ function CheckIcon() {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
       <path
         d="M3 8L6.5 11.5L13 5"
-        stroke="var(--color-text-primary)"
+        stroke="var(--md-sys-color-text-primary)"
         strokeWidth="1.75"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -74,16 +74,16 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-0.5 h-8 px-3 text-sm font-semibold active:opacity-70 transition-opacity"
         style={{
-          background: open ? "var(--color-brand-purple)" : "var(--color-dark-secondary)",
+          background: open ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
           borderRadius: "var(--radius-full)",
-          color: open ? "#fff" : "var(--color-text-primary)",
+          color: open ? "#fff" : "var(--md-sys-color-text-primary)",
         }}
       >
         {currentLabel}
         <Icon
           name={open ? "keyboard_arrow_up" : "keyboard_arrow_down"}
           size={18}
-          style={{ color: open ? "rgba(255,255,255,0.7)" : "var(--color-text-muted)" }}
+          style={{ color: open ? "rgba(255,255,255,0.7)" : "var(--md-sys-color-text-muted)" }}
         />
       </button>
 
@@ -103,7 +103,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
               transition={menuTransition}
               style={{
                 transformOrigin: "top left",
-                background: "var(--color-dark-tertiary)",
+                background: "var(--md-sys-color-dark-tertiary)",
                 borderRadius: "var(--radius-xl)",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
                 paddingTop: 8,
@@ -130,7 +130,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
                       paddingLeft: 16,
                       paddingRight: 16,
                       background: "transparent",
-                      color: "var(--color-text-primary)",
+                      color: "var(--md-sys-color-text-primary)",
                     }}
                   >
                     <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>

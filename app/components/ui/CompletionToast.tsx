@@ -53,9 +53,9 @@ export default function CompletionToast({
             className="flex items-center gap-3 px-4"
             style={{
               height: 52,
-              background: "var(--color-dark-secondary)",
+              background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
-              border: "1px solid var(--color-dark-tertiary)",
+              border: "1px solid var(--md-sys-color-dark-tertiary)",
               boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
             }}
           >
@@ -70,7 +70,7 @@ export default function CompletionToast({
             {/* Label */}
             <span
               className="flex-1 text-sm font-semibold"
-              style={{ color: "var(--color-text-primary)" }}
+              style={{ color: "var(--md-sys-color-text-primary)" }}
             >
               Item complete
             </span>
@@ -79,7 +79,7 @@ export default function CompletionToast({
             <button
               onClick={onUndo}
               className="text-sm font-semibold active:opacity-60 transition-opacity"
-              style={{ color: "var(--color-brand-purple)" }}
+              style={{ color: "var(--md-sys-color-neonindigo)" }}
             >
               undo
             </button>
@@ -88,7 +88,7 @@ export default function CompletionToast({
             <button
               onClick={onDismiss}
               className="ml-1 flex items-center justify-center active:opacity-60 transition-opacity"
-              style={{ color: "var(--color-text-muted)" }}
+              style={{ color: "var(--md-sys-color-text-muted)" }}
             >
               <Icon name="close" size={18} />
             </button>

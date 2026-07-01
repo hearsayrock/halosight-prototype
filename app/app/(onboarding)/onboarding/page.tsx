@@ -481,7 +481,7 @@ function Slide({ slide, active }: { slide: typeof SLIDES[number]; active: boolea
         inset: 0,
         display: "flex",
         flexDirection: "column",
-        background: `var(--color-background)`,
+        background: `var(--md-sys-color-background)`,
         overflow: "hidden",
       }}
     >
@@ -543,7 +543,7 @@ function Slide({ slide, active }: { slide: typeof SLIDES[number]; active: boolea
             margin: "0 0 16px",
             fontSize: 32, fontWeight: 700,
             lineHeight: 1.15,
-            color: "var(--color-text-primary)",
+            color: "var(--md-sys-color-text-primary)",
             textAlign: "center",
             fontFamily: "Roboto Slab, Georgia, serif",
             whiteSpace: "pre-line",
@@ -560,7 +560,7 @@ function Slide({ slide, active }: { slide: typeof SLIDES[number]; active: boolea
           style={{
             margin: "0 0 20px",
             fontSize: 16, lineHeight: 1.55,
-            color: "var(--color-text-secondary)",
+            color: "var(--md-sys-color-text-secondary)",
             textAlign: "center",
           }}
         >
@@ -648,7 +648,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", background: "var(--color-background)" }}>
+    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", background: "var(--md-sys-color-background)" }}>
 
       {/* Skip button */}
       <button
@@ -661,7 +661,7 @@ export default function OnboardingPage() {
           border: "none",
           cursor: "pointer",
           fontSize: 14, fontWeight: 600,
-          color: "var(--color-text-muted)",
+          color: "var(--md-sys-color-text-muted)",
           padding: "8px 4px",
           letterSpacing: "0.01em",
         }}
@@ -708,7 +708,7 @@ export default function OnboardingPage() {
           flexDirection: "column",
           alignItems: "center",
           gap: 16,
-          background: `linear-gradient(to top, var(--color-background) 70%, transparent)`,
+          background: `linear-gradient(to top, var(--md-sys-color-background) 70%, transparent)`,
           zIndex: 10,
         }}
       >

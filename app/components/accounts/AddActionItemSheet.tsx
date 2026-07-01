@@ -94,7 +94,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
       <motion.div
         className="absolute left-0 right-0 bottom-0"
         style={{
-          background: "var(--color-background)",
+          background: "var(--md-sys-color-background)",
           borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
           maxHeight: "88%",
           overflowY: "auto",
@@ -106,14 +106,14 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full" style={{ background: "var(--color-dark-tertiary)" }} />
+          <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
         </div>
 
         <div className="px-5 pt-3 pb-8">
           {/* Heading */}
           <h2
             className="text-[22px] font-semibold mb-5"
-            style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
+            style={{ color: "var(--md-sys-color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
           >
             Add an item
           </h2>
@@ -127,16 +127,16 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
             onChange={(e) => setTitle(e.target.value)}
             className="w-full text-[15px] outline-none px-4 py-3.5"
             style={{
-              background: "var(--color-dark-secondary)",
+              background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
-              color: "var(--color-text-primary)",
+              color: "var(--md-sys-color-text-primary)",
             }}
           />
 
           {/* Due date section */}
           <div className="mt-5 mb-3 flex items-center gap-1.5">
-            <Icon name="calendar_today" size={13} style={{ color: "var(--color-brand-purple-dark)" }} />
-            <span className="eyebrow-text" style={{ color: "var(--color-text-muted)" }}>Due Date</span>
+            <Icon name="calendar_today" size={13} style={{ color: "var(--md-sys-color-neonindigo-dark)" }} />
+            <span className="eyebrow-text" style={{ color: "var(--md-sys-color-text-muted)" }}>Due Date</span>
           </div>
 
           {/* Pills ↔ Calendar swap — single AnimatePresence, mode=wait, opacity only */}
@@ -160,16 +160,16 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
                         style={{
                           width: 64,
                           borderRadius: "var(--radius-md)",
-                          background: isSel ? "var(--color-brand-purple)" : "var(--color-dark-secondary)",
+                          background: isSel ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
                         }}
                       >
-                        <span className="text-xs font-bold" style={{ color: isSel ? "var(--color-text-primary)" : "var(--color-text-muted)" }}>
+                        <span className="text-xs font-bold" style={{ color: isSel ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)" }}>
                           {getDayLabel(date, today)}
                         </span>
-                        <span className="text-lg font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                        <span className="text-lg font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                           {date.getDate()}
                         </span>
-                        <span className="text-xs" style={{ color: isSel ? "var(--color-text-primary)" : "var(--color-text-muted)" }}>
+                        <span className="text-xs" style={{ color: isSel ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)" }}>
                           {formatQuickDate(date)}
                         </span>
                       </button>
@@ -180,12 +180,12 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
                   onClick={() => setShowCalendar(true)}
                   className="flex items-center gap-2 px-3 py-2 mb-4 active:opacity-70 transition-opacity"
                   style={{
-                    border: "1px solid var(--color-dark-tertiary)",
+                    border: "1px solid var(--md-sys-color-dark-tertiary)",
                     borderRadius: "var(--radius-full)",
                   }}
                 >
-                  <Icon name="calendar_today" size={14} style={{ color: "var(--color-text-muted)" }} />
-                  <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>Pick another date</span>
+                  <Icon name="calendar_today" size={14} style={{ color: "var(--md-sys-color-text-muted)" }} />
+                  <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>Pick another date</span>
                 </button>
               </motion.div>
             ) : (
@@ -202,15 +202,15 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
                     onClick={() => setShowCalendar(false)}
                     className="flex items-center gap-1.5 px-3 py-1.5 active:opacity-70 transition-opacity"
                     style={{
-                      border: "1px solid var(--color-dark-tertiary)",
+                      border: "1px solid var(--md-sys-color-dark-tertiary)",
                       borderRadius: "var(--radius-full)",
                     }}
                   >
-                    <Icon name="close" size={13} style={{ color: "var(--color-text-muted)" }} />
-                    <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>Hide calendar</span>
+                    <Icon name="close" size={13} style={{ color: "var(--md-sys-color-text-muted)" }} />
+                    <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>Hide calendar</span>
                   </button>
                   {selectedDate && (
-                    <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                    <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                       {selectedDate.toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric" })}
                     </p>
                   )}
@@ -229,8 +229,8 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
             disabled={!title.trim()}
             className="w-full h-12 font-semibold text-[15px] flex items-center justify-center transition-opacity"
             style={{
-              background: "var(--color-brand-coral)",
-              color: "var(--color-text-primary)",
+              background: "var(--md-sys-color-brand-coral)",
+              color: "var(--md-sys-color-text-primary)",
               borderRadius: "var(--radius-full)",
               opacity: title.trim() ? 1 : 0.4,
             }}

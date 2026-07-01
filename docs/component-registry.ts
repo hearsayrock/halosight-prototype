@@ -5,7 +5,7 @@
  * Read this file before creating or modifying any component or screen.
  *
  * Rules enforced by this registry:
- *   1. Never use raw hex values — always var(--color-*)
+ *   1. Never use raw hex values — always var(--md-sys-color-*)
  *   2. Never recreate a component that already exists here
  *   3. Always use the tokens listed under `tokens.required`
  *   4. Always check `usage.antiPatterns` before writing markup
@@ -86,17 +86,17 @@ export const registry: ComponentMeta[] = [
     flutterEquivalent: "Custom NavigationBar — see flutter-handoff.md BottomNav section",
     tokens: {
       required: [
-        { token: "--color-alpha-purple-glass", role: "nav background" },
-        { token: "--color-alpha-white-10",     role: "nav border" },
-        { token: "--color-alpha-dark-glass",   role: "active pill fill" },
-        { token: "--color-text-primary",       role: "active icon + label color" },
-        { token: "--color-text-muted",         role: "inactive icon + label color" },
+        { token: "--md-sys-color-alpha-neonindigo-glass", role: "nav background" },
+        { token: "--md-sys-color-alpha-white-10",     role: "nav border" },
+        { token: "--md-sys-color-alpha-dark-glass",   role: "active pill fill" },
+        { token: "--md-sys-color-text-primary",       role: "active icon + label color" },
+        { token: "--md-sys-color-text-muted",         role: "inactive icon + label color" },
         { token: "--radius-full",              role: "nav pill shape" },
       ],
       forbidden: [
         "Any raw hex for background — must be alpha token for glass effect",
-        "--color-dark-secondary (not transparent enough for glass)",
-        "--color-brand-purple (wrong role — that's for interactive elements)",
+        "--md-sys-color-dark-secondary (not transparent enough for glass)",
+        "--md-sys-color-neonindigo (wrong role — that's for interactive elements)",
       ],
     },
     props: [],
@@ -166,18 +166,18 @@ import BottomNav from "@/components/layout/BottomNav";
     flutterEquivalent: "AccountsViewAccountListItem — lib/view/_widget/account_list/accounts_view_account_list_item.dart",
     tokens: {
       required: [
-        { token: "--color-dark-secondary",     role: "card background" },
-        { token: "--color-alpha-white-10",     role: "card border (1px)" },
+        { token: "--md-sys-color-dark-secondary",     role: "card background" },
+        { token: "--md-sys-color-alpha-white-10",     role: "card border (1px)" },
         { token: "--radius-sm",                role: "card border radius" },
-        { token: "--color-text-primary",       role: "account name" },
-        { token: "--color-text-muted",         role: "distance and last-visited text" },
-        { token: "--color-brand-coral",        role: "last-visited label when isToday = true" },
-        { token: "--color-brand-purple-light", role: "city, state text" },
+        { token: "--md-sys-color-text-primary",       role: "account name" },
+        { token: "--md-sys-color-text-muted",         role: "distance and last-visited text" },
+        { token: "--md-sys-color-brand-coral",        role: "last-visited label when isToday = true" },
+        { token: "--md-sys-color-neonindigo-light", role: "city, state text" },
       ],
       forbidden: [
         "Raw hex for background (#202535, #252A36, etc.)",
-        "--color-dark-primary (too dark — loses hierarchy against page bg)",
-        "--color-text-disabled for city/state (too faint — use brand-purple-light)",
+        "--md-sys-color-dark-primary (too dark — loses hierarchy against page bg)",
+        "--md-sys-color-text-disabled for city/state (too faint — use brand-purple-light)",
         "Adding a count badge (removed — do not re-add)",
       ],
     },
@@ -213,9 +213,9 @@ import type { Account } from "@/lib/types";
           instead: "Use <AccountListItem account={account} /> — pass the full Account object",
         },
         {
-          scenario: "Showing city/state in --color-text-muted",
+          scenario: "Showing city/state in --md-sys-color-text-muted",
           why: "City/state is intentionally purple-light to distinguish it from the distance/recency metadata",
-          instead: "Always use --color-brand-purple-light for city and state",
+          instead: "Always use --md-sys-color-neonindigo-light for city and state",
         },
         {
           scenario: "Adding hover background highlight",
@@ -258,8 +258,8 @@ import type { Account } from "@/lib/types";
     flutterEquivalent: "CustomPainter with 3 variants",
     tokens: {
       required: [
-        { token: "--color-text-muted",    role: "primary stroke color (#8B94A8)" },
-        { token: "--color-text-disabled", role: "secondary/lower-layer stroke (#5D667A)" },
+        { token: "--md-sys-color-text-muted",    role: "primary stroke color (#8B94A8)" },
+        { token: "--md-sys-color-text-disabled", role: "secondary/lower-layer stroke (#5D667A)" },
       ],
       forbidden: [
         "Brand colors for these icons — they are intentionally neutral/muted",
@@ -317,7 +317,7 @@ import AccountTypeIcon from "@/components/accounts/AccountTypeIcon";
       ],
       alwaysRemember: [
         "Rendered at 18×18 — the parent (AccountListItem) adds mt-[3px] to align with title baseline",
-        "The icon colors are hardcoded SVG fill/stroke values that map to --color-text-muted and --color-text-disabled — they are not CSS variables because SVG fill doesn't read CSS custom properties without currentColor refactor",
+        "The icon colors are hardcoded SVG fill/stroke values that map to --md-sys-color-text-muted and --md-sys-color-text-disabled — they are not CSS variables because SVG fill doesn't read CSS custom properties without currentColor refactor",
       ],
     },
   },
@@ -336,16 +336,16 @@ import AccountTypeIcon from "@/components/accounts/AccountTypeIcon";
     flutterEquivalent: "PopupMenuButton<SortOption> or custom overlay",
     tokens: {
       required: [
-        { token: "--color-dark-secondary", role: "trigger button background" },
-        { token: "--color-text-muted",     role: "trigger icon strokes" },
-        { token: "--color-dark-tertiary",  role: "dropdown background" },
-        { token: "--color-text-primary",   role: "all option labels (active and inactive)" },
+        { token: "--md-sys-color-dark-secondary", role: "trigger button background" },
+        { token: "--md-sys-color-text-muted",     role: "trigger icon strokes" },
+        { token: "--md-sys-color-dark-tertiary",  role: "dropdown background" },
+        { token: "--md-sys-color-text-primary",   role: "all option labels (active and inactive)" },
         { token: "--radius-xl",            role: "dropdown border radius" },
       ],
       forbidden: [
         "Raw hex (#2A3042, #F7F8FF, #8B94A8) — all removed in the token migration",
-        "--color-text-muted for inactive option labels (all options use text-primary)",
-        "--color-dark-secondary for dropdown bg (too light — use dark-tertiary)",
+        "--md-sys-color-text-muted for inactive option labels (all options use text-primary)",
+        "--md-sys-color-dark-secondary for dropdown bg (too light — use dark-tertiary)",
         "--radius-md for dropdown (use radius-xl per design spec)",
       ],
     },
@@ -391,8 +391,8 @@ const [sort, setSort] = useState<SortOption>("alphabetical");
         },
         {
           scenario: "Using different text colors for active vs inactive options",
-          why: "Design spec: ALL options use --color-text-primary. Selection is indicated by checkmark only.",
-          instead: "Keep all labels at --color-text-primary regardless of selected state",
+          why: "Design spec: ALL options use --md-sys-color-text-primary. Selection is indicated by checkmark only.",
+          instead: "Keep all labels at --md-sys-color-text-primary regardless of selected state",
         },
       ],
     },
@@ -468,7 +468,7 @@ const [sort, setSort] = useState<SortOption>("alphabetical");
         name: "style",
         type: "React.CSSProperties",
         required: false,
-        description: "Use this to set color: 'var(--color-text-primary)' etc.",
+        description: "Use this to set color: 'var(--md-sys-color-text-primary)' etc.",
       },
       {
         name: "label",
@@ -485,25 +485,25 @@ const [sort, setSort] = useState<SortOption>("alphabetical");
           code: `
 import Icon from "@/components/ui/Icon";
 
-<Icon name="home" style={{ color: "var(--color-text-primary)" }} />`,
+<Icon name="home" style={{ color: "var(--md-sys-color-text-primary)" }} />`,
         },
         {
           name: "filled icon, custom size",
           when: "Hero icons, feature illustrations, filled active states",
           code: `
-<Icon name="star" fill size={32} style={{ color: "var(--color-brand-coral)" }} />`,
+<Icon name="star" fill size={32} style={{ color: "var(--md-sys-color-brand-coral)" }} />`,
         },
         {
           name: "lightweight icon",
           when: "Subtle, decorative, or secondary context",
           code: `
-<Icon name="arrow_forward" weight={300} size={20} style={{ color: "var(--color-text-muted)" }} />`,
+<Icon name="arrow_forward" weight={300} size={20} style={{ color: "var(--md-sys-color-text-muted)" }} />`,
         },
         {
           name: "accessible standalone icon",
           when: "Icon used as the only indicator of an action (no adjacent label)",
           code: `
-<Icon name="close" size={20} label="Close" style={{ color: "var(--color-text-muted)" }} />`,
+<Icon name="close" size={20} label="Close" style={{ color: "var(--md-sys-color-text-muted)" }} />`,
         },
       ],
       antiPatterns: [
@@ -525,7 +525,7 @@ import Icon from "@/components/ui/Icon";
         {
           scenario: "Omitting the style color prop",
           why: "Icon inherits currentColor — if no color is set in the hierarchy it defaults to white which may blend into backgrounds",
-          instead: "Always explicitly set color via style={{ color: 'var(--color-*)' }}",
+          instead: "Always explicitly set color via style={{ color: 'var(--md-sys-color-*)' }}",
         },
       ],
     },
@@ -563,10 +563,10 @@ import Icon from "@/components/ui/Icon";
     flutterEquivalent: "CustomPainter with two rounded rects, or flutter_svg",
     tokens: {
       required: [
-        { token: "--color-text-muted", role: "default icon color" },
+        { token: "--md-sys-color-text-muted", role: "default icon color" },
       ],
       forbidden: [
-        "Raw hex for color — always pass a --color-* token via the color prop",
+        "Raw hex for color — always pass a --md-sys-color-* token via the color prop",
         "Using Icon name='menu' (Material Symbols menu) instead — that's 3 equal bars, Halosight's is asymmetric",
       ],
     },
@@ -582,7 +582,7 @@ import Icon from "@/components/ui/Icon";
         name: "color",
         type: "string",
         required: false,
-        default: "var(--color-text-muted)",
+        default: "var(--md-sys-color-text-muted)",
         description: "Fill color for both bars. Always pass a CSS var token.",
       },
     ],
@@ -597,10 +597,10 @@ import MenuIcon from "@/components/ui/MenuIcon";
 <button
   onClick={() => setDrawerOpen(true)}
   className="aside:hidden flex items-center justify-center w-8 h-8 rounded-lg"
-  style={{ background: "var(--color-dark-secondary)" }}
+  style={{ background: "var(--md-sys-color-dark-secondary)" }}
   aria-label="Open navigation"
 >
-  <MenuIcon size={18} color="var(--color-text-muted)" />
+  <MenuIcon size={18} color="var(--md-sys-color-text-muted)" />
 </button>`,
         },
       ],
@@ -613,7 +613,7 @@ import MenuIcon from "@/components/ui/MenuIcon";
         {
           scenario: "Hardcoding the color as a hex value",
           why: "Breaks the token system and makes theme changes impossible",
-          instead: `<MenuIcon color="var(--color-text-muted)" />`,
+          instead: `<MenuIcon color="var(--md-sys-color-text-muted)" />`,
         },
       ],
     },
@@ -640,30 +640,30 @@ import MenuIcon from "@/components/ui/MenuIcon";
 
 export const tokenRules = {
   backgrounds: {
-    page:       "--color-background",       // #111420 — page chrome only
-    nav:        "--color-surface-dim",       // #171B29 — persistent nav / sidebar
-    card:       "--color-dark-secondary",    // #252A36 — cards, list items, dropdowns
-    elevated:   "--color-dark-tertiary",     // #3D4451 — menus, popovers, elevated surfaces
-    glass:      "--color-alpha-purple-glass", // rgba — floating pill nav
-    activePill: "--color-alpha-dark-glass",  // rgba — active state on glass nav
+    page:       "--md-sys-color-background",       // #111420 — page chrome only
+    nav:        "--md-sys-color-surface-dim",       // #171B29 — persistent nav / sidebar
+    card:       "--md-sys-color-dark-secondary",    // #252A36 — cards, list items, dropdowns
+    elevated:   "--md-sys-color-dark-tertiary",     // #3D4451 — menus, popovers, elevated surfaces
+    glass:      "--md-sys-color-alpha-neonindigo-glass", // rgba — floating pill nav
+    activePill: "--md-sys-color-alpha-dark-glass",  // rgba — active state on glass nav
   },
   text: {
-    primary:   "--color-text-primary",    // #F7F8FF — body, names
-    secondary: "--color-text-secondary",  // #C3CAD8 — supporting text
-    muted:     "--color-text-muted",      // #8B94A8 — metadata, icons, placeholders
-    disabled:  "--color-text-disabled",   // #5D667A — inactive, timestamps
-    inverse:   "--color-text-inverse",    // #111420 — text on light surfaces
+    primary:   "--md-sys-color-text-primary",    // #F7F8FF — body, names
+    secondary: "--md-sys-color-text-secondary",  // #C3CAD8 — supporting text
+    muted:     "--md-sys-color-text-muted",      // #8B94A8 — metadata, icons, placeholders
+    disabled:  "--md-sys-color-text-disabled",   // #5D667A — inactive, timestamps
+    inverse:   "--md-sys-color-text-inverse",    // #111420 — text on light surfaces
   },
   borders: {
-    standard: "--color-alpha-white-10",   // 1px — card borders, nav borders
-    emphasis:  "--color-alpha-white-18",  // active field borders
+    standard: "--md-sys-color-alpha-white-10",   // 1px — card borders, nav borders
+    emphasis:  "--md-sys-color-alpha-white-18",  // active field borders
   },
   brand: {
-    interactive: "--color-brand-purple",       // primary interactive / accent
-    interactiveLight: "--color-brand-purple-light", // city/state text, light accent
-    cta:         "--color-brand-coral",        // primary CTA buttons
-    secondary:   "--color-brand-blue",         // secondary actions
-    today:       "--color-brand-coral",        // "visited today" recency indicator
+    interactive: "--md-sys-color-neonindigo",       // primary interactive / accent
+    interactiveLight: "--md-sys-color-neonindigo-light", // city/state text, light accent
+    cta:         "--md-sys-color-brand-coral",        // primary CTA buttons
+    secondary:   "--md-sys-color-indigo",         // secondary actions
+    today:       "--md-sys-color-brand-coral",        // "visited today" recency indicator
   },
   radius: {
     card:    "--radius-sm",    // 8px — account cards, inputs
@@ -681,7 +681,7 @@ BEFORE BUILDING ANY UI IN THIS PROJECT:
 
 1. Check this registry — if a component exists for your use case, use it. Do not recreate.
 2. Check tokenRules above — use the correct token for the surface/text/border role.
-3. Never use raw hex values. Every color must be var(--color-*).
+3. Never use raw hex values. Every color must be var(--md-sys-color-*).
 4. Every new screen must include <BottomNav /> if it is a top-level tab.
 5. Typography classes: headings use .heading-1 through .heading-6 (Roboto Slab).
    Body text uses Tailwind's text-xl/lg/base/sm/xs + .text-*-bold for 600 weight.

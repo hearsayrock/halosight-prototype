@@ -24,7 +24,7 @@ function UserIcon({ size = 12 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
       <path
         d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-        stroke="var(--color-brand-teal)"
+        stroke="var(--md-sys-color-brand-teal)"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -48,7 +48,7 @@ function AccountsIcon() {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path
         d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-        stroke="var(--color-text-muted)"
+        stroke="var(--md-sys-color-text-muted)"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -69,7 +69,7 @@ function CheckCircle({ checked, onCheck }: { checked: boolean; onCheck: () => vo
       <div
         className="absolute inset-0 rounded-full transition-opacity duration-150"
         style={{
-          border: "1.5px solid var(--color-text-disabled)",
+          border: "1.5px solid var(--md-sys-color-text-disabled)",
           opacity: checked ? 0 : 1,
         }}
       />
@@ -125,7 +125,7 @@ function TaskRow({
       {!isLast && (
         <div
           className="absolute bottom-0 left-3 right-3"
-          style={{ height: 1, background: "var(--color-dark-tertiary)" }}
+          style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }}
         />
       )}
 
@@ -142,7 +142,7 @@ function TaskRow({
         <div className="flex-1 min-w-0">
           <p
             className="text-[16px] font-semibold leading-snug"
-            style={{ color: "var(--color-text-primary)" }}
+            style={{ color: "var(--md-sys-color-text-primary)" }}
           >
             {task.title}
           </p>
@@ -151,14 +151,14 @@ function TaskRow({
               <Icon
                 name="calendar_today"
                 size={12}
-                style={{ color: "var(--color-brand-purple-dark)" }}
+                style={{ color: "var(--md-sys-color-neonindigo-dark)" }}
               />
               <span
                 className="text-xs font-medium"
                 style={{
                   color: isToday
-                    ? "var(--color-brand-coral)"
-                    : "var(--color-text-disabled)",
+                    ? "var(--md-sys-color-brand-coral)"
+                    : "var(--md-sys-color-text-disabled)",
                 }}
               >
                 {formatTaskDue(task.dueDate)}
@@ -166,7 +166,7 @@ function TaskRow({
             </div>
             <div className="flex items-center gap-1">
               <UserIcon size={12} />
-              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                 {task.accountName}
               </span>
             </div>
@@ -175,7 +175,7 @@ function TaskRow({
         <Icon
           name="chevron_right"
           size={18}
-          style={{ color: "var(--color-text-disabled)", flexShrink: 0 }}
+          style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }}
         />
       </Link>
     </motion.div>
@@ -209,21 +209,21 @@ function ActivityCard({ activity }: { activity: HomeActivity }) {
       <div
         className="flex items-start gap-3 p-4 active:opacity-70 transition-opacity"
         style={{
-          background: "var(--color-dark-secondary)",
+          background: "var(--md-sys-color-dark-secondary)",
           borderRadius: "var(--radius-md)",
         }}
       >
         <div className="flex-1 min-w-0">
           <p
             className="text-[16px] font-semibold mb-1"
-            style={{ color: "var(--color-text-primary)" }}
+            style={{ color: "var(--md-sys-color-text-primary)" }}
           >
             {activity.title}
           </p>
           <p
             className="text-sm leading-relaxed mb-2"
             style={{
-              color: "var(--color-text-muted)",
+              color: "var(--md-sys-color-text-muted)",
               display: "-webkit-box",
               WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
@@ -234,17 +234,17 @@ function ActivityCard({ activity }: { activity: HomeActivity }) {
           </p>
           <div className="flex items-center gap-1.5 flex-wrap">
             <UserIcon size={12} />
-            <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
+            <span className="text-xs" style={{ color: "var(--md-sys-color-text-secondary)" }}>
               {activity.accountName}
             </span>
             <span style={{ display: "inline-block", width: 4 }} />
-            <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+            <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
               {formatActivityDate(activity.date)}
             </span>
-            <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+            <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
               •
             </span>
-            <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+            <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
               {formatDuration(activity.durationMinutes)}
             </span>
           </div>
@@ -252,7 +252,7 @@ function ActivityCard({ activity }: { activity: HomeActivity }) {
         <Icon
           name="chevron_right"
           size={18}
-          style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }}
+          style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 2 }}
         />
       </div>
     </Link>
@@ -308,20 +308,20 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+    <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
       {/* Header */}
       <div className="flex items-start justify-between px-4 pt-10 pb-4">
         <div>
           <p
             className="eyebrow-text mb-1"
-            style={{ color: "var(--color-text-disabled)" }}
+            style={{ color: "var(--md-sys-color-text-disabled)" }}
           >
             {greeting()}, Nate!
           </p>
           <h1
             style={{
-              color: "var(--color-text-primary)",
+              color: "var(--md-sys-color-text-primary)",
               fontFamily: "Roboto Slab, Georgia, serif",
               fontSize: 30,
               fontWeight: 500,
@@ -338,7 +338,7 @@ export default function HomePage() {
           >
             <div
               className="w-9 h-9 rounded-full flex items-center justify-center"
-              style={{ background: "var(--color-dark-secondary)" }}
+              style={{ background: "var(--md-sys-color-dark-secondary)" }}
             >
               <AccountsIcon />
             </div>
@@ -353,13 +353,13 @@ export default function HomePage() {
         {availableTasks.length > 0 ? (
           <section className="mb-6">
             <div className="flex items-center justify-between px-4 mb-1">
-              <span className="eyebrow-text" style={{ color: "var(--color-text-muted)" }}>
+              <span className="eyebrow-text" style={{ color: "var(--md-sys-color-text-muted)" }}>
                 Upcoming
               </span>
               <Link
                 href="/tasks"
                 className="text-sm font-semibold active:opacity-60 transition-opacity"
-                style={{ color: "var(--color-brand-purple)" }}
+                style={{ color: "var(--md-sys-color-neonindigo)" }}
               >
                 View All
               </Link>
@@ -380,18 +380,18 @@ export default function HomePage() {
         ) : (
           <section className="mb-6 px-4">
             <div className="flex items-center gap-3 px-4 py-3.5" style={{
-              background: "var(--color-dark-secondary)",
+              background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
             }}>
               <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
                 style={{ background: "color-mix(in srgb, #2ECC71 15%, transparent)" }}>
                 <span style={{ fontSize: 16 }}>✓</span>
               </div>
-              <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+              <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                 All caught up!
               </p>
               <Link href="/tasks" className="ml-auto text-sm font-semibold"
-                style={{ color: "var(--color-brand-purple)" }}>
+                style={{ color: "var(--md-sys-color-neonindigo)" }}>
                 View All
               </Link>
             </div>
@@ -401,7 +401,7 @@ export default function HomePage() {
         {/* ── Recently logged ───────────────────────────────────────── */}
         <section>
           <div className="px-4 mb-3">
-            <span className="eyebrow-text" style={{ color: "var(--color-text-muted)" }}>
+            <span className="eyebrow-text" style={{ color: "var(--md-sys-color-text-muted)" }}>
               Recently Logged
             </span>
           </div>

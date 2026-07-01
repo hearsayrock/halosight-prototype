@@ -156,7 +156,7 @@ export default function CaptureWidget() {
               position: "relative",
               overflow: "hidden",
               borderRadius: "20px 20px 0 0",
-              background: "color-mix(in srgb, var(--color-dark-primary) 82%, transparent)",
+              background: "color-mix(in srgb, var(--md-sys-color-dark-primary) 82%, transparent)",
               backdropFilter: "blur(4px)",
             }}
           >
@@ -176,17 +176,17 @@ export default function CaptureWidget() {
                     <span className="w-2 h-2 rounded-full" style={{ background: "#ff4444" }} />
                     <span
                       className="text-sm font-bold tabular-nums"
-                      style={{ color: "var(--color-text-primary)", minWidth: 44 }}
+                      style={{ color: "var(--md-sys-color-text-primary)", minWidth: 44 }}
                     >
                       {formatTime(elapsed)}
                     </span>
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold leading-tight" style={{ color: "var(--color-text-primary)" }}>
+                    <p className="text-sm font-bold leading-tight" style={{ color: "var(--md-sys-color-text-primary)" }}>
                       Taking notes
                     </p>
-                    <p className="text-xs truncate" style={{ color: "var(--color-text-muted)" }}>
+                    <p className="text-xs truncate" style={{ color: "var(--md-sys-color-text-muted)" }}>
                       {accountName}
                     </p>
                   </div>
@@ -194,7 +194,7 @@ export default function CaptureWidget() {
                   <button
                     onClick={finishCapture}
                     className="flex-shrink-0 h-9 px-4 text-sm font-bold rounded-full active:opacity-70 transition-opacity"
-                    style={{ background: "var(--color-brand-coral)", color: "var(--color-text-primary)" }}
+                    style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-primary)" }}
                   >
                     Finish
                   </button>
@@ -212,20 +212,20 @@ export default function CaptureWidget() {
                   className="px-4 pt-4 pb-7"
                 >
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <p className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>
+                    <p className="text-sm font-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                       {status === "ready" ? "Note is ready! 🎉" : "Finalizing your note!"}
                     </p>
                     <button
                       onClick={dismissCapture}
                       className="flex-shrink-0 w-5 h-5 flex items-center justify-center active:opacity-60 transition-opacity"
-                      style={{ color: "var(--color-text-muted)", fontSize: 18, lineHeight: 1 }}
+                      style={{ color: "var(--md-sys-color-text-muted)", fontSize: 18, lineHeight: 1 }}
                     >
                       ×
                     </button>
                   </div>
 
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+                    <p className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>
                       {status === "ready" ? accountName : "I will let you know when it's ready."}
                     </p>
 
@@ -238,7 +238,7 @@ export default function CaptureWidget() {
                           transition={{ duration: 0.2 }}
                           onClick={handleReview}
                           className="flex-shrink-0 h-8 px-4 text-sm font-bold rounded-full active:opacity-70 transition-opacity"
-                          style={{ background: "var(--color-brand-purple)", color: "var(--color-text-primary)" }}
+                          style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-primary)" }}
                         >
                           Review
                         </motion.button>

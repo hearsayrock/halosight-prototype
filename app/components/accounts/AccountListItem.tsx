@@ -29,8 +29,8 @@ function AccountTypeBadge({ type }: { type: CrmAccountType }) {
     <span
       className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{
-        background: "var(--color-dark-tertiary)",
-        color: "var(--color-text-muted)",
+        background: "var(--md-sys-color-dark-tertiary)",
+        color: "var(--md-sys-color-text-muted)",
       }}
     >
       {CRM_LABEL[type]}
@@ -55,7 +55,7 @@ function TaskIcon({ color }: { color: string }) {
 
 function TaskIndicator({ count }: { count: number }) {
   if (count === 0) {
-    return <TaskIcon color="var(--color-text-disabled)" />;
+    return <TaskIcon color="var(--md-sys-color-text-disabled)" />;
   }
   return (
     <span
@@ -65,10 +65,10 @@ function TaskIndicator({ count }: { count: number }) {
         height: 20,
       }}
     >
-      <TaskIcon color="var(--color-brand-coral-light)" />
+      <TaskIcon color="var(--md-sys-color-brand-coral-light)" />
       <span
         className="text-[11px] font-semibold"
-        style={{ color: "var(--color-brand-coral-light)", lineHeight: 1 }}
+        style={{ color: "var(--md-sys-color-brand-coral-light)", lineHeight: 1 }}
       >
         {count}
       </span>
@@ -85,8 +85,8 @@ function AssigneeCircle({ initial }: { initial: string }) {
       style={{
         width: 22,
         height: 22,
-        background: "var(--color-dark-tertiary)",
-        color: "var(--color-text-muted)",
+        background: "var(--md-sys-color-dark-tertiary)",
+        color: "var(--md-sys-color-text-muted)",
       }}
     >
       {initial}
@@ -110,26 +110,26 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         className="flex items-start gap-3 px-4 py-3.5 active:opacity-70 transition-opacity relative"
       >
         {/* Separator — inset 12px each side, hidden on last item */}
-        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "var(--color-dark-tertiary)" }} />}
+        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />}
         {/* Left — 3-line text stack */}
         <div className="flex-1 min-w-0">
           {/* Account name */}
           <span
             className="text-[16px] font-semibold truncate block"
-            style={{ color: "var(--color-text-primary)" }}
+            style={{ color: "var(--md-sys-color-text-primary)" }}
           >
             {account.name}
           </span>
 
           {/* Distance • location */}
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+            <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {formatDistance(account.distanceMiles)}
             </span>
             {account.city && account.state && (
               <>
-                <span className="text-sm" style={{ color: "var(--color-text-disabled)" }}>•</span>
-                <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+                <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
+                <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
                   {account.city}, {account.state}
                 </span>
               </>
@@ -138,10 +138,10 @@ export default function AccountListItem({ account, isLast = false }: Props) {
 
           {/* Visited */}
           <p className="text-sm mt-0.5">
-            <span style={{ color: "var(--color-text-disabled)" }}>Visited </span>
+            <span style={{ color: "var(--md-sys-color-text-disabled)" }}>Visited </span>
             <span
               className="font-semibold"
-              style={{ color: isToday ? "var(--color-brand-coral)" : "var(--color-text-muted)" }}
+              style={{ color: isToday ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-muted)" }}
             >
               {label}
             </span>

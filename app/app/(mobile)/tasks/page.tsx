@@ -62,16 +62,16 @@ function FilterPill({ label, onClick }: { label: string; onClick: () => void }) 
       onClick={onClick}
       className="flex items-center gap-0.5 h-8 px-3 text-sm font-semibold active:opacity-70 transition-opacity"
       style={{
-        background: "var(--color-dark-secondary)",
+        background: "var(--md-sys-color-dark-secondary)",
         borderRadius: "var(--radius-full)",
-        color: "var(--color-text-primary)",
+        color: "var(--md-sys-color-text-primary)",
       }}
     >
       {label}
       <Icon
         name="keyboard_arrow_down"
         size={18}
-        style={{ color: "var(--color-text-muted)" }}
+        style={{ color: "var(--md-sys-color-text-muted)" }}
       />
     </button>
   );
@@ -84,7 +84,7 @@ function PersonIcon({ size = 12 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
       <path
         d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-        stroke="var(--color-text-disabled)"
+        stroke="var(--md-sys-color-text-disabled)"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -104,7 +104,7 @@ function CheckCircle({ checked, onCheck }: { checked: boolean; onCheck: () => vo
       <div
         className="absolute inset-0 rounded-full transition-opacity duration-150"
         style={{
-          border: "1.5px solid var(--color-text-disabled)",
+          border: "1.5px solid var(--md-sys-color-text-disabled)",
           opacity: checked ? 0 : 1,
         }}
       />
@@ -158,7 +158,7 @@ function TaskRow({
       {!isLast && (
         <div
           className="absolute bottom-0 left-3 right-3"
-          style={{ height: 1, background: "var(--color-dark-tertiary)" }}
+          style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }}
         />
       )}
 
@@ -175,7 +175,7 @@ function TaskRow({
         <div className="flex-1 min-w-0">
           <p
             className="text-[16px] font-semibold leading-snug mb-1"
-            style={{ color: "var(--color-text-primary)" }}
+            style={{ color: "var(--md-sys-color-text-primary)" }}
           >
             {item.title}
           </p>
@@ -184,14 +184,14 @@ function TaskRow({
               <Icon
                 name="calendar_today"
                 size={12}
-                style={{ color: "var(--color-brand-purple-dark)" }}
+                style={{ color: "var(--md-sys-color-neonindigo-dark)" }}
               />
               <span
                 className="text-xs font-medium"
                 style={{
                   color: dueToday
-                    ? "var(--color-brand-coral)"
-                    : "var(--color-text-disabled)",
+                    ? "var(--md-sys-color-brand-coral)"
+                    : "var(--md-sys-color-text-disabled)",
                 }}
               >
                 {formatDate(item.dueDate)}
@@ -199,7 +199,7 @@ function TaskRow({
             </div>
             <div className="flex items-center gap-1">
               <PersonIcon size={12} />
-              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                 {accountName}
               </span>
             </div>
@@ -208,7 +208,7 @@ function TaskRow({
         <Icon
           name="chevron_right"
           size={18}
-          style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }}
+          style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 2 }}
         />
       </Link>
     </motion.div>
@@ -303,7 +303,7 @@ export default function TasksPage() {
   }, [getAllItems, statusFilter, sortMode]);
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+    <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
       {/* Header */}
       <div className="pt-10 px-4 pb-3">
@@ -311,13 +311,13 @@ export default function TasksPage() {
           onClick={() => router.back()}
           className="p-1 mb-3 active:opacity-60 transition-opacity"
         >
-          <Icon name="chevron_left" size={24} style={{ color: "var(--color-text-muted)" }} />
+          <Icon name="chevron_left" size={24} style={{ color: "var(--md-sys-color-text-muted)" }} />
         </button>
 
         <div className="flex items-end justify-between gap-3">
           <h1
             style={{
-              color: "var(--color-text-primary)",
+              color: "var(--md-sys-color-text-primary)",
               fontFamily: "Roboto Slab, Georgia, serif",
               fontSize: 30,
               fontWeight: 700,
@@ -347,7 +347,7 @@ export default function TasksPage() {
       <div className="flex-1 overflow-y-auto pb-6">
         {groups.length === 0 ? (
           <div className="flex items-center justify-center py-20">
-            <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>
+            <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>
               No {statusFilter} items
             </p>
           </div>
@@ -358,13 +358,13 @@ export default function TasksPage() {
               <div className="flex items-center gap-2 px-4 mb-1 mt-2">
                 <span
                   className="eyebrow-text"
-                  style={{ color: "var(--color-text-disabled)" }}
+                  style={{ color: "var(--md-sys-color-text-disabled)" }}
                 >
                   {group.accountName.toUpperCase()}
                 </span>
                 <span
                   className="text-xs font-bold"
-                  style={{ color: "var(--color-brand-purple)" }}
+                  style={{ color: "var(--md-sys-color-neonindigo)" }}
                 >
                   {group.items.length}
                 </span>

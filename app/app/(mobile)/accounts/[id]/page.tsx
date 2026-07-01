@@ -5,9 +5,9 @@
  * Route: /accounts/[id]
  * Widget: StatefulWidget
  * State: activeTab ("overview" | "activity"), pageState (loading|error|loaded)
- * Tokens: --color-background, --color-dark-primary, --color-dark-secondary,
- *         --color-dark-tertiary, --color-text-primary, --color-text-muted,
- *         --color-text-disabled, --color-brand-coral, --radius-full, --radius-md
+ * Tokens: --md-sys-color-background, --md-sys-color-dark-primary, --md-sys-color-dark-secondary,
+ *         --md-sys-color-dark-tertiary, --md-sys-color-text-primary, --md-sys-color-text-muted,
+ *         --md-sys-color-text-disabled, --md-sys-color-brand-coral, --radius-full, --radius-md
  * Flutter equivalent: account_detail_page.dart
  *
  * STATES (preview via ?preview=loading or ?preview=error):
@@ -56,18 +56,18 @@ function ActivityCard({ item, accountId }: { item: ActivityItem; accountId: stri
     <div
       className="flex items-start gap-3 p-4 active:opacity-70 transition-opacity"
       style={{
-        background: "var(--color-dark-secondary)",
+        background: "var(--md-sys-color-dark-secondary)",
         borderRadius: "var(--radius-md)",
       }}
     >
       <div className="flex-1 min-w-0">
-        <p className="text-[16px] font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>
+        <p className="text-[16px] font-semibold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
           {item.title}
         </p>
         <p
           className="text-sm leading-relaxed mb-2"
           style={{
-            color: "var(--color-text-muted)",
+            color: "var(--md-sys-color-text-muted)",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
@@ -77,20 +77,20 @@ function ActivityCard({ item, accountId }: { item: ActivityItem; accountId: stri
           {item.summary}
         </p>
         <div className="flex items-center gap-1.5">
-          <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+          <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
             {formatActivityDate(item.date)}
           </span>
           {item.durationMinutes != null && (
             <>
-              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>•</span>
-              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                 {formatDuration(item.durationMinutes)}
               </span>
             </>
           )}
         </div>
       </div>
-      <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
+      <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
     </div>
     </Link>
   );
@@ -121,11 +121,11 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   if (preview === "error") {
     return (
-      <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+      <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
         <div className="pt-10 px-4 pb-2">
           <Link href="/accounts">
             <button className="p-1 active:opacity-60 transition-opacity">
-              <Icon name="close" size={22} style={{ color: "var(--color-text-muted)" }} />
+              <Icon name="close" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
             </button>
           </Link>
         </div>
@@ -140,11 +140,11 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   if (!account) {
     return (
-      <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+      <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
         <div className="pt-10 px-4 pb-2">
           <Link href="/accounts">
             <button className="p-1 active:opacity-60 transition-opacity">
-              <Icon name="close" size={22} style={{ color: "var(--color-text-muted)" }} />
+              <Icon name="close" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
             </button>
           </Link>
         </div>
@@ -157,7 +157,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+    <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
       {/* Header */}
       <div className="pt-10 px-4 pb-4">
@@ -166,7 +166,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         <div className="mb-3">
           <Link href="/accounts">
             <button className="p-1 active:opacity-60 transition-opacity">
-              <Icon name="close" size={22} style={{ color: "var(--color-text-muted)" }} />
+              <Icon name="close" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
             </button>
           </Link>
         </div>
@@ -175,7 +175,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         <h1
           className="w-full text-center text-[26px] font-bold leading-tight px-10 mb-4"
           style={{
-            color: "var(--color-text-primary)",
+            color: "var(--md-sys-color-text-primary)",
             fontFamily: "Roboto Slab, Georgia, serif",
           }}
         >
@@ -185,7 +185,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         {/* Tabs */}
         <div
           className="flex p-1 gap-1 mx-auto"
-          style={{ width: 255, background: "var(--color-dark-primary)", borderRadius: "var(--radius-full)" }}
+          style={{ width: 255, background: "var(--md-sys-color-dark-primary)", borderRadius: "var(--radius-full)" }}
         >
           {(["overview", "activity"] as const).map((tab) => (
             <button
@@ -194,8 +194,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               className="flex-1 py-2 text-sm font-semibold transition-all capitalize"
               style={{
                 borderRadius: "var(--radius-full)",
-                background: activeTab === tab ? "var(--color-dark-secondary)" : "transparent",
-                color: activeTab === tab ? "var(--color-text-primary)" : "var(--color-text-muted)",
+                background: activeTab === tab ? "var(--md-sys-color-dark-secondary)" : "transparent",
+                color: activeTab === tab ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
               }}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -214,16 +214,16 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             {detail ? (
               <>
                 <section className="mb-6">
-                  <h2 className="heading-6 mb-2" style={{ color: "var(--color-text-primary)" }}>
+                  <h2 className="heading-6 mb-2" style={{ color: "var(--md-sys-color-text-primary)" }}>
                     Last Time
                   </h2>
-                  <p className="text-base leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+                  <p className="text-base leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>
                     {detail.lastVisitSummary}
                   </p>
                 </section>
 
                 <section className="mb-6">
-                  <h2 className="heading-6 mb-3" style={{ color: "var(--color-text-primary)" }}>
+                  <h2 className="heading-6 mb-3" style={{ color: "var(--md-sys-color-text-primary)" }}>
                     Ideas for this Time
                   </h2>
                   <ul className="flex flex-col gap-2.5">
@@ -231,9 +231,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                       <li key={i} className="flex items-start gap-2.5">
                         <span
                           className="flex-shrink-0 w-1.5 h-1.5 rounded-full"
-                          style={{ background: "var(--color-text-muted)", marginTop: "0.625rem" }}
+                          style={{ background: "var(--md-sys-color-text-muted)", marginTop: "0.625rem" }}
                         />
-                        <span className="text-base leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+                        <span className="text-base leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>
                           {idea}
                         </span>
                       </li>
@@ -243,7 +243,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               </>
             ) : (
               <div className="py-8 text-center mb-2">
-                <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>
+                <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                   No overview available yet.
                   <br />
                   Capture your first meeting to generate insights.
@@ -254,12 +254,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             {/* Action Items — always visible regardless of detail */}
             <section>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="heading-6" style={{ color: "var(--color-text-primary)" }}>
+                <h2 className="heading-6" style={{ color: "var(--md-sys-color-text-primary)" }}>
                   Action Items
                 </h2>
                 {actionItems.length > 0 && (
                   <button onClick={() => setShowAddSheet(true)} className="active:opacity-60 transition-opacity">
-                    <Icon name="add" size={20} style={{ color: "var(--color-text-primary)" }} />
+                    <Icon name="add" size={20} style={{ color: "var(--md-sys-color-text-primary)" }} />
                   </button>
                 )}
               </div>
@@ -277,23 +277,23 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   onClick={() => setShowAddSheet(true)}
                   className="w-full flex items-center gap-3 px-4 py-4 active:opacity-70 transition-opacity"
                   style={{
-                    background: "var(--color-dark-secondary)",
+                    background: "var(--md-sys-color-dark-secondary)",
                     borderRadius: "var(--radius-xl)",
                   }}
                 >
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{
-                      background: "color-mix(in srgb, var(--color-brand-purple) 15%, transparent)",
+                      background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)",
                     }}
                   >
-                    <Icon name="add" size={18} style={{ color: "var(--color-brand-purple)" }} />
+                    <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                    <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                       Add your first action item
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: "var(--color-text-secondary)" }}>
+                    <p className="text-xs mt-0.5" style={{ color: "var(--md-sys-color-text-secondary)" }}>
                       Track follow-ups from this visit
                     </p>
                   </div>
@@ -312,7 +312,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               ))
             ) : (
               <div className="py-8 text-center">
-                <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>
+                <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                   No activity recorded yet.
                 </p>
               </div>
@@ -332,12 +332,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             onClick={() => startCapture(id, account.name)}
             className="h-11 px-6 font-semibold text-[14px] flex items-center gap-2 transition-opacity active:opacity-80"
             style={{
-              background: "var(--color-brand-coral)",
-              color: "var(--color-text-primary)",
+              background: "var(--md-sys-color-brand-coral)",
+              color: "var(--md-sys-color-text-primary)",
               borderRadius: "var(--radius-full)",
             }}
           >
-            <Icon name="edit" size={16} style={{ color: "var(--color-text-primary)" }} />
+            <Icon name="edit" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
             Capture Meeting
           </button>
         </div>

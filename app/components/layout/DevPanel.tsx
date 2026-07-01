@@ -119,13 +119,13 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
             width: 28,
             height: 64,
             borderRadius: 8,
-            background: "var(--color-dark-secondary)",
+            background: "var(--md-sys-color-dark-secondary)",
             border: "none",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "var(--color-text-muted)",
+            color: "var(--md-sys-color-text-muted)",
             fontSize: 11,
           }}
         >
@@ -153,7 +153,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
           <p style={{
             fontSize: 11,
             fontWeight: 700,
-            color: "var(--color-text-primary)",
+            color: "var(--md-sys-color-text-primary)",
             margin: 0,
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -164,7 +164,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
           {!isMain && activePlayground && (
             <p style={{
               fontSize: 12,
-              color: "var(--color-text-muted)",
+              color: "var(--md-sys-color-text-muted)",
               margin: "2px 0 0",
               lineHeight: 1.4,
               display: "-webkit-box",
@@ -176,7 +176,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
             </p>
           )}
           {isMain && (
-            <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "2px 0 0" }}>
+            <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", margin: "2px 0 0" }}>
               Prototype baseline
             </p>
           )}
@@ -192,7 +192,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
             background: "transparent",
             border: "none",
             cursor: "pointer",
-            color: "var(--color-text-muted)",
+            color: "var(--md-sys-color-text-muted)",
             fontSize: 11,
             display: "flex",
             alignItems: "center",
@@ -204,7 +204,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
       </div>
 
       {/* Divider */}
-      <div style={{ height: 1, background: "var(--color-dark-tertiary)", marginTop: -8 }} />
+      <div style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)", marginTop: -8 }} />
 
       {/* Quick Nav */}
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -216,7 +216,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
                 fontWeight: 600,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                color: "var(--color-text-muted)",
+                color: "var(--md-sys-color-text-muted)",
                 marginBottom: 4,
                 paddingLeft: 10,
               }}
@@ -235,8 +235,8 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
                       textAlign: "left",
                       fontSize: 13,
                       fontWeight: active ? 600 : 400,
-                      color: active ? "var(--color-text-primary)" : "var(--color-text-muted)",
-                      background: active ? "var(--color-dark-secondary)" : "transparent",
+                      color: active ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
+                      background: active ? "var(--md-sys-color-dark-secondary)" : "transparent",
                       borderRadius: 8,
                       padding: "5px 10px",
                       transition: "background 0.12s, color 0.12s",
@@ -246,7 +246,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
                     }}
                   >
                     {active && (
-                      <span style={{ color: "var(--color-brand-purple)", marginRight: 6, fontSize: 10 }}>▶</span>
+                      <span style={{ color: "var(--md-sys-color-neonindigo)", marginRight: 6, fontSize: 10 }}>▶</span>
                     )}
                     {label}
                   </button>
@@ -258,7 +258,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
       </div>
 
       {/* Divider */}
-      <div style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+      <div style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
 
       {/* Device size */}
       <div>
@@ -268,7 +268,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
             fontWeight: 600,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
-            color: "var(--color-text-muted)",
+            color: "var(--md-sys-color-text-muted)",
             marginBottom: 6,
             paddingLeft: 2,
           }}
@@ -286,9 +286,9 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
                   flex: 1,
                   fontSize: 12,
                   fontWeight: active ? 700 : 400,
-                  color: active ? "var(--color-text-primary)" : "var(--color-text-muted)",
-                  background: active ? "var(--color-dark-secondary)" : "transparent",
-                  border: active ? "1px solid var(--color-dark-tertiary)" : "1px solid transparent",
+                  color: active ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
+                  background: active ? "var(--md-sys-color-dark-secondary)" : "transparent",
+                  border: active ? "1px solid var(--md-sys-color-dark-tertiary)" : "1px solid transparent",
                   borderRadius: 8,
                   padding: "5px 0",
                   cursor: "pointer",
@@ -311,7 +311,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
           display: "block",
           fontSize: 13,
           fontWeight: 500,
-          color: "var(--color-brand-purple)",
+          color: "var(--md-sys-color-neonindigo)",
           background: "rgba(139,146,255,0.08)",
           border: "1px solid rgba(139,146,255,0.2)",
           borderRadius: 20,
@@ -333,9 +333,9 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
         style={{
           fontSize: 13,
           fontWeight: 500,
-          color: "var(--color-text-muted)",
+          color: "var(--md-sys-color-text-muted)",
           background: "transparent",
-          border: "1px solid var(--color-dark-tertiary)",
+          border: "1px solid var(--md-sys-color-dark-tertiary)",
           borderRadius: 20,
           padding: "7px 0",
           cursor: "pointer",
