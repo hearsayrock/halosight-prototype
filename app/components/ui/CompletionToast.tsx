@@ -5,9 +5,9 @@
  * Fades in when visible, fades + slides down on exit.
  * Portals into #phone-overlay-root so it sits above everything.
  *
- * Tokens: --color-dark-secondary (bg), --color-dark-tertiary (border),
- *         --color-text-primary, --color-text-muted, --color-brand-purple,
- *         --color-brand-teal, --radius-xl
+ * Tokens: --md-sys-color-dark-secondary (bg), --md-sys-color-dark-tertiary (border),
+ *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-neonindigo,
+ *         --md-sys-color-brand-teal, --radius-xl
  */
 
 import { createPortal } from "react-dom";
@@ -58,9 +58,9 @@ export default function CompletionToast({
         >
           <div
             style={{
-              background: "var(--color-dark-secondary)",
+              background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
-              border: "1px solid var(--color-dark-tertiary)",
+              border: "1px solid var(--md-sys-color-dark-tertiary)",
               boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.3)",
               padding: "12px 16px",
             }}
@@ -78,7 +78,7 @@ export default function CompletionToast({
               {/* Label */}
               <span
                 className="flex-1 text-sm font-semibold"
-                style={{ color: "var(--color-text-primary)" }}
+                style={{ color: "var(--md-sys-color-text-primary)" }}
               >
                 Item complete
               </span>
@@ -87,7 +87,7 @@ export default function CompletionToast({
               <button
                 onClick={onUndo}
                 className="text-sm font-semibold active:opacity-60 transition-opacity"
-                style={{ color: "var(--color-brand-purple)" }}
+                style={{ color: "var(--md-sys-color-neonindigo)" }}
               >
                 undo
               </button>
@@ -96,7 +96,7 @@ export default function CompletionToast({
               <button
                 onClick={onDismiss}
                 className="ml-1 flex items-center justify-center active:opacity-60 transition-opacity"
-                style={{ color: "var(--color-text-muted)" }}
+                style={{ color: "var(--md-sys-color-text-muted)" }}
               >
                 <Icon name="close" size={18} />
               </button>
@@ -109,10 +109,10 @@ export default function CompletionToast({
                 className="flex items-center gap-1.5 mt-2.5 active:opacity-60 transition-opacity"
                 style={{ paddingLeft: 36 }}
               >
-                <Icon name="edit" size={13} style={{ color: "var(--color-brand-teal)" }} />
+                <Icon name="edit" size={13} style={{ color: "var(--md-sys-color-brand-teal)" }} />
                 <span
                   className="text-xs font-semibold"
-                  style={{ color: "var(--color-brand-teal)" }}
+                  style={{ color: "var(--md-sys-color-brand-teal)" }}
                 >
                   Add a note
                 </span>

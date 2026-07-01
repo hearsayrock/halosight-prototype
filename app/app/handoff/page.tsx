@@ -34,10 +34,10 @@ function Section({ id, title, children }: { id: string; title: string; children:
         fontWeight: 700,
         letterSpacing: "0.1em",
         textTransform: "uppercase",
-        color: "var(--color-brand-purple)",
+        color: "var(--md-sys-color-neonindigo)",
         marginBottom: 24,
         paddingBottom: 12,
-        borderBottom: "1px solid var(--color-dark-tertiary)",
+        borderBottom: "1px solid var(--md-sys-color-dark-tertiary)",
       }}>
         {title}
       </h2>
@@ -53,7 +53,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
       fontWeight: 700,
       letterSpacing: "0.08em",
       textTransform: "uppercase",
-      color: "var(--color-text-muted)",
+      color: "var(--md-sys-color-text-muted)",
       marginBottom: 4,
     }}>
       {children}
@@ -61,7 +61,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Tag({ children, color = "var(--color-dark-tertiary)", textColor = "var(--color-text-muted)" }: {
+function Tag({ children, color = "var(--md-sys-color-dark-tertiary)", textColor = "var(--md-sys-color-text-muted)" }: {
   children: React.ReactNode;
   color?: string;
   textColor?: string;
@@ -83,9 +83,9 @@ function Tag({ children, color = "var(--color-dark-tertiary)", textColor = "var(
 
 function StateLink({ label, path, variant }: { label: string; path: string; variant: "loading" | "error" | "default" }) {
   const colors = {
-    loading: { bg: "rgba(139,146,255,0.12)", text: "var(--color-brand-purple)" },
-    error:   { bg: "rgba(255,107,90,0.12)",  text: "var(--color-brand-coral)" },
-    default: { bg: "var(--color-dark-secondary)", text: "var(--color-text-secondary)" },
+    loading: { bg: "rgba(139,146,255,0.12)", text: "var(--md-sys-color-neonindigo)" },
+    error:   { bg: "rgba(255,107,90,0.12)",  text: "var(--md-sys-color-brand-coral)" },
+    default: { bg: "var(--md-sys-color-dark-secondary)", text: "var(--md-sys-color-text-secondary)" },
   };
   const c = colors[variant];
   return (
@@ -115,15 +115,15 @@ function StateLink({ label, path, variant }: { label: string; path: string; vari
 function Code({ children, language = "typescript" }: { children: string; language?: string }) {
   return (
     <pre style={{
-      background: "var(--color-dark-base)",
+      background: "var(--md-sys-color-dark-base)",
       borderRadius: 10,
       padding: "16px 20px",
       overflow: "auto",
       fontSize: 12,
       lineHeight: 1.7,
-      color: "var(--color-text-secondary)",
+      color: "var(--md-sys-color-text-secondary)",
       fontFamily: "ui-monospace, 'Cascadia Code', 'Fira Code', monospace",
-      border: "1px solid var(--color-dark-tertiary)",
+      border: "1px solid var(--md-sys-color-dark-tertiary)",
       margin: 0,
     }}>
       <code>{children}</code>
@@ -256,8 +256,8 @@ const SCREENS: ScreenSpec[] = [
 function ScreenCard({ screen }: { screen: ScreenSpec }) {
   return (
     <div style={{
-      background: "var(--color-dark-primary)",
-      border: "1px solid var(--color-dark-tertiary)",
+      background: "var(--md-sys-color-dark-primary)",
+      border: "1px solid var(--md-sys-color-dark-tertiary)",
       borderRadius: 12,
       padding: "20px 24px",
       marginBottom: 16,
@@ -265,15 +265,15 @@ function ScreenCard({ screen }: { screen: ScreenSpec }) {
       {/* Header row */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 12 }}>
         <div>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--color-text-primary)", margin: "0 0 2px" }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--md-sys-color-text-primary)", margin: "0 0 2px" }}>
             {screen.name}
           </h3>
           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <code style={{ fontSize: 12, color: "var(--color-text-muted)", fontFamily: "ui-monospace, monospace" }}>
+            <code style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", fontFamily: "ui-monospace, monospace" }}>
               {screen.route}
             </code>
-            <span style={{ color: "var(--color-dark-tertiary)" }}>·</span>
-            <code style={{ fontSize: 12, color: "var(--color-brand-purple)", fontFamily: "ui-monospace, monospace" }}>
+            <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>·</span>
+            <code style={{ fontSize: 12, color: "var(--md-sys-color-neonindigo)", fontFamily: "ui-monospace, monospace" }}>
               {screen.flutterFile}
             </code>
           </div>
@@ -288,7 +288,7 @@ function ScreenCard({ screen }: { screen: ScreenSpec }) {
       </div>
 
       {/* Description */}
-      <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "0 0 14px" }}>
+      <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "0 0 14px" }}>
         {screen.description}
       </p>
 
@@ -297,7 +297,7 @@ function ScreenCard({ screen }: { screen: ScreenSpec }) {
         <Eyebrow>Interactions</Eyebrow>
         <ul style={{ margin: 0, padding: "0 0 0 16px", display: "flex", flexDirection: "column", gap: 4 }}>
           {screen.interactions.map((note, i) => (
-            <li key={i} style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.55 }}>
+            <li key={i} style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", lineHeight: 1.55 }}>
               {note}
             </li>
           ))}
@@ -313,8 +313,8 @@ function ScreenCard({ screen }: { screen: ScreenSpec }) {
           background: "rgba(139,146,255,0.07)",
           border: "1px solid rgba(139,146,255,0.2)",
         }}>
-          <p style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.55, margin: 0 }}>
-            <strong style={{ color: "var(--color-text-secondary)" }}>Note: </strong>{screen.notes}
+          <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", lineHeight: 1.55, margin: 0 }}>
+            <strong style={{ color: "var(--md-sys-color-text-secondary)" }}>Note: </strong>{screen.notes}
           </p>
         </div>
       )}
@@ -429,21 +429,21 @@ function ModelCard({ model }: { model: typeof MODELS[0] }) {
   return (
     <div style={{
       marginBottom: 24,
-      background: "var(--color-dark-primary)",
-      border: "1px solid var(--color-dark-tertiary)",
+      background: "var(--md-sys-color-dark-primary)",
+      border: "1px solid var(--md-sys-color-dark-tertiary)",
       borderRadius: 12,
       overflow: "hidden",
     }}>
-      <div style={{ padding: "16px 20px 12px", borderBottom: "1px solid var(--color-dark-tertiary)" }}>
+      <div style={{ padding: "16px 20px 12px", borderBottom: "1px solid var(--md-sys-color-dark-tertiary)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-          <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--md-sys-color-text-primary)", margin: 0 }}>
             {model.name}
           </h3>
-          <Tag color="rgba(139,146,255,0.12)" textColor="var(--color-brand-purple)">
+          <Tag color="rgba(139,146,255,0.12)" textColor="var(--md-sys-color-neonindigo)">
             {model.dartClass}.dart
           </Tag>
         </div>
-        <p style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.55, margin: 0 }}>
+        <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", lineHeight: 1.55, margin: 0 }}>
           {model.note}
         </p>
       </div>
@@ -460,43 +460,43 @@ const COLOR_GROUPS: { label: string; tokens: { name: string; value: string; usag
   {
     label: "Surfaces",
     tokens: [
-      { name: "--color-background",    value: "#111420", usage: "Page / app chrome background" },
-      { name: "--color-dark-primary",  value: "#1A1D29", usage: "Card backgrounds, sheet backgrounds" },
-      { name: "--color-dark-secondary",value: "#252A36", usage: "Input fields, pressed states, list items" },
-      { name: "--color-dark-tertiary", value: "#3D4451", usage: "Dividers, borders, inactive chips" },
+      { name: "--md-sys-color-background",    value: "#111420", usage: "Page / app chrome background" },
+      { name: "--md-sys-color-dark-primary",  value: "#1A1D29", usage: "Card backgrounds, sheet backgrounds" },
+      { name: "--md-sys-color-dark-secondary",value: "#252A36", usage: "Input fields, pressed states, list items" },
+      { name: "--md-sys-color-dark-tertiary", value: "#3D4451", usage: "Dividers, borders, inactive chips" },
     ],
   },
   {
     label: "Text",
     tokens: [
-      { name: "--color-text-primary",   value: "#F7F8FF", usage: "Headings, primary content" },
-      { name: "--color-text-secondary", value: "#C3CAD8", usage: "Body text, supporting labels" },
-      { name: "--color-text-muted",     value: "#8B94A8", usage: "Metadata, timestamps, captions (4.5:1 contrast)" },
-      { name: "--color-text-disabled",  value: "#5D667A", usage: "Placeholders only — fails WCAG AA, never use for readable text" },
+      { name: "--md-sys-color-text-primary",   value: "#F7F8FF", usage: "Headings, primary content" },
+      { name: "--md-sys-color-text-secondary", value: "#C3CAD8", usage: "Body text, supporting labels" },
+      { name: "--md-sys-color-text-muted",     value: "#8B94A8", usage: "Metadata, timestamps, captions (4.5:1 contrast)" },
+      { name: "--md-sys-color-text-disabled",  value: "#5D667A", usage: "Placeholders only — fails WCAG AA, never use for readable text" },
     ],
   },
   {
     label: "Brand — Purple (primary)",
     tokens: [
-      { name: "--color-brand-purple-light", value: "#B3B8FF", usage: "Active text on dark tinted backgrounds" },
-      { name: "--color-brand-purple",       value: "#8B92FF", usage: "Primary interactive elements, icons, active states" },
-      { name: "--color-brand-purple-dark",  value: "#6B72E8", usage: "Pressed state for purple elements" },
+      { name: "--md-sys-color-neonindigo-light", value: "#B3B8FF", usage: "Active text on dark tinted backgrounds" },
+      { name: "--md-sys-color-neonindigo",       value: "#8B92FF", usage: "Primary interactive elements, icons, active states" },
+      { name: "--md-sys-color-neonindigo-dark",  value: "#6B72E8", usage: "Pressed state for purple elements" },
     ],
   },
   {
     label: "Brand — Coral (action / alert)",
     tokens: [
-      { name: "--color-brand-coral-light", value: "#FF8F82", usage: "Task indicators, urgent badges" },
-      { name: "--color-brand-coral",       value: "#FF6B5A", usage: "Capture Meeting CTA, primary destructive action" },
-      { name: "--color-brand-coral-dark",  value: "#E64A37", usage: "Pressed state" },
+      { name: "--md-sys-color-brand-coral-light", value: "#FF8F82", usage: "Task indicators, urgent badges" },
+      { name: "--md-sys-color-brand-coral",       value: "#FF6B5A", usage: "Capture Meeting CTA, primary destructive action" },
+      { name: "--md-sys-color-brand-coral-dark",  value: "#E64A37", usage: "Pressed state" },
     ],
   },
   {
     label: "Semantic",
     tokens: [
-      { name: "--color-success", value: "#2ECC71", usage: "Completion, shipped status, green checkmark" },
-      { name: "--color-warning", value: "#F5A623", usage: "Review status, due-soon warnings" },
-      { name: "--color-error",   value: "#FF4D4F", usage: "Error states, destructive confirmations" },
+      { name: "--md-sys-color-success", value: "#2ECC71", usage: "Completion, shipped status, green checkmark" },
+      { name: "--md-sys-color-warning", value: "#F5A623", usage: "Review status, due-soon warnings" },
+      { name: "--md-sys-color-error",   value: "#FF4D4F", usage: "Error states, destructive confirmations" },
     ],
   },
 ];
@@ -508,7 +508,7 @@ function Swatch({ token }: { token: { name: string; value: string; usage: string
       alignItems: "flex-start",
       gap: 12,
       padding: "10px 0",
-      borderBottom: "1px solid var(--color-dark-tertiary)",
+      borderBottom: "1px solid var(--md-sys-color-dark-tertiary)",
     }}>
       <div style={{
         width: 36,
@@ -520,14 +520,14 @@ function Swatch({ token }: { token: { name: string; value: string; usage: string
       }} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <code style={{ fontSize: 12, color: "var(--color-brand-purple)", fontFamily: "ui-monospace, monospace" }}>
+          <code style={{ fontSize: 12, color: "var(--md-sys-color-neonindigo)", fontFamily: "ui-monospace, monospace" }}>
             {token.name}
           </code>
-          <code style={{ fontSize: 11, color: "var(--color-text-muted)", fontFamily: "ui-monospace, monospace" }}>
+          <code style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", fontFamily: "ui-monospace, monospace" }}>
             {token.value}
           </code>
         </div>
-        <p style={{ fontSize: 11, color: "var(--color-text-muted)", margin: "2px 0 0", lineHeight: 1.4 }}>
+        <p style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", margin: "2px 0 0", lineHeight: 1.4 }}>
           {token.usage}
         </p>
       </div>
@@ -613,26 +613,26 @@ function ComponentRow({ comp }: { comp: typeof COMPONENTS[0] }) {
   return (
     <div style={{
       padding: "16px 0",
-      borderBottom: "1px solid var(--color-dark-tertiary)",
+      borderBottom: "1px solid var(--md-sys-color-dark-tertiary)",
     }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: 12, flexWrap: "wrap", marginBottom: 6 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", margin: 0 }}>
           {comp.name}
         </h3>
-        <code style={{ fontSize: 11, color: "var(--color-text-muted)", fontFamily: "ui-monospace, monospace" }}>
+        <code style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", fontFamily: "ui-monospace, monospace" }}>
           {comp.file}
         </code>
-        <Tag color="rgba(139,146,255,0.12)" textColor="var(--color-brand-purple)">
+        <Tag color="rgba(139,146,255,0.12)" textColor="var(--md-sys-color-neonindigo)">
           {comp.flutterWidget}
         </Tag>
       </div>
-      <p style={{ fontSize: 12, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "0 0 (comp.props ? 6px : 0)" }}>
+      <p style={{ fontSize: 12, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "0 0 (comp.props ? 6px : 0)" }}>
         {comp.description}
       </p>
       {comp.props && (
         <p style={{ fontSize: 11, margin: "6px 0 0" }}>
-          <span style={{ color: "var(--color-text-muted)", fontWeight: 600 }}>Props: </span>
-          <code style={{ color: "var(--color-text-muted)", fontFamily: "ui-monospace, monospace" }}>{comp.props}</code>
+          <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 600 }}>Props: </span>
+          <code style={{ color: "var(--md-sys-color-text-muted)", fontFamily: "ui-monospace, monospace" }}>{comp.props}</code>
         </p>
       )}
     </div>
@@ -665,7 +665,7 @@ function SidebarNav({ active }: { active: string }) {
         fontWeight: 700,
         letterSpacing: "0.1em",
         textTransform: "uppercase",
-        color: "var(--color-text-muted)",
+        color: "var(--md-sys-color-text-muted)",
         marginBottom: 8,
         paddingLeft: 12,
       }}>
@@ -679,9 +679,9 @@ function SidebarNav({ active }: { active: string }) {
             display: "block",
             fontSize: 13,
             fontWeight: active === item.id ? 600 : 400,
-            color: active === item.id ? "var(--color-text-primary)" : "var(--color-text-muted)",
-            background: active === item.id ? "var(--color-dark-secondary)" : "transparent",
-            borderLeft: `3px solid ${active === item.id ? "var(--color-brand-purple)" : "transparent"}`,
+            color: active === item.id ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
+            background: active === item.id ? "var(--md-sys-color-dark-secondary)" : "transparent",
+            borderLeft: `3px solid ${active === item.id ? "var(--md-sys-color-neonindigo)" : "transparent"}`,
             padding: "6px 12px",
             borderRadius: "0 8px 8px 0",
             textDecoration: "none",
@@ -722,8 +722,8 @@ export default function HandoffPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "var(--color-background)",
-      color: "var(--color-text-primary)",
+      background: "var(--md-sys-color-background)",
+      color: "var(--md-sys-color-text-primary)",
       fontFamily: "Barlow, system-ui, sans-serif",
     }}>
       {/* Top bar */}
@@ -731,8 +731,8 @@ export default function HandoffPage() {
         position: "sticky",
         top: 0,
         zIndex: 50,
-        background: "var(--color-dark-primary)",
-        borderBottom: "1px solid var(--color-dark-tertiary)",
+        background: "var(--md-sys-color-dark-primary)",
+        borderBottom: "1px solid var(--md-sys-color-dark-tertiary)",
         padding: "0 40px",
         height: 48,
         display: "flex",
@@ -740,11 +740,11 @@ export default function HandoffPage() {
         justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)" }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)" }}>
             Halosight
           </span>
-          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          <span style={{ fontSize: 14, color: "var(--color-text-muted)" }}>Flutter Handoff</span>
+          <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
+          <span style={{ fontSize: 14, color: "var(--md-sys-color-text-muted)" }}>Flutter Handoff</span>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
           <Tag>Accounts flow</Tag>
@@ -755,7 +755,7 @@ export default function HandoffPage() {
             style={{
               fontSize: 12,
               fontWeight: 600,
-              color: "var(--color-brand-purple)",
+              color: "var(--md-sys-color-neonindigo)",
               textDecoration: "none",
               padding: "4px 12px",
               background: "rgba(139,146,255,0.1)",
@@ -786,16 +786,16 @@ export default function HandoffPage() {
           {/* ── Overview ─────────────────────────────────────────────────── */}
           <Section id="overview" title="Overview">
             <div style={{
-              background: "var(--color-dark-primary)",
-              border: "1px solid var(--color-dark-tertiary)",
+              background: "var(--md-sys-color-dark-primary)",
+              border: "1px solid var(--md-sys-color-dark-tertiary)",
               borderRadius: 12,
               padding: "24px 28px",
               marginBottom: 24,
             }}>
-              <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--color-text-primary)", margin: "0 0 8px" }}>
+              <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--md-sys-color-text-primary)", margin: "0 0 8px" }}>
                 Flutter Handoff — Accounts Flow
               </h1>
-              <p style={{ fontSize: 14, color: "var(--color-text-secondary)", lineHeight: 1.7, margin: "0 0 20px" }}>
+              <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.7, margin: "0 0 20px" }}>
                 This page is the living spec for the Halosight accounts flow. Every screen, data model,
                 design token, and component is documented here with direct links into the running prototype.
                 Use this alongside the prototype — open a screen link to see the interaction, then reference
@@ -807,8 +807,8 @@ export default function HandoffPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
-                    fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)",
-                    background: "var(--color-brand-purple)", textDecoration: "none",
+                    fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-primary)",
+                    background: "var(--md-sys-color-neonindigo)", textDecoration: "none",
                     padding: "8px 18px", borderRadius: 20,
                   }}
                 >
@@ -819,10 +819,10 @@ export default function HandoffPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
-                    fontSize: 13, fontWeight: 600, color: "var(--color-text-secondary)",
-                    background: "var(--color-dark-secondary)", textDecoration: "none",
+                    fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-secondary)",
+                    background: "var(--md-sys-color-dark-secondary)", textDecoration: "none",
                     padding: "8px 18px", borderRadius: 20,
-                    border: "1px solid var(--color-dark-tertiary)",
+                    border: "1px solid var(--md-sys-color-dark-tertiary)",
                   }}
                 >
                   Full prototype ↗
@@ -837,16 +837,16 @@ export default function HandoffPage() {
                 { label: "Color tokens", value: String(COLOR_GROUPS.reduce((n, g) => n + g.tokens.length, 0)), note: "semantic tokens" },
               ].map(stat => (
                 <div key={stat.label} style={{
-                  background: "var(--color-dark-primary)",
-                  border: "1px solid var(--color-dark-tertiary)",
+                  background: "var(--md-sys-color-dark-primary)",
+                  border: "1px solid var(--md-sys-color-dark-tertiary)",
                   borderRadius: 10,
                   padding: "16px 20px",
                   textAlign: "center",
                 }}>
-                  <p style={{ fontSize: 28, fontWeight: 700, color: "var(--color-brand-purple)", margin: "0 0 2px" }}>
+                  <p style={{ fontSize: 28, fontWeight: 700, color: "var(--md-sys-color-neonindigo)", margin: "0 0 2px" }}>
                     {stat.value}
                   </p>
-                  <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0 }}>
+                  <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", margin: 0 }}>
                     {stat.label}
                     <br /><span style={{ fontSize: 11 }}>{stat.note}</span>
                   </p>
@@ -864,7 +864,7 @@ export default function HandoffPage() {
 
           {/* ── Data Models ──────────────────────────────────────────────── */}
           <Section id="models" title="Data Models">
-            <p style={{ fontSize: 13, color: "var(--color-text-muted)", lineHeight: 1.6, marginBottom: 24 }}>
+            <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 24 }}>
               These TypeScript interfaces map directly to Dart entity classes in <code style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>lib/entity/</code>.
               Each <code style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>Date</code> field becomes a <code style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>DateTime</code>.
               Optional fields (<code style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>?</code>) become nullable types.
@@ -876,7 +876,7 @@ export default function HandoffPage() {
 
           {/* ── Tokens ───────────────────────────────────────────────────── */}
           <Section id="tokens" title="Design Tokens">
-            <p style={{ fontSize: 13, color: "var(--color-text-muted)", lineHeight: 1.6, marginBottom: 24 }}>
+            <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 24 }}>
               All tokens are defined in <code style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>tokens/colors.css</code> and <code style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>tokens/spacing.css</code>.
               In Flutter, define these in a <code style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>AppTheme</code> class and reference via <code style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>Theme.of(context)</code>.
             </p>
@@ -885,14 +885,14 @@ export default function HandoffPage() {
               <div key={group.label} style={{ marginBottom: 32 }}>
                 <Eyebrow>{group.label}</Eyebrow>
                 <div style={{
-                  background: "var(--color-dark-primary)",
-                  border: "1px solid var(--color-dark-tertiary)",
+                  background: "var(--md-sys-color-dark-primary)",
+                  border: "1px solid var(--md-sys-color-dark-tertiary)",
                   borderRadius: 10,
                   padding: "0 16px",
                   overflow: "hidden",
                 }}>
                   {group.tokens.map((token, i) => (
-                    <div key={token.name} style={{ borderBottom: i < group.tokens.length - 1 ? "1px solid var(--color-dark-tertiary)" : "none" }}>
+                    <div key={token.name} style={{ borderBottom: i < group.tokens.length - 1 ? "1px solid var(--md-sys-color-dark-tertiary)" : "none" }}>
                       <Swatch token={token} />
                     </div>
                   ))}
@@ -904,8 +904,8 @@ export default function HandoffPage() {
             <div style={{ marginBottom: 32 }}>
               <Eyebrow>Border Radius (M3 shape scale)</Eyebrow>
               <div style={{
-                background: "var(--color-dark-primary)",
-                border: "1px solid var(--color-dark-tertiary)",
+                background: "var(--md-sys-color-dark-primary)",
+                border: "1px solid var(--md-sys-color-dark-tertiary)",
                 borderRadius: 10,
                 padding: "16px 20px",
                 display: "flex",
@@ -917,15 +917,15 @@ export default function HandoffPage() {
                     <div style={{
                       width: 48,
                       height: 48,
-                      background: "var(--color-dark-secondary)",
+                      background: "var(--md-sys-color-dark-secondary)",
                       borderRadius: r.value,
-                      border: "1px solid var(--color-dark-tertiary)",
+                      border: "1px solid var(--md-sys-color-dark-tertiary)",
                     }} />
                     <div style={{ textAlign: "center" }}>
-                      <code style={{ fontSize: 10, color: "var(--color-brand-purple)", display: "block", fontFamily: "ui-monospace, monospace" }}>
+                      <code style={{ fontSize: 10, color: "var(--md-sys-color-neonindigo)", display: "block", fontFamily: "ui-monospace, monospace" }}>
                         {r.name.replace("--radius-", "")}
                       </code>
-                      <span style={{ fontSize: 11, color: "var(--color-text-muted)" }}>{r.value}</span>
+                      <span style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)" }}>{r.value}</span>
                     </div>
                   </div>
                 ))}
@@ -935,17 +935,17 @@ export default function HandoffPage() {
 
           {/* ── Components ───────────────────────────────────────────────── */}
           <Section id="components" title="Components">
-            <p style={{ fontSize: 13, color: "var(--color-text-muted)", lineHeight: 1.6, marginBottom: 8 }}>
+            <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 8 }}>
               Reusable widgets in the accounts flow. Each has a direct source file path and the recommended Flutter widget equivalent.
             </p>
             <div style={{
-              background: "var(--color-dark-primary)",
-              border: "1px solid var(--color-dark-tertiary)",
+              background: "var(--md-sys-color-dark-primary)",
+              border: "1px solid var(--md-sys-color-dark-tertiary)",
               borderRadius: 10,
               padding: "0 20px",
             }}>
               {COMPONENTS.map((comp, i) => (
-                <div key={comp.name} style={{ borderBottom: i < COMPONENTS.length - 1 ? "1px solid var(--color-dark-tertiary)" : "none" }}>
+                <div key={comp.name} style={{ borderBottom: i < COMPONENTS.length - 1 ? "1px solid var(--md-sys-color-dark-tertiary)" : "none" }}>
                   <ComponentRow comp={comp} />
                 </div>
               ))}

@@ -35,7 +35,7 @@ function AccountListItemSkeleton({ isLast = false }: { isLast?: boolean }) {
       {!isLast && (
         <div
           className="absolute bottom-0 left-3 right-3"
-          style={{ height: 1, background: "var(--color-dark-tertiary)" }}
+          style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }}
         />
       )}
 
@@ -72,7 +72,7 @@ export function AccountListSkeleton({ rows = 6 }: { rows?: number }) {
 
 export function AccountDetailSkeleton() {
   return (
-    <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+    <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
       {/* Header */}
       <div className="pt-10 px-4 pb-4">

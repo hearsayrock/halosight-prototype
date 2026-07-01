@@ -5,9 +5,9 @@
  * Route: /accounts/[id]
  * Widget: StatefulWidget
  * State: activeTab ("overview" | "activity"), pageState (loading|error|loaded)
- * Tokens: --color-background, --color-dark-primary, --color-dark-secondary,
- *         --color-dark-tertiary, --color-text-primary, --color-text-muted,
- *         --color-text-disabled, --color-brand-coral, --radius-full, --radius-md
+ * Tokens: --md-sys-color-background, --md-sys-color-dark-primary, --md-sys-color-dark-secondary,
+ *         --md-sys-color-dark-tertiary, --md-sys-color-text-primary, --md-sys-color-text-muted,
+ *         --md-sys-color-text-disabled, --md-sys-color-brand-coral, --radius-full, --radius-md
  * Flutter equivalent: account_detail_page.dart
  *
  * STATES (preview via ?preview=loading or ?preview=error):
@@ -59,19 +59,19 @@ function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; acc
     <div
       className="flex items-start gap-3 p-4 active:opacity-70 transition-opacity"
       style={{
-        background: isExternal ? "var(--color-dark-primary)" : "var(--color-dark-secondary)",
+        background: isExternal ? "var(--md-sys-color-dark-primary)" : "var(--md-sys-color-dark-secondary)",
         borderRadius: "var(--radius-md)",
-        border: isExternal ? "1px solid var(--color-dark-secondary)" : undefined,
+        border: isExternal ? "1px solid var(--md-sys-color-dark-secondary)" : undefined,
       }}
     >
       <div className="flex-1 min-w-0">
-        <p className="text-[16px] font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>
+        <p className="text-[16px] font-semibold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
           {item.title}
         </p>
         <p
           className="text-sm leading-relaxed mb-2"
           style={{
-            color: "var(--color-text-muted)",
+            color: "var(--md-sys-color-text-muted)",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
@@ -81,27 +81,27 @@ function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; acc
           {item.summary}
         </p>
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+          <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
             {formatActivityDate(item.date)}
           </span>
           {item.durationMinutes != null && (
             <>
-              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>•</span>
-              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                 {formatDuration(item.durationMinutes)}
               </span>
             </>
           )}
           {item.repName !== "Jordan Mills" && (
             <>
-              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>•</span>
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
               <div
                 className="flex items-center justify-center rounded-full text-[10px] font-bold flex-shrink-0"
                 style={{
                   width: 18,
                   height: 18,
-                  background: "var(--color-dark-tertiary)",
-                  color: "var(--color-text-muted)",
+                  background: "var(--md-sys-color-dark-tertiary)",
+                  color: "var(--md-sys-color-text-muted)",
                 }}
                 title={item.repName}
               >
@@ -114,7 +114,7 @@ function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; acc
               className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
               style={{
                 background: "rgba(139,146,255,0.10)",
-                color: "var(--color-brand-purple)",
+                color: "var(--md-sys-color-neonindigo)",
                 border: "1px solid rgba(139,146,255,0.18)",
               }}
             >
@@ -123,7 +123,7 @@ function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; acc
           )}
         </div>
       </div>
-      <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
+      <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
     </div>
     </Link>
   );
@@ -201,7 +201,7 @@ function AccountAIOverlay({
       transition={{ type: "spring", stiffness: 380, damping: 38 }}
       style={{
         position: "absolute", inset: 0,
-        background: "var(--color-background)",
+        background: "var(--md-sys-color-background)",
         display: "flex", flexDirection: "column",
         pointerEvents: "auto", zIndex: 60,
       }}
@@ -218,21 +218,21 @@ function AccountAIOverlay({
       <div className="flex items-start justify-between px-4 pt-12 pb-3 flex-shrink-0">
         <div>
           <div className="flex items-center gap-1.5 mb-0.5">
-            <Icon name="auto_awesome" size={13} style={{ color: "var(--color-brand-purple)" }} />
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--color-brand-purple)" }}>
+            <Icon name="auto_awesome" size={13} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--md-sys-color-neonindigo)" }}>
               Halosight AI
             </span>
           </div>
-          <p style={{ fontFamily: "Roboto Slab, Georgia, serif", fontSize: 20, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.2 }}>
+          <p style={{ fontFamily: "Roboto Slab, Georgia, serif", fontSize: 20, fontWeight: 700, color: "var(--md-sys-color-text-primary)", lineHeight: 1.2 }}>
             {isConversing ? name : `Prepping for ${name}`}
           </p>
         </div>
         <button
           onClick={onClose}
           className="flex items-center justify-center active:opacity-60 transition-opacity mt-1"
-          style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--color-dark-secondary)", flexShrink: 0 }}
+          style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--md-sys-color-dark-secondary)", flexShrink: 0 }}
         >
-          <Icon name="close" size={18} style={{ color: "var(--color-text-muted)" }} />
+          <Icon name="close" size={18} style={{ color: "var(--md-sys-color-text-muted)" }} />
         </button>
       </div>
 
@@ -245,12 +245,12 @@ function AccountAIOverlay({
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 {m.role === "user" ? (
                   <span className="px-3 py-2 text-sm leading-relaxed whitespace-pre-line"
-                    style={{ background: "var(--color-brand-purple)", color: "white", borderRadius: "16px 16px 4px 16px", maxWidth: "82%" }}>
+                    style={{ background: "var(--md-sys-color-neonindigo)", color: "white", borderRadius: "16px 16px 4px 16px", maxWidth: "82%" }}>
                     {m.content}
                   </span>
                 ) : (
                   <span className="px-3 py-2 text-sm leading-relaxed whitespace-pre-line"
-                    style={{ background: "rgba(255,255,255,0.06)", color: "var(--color-text-secondary)", borderRadius: "16px 16px 16px 4px", maxWidth: "92%" }}>
+                    style={{ background: "rgba(255,255,255,0.06)", color: "var(--md-sys-color-text-secondary)", borderRadius: "16px 16px 16px 4px", maxWidth: "92%" }}>
                     {m.content}
                   </span>
                 )}
@@ -262,7 +262,7 @@ function AccountAIOverlay({
                   <div className="flex gap-1 items-center">
                     {[0, 1, 2].map((i) => (
                       <motion.div key={i}
-                        style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--color-text-disabled)" }}
+                        style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--md-sys-color-text-disabled)" }}
                         animate={{ y: [0, -4, 0] }}
                         transition={{ duration: 0.55, delay: i * 0.15, repeat: Infinity, ease: "easeInOut" }}
                       />
@@ -284,11 +284,11 @@ function AccountAIOverlay({
             onKeyDown={(e) => e.key === "Enter" && send(input)}
             placeholder={isConversing ? "Ask a follow-up…" : "Ask anything about this account…"}
             className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: "var(--color-text-primary)" }}
+            style={{ color: "var(--md-sys-color-text-primary)" }}
           />
           <button onClick={() => send(input)} disabled={!input.trim() || typing}
             className="flex-shrink-0 active:opacity-60 transition-opacity disabled:opacity-30">
-            <Icon name="send" size={15} style={{ color: "var(--color-brand-purple)" }} />
+            <Icon name="send" size={15} style={{ color: "var(--md-sys-color-neonindigo)" }} />
           </button>
         </div>
 
@@ -299,7 +299,7 @@ function AccountAIOverlay({
               <button key={p.label} onClick={() => send(p.label)}
                 className="text-left px-2.5 py-2 active:opacity-50 transition-opacity"
                 style={{ background: "rgba(255,255,255,0.03)", borderRadius: "var(--radius-md)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                <span style={{ fontSize: 11.5, color: "var(--color-text-disabled)", lineHeight: 1.35, display: "block" }}>
+                <span style={{ fontSize: 11.5, color: "var(--md-sys-color-text-disabled)", lineHeight: 1.35, display: "block" }}>
                   {p.label}
                 </span>
               </button>
@@ -375,10 +375,10 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   if (preview === "error") {
     return (
-      <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+      <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
         <div className="pt-10 px-4 pb-2">
           <button onClick={() => router.push("/accounts")} className="p-1 active:opacity-60 transition-opacity">
-            <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
+            <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
           </button>
         </div>
         <ErrorState
@@ -392,10 +392,10 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   if (!account) {
     return (
-      <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+      <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
         <div className="pt-10 px-4 pb-2">
           <button onClick={() => router.push("/accounts")} className="p-1 active:opacity-60 transition-opacity">
-            <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
+            <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
           </button>
         </div>
         <ErrorState
@@ -407,7 +407,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+    <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
       {/* Header */}
       <div className="pt-10 px-4 pb-4">
@@ -415,20 +415,20 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         {/* Back button row — assignee badge appears on the right for other reps' accounts */}
         <div className="flex items-center justify-between mb-3">
           <button onClick={() => router.push("/accounts")} className="p-1 active:opacity-60 transition-opacity">
-            <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-muted)" }} />
+            <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
           </button>
           {account.assignedInitial && account.assignedInitial !== "J" ? (
             /* Assigned to a different rep */
             <div className="flex items-center gap-2 pr-1">
-              <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>Assigned to</span>
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>Assigned to</span>
               <div
                 className="flex items-center justify-center rounded-full text-[13px] font-semibold"
                 style={{
                   width: 28,
                   height: 28,
-                  background: "var(--color-dark-secondary)",
-                  color: "var(--color-text-muted)",
-                  border: "1.5px solid var(--color-dark-tertiary)",
+                  background: "var(--md-sys-color-dark-secondary)",
+                  color: "var(--md-sys-color-text-muted)",
+                  border: "1.5px solid var(--md-sys-color-dark-tertiary)",
                 }}
               >
                 {account.assignedInitial}
@@ -440,7 +440,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               className="text-[11px] font-semibold px-2.5 py-1 rounded-full mr-1"
               style={{
                 background: "rgba(139,146,255,0.1)",
-                color: "var(--color-brand-purple)",
+                color: "var(--md-sys-color-neonindigo)",
                 border: "1px solid rgba(139,146,255,0.2)",
               }}
             >
@@ -453,7 +453,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         <h1
           className="w-full text-center text-[26px] font-bold leading-tight px-10 mb-2"
           style={{
-            color: "var(--color-text-primary)",
+            color: "var(--md-sys-color-text-primary)",
             fontFamily: "Roboto Slab, Georgia, serif",
           }}
         >
@@ -472,21 +472,21 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
               {account.address && (
                 <div className="flex items-center gap-1">
-                  <Icon name="location_on" size={13} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
-                  <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+                  <Icon name="location_on" size={13} style={{ color: "var(--md-sys-color-text-muted)", flexShrink: 0 }} />
+                  <span className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>
                     {account.address}
                   </span>
                 </div>
               )}
               {account.address && typeLabel && (
-                <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>·</span>
+                <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>·</span>
               )}
               {typeLabel && (
                 <span
                   className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
                   style={{
-                    background: "var(--color-dark-secondary)",
-                    color: "var(--color-text-muted)",
+                    background: "var(--md-sys-color-dark-secondary)",
+                    color: "var(--md-sys-color-text-muted)",
                   }}
                 >
                   {typeLabel}
@@ -502,17 +502,17 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             <div className="flex items-center gap-1.5">
               <div
                 className="rounded-full flex-shrink-0"
-                style={{ width: 7, height: 7, background: "var(--color-brand-teal)" }}
+                style={{ width: 7, height: 7, background: "var(--md-sys-color-brand-teal)" }}
               />
-              <span className="text-sm font-semibold" style={{ color: "var(--color-brand-teal)" }}>
+              <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-brand-teal)" }}>
                 Lead
               </span>
             </div>
-            <div style={{ width: 1, height: 14, background: "var(--color-dark-tertiary)", flexShrink: 0 }} />
+            <div style={{ width: 1, height: 14, background: "var(--md-sys-color-dark-tertiary)", flexShrink: 0 }} />
             <button
               onClick={handleDisqualify}
               className="text-sm active:opacity-60 transition-opacity"
-              style={{ color: "var(--color-brand-coral)" }}
+              style={{ color: "var(--md-sys-color-brand-coral)" }}
             >
               Disqualify
             </button>
@@ -522,7 +522,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         {/* Tabs — hidden on just-created blank slate */}
         {!justCreated && <div
           className="flex p-1 gap-1 mx-auto"
-          style={{ width: 255, background: "var(--color-dark-primary)", borderRadius: "var(--radius-full)" }}
+          style={{ width: 255, background: "var(--md-sys-color-dark-primary)", borderRadius: "var(--radius-full)" }}
         >
           {(["overview", "activity"] as const).map((tab) => (
             <button
@@ -531,8 +531,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               className="flex-1 py-2 text-sm font-semibold transition-all capitalize"
               style={{
                 borderRadius: "var(--radius-full)",
-                background: activeTab === tab ? "var(--color-dark-secondary)" : "transparent",
-                color: activeTab === tab ? "var(--color-text-primary)" : "var(--color-text-muted)",
+                background: activeTab === tab ? "var(--md-sys-color-dark-secondary)" : "transparent",
+                color: activeTab === tab ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
               }}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -544,18 +544,18 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       {/* Just-created empty state — replaces tabs entirely */}
       {justCreated && (
         <div className="flex-1 flex flex-col items-center justify-center px-8 pb-24 text-center">
-          <Icon name="auto_awesome" size={32} style={{ color: "var(--color-brand-purple)", marginBottom: 20 }} />
+          <Icon name="auto_awesome" size={32} style={{ color: "var(--md-sys-color-neonindigo)", marginBottom: 20 }} />
           <h2
             style={{
               fontFamily: "Roboto Slab, Georgia, serif",
               fontSize: 22, fontWeight: 700,
-              color: "var(--color-text-primary)",
+              color: "var(--md-sys-color-text-primary)",
               lineHeight: 1.25, marginBottom: 12,
             }}
           >
             And just like that,<br />{account.name} exists.
           </h2>
-          <p style={{ fontSize: 15, lineHeight: 1.6, color: "var(--color-text-muted)", maxWidth: 280 }}>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: "var(--md-sys-color-text-muted)", maxWidth: 280 }}>
             No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and nowhere to go but up.
           </p>
         </div>
@@ -571,16 +571,16 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             {detail ? (
               <>
                 <section className="mb-6">
-                  <h2 className="heading-6 mb-2" style={{ color: "var(--color-text-primary)" }}>
+                  <h2 className="heading-6 mb-2" style={{ color: "var(--md-sys-color-text-primary)" }}>
                     Last Time
                   </h2>
-                  <p className="text-base leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+                  <p className="text-base leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>
                     {detail.lastVisitSummary}
                   </p>
                 </section>
 
                 <section className="mb-6">
-                  <h2 className="heading-6 mb-3" style={{ color: "var(--color-text-primary)" }}>
+                  <h2 className="heading-6 mb-3" style={{ color: "var(--md-sys-color-text-primary)" }}>
                     Ideas for this Time
                   </h2>
                   <ul className="flex flex-col gap-2.5">
@@ -588,9 +588,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                       <li key={i} className="flex items-start gap-2.5">
                         <span
                           className="flex-shrink-0 w-1.5 h-1.5 rounded-full"
-                          style={{ background: "var(--color-text-muted)", marginTop: "0.625rem" }}
+                          style={{ background: "var(--md-sys-color-text-muted)", marginTop: "0.625rem" }}
                         />
-                        <span className="text-base leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+                        <span className="text-base leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>
                           {idea}
                         </span>
                       </li>
@@ -600,7 +600,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               </>
             ) : (
               <div className="py-8 text-center mb-2">
-                <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>
+                <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                   No overview available yet.
                   <br />
                   Capture your first meeting to generate insights.
@@ -611,12 +611,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             {/* Action Items — always visible regardless of detail */}
             <section>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="heading-6" style={{ color: "var(--color-text-primary)" }}>
+                <h2 className="heading-6" style={{ color: "var(--md-sys-color-text-primary)" }}>
                   Action Items
                 </h2>
                 {actionItems.length > 0 && (
                   <button onClick={() => setShowAddSheet(true)} className="active:opacity-60 transition-opacity">
-                    <Icon name="add" size={20} style={{ color: "var(--color-text-primary)" }} />
+                    <Icon name="add" size={20} style={{ color: "var(--md-sys-color-text-primary)" }} />
                   </button>
                 )}
               </div>
@@ -634,23 +634,23 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   onClick={() => setShowAddSheet(true)}
                   className="w-full flex items-center gap-3 px-4 py-4 active:opacity-70 transition-opacity"
                   style={{
-                    background: "var(--color-dark-secondary)",
+                    background: "var(--md-sys-color-dark-secondary)",
                     borderRadius: "var(--radius-xl)",
                   }}
                 >
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{
-                      background: "color-mix(in srgb, var(--color-brand-purple) 15%, transparent)",
+                      background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)",
                     }}
                   >
-                    <Icon name="add" size={18} style={{ color: "var(--color-brand-purple)" }} />
+                    <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                    <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                       Add your first action item
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: "var(--color-text-secondary)" }}>
+                    <p className="text-xs mt-0.5" style={{ color: "var(--md-sys-color-text-secondary)" }}>
                       Track follow-ups from this visit
                     </p>
                   </div>
@@ -669,7 +669,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               ))
             ) : (
               <div className="py-8 text-center">
-                <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>
+                <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                   No activity recorded yet.
                 </p>
               </div>
@@ -689,12 +689,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             onClick={() => startCapture(id, account.name)}
             className="h-11 px-6 font-semibold text-[14px] flex items-center gap-2 transition-opacity active:opacity-80"
             style={{
-              background: "var(--color-brand-coral)",
-              color: "var(--color-text-primary)",
+              background: "var(--md-sys-color-brand-coral)",
+              color: "var(--md-sys-color-text-primary)",
               borderRadius: "var(--radius-full)",
             }}
           >
-            <Icon name="edit" size={16} style={{ color: "var(--color-text-primary)" }} />
+            <Icon name="edit" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
             Capture Meeting
           </button>
         </div>
@@ -714,7 +714,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           width: 48,
           height: 48,
           borderRadius: "50%",
-          background: "var(--color-brand-purple)",
+          background: "var(--md-sys-color-neonindigo)",
           boxShadow: "0 4px 18px rgba(139,146,255,0.45)",
         }}
       >
@@ -762,9 +762,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             >
               <div
                 style={{
-                  background: "var(--color-dark-secondary)",
+                  background: "var(--md-sys-color-dark-secondary)",
                   borderRadius: "var(--radius-xl)",
-                  border: "1px solid var(--color-dark-tertiary)",
+                  border: "1px solid var(--md-sys-color-dark-tertiary)",
                   boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.3)",
                   padding: "12px 16px",
                 }}
@@ -774,22 +774,22 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                     className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
                     style={{ background: "rgba(107, 157, 176, 0.20)" }}
                   >
-                    <div className="w-2 h-2 rounded-full" style={{ background: "var(--color-brand-teal)" }} />
+                    <div className="w-2 h-2 rounded-full" style={{ background: "var(--md-sys-color-brand-teal)" }} />
                   </div>
-                  <span className="flex-1 text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                  <span className="flex-1 text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                     Lead disqualified
                   </span>
                   <button
                     onClick={handleUndoDisqualify}
                     className="text-sm font-semibold active:opacity-60 transition-opacity"
-                    style={{ color: "var(--color-brand-purple)" }}
+                    style={{ color: "var(--md-sys-color-neonindigo)" }}
                   >
                     undo
                   </button>
                   <button
                     onClick={handleConfirmDisqualify}
                     className="ml-1 flex items-center justify-center active:opacity-60 transition-opacity"
-                    style={{ color: "var(--color-text-muted)" }}
+                    style={{ color: "var(--md-sys-color-text-muted)" }}
                   >
                     <Icon name="close" size={18} />
                   </button>

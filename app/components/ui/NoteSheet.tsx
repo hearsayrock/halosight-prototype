@@ -7,8 +7,8 @@
  * The user can type a note and tap Done, or dismiss without adding one.
  * Either path commits the completion — this sheet has no undo.
  *
- * Tokens: --color-dark-secondary (sheet bg), --color-dark-tertiary (input bg),
- *         --color-text-primary, --color-text-muted, --color-brand-teal,
+ * Tokens: --md-sys-color-dark-secondary (sheet bg), --md-sys-color-dark-tertiary (input bg),
+ *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-brand-teal,
  *         --radius-xl, --radius-lg, --radius-full
  */
 
@@ -76,7 +76,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
               right: 0,
               zIndex: 71,
               pointerEvents: "auto",
-              background: "var(--color-dark-secondary)",
+              background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
               padding: "20px 16px 36px",
             }}
@@ -85,7 +85,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
             <div className="flex items-center justify-between mb-3">
               <span
                 className="text-sm font-bold"
-                style={{ color: "var(--color-text-muted)" }}
+                style={{ color: "var(--md-sys-color-text-muted)" }}
               >
                 Add a note
               </span>
@@ -93,7 +93,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
                 onClick={() => onDone("")}
                 className="active:opacity-60 transition-opacity"
               >
-                <Icon name="close" size={20} style={{ color: "var(--color-text-muted)" }} />
+                <Icon name="close" size={20} style={{ color: "var(--md-sys-color-text-muted)" }} />
               </button>
             </div>
 
@@ -107,11 +107,11 @@ export default function NoteSheet({ visible, onDone }: Props) {
               rows={3}
               className="w-full resize-none outline-none text-sm px-3 py-2.5 mb-3"
               style={{
-                background: "var(--color-dark-tertiary)",
+                background: "var(--md-sys-color-dark-tertiary)",
                 borderRadius: "var(--radius-lg)",
-                color: "var(--color-text-primary)",
+                color: "var(--md-sys-color-text-primary)",
                 lineHeight: "1.6",
-                caretColor: "var(--color-brand-teal)",
+                caretColor: "var(--md-sys-color-brand-teal)",
                 display: "block",
               }}
             />
@@ -121,7 +121,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
               onClick={() => onDone(note)}
               className="w-full h-11 font-semibold text-sm active:opacity-80 transition-opacity"
               style={{
-                background: "var(--color-brand-teal)",
+                background: "var(--md-sys-color-brand-teal)",
                 borderRadius: "var(--radius-full)",
                 color: "#fff",
               }}

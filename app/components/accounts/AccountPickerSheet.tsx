@@ -4,9 +4,9 @@
  * FLUTTER HANDOFF: AccountPickerSheet
  * Widget: StatefulWidget
  * State: query
- * Tokens: --color-dark-primary, --color-dark-secondary, --color-dark-tertiary,
- *         --color-text-primary, --color-text-muted, --color-text-disabled,
- *         --color-brand-purple, --radius-xl, --radius-full
+ * Tokens: --md-sys-color-dark-primary, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
+ *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
+ *         --md-sys-color-neonindigo, --radius-xl, --radius-full
  * Flutter equivalent: account_picker_sheet.dart
  *
  * Slides up from the bottom. Shows the current account pinned at top,
@@ -49,7 +49,7 @@ function AccountRow({
       {showDivider && (
         <div
           className="absolute top-0 left-5 right-5"
-          style={{ height: 1, background: "var(--color-dark-tertiary)" }}
+          style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }}
         />
       )}
       <div className="flex-1 min-w-0">
@@ -57,19 +57,19 @@ function AccountRow({
           className="font-semibold truncate"
           style={{
             fontSize: 15,
-            color: isSelected ? "var(--color-brand-purple)" : "var(--color-text-primary)",
+            color: isSelected ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-primary)",
           }}
         >
           {account.name}
         </p>
         {(account.city || account.state) && (
-          <p className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>
+          <p className="text-xs mt-0.5" style={{ color: "var(--md-sys-color-text-muted)" }}>
             {[account.city, account.state].filter(Boolean).join(", ")}
           </p>
         )}
       </div>
       {isSelected && (
-        <Icon name="check" size={18} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+        <Icon name="check" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
       )}
     </button>
   );
@@ -116,7 +116,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
         className="absolute left-0 right-0 bottom-0"
         style={{
           zIndex: 61,
-          background: "var(--color-dark-primary)",
+          background: "var(--md-sys-color-dark-primary)",
           borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
           maxHeight: "72%",
           display: "flex",
@@ -129,7 +129,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full" style={{ background: "var(--color-dark-tertiary)" }} />
+          <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
         </div>
 
         {/* Header */}
@@ -139,7 +139,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
               fontFamily: "Roboto Slab, Georgia, serif",
               fontSize: 18,
               fontWeight: 700,
-              color: "var(--color-text-primary)",
+              color: "var(--md-sys-color-text-primary)",
             }}
           >
             Switch account
@@ -148,7 +148,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
             onClick={onClose}
             className="w-7 h-7 flex items-center justify-center active:opacity-60 transition-opacity"
           >
-            <Icon name="close" size={18} style={{ color: "var(--color-text-muted)" }} />
+            <Icon name="close" size={18} style={{ color: "var(--md-sys-color-text-muted)" }} />
           </button>
         </div>
 
@@ -157,11 +157,11 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
           className="flex items-center gap-2 mx-5 mb-3 px-3 flex-shrink-0"
           style={{
             height: 40,
-            background: "var(--color-dark-secondary)",
+            background: "var(--md-sys-color-dark-secondary)",
             borderRadius: "var(--radius-full)",
           }}
         >
-          <Icon name="search" size={16} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
+          <Icon name="search" size={16} style={{ color: "var(--md-sys-color-text-muted)", flexShrink: 0 }} />
           <input
             ref={searchRef}
             type="text"
@@ -169,11 +169,11 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: "var(--color-text-primary)" }}
+            style={{ color: "var(--md-sys-color-text-primary)" }}
           />
           {query && (
             <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-              <Icon name="cancel" fill size={15} style={{ color: "var(--color-text-disabled)" }} />
+              <Icon name="cancel" fill size={15} style={{ color: "var(--md-sys-color-text-disabled)" }} />
             </button>
           )}
         </div>
@@ -194,7 +194,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
                 <div
                   style={{
                     height: 1,
-                    background: "var(--color-dark-tertiary)",
+                    background: "var(--md-sys-color-dark-tertiary)",
                     margin: "0 20px 4px",
                   }}
                 />
@@ -214,7 +214,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
           ))}
 
           {filteredList.length === 0 && isSearching && (
-            <p className="text-sm text-center py-8" style={{ color: "var(--color-text-disabled)" }}>
+            <p className="text-sm text-center py-8" style={{ color: "var(--md-sys-color-text-disabled)" }}>
               No accounts match &ldquo;{query}&rdquo;
             </p>
           )}
