@@ -636,7 +636,6 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   key={item.id}
                   item={item}
                   accountId={id}
-                  isExternal={isExternalAccount}
                   isExternal={item.id === "new-capture" ? false : isExternalAccount}
                   href={item.id === "new-capture"
                     ? `/relationships/${id}/activity/new-capture?name=${encodeURIComponent(account.name)}`
