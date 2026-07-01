@@ -101,7 +101,7 @@ Generic, not domain-aware. Equivalent to Flutter's shared widget library.
 | Page files | lowercase | `page.tsx` |
 | Utility files | camelCase | `utils.ts` |
 | Mock data files | camelCase | `accounts.ts` |
-| CSS token names | `--kebab-case` | `--color-brand-purple` |
+| CSS token names | `--kebab-case` | `--md-sys-color-neonindigo` |
 | CSS class names | `.kebab-case` | `.heading-1`, `.label-serif` |
 
 ---
@@ -119,7 +119,7 @@ Every component must follow this structure:
  * Props: list props and types
  * State: none OR describe state
  * Flutter equivalent: path/to/widget.dart (or description)
- * Tokens: list every --color-* and --radius-* token used
+ * Tokens: list every --md-sys-color-* and --radius-* token used
  * Transitions: describe any animations
  */
 
@@ -140,9 +140,9 @@ The Flutter handoff comment block is **required** on every component. It makes t
 
 ## Token Usage Rules
 
-1. **Never use raw hex values** in components — always `var(--color-*)`.
+1. **Never use raw hex values** in components — always `var(--md-sys-color-*)`.
 2. **Never use raw px values for radius** — always `var(--radius-*)`.
-3. Alpha/glass effects use `--color-alpha-*` tokens + `backdropFilter`.
+3. Alpha/glass effects use `--md-sys-color-alpha-*` tokens + `backdropFilter`.
 4. If a color doesn't have a token, add it to `globals.css` and the design system page first.
 
 ---
@@ -182,7 +182,7 @@ No Redux, no Zustand, no global state libraries. Keep it simple — the Flutter 
 1. Determine category: layout / feature / ui primitive
 2. Place in correct `components/` subfolder
 3. Add Flutter handoff comment block
-4. Use `var(--color-*)` tokens — never raw hex
+4. Use `var(--md-sys-color-*)` tokens — never raw hex
 5. Export as default export
 6. If it's a new primitive, add it to `components/ui/` and document it in this file
 7. Add it to the design system page under the appropriate section

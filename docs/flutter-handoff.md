@@ -32,25 +32,25 @@ ThemeData halosightDarkTheme = ThemeData(
   colorScheme: ColorScheme(
     brightness: Brightness.dark,
     // Brand primaries
-    primary: Color(0xFFFF6B5A),         // --color-brand-coral
-    primaryContainer: Color(0xFFFF8F82), // --color-brand-coral-light
-    onPrimary: Color(0xFF111420),        // --color-text-inverse
-    secondary: Color(0xFF8B92FF),        // --color-brand-purple
-    secondaryContainer: Color(0xFFB3B8FF), // --color-brand-purple-light
+    primary: Color(0xFFFF6B5A),         // --md-sys-color-brand-coral
+    primaryContainer: Color(0xFFFF8F82), // --md-sys-color-brand-coral-light
+    onPrimary: Color(0xFF111420),        // --md-sys-color-text-inverse
+    secondary: Color(0xFF8B92FF),        // --md-sys-color-neonindigo
+    secondaryContainer: Color(0xFFB3B8FF), // --md-sys-color-neonindigo-light
     onSecondary: Color(0xFF111420),
-    tertiary: Color(0xFF5B63D6),         // --color-brand-blue
+    tertiary: Color(0xFF5B63D6),         // --md-sys-color-indigo
     onTertiary: Color(0xFFF7F8FF),
-    error: Color(0xFFFF4D4F),            // --color-error
+    error: Color(0xFFFF4D4F),            // --md-sys-color-error
     onError: Color(0xFFF7F8FF),
     // Surfaces
-    surface: Color(0xFF252A36),          // --color-dark-secondary
-    onSurface: Color(0xFFF7F8FF),        // --color-text-primary
-    surfaceContainerLow: Color(0xFF1A1D29),  // --color-dark-primary
-    surfaceContainerHigh: Color(0xFF3D4451), // --color-dark-tertiary
-    onSurfaceVariant: Color(0xFF8B94A8), // --color-text-muted
-    outline: Color(0x1AFFFFFF),          // --color-alpha-white-10
+    surface: Color(0xFF252A36),          // --md-sys-color-dark-secondary
+    onSurface: Color(0xFFF7F8FF),        // --md-sys-color-text-primary
+    surfaceContainerLow: Color(0xFF1A1D29),  // --md-sys-color-dark-primary
+    surfaceContainerHigh: Color(0xFF3D4451), // --md-sys-color-dark-tertiary
+    onSurfaceVariant: Color(0xFF8B94A8), // --md-sys-color-text-muted
+    outline: Color(0x1AFFFFFF),          // --md-sys-color-alpha-white-10
   ),
-  scaffoldBackgroundColor: Color(0xFF111420), // --color-background
+  scaffoldBackgroundColor: Color(0xFF111420), // --md-sys-color-background
   fontFamily: 'Barlow',
 );
 ```
@@ -154,8 +154,8 @@ Layout:
   Row: [AccountTypeIcon | Column(name, Row(distance · lastVisited)) | city/state?]
   items-start alignment — icon offset 3px top, city/state offset 2px top
   Padding: 16px horizontal, 12px vertical
-  Background: --color-dark-secondary
-  Border: 1px --color-alpha-white-10
+  Background: --md-sys-color-dark-secondary
+  Border: 1px --md-sys-color-alpha-white-10
   Radius: --radius-sm
 State: none — purely presentational
 Tokens:
@@ -176,7 +176,7 @@ Tokens:
 Widget type: StatelessWidget
 Props: type (AccountType: corporate | branch | standalone)
 Size: 18×18
-corporate: layered diamond/chain icon — stroked paths, --color-text-muted top layer, --color-text-disabled lower
+corporate: layered diamond/chain icon — stroked paths, --md-sys-color-text-muted top layer, --md-sys-color-text-disabled lower
 branch: rectangle outline with dot grid
 standalone: rectangle outline with horizontal dash
 ```
@@ -190,17 +190,17 @@ Widget type: StatefulWidget (manages open/close)
 Props: current (SortOption), onChange (Function)
 Trigger:
   Size: 40×40, radius: rounded-xl
-  Background: --color-dark-secondary
-  Icon: sort (3 horizontal bars), --color-text-muted
+  Background: --md-sys-color-dark-secondary
+  Icon: sort (3 horizontal bars), --md-sys-color-text-muted
   On open: trigger fades + scales down (opacity 0, scale 0.85, 120ms)
 Dropdown:
-  Background: --color-dark-tertiary
+  Background: --md-sys-color-dark-tertiary
   Radius: --radius-xl
   Padding: 16px top/bottom, 20px sides
   Shadow: --elevation-3
   Row layout: [16px check slot | 12px gap | label text]
   Check icon: visible on selected row only
-  All labels: --color-text-primary, text-base (16px)
+  All labels: --md-sys-color-text-primary, text-base (16px)
 Options: alphabetical | distance | lastVisited | company
 State: isOpen bool
 Animation (iOS UIMenu style):
@@ -222,17 +222,17 @@ Props: activeTab (home | accounts)
 Layout:
   Floating pill — 32px margin bottom and sides
   Height: 66px, radius: full (9999px)
-  Background: --color-alpha-purple-glass
-  Border: 1px --color-alpha-white-10
+  Background: --md-sys-color-alpha-neonindigo-glass
+  Border: 1px --md-sys-color-alpha-white-10
   Backdrop filter: blur(20px) saturate(180%) — liquid glass
   Shadow: 0 8px 32px rgba(0,0,0,0.35)
 Active pill:
-  Background: --color-alpha-dark-glass (rgba(255,255,255,0.18))
+  Background: --md-sys-color-alpha-dark-glass (rgba(255,255,255,0.18))
   Inset: 6px top/bottom/outer-edge
   Animated: left + right CSS transition 200ms ease
 Tab labels: .label-serif (Roboto Slab 10px)
-Active: --color-text-primary icon + label
-Inactive: --color-text-muted icon + label
+Active: --md-sys-color-text-primary icon + label
+Inactive: --md-sys-color-text-muted icon + label
 Icons: filled SVG paths, 22×22 rendered
 ```
 
@@ -258,7 +258,7 @@ Color: currentColor (controlled via className or style)
 
 ```
 Widget type: StatelessWidget
-Props: size (default 32), color (default --color-text-muted)
+Props: size (default 32), color (default --md-sys-color-text-muted)
 SVG: two pill-shaped bars
   Top bar: full width (32px), height 5px, y=7, rx=2.5
   Bottom bar: 56% width (18px), height 5px, y=19, rx=2.5

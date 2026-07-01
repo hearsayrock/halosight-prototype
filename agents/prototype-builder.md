@@ -114,20 +114,20 @@ When writing inline styles (preferred over Tailwind classes for token values):
 
 ```tsx
 // Colors
-style={{ background: "var(--color-surface)" }}
-style={{ color: "var(--color-on-surface-variant)" }}
-style={{ borderColor: "var(--color-outline)" }}
+style={{ background: "var(--md-sys-color-surface)" }}
+style={{ color: "var(--md-sys-color-on-surface-variant)" }}
+style={{ borderColor: "var(--md-sys-color-outline)" }}
 
 // Or use hex directly (tokens are defined in globals.css):
-background: "#13141F"    // --color-background
-background: "#1C1D2B"    // --color-surface
-background: "#22243A"    // --color-surface-container-high
-background: "#2A2D45"    // --color-outline
-background: "#E8614A"    // --color-primary
-background: "#6B7FD7"    // --color-secondary
-color:      "#FFFFFF"    // --color-on-surface
-color:      "#8B8FA8"    // --color-on-surface-variant
-color:      "#5A5E78"    // --color-text-muted
+background: "#13141F"    // --md-sys-color-background
+background: "#1C1D2B"    // --md-sys-color-surface
+background: "#22243A"    // --md-sys-color-surface-container-high
+background: "#2A2D45"    // --md-sys-color-outline
+background: "#E8614A"    // --md-sys-color-primary
+background: "#6B7FD7"    // --md-sys-color-secondary
+color:      "#FFFFFF"    // --md-sys-color-on-surface
+color:      "#8B8FA8"    // --md-sys-color-on-surface-variant
+color:      "#5A5E78"    // --md-sys-color-text-muted
 ```
 
 ---
