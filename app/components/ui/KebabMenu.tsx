@@ -4,9 +4,9 @@
  * FLUTTER HANDOFF: KebabMenu
  * Widget: StatefulWidget (manages open/close)
  * Props: items ({ label, onClick, destructive? }[])
- * Tokens: --color-dark-secondary (trigger bg), --color-dark-tertiary (menu bg),
- *         --color-text-muted (trigger icon), --color-text-primary (item text),
- *         --color-brand-coral (destructive item), --radius-xl
+ * Tokens: --md-sys-color-dark-secondary (trigger bg), --md-sys-color-dark-tertiary (menu bg),
+ *         --md-sys-color-text-muted (trigger icon), --md-sys-color-text-primary (item text),
+ *         --md-sys-color-brand-coral (destructive item), --radius-xl
  * Animation: springs in from top-right anchor, matching SortMenu pattern.
  */
 
@@ -56,10 +56,10 @@ export default function KebabMenu({ items }: Props) {
         animate={{ opacity: open ? 0 : 1, scale: open ? 0.85 : 1 }}
         transition={{ duration: 0.12 }}
         className="w-10 h-10 flex items-center justify-center rounded-xl"
-        style={{ background: "var(--color-dark-secondary)" }}
+        style={{ background: "var(--md-sys-color-dark-secondary)" }}
         aria-label="More options"
       >
-        <Icon name="more_vert" size={20} style={{ color: "var(--color-text-muted)" }} />
+        <Icon name="more_vert" size={20} style={{ color: "var(--md-sys-color-text-muted)" }} />
       </motion.button>
 
       <AnimatePresence>
@@ -75,7 +75,7 @@ export default function KebabMenu({ items }: Props) {
               transition={menuTransition}
               style={{
                 transformOrigin: "top right",
-                background: "var(--color-dark-tertiary)",
+                background: "var(--md-sys-color-dark-tertiary)",
                 borderRadius: "var(--radius-xl)",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
                 paddingTop: 16,
@@ -100,7 +100,7 @@ export default function KebabMenu({ items }: Props) {
                     paddingTop: 10,
                     paddingBottom: 10,
                     background: "transparent",
-                    color: item.destructive ? "var(--color-brand-coral)" : "var(--color-text-primary)",
+                    color: item.destructive ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-primary)",
                   }}
                 >
                   {item.label}

@@ -25,7 +25,7 @@ function ProspectBadge() {
       className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{
         background: "rgba(107, 157, 176, 0.18)",
-        color: "var(--color-brand-teal)",
+        color: "var(--md-sys-color-brand-teal)",
       }}
     >
       Lead
@@ -47,8 +47,8 @@ function CrmTypeBadge({ type }: { type: CrmAccountType }) {
     <span
       className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{
-        background: "var(--color-dark-tertiary)",
-        color: "var(--color-text-muted)",
+        background: "var(--md-sys-color-dark-tertiary)",
+        color: "var(--md-sys-color-text-muted)",
       }}
     >
       {CRM_LABEL[type]}
@@ -73,7 +73,7 @@ function TaskIcon({ color }: { color: string }) {
 
 function TaskIndicator({ count }: { count: number }) {
   if (count === 0) {
-    return <TaskIcon color="var(--color-text-disabled)" />;
+    return <TaskIcon color="var(--md-sys-color-text-disabled)" />;
   }
   return (
     <span
@@ -83,10 +83,10 @@ function TaskIndicator({ count }: { count: number }) {
         height: 20,
       }}
     >
-      <TaskIcon color="var(--color-brand-coral-light)" />
+      <TaskIcon color="var(--md-sys-color-brand-coral-light)" />
       <span
         className="text-[11px] font-semibold"
-        style={{ color: "var(--color-brand-coral-light)", lineHeight: 1 }}
+        style={{ color: "var(--md-sys-color-brand-coral-light)", lineHeight: 1 }}
       >
         {count}
       </span>
@@ -103,8 +103,8 @@ function AssigneeCircle({ initial }: { initial: string }) {
       style={{
         width: 22,
         height: 22,
-        background: "var(--color-dark-tertiary)",
-        color: "var(--color-text-muted)",
+        background: "var(--md-sys-color-dark-tertiary)",
+        color: "var(--md-sys-color-text-muted)",
       }}
     >
       {initial}
@@ -136,9 +136,9 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         {/* Type icon */}
         <div className="flex-shrink-0 mt-[4px]">
           {account.halosightType === "prospect" ? (
-            <LeadStarIcon size={18} style={{ color: "var(--color-brand-purple)" }} />
+            <LeadStarIcon size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
           ) : (
-            <CompanyIcon size={18} style={{ color: "var(--color-text-disabled)" }} />
+            <CompanyIcon size={18} style={{ color: "var(--md-sys-color-text-disabled)" }} />
           )}
         </div>
 
@@ -147,7 +147,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
           <div className="flex items-center gap-1.5">
             <span
               className="text-[16px] font-semibold truncate"
-              style={{ color: "var(--color-text-primary)" }}
+              style={{ color: "var(--md-sys-color-text-primary)" }}
             >
               {account.name}
             </span>
@@ -155,13 +155,13 @@ export default function AccountListItem({ account, isLast = false }: Props) {
 
           {/* Distance • location */}
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+            <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {formatDistance(account.distanceMiles)}
             </span>
             {location && (
               <>
-                <span className="text-sm" style={{ color: "var(--color-text-disabled)" }}>•</span>
-                <span className="text-sm truncate" style={{ color: "var(--color-text-muted)" }}>
+                <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
+                <span className="text-sm truncate" style={{ color: "var(--md-sys-color-text-muted)" }}>
                   {location}
                 </span>
               </>
@@ -170,8 +170,8 @@ export default function AccountListItem({ account, isLast = false }: Props) {
 
           {/* Visited */}
           <p className="text-sm mt-0.5">
-            <span style={{ color: "var(--color-text-disabled)" }}>Visited </span>
-            <span className="font-semibold" style={{ color: "var(--color-text-muted)" }}>
+            <span style={{ color: "var(--md-sys-color-text-disabled)" }}>Visited </span>
+            <span className="font-semibold" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {label}
             </span>
           </p>
@@ -183,7 +183,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
           {showAttention && (
             <span
               className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
-              style={{ background: "rgba(245,166,35,0.15)", color: "var(--color-warning)", border: "1px solid rgba(245,166,35,0.3)" }}
+              style={{ background: "rgba(245,166,35,0.15)", color: "var(--md-sys-color-warning)", border: "1px solid rgba(245,166,35,0.3)" }}
             >
               Needs Info
             </span>

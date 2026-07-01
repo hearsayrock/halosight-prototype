@@ -3,9 +3,9 @@
 /**
  * FLUTTER HANDOFF: FeedbackWidget
  * Widget: StatefulWidget
- * Tokens: --color-dark-secondary, --color-dark-tertiary, --color-background,
- *         --color-text-primary, --color-text-secondary, --color-text-muted,
- *         --color-text-disabled, --color-brand-purple, --color-brand-teal,
+ * Tokens: --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary, --md-sys-color-background,
+ *         --md-sys-color-text-primary, --md-sys-color-text-secondary, --md-sys-color-text-muted,
+ *         --md-sys-color-text-disabled, --md-sys-color-neonindigo, --md-sys-color-brand-teal,
  *         --radius-xl, --radius-full, --radius-md
  *
  * Entry card lives inline in the home scroll. Tapping a category pill opens
@@ -78,7 +78,7 @@ function FeedbackSheet({
           <motion.div
             className="absolute left-0 right-0 bottom-0"
             style={{
-              background: "var(--color-background)",
+              background: "var(--md-sys-color-background)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
               maxHeight: "90%",
               overflowY: "auto",
@@ -90,7 +90,7 @@ function FeedbackSheet({
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full" style={{ background: "var(--color-dark-tertiary)" }} />
+              <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
             </div>
 
             <div className="px-5 pt-3 pb-10">
@@ -98,20 +98,20 @@ function FeedbackSheet({
               <div className="flex items-start justify-between mb-1">
                 <h2
                   className="text-[22px] font-bold"
-                  style={{ color: "var(--color-text-primary)" }}
+                  style={{ color: "var(--md-sys-color-text-primary)" }}
                 >
                   Share feedback
                 </h2>
                 <button
                   onClick={handleClose}
                   className="w-8 h-8 rounded-full flex items-center justify-center active:opacity-60 transition-opacity"
-                  style={{ background: "var(--color-dark-secondary)", marginTop: 2 }}
+                  style={{ background: "var(--md-sys-color-dark-secondary)", marginTop: 2 }}
                 >
-                  <Icon name="close" size={16} style={{ color: "var(--color-text-muted)" }} />
+                  <Icon name="close" size={16} style={{ color: "var(--md-sys-color-text-muted)" }} />
                 </button>
               </div>
 
-              <p className="text-[14px] mb-5" style={{ color: "var(--color-text-muted)" }}>
+              <p className="text-[14px] mb-5" style={{ color: "var(--md-sys-color-text-muted)" }}>
                 Pick a type, then tell us more. We read everything.
               </p>
 
@@ -126,9 +126,9 @@ function FeedbackSheet({
                       className="flex items-center gap-1.5 px-3.5 py-2 active:opacity-80 transition-opacity"
                       style={{
                         borderRadius: "var(--radius-full)",
-                        border: `1.5px solid ${active ? "transparent" : "var(--color-dark-tertiary)"}`,
+                        border: `1.5px solid ${active ? "transparent" : "var(--md-sys-color-dark-tertiary)"}`,
                         background: active ? "rgba(139,146,255,0.18)" : "transparent",
-                        color: active ? "var(--color-brand-purple)" : "var(--color-text-muted)",
+                        color: active ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)",
                         fontSize: 14,
                         fontWeight: active ? 600 : 500,
                         transition: "background 0.15s, color 0.15s, border-color 0.15s",
@@ -149,11 +149,11 @@ function FeedbackSheet({
                 rows={4}
                 className="w-full text-[15px] resize-none outline-none"
                 style={{
-                  background: "var(--color-dark-secondary)",
+                  background: "var(--md-sys-color-dark-secondary)",
                   borderRadius: "var(--radius-md)",
                   padding: "14px 16px",
-                  color: "var(--color-text-primary)",
-                  caretColor: "var(--color-brand-coral)",
+                  color: "var(--md-sys-color-text-primary)",
+                  caretColor: "var(--md-sys-color-brand-coral)",
                   border: "none",
                   marginBottom: 16,
                   display: "block",
@@ -171,13 +171,13 @@ function FeedbackSheet({
                   background: sent
                     ? "rgba(46,204,113,0.15)"
                     : text.trim()
-                      ? "var(--color-brand-teal)"
-                      : "var(--color-dark-secondary)",
+                      ? "var(--md-sys-color-brand-teal)"
+                      : "var(--md-sys-color-dark-secondary)",
                   color: sent
-                    ? "var(--color-semantic-success)"
+                    ? "var(--md-sys-color-semantic-success)"
                     : text.trim()
-                      ? "var(--color-text-primary)"
-                      : "var(--color-text-disabled)",
+                      ? "var(--md-sys-color-text-primary)"
+                      : "var(--md-sys-color-text-disabled)",
                   fontSize: 16,
                   transition: "background 0.2s, color 0.2s",
                 }}
@@ -210,7 +210,7 @@ export default function FeedbackWidget() {
       <div
         className="mx-4 mb-6"
         style={{
-          background: "var(--color-dark-primary)",
+          background: "var(--md-sys-color-dark-primary)",
           borderRadius: "var(--radius-xl)",
           padding: "18px 18px 16px",
           border: "1px solid rgba(255,255,255,0.08)",
@@ -218,11 +218,11 @@ export default function FeedbackWidget() {
       >
         {/* Eyebrow */}
         <div className="flex items-center gap-1.5 mb-3">
-          <Icon name="feedback" size={14} style={{ color: "var(--color-brand-purple)" }} />
+          <Icon name="feedback" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
           <span
             style={{
               fontSize: 10, fontWeight: 700, letterSpacing: "0.09em",
-              textTransform: "uppercase", color: "var(--color-brand-purple)",
+              textTransform: "uppercase", color: "var(--md-sys-color-neonindigo)",
             }}
           >
             Share Feedback
@@ -232,13 +232,13 @@ export default function FeedbackWidget() {
         {/* Title */}
         <p
           className="font-bold mb-1"
-          style={{ fontSize: 18, color: "var(--color-text-primary)", lineHeight: 1.25 }}
+          style={{ fontSize: 18, color: "var(--md-sys-color-text-primary)", lineHeight: 1.25 }}
         >
           Help shape Halosight
         </p>
 
         {/* Subtitle */}
-        <p className="text-[13px] mb-4" style={{ color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+        <p className="text-[13px] mb-4" style={{ color: "var(--md-sys-color-text-muted)", lineHeight: 1.5 }}>
           We&apos;re brand new and reading every note. Tell us what&apos;s working — or what&apos;s missing.
         </p>
 
@@ -251,14 +251,14 @@ export default function FeedbackWidget() {
               className="flex items-center gap-1.5 px-3 py-2 active:opacity-70 transition-opacity"
               style={{
                 borderRadius: "var(--radius-full)",
-                border: "1.5px solid var(--color-dark-tertiary)",
+                border: "1.5px solid var(--md-sys-color-dark-tertiary)",
                 background: "transparent",
-                color: "var(--color-text-secondary)",
+                color: "var(--md-sys-color-text-secondary)",
                 fontSize: 13,
                 fontWeight: 500,
               }}
             >
-              <Icon name={t.icon} size={14} style={{ color: "var(--color-text-muted)" }} />
+              <Icon name={t.icon} size={14} style={{ color: "var(--md-sys-color-text-muted)" }} />
               {t.label}
             </button>
           ))}

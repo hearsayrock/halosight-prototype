@@ -10,9 +10,9 @@
  * corrections in real time. Field cards update live (green on confirm).
  * "Looks good" / "Use defaults" → readyCapture().
  *
- * Tokens: --color-background, --color-dark-secondary, --color-text-primary,
- *         --color-text-muted, --color-text-disabled, --color-brand-purple,
- *         --color-semantic-success, --radius-lg, --radius-full
+ * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-text-primary,
+ *         --md-sys-color-text-muted, --md-sys-color-text-disabled, --md-sys-color-neonindigo,
+ *         --md-sys-color-semantic-success, --radius-lg, --radius-full
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -111,7 +111,7 @@ function LiveCaption({ text }: { text: string }) {
             animate={{ opacity: 1, filter: "blur(0px)" }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="shrink-0 text-[15px] italic"
-            style={{ color: "var(--color-text-muted)" }}
+            style={{ color: "var(--md-sys-color-text-muted)" }}
           >
             {word}
           </motion.span>
@@ -130,7 +130,7 @@ function WaveformBars() {
       {scales.map((s, i) => (
         <motion.div
           key={i}
-          style={{ width: 4, borderRadius: 2, background: "var(--color-brand-purple)" }}
+          style={{ width: 4, borderRadius: 2, background: "var(--md-sys-color-neonindigo)" }}
           animate={{ height: [10 * s, 44 * s, 7 * s, 40 * s, 10 * s] }}
           transition={{ duration: 0.85 + i * 0.14, repeat: Infinity, ease: "easeInOut", delay: i * 0.11 }}
         />
@@ -169,13 +169,13 @@ function FieldCard({ field, onSave }: FieldCardProps) {
     ? "2px dashed rgba(139,146,255,0.65)"
     : "1px solid rgba(139,146,255,0.28)";
 
-  const bg = isConfirmed && !focused ? "rgba(46,204,113,0.05)" : "var(--color-dark-secondary)";
+  const bg = isConfirmed && !focused ? "rgba(46,204,113,0.05)" : "var(--md-sys-color-dark-secondary)";
 
   const idleValueColor = isConfirmed
-    ? "var(--color-text-primary)"
+    ? "var(--md-sys-color-text-primary)"
     : isHigh
-    ? "var(--color-brand-purple)"
-    : "var(--color-text-muted)";
+    ? "var(--md-sys-color-neonindigo)"
+    : "var(--md-sys-color-text-muted)";
 
   function focusInput() {
     setFocused(true);
@@ -200,9 +200,9 @@ function FieldCard({ field, onSave }: FieldCardProps) {
       {field.multiLine ? (
         <>
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[13px]" style={{ color: "var(--color-text-muted)" }}>{field.label}</span>
-            {isHigh && !focused && <Icon name="auto_awesome" size={14} style={{ color: "var(--color-brand-purple)" }} />}
-            {isConfirmed && !focused && <span className="text-[15px] font-bold" style={{ color: "var(--color-semantic-success)" }}>✓</span>}
+            <span className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>{field.label}</span>
+            {isHigh && !focused && <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />}
+            {isConfirmed && !focused && <span className="text-[15px] font-bold" style={{ color: "var(--md-sys-color-semantic-success)" }}>✓</span>}
           </div>
           <input
             ref={inputRef}
@@ -216,7 +216,7 @@ function FieldCard({ field, onSave }: FieldCardProps) {
             onClick={(e) => e.stopPropagation()}
             className="w-full text-[15px] outline-none bg-transparent"
             style={{
-              color: focused ? "var(--color-text-primary)" : idleValueColor,
+              color: focused ? "var(--md-sys-color-text-primary)" : idleValueColor,
               fontWeight: focused ? 400 : 600,
               transition: "color 0.15s",
             }}
@@ -234,7 +234,7 @@ function FieldCard({ field, onSave }: FieldCardProps) {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.12 }}
                 className="text-[13px] flex-shrink-0"
-                style={{ color: "var(--color-text-muted)" }}
+                style={{ color: "var(--md-sys-color-text-muted)" }}
               >
                 {field.label}
               </motion.span>
@@ -245,11 +245,11 @@ function FieldCard({ field, onSave }: FieldCardProps) {
             <AnimatePresence initial={false}>
               {!focused && isHigh && (
                 <motion.span key="sparkle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}>
-                  <Icon name="auto_awesome" size={14} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
+                  <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
                 </motion.span>
               )}
               {!focused && isConfirmed && (
-                <motion.span key="check" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }} className="text-[15px] font-bold flex-shrink-0" style={{ color: "var(--color-semantic-success)" }}>
+                <motion.span key="check" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }} className="text-[15px] font-bold flex-shrink-0" style={{ color: "var(--md-sys-color-semantic-success)" }}>
                   ✓
                 </motion.span>
               )}
@@ -266,7 +266,7 @@ function FieldCard({ field, onSave }: FieldCardProps) {
                 onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
                 onClick={(e) => e.stopPropagation()}
                 className="outline-none bg-transparent min-w-0 w-full"
-                style={{ fontSize: 15, fontWeight: 400, color: "var(--color-text-primary)", textAlign: "left" }}
+                style={{ fontSize: 15, fontWeight: 400, color: "var(--md-sys-color-text-primary)", textAlign: "left" }}
               />
             ) : (
               <motion.span
@@ -371,7 +371,7 @@ export default function AIReviewOverlay() {
         <motion.div
           key="ai-review"
           className="absolute inset-0 flex flex-col"
-          style={{ background: "var(--color-background)", zIndex: 100, pointerEvents: "auto" }}
+          style={{ background: "var(--md-sys-color-background)", zIndex: 100, pointerEvents: "auto" }}
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
@@ -393,13 +393,13 @@ export default function AIReviewOverlay() {
                     onClick={() => setShowExtra((v) => !v)}
                     whileTap={{ scale: 0.94 }}
                     className="text-[11px] font-semibold mb-1 w-fit"
-                    style={{ color: "var(--color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
+                    style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
                   >
                     What we learned
                   </motion.p>
                   <h2
                     className="text-[26px] font-bold leading-tight"
-                    style={{ fontFamily: "Roboto Slab, Georgia, serif", color: "var(--color-text-primary)" }}
+                    style={{ fontFamily: "Roboto Slab, Georgia, serif", color: "var(--md-sys-color-text-primary)" }}
                   >
                     Here's the read on {accountName ?? "this lead"}
                   </h2>
@@ -436,7 +436,7 @@ export default function AIReviewOverlay() {
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           className="text-center text-[13px] w-full"
-                          style={{ color: "var(--color-text-disabled)" }}
+                          style={{ color: "var(--md-sys-color-text-disabled)" }}
                         >
                           Listening…
                         </motion.p>
@@ -446,7 +446,7 @@ export default function AIReviewOverlay() {
 
                   <p
                     className="text-[11px] font-semibold mb-3"
-                    style={{ color: "var(--color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
+                    style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
                   >
                     After you speak
                   </p>
@@ -472,7 +472,7 @@ export default function AIReviewOverlay() {
               className="absolute inset-x-0 bottom-0 pointer-events-none"
               style={{
                 top: 0,
-                background: "linear-gradient(to bottom, transparent 0%, color-mix(in srgb, var(--color-background) 60%, transparent) 35%, var(--color-background) 75%)",
+                background: "linear-gradient(to bottom, transparent 0%, color-mix(in srgb, var(--md-sys-color-background) 60%, transparent) 35%, var(--md-sys-color-background) 75%)",
                 backdropFilter: "blur(14px)",
                 WebkitBackdropFilter: "blur(14px)",
               }}
@@ -522,7 +522,7 @@ export default function AIReviewOverlay() {
               <motion.button
                 className="absolute inset-0 rounded-full flex items-center justify-center z-10"
                 style={{
-                  background: "var(--color-brand-purple)",
+                  background: "var(--md-sys-color-neonindigo)",
                   boxShadow: "0 4px 20px rgba(139,146,255,0.3)",
                 }}
                 onPointerDown={startListening}
@@ -536,7 +536,7 @@ export default function AIReviewOverlay() {
 
               <span
                 className="text-[12px] font-semibold"
-                style={{ color: listening ? "var(--color-brand-purple)" : "var(--color-text-primary)" }}
+                style={{ color: listening ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-primary)" }}
               >
                 {listening ? "Listening…" : "Hold to talk"}
               </span>
@@ -583,13 +583,13 @@ function SideButton({
       <div
         className="w-12 h-12 rounded-full flex items-center justify-center"
         style={{
-          background: isPurple ? "var(--color-alpha-purple-10)" : "var(--color-dark-secondary)",
-          border: isPurple ? "1.5px solid var(--color-brand-purple)" : "1px solid rgba(255,255,255,0.08)",
+          background: isPurple ? "var(--md-sys-color-alpha-neonindigo-10)" : "var(--md-sys-color-dark-secondary)",
+          border: isPurple ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        <Icon name={icon} size={22} style={{ color: isPurple ? "var(--color-brand-purple)" : "var(--color-text-muted)" }} />
+        <Icon name={icon} size={22} style={{ color: isPurple ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)" }} />
       </div>
-      <span className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>{label}</span>
+      <span className="text-[11px]" style={{ color: "var(--md-sys-color-text-muted)" }}>{label}</span>
     </button>
   );
 }

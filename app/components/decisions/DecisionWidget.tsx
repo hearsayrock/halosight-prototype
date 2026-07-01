@@ -3,9 +3,9 @@
 /**
  * FLUTTER HANDOFF: DecisionWidget
  * Widget: StatefulWidget
- * Tokens: --color-dark-secondary, --color-dark-tertiary, --color-warning,
- *         --color-success, --color-brand-purple, --color-text-muted,
- *         --color-text-disabled, --color-background, --radius-sm, --radius-full
+ * Tokens: --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary, --md-sys-color-warning,
+ *         --md-sys-color-success, --md-sys-color-neonindigo, --md-sys-color-text-muted,
+ *         --md-sys-color-text-disabled, --md-sys-color-background, --radius-sm, --radius-full
  * Notes: Supabase-backed shared decision recorder. Used on story walkthrough pages.
  *        Real-time sync between sessions via Supabase Realtime.
  */
@@ -106,15 +106,15 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
     <div style={{
       marginTop: 10,
       padding: "10px 14px",
-      background: decided ? "rgba(245,166,35,0.05)" : "var(--color-dark-secondary)",
-      border: `1px solid ${decided ? "rgba(245,166,35,0.28)" : "var(--color-dark-tertiary)"}`,
+      background: decided ? "rgba(245,166,35,0.05)" : "var(--md-sys-color-dark-secondary)",
+      border: `1px solid ${decided ? "rgba(245,166,35,0.28)" : "var(--md-sys-color-dark-tertiary)"}`,
       borderRadius: "var(--radius-sm)",
       transition: "border-color 0.15s, background 0.15s",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
         <span style={{
           fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
-          color: decided ? "var(--color-warning)" : "var(--color-text-disabled)",
+          color: decided ? "var(--md-sys-color-warning)" : "var(--md-sys-color-text-disabled)",
           flexShrink: 0, marginRight: 2,
         }}>
           {decided ? "✓ Decided" : "Decide:"}
@@ -128,8 +128,8 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
               padding: "3px 11px", borderRadius: "var(--radius-full)", fontSize: 12,
               fontWeight: chosen === opt ? 700 : 400,
               background: chosen === opt ? "rgba(245,166,35,0.14)" : "transparent",
-              color: chosen === opt ? "var(--color-warning)" : "var(--color-text-muted)",
-              border: `1px solid ${chosen === opt ? "rgba(245,166,35,0.4)" : "var(--color-dark-tertiary)"}`,
+              color: chosen === opt ? "var(--md-sys-color-warning)" : "var(--md-sys-color-text-muted)",
+              border: `1px solid ${chosen === opt ? "rgba(245,166,35,0.4)" : "var(--md-sys-color-dark-tertiary)"}`,
               cursor: "pointer", transition: "all 0.1s",
             }}
           >
@@ -147,7 +147,7 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
                   padding: "2px 9px", borderRadius: "var(--radius-full)", fontSize: 11,
                   fontWeight: decidedBy === name ? 600 : 400,
                   background: decidedBy === name ? "rgba(139,146,255,0.12)" : "transparent",
-                  color: decidedBy === name ? "var(--color-brand-purple)" : "var(--color-text-muted)",
+                  color: decidedBy === name ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)",
                   border: `1px solid ${decidedBy === name ? "rgba(139,146,255,0.3)" : "transparent"}`,
                   cursor: "pointer",
                 }}
@@ -157,7 +157,7 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
             ))}
             <span style={{
               fontSize: 11, minWidth: 52, textAlign: "right",
-              color: saveStatus === "saving" ? "var(--color-warning)" : saveStatus === "saved" ? "var(--color-success)" : "transparent",
+              color: saveStatus === "saving" ? "var(--md-sys-color-warning)" : saveStatus === "saved" ? "var(--md-sys-color-success)" : "transparent",
             }}>
               {saveStatus === "saving" ? "Saving…" : saveStatus === "saved" ? "Saved ✓" : "."}
             </span>
@@ -172,11 +172,11 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
           placeholder="Add reasoning or notes… (auto-saves)"
           style={{
             display: "block", width: "100%", boxSizing: "border-box", marginTop: 8,
-            background: "var(--color-background)",
-            border: "1px solid var(--color-dark-tertiary)",
+            background: "var(--md-sys-color-background)",
+            border: "1px solid var(--md-sys-color-dark-tertiary)",
             borderRadius: "var(--radius-sm)",
             padding: "7px 10px",
-            fontSize: 12, color: "var(--color-text-secondary)",
+            fontSize: 12, color: "var(--md-sys-color-text-secondary)",
             lineHeight: 1.55, resize: "vertical", minHeight: 52,
             fontFamily: "inherit", outline: "none",
           }}

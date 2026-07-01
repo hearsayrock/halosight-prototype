@@ -12,8 +12,8 @@ import { PLAYGROUNDS, CURRENT_APP_URL, type PlaygroundStatus } from "@/lib/playg
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const STATUS_COLOR: Record<PlaygroundStatus, string> = {
-  exploring: "var(--color-brand-purple)",
-  review:    "var(--color-brand-coral)",
+  exploring: "var(--md-sys-color-neonindigo)",
+  review:    "var(--md-sys-color-brand-coral)",
   shipped:   "#2ECC71",
 };
 
@@ -70,21 +70,21 @@ function SkillCall({ command, args }: { command: string; args?: string }) {
       marginTop: 8,
       padding: "9px 12px",
       borderRadius: 8,
-      background: "color-mix(in srgb, var(--color-brand-purple) 10%, transparent)",
-      border: "1px solid color-mix(in srgb, var(--color-brand-purple) 28%, transparent)",
+      background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 10%, transparent)",
+      border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 28%, transparent)",
       display: "flex",
       alignItems: "baseline",
       gap: 6,
     }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: "var(--color-brand-purple)", letterSpacing: "0.04em", flexShrink: 0 }}>
+      <span style={{ fontSize: 11, fontWeight: 700, color: "var(--md-sys-color-neonindigo)", letterSpacing: "0.04em", flexShrink: 0 }}>
         TYPE IN CLAUDE
       </span>
       <code style={{
         fontSize: 13,
         fontFamily: "ui-monospace, 'Cascadia Code', 'Fira Code', monospace",
-        color: "var(--color-text-primary)",
+        color: "var(--md-sys-color-text-primary)",
       }}>
-        /{command}{args ? <span style={{ color: "var(--color-text-muted)" }}> {args}</span> : null}
+        /{command}{args ? <span style={{ color: "var(--md-sys-color-text-muted)" }}> {args}</span> : null}
       </code>
     </div>
   );
@@ -98,8 +98,8 @@ const STEPS = [
     title: "Register the playground",
     body: (
       <>
-        <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          In your Claude chat, run the <strong style={{ color: "var(--color-text-primary)" }}>/new-playground</strong> skill.
+        <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
+          In your Claude chat, run the <strong style={{ color: "var(--md-sys-color-text-primary)" }}>/new-playground</strong> skill.
           Give it a name, a one-line description, and who's working on it.
           Claude will add it to the registry and give you the exact commands to run in step 2.
         </p>
@@ -112,12 +112,12 @@ const STEPS = [
     title: "Create your branch in Terminal",
     body: (
       <>
-        <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
+        <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
           Claude will give you the exact two commands to copy-paste. They'll look like this
           (using whatever slug it derived from your name):
         </p>
         <Code>{`git checkout -b playground/map-view\ngit push -u origin playground/map-view`}</Code>
-        <p style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.5, marginTop: 8 }}>
+        <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", lineHeight: 1.5, marginTop: 8 }}>
           Once you push, Vercel automatically starts building a preview in the background — takes about 1–2 minutes.
         </p>
       </>
@@ -128,12 +128,12 @@ const STEPS = [
     title: "Copy the preview URL from Vercel",
     body: (
       <>
-        <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Go to <strong style={{ color: "var(--color-text-primary)" }}>vercel.com</strong>, open the{" "}
-          <strong style={{ color: "var(--color-text-primary)" }}>halosight-prototype</strong> project, and
-          click <strong style={{ color: "var(--color-text-primary)" }}>Deployments</strong> in the left sidebar.
+        <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
+          Go to <strong style={{ color: "var(--md-sys-color-text-primary)" }}>vercel.com</strong>, open the{" "}
+          <strong style={{ color: "var(--md-sys-color-text-primary)" }}>halosight-prototype</strong> project, and
+          click <strong style={{ color: "var(--md-sys-color-text-primary)" }}>Deployments</strong> in the left sidebar.
           Find your branch in the list and wait for the status dot to turn green.
-          Once it's green, click <strong style={{ color: "var(--color-text-primary)" }}>Visit</strong> and
+          Once it's green, click <strong style={{ color: "var(--md-sys-color-text-primary)" }}>Visit</strong> and
           copy the URL from your browser's address bar.
         </p>
       </>
@@ -144,8 +144,8 @@ const STEPS = [
     title: "Wire in the URL",
     body: (
       <>
-        <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Run the <strong style={{ color: "var(--color-text-primary)" }}>/playground-url</strong> skill and paste the URL as the argument.
+        <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
+          Run the <strong style={{ color: "var(--md-sys-color-text-primary)" }}>/playground-url</strong> skill and paste the URL as the argument.
           Claude will add it to the registry and push — this sidebar and the DevPanel on the right will
           now link directly to your playground.
         </p>
@@ -158,19 +158,19 @@ const STEPS = [
     title: "Build, then wrap up when you're done",
     body: (
       <>
-        <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
+        <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
           You're live on a completely separate branch — nothing on the main app is affected. Build with Claude as usual.
-          When you're finished, use <strong style={{ color: "var(--color-text-primary)" }}>/playground-status</strong> to update
+          When you're finished, use <strong style={{ color: "var(--md-sys-color-text-primary)" }}>/playground-status</strong> to update
           the badge in this sidebar:
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 4 }}>
           <SkillCall command="playground-status" args='"Map View" review' />
           <SkillCall command="playground-status" args='"Map View" shipped' />
         </div>
-        <p style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.5, marginTop: 8 }}>
-          <strong style={{ color: "var(--color-text-secondary)" }}>Exploring</strong> = actively working on it (purple) ·{" "}
-          <strong style={{ color: "var(--color-text-secondary)" }}>Review</strong> = ready for others to look at (orange) ·{" "}
-          <strong style={{ color: "var(--color-text-secondary)" }}>Shipped</strong> = merged and live (green)
+        <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", lineHeight: 1.5, marginTop: 8 }}>
+          <strong style={{ color: "var(--md-sys-color-text-secondary)" }}>Exploring</strong> = actively working on it (purple) ·{" "}
+          <strong style={{ color: "var(--md-sys-color-text-secondary)" }}>Review</strong> = ready for others to look at (orange) ·{" "}
+          <strong style={{ color: "var(--md-sys-color-text-secondary)" }}>Shipped</strong> = merged and live (green)
         </p>
       </>
     ),
@@ -200,9 +200,9 @@ function InstructionsModal({ onClose }: { onClose: () => void }) {
           maxWidth: 560,
           maxHeight: "85vh",
           overflowY: "auto",
-          background: "var(--color-dark-primary)",
+          background: "var(--md-sys-color-dark-primary)",
           borderRadius: 16,
-          border: "1px solid var(--color-dark-tertiary)",
+          border: "1px solid var(--md-sys-color-dark-tertiary)",
           boxShadow: "0 24px 64px rgba(0,0,0,0.6)",
           padding: "28px 28px 32px",
         }}
@@ -210,10 +210,10 @@ function InstructionsModal({ onClose }: { onClose: () => void }) {
         {/* Header */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24 }}>
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--md-sys-color-text-primary)", margin: 0 }}>
               How to start a playground
             </h2>
-            <p style={{ fontSize: 13, color: "var(--color-text-muted)", margin: "4px 0 0" }}>
+            <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", margin: "4px 0 0" }}>
               Each playground is a git branch + Vercel preview. Three skills handle all the setup automatically.
             </p>
           </div>
@@ -223,10 +223,10 @@ function InstructionsModal({ onClose }: { onClose: () => void }) {
               width: 28,
               height: 28,
               borderRadius: "50%",
-              background: "var(--color-dark-tertiary)",
+              background: "var(--md-sys-color-dark-tertiary)",
               border: "none",
               cursor: "pointer",
-              color: "var(--color-text-secondary)",
+              color: "var(--md-sys-color-text-secondary)",
               fontSize: 16,
               display: "flex",
               alignItems: "center",
@@ -248,7 +248,7 @@ function InstructionsModal({ onClose }: { onClose: () => void }) {
                 width: 26,
                 height: 26,
                 borderRadius: "50%",
-                background: "var(--color-brand-purple)",
+                background: "var(--md-sys-color-neonindigo)",
                 color: "#fff",
                 fontSize: 12,
                 fontWeight: 700,
@@ -263,7 +263,7 @@ function InstructionsModal({ onClose }: { onClose: () => void }) {
 
               {/* Content */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)", margin: 0 }}>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-text-primary)", margin: 0 }}>
                   {title}
                 </p>
                 {body}
@@ -298,7 +298,7 @@ function NavItem({
   isActive: boolean;
   href: string;
 }) {
-  const color = isCurrent ? "#2ECC71" : (status ? STATUS_COLOR[status] : "var(--color-text-secondary)");
+  const color = isCurrent ? "#2ECC71" : (status ? STATUS_COLOR[status] : "var(--md-sys-color-text-secondary)");
 
   return (
     <a
@@ -307,7 +307,7 @@ function NavItem({
         display: "block",
         padding: "10px 12px",
         borderRadius: 10,
-        background: isActive ? "var(--color-dark-secondary)" : "transparent",
+        background: isActive ? "var(--md-sys-color-dark-secondary)" : "transparent",
         textDecoration: "none",
         transition: "background 0.12s",
         borderLeft: `3px solid ${isActive ? color : "transparent"}`,
@@ -321,7 +321,7 @@ function NavItem({
         <span style={{
           fontSize: 14,
           fontWeight: isActive ? 600 : 500,
-          color: isActive ? "var(--color-text-primary)" : "var(--color-text-secondary)",
+          color: isActive ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-secondary)",
           flex: 1,
           overflow: "hidden",
           textOverflow: "ellipsis",
@@ -334,13 +334,13 @@ function NavItem({
             width: 20,
             height: 20,
             borderRadius: "50%",
-            background: "var(--color-dark-tertiary)",
+            background: "var(--md-sys-color-dark-tertiary)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: 10,
             fontWeight: 700,
-            color: "var(--color-text-secondary)",
+            color: "var(--md-sys-color-text-secondary)",
             flexShrink: 0,
           }}>
             {authorInitial(author)}
@@ -352,7 +352,7 @@ function NavItem({
       {description && (
         <p style={{
           fontSize: 12,
-          color: "var(--color-text-muted)",
+          color: "var(--md-sys-color-text-muted)",
           lineHeight: 1.45,
           margin: "0 0 6px 17px",
           display: "-webkit-box",
@@ -380,7 +380,7 @@ function NavItem({
             </span>
           )}
           {startedAt && (
-            <span style={{ fontSize: 11, color: "var(--color-text-muted)" }}>
+            <span style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)" }}>
               {relativeDate(startedAt)}
             </span>
           )}
@@ -416,7 +416,7 @@ function RailDot({
         width: 32,
         height: 32,
         borderRadius: "50%",
-        background: isActive ? "var(--color-dark-secondary)" : "transparent",
+        background: isActive ? "var(--md-sys-color-dark-secondary)" : "transparent",
         border: isActive ? `2px solid ${color}` : "2px solid transparent",
         fontSize: 13,
         color,
@@ -475,13 +475,13 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               width: 32,
               height: 32,
               borderRadius: 8,
-              background: "var(--color-dark-secondary)",
+              background: "var(--md-sys-color-dark-secondary)",
               border: "none",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "var(--color-text-secondary)",
+              color: "var(--md-sys-color-text-secondary)",
               fontSize: 14,
               marginBottom: 8,
             }}
@@ -502,7 +502,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           {otherBranches.map(b => (
             <RailDot
               key={b}
-              color="var(--color-brand-purple)"
+              color="var(--md-sys-color-neonindigo)"
               icon="●"
               isActive={currentBranch === b}
               href="#"
@@ -540,7 +540,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
             fontWeight: 600,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
-            color: "var(--color-text-muted)",
+            color: "var(--md-sys-color-text-muted)",
           }}>
             Playgrounds
           </span>
@@ -552,7 +552,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              color: "var(--color-text-muted)",
+              color: "var(--md-sys-color-text-muted)",
               fontSize: 14,
             }}
             title="Collapse"
@@ -572,14 +572,14 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
 
         {/* Divider */}
         {PLAYGROUNDS.length > 0 && (
-          <div style={{ height: 1, background: "var(--color-dark-tertiary)", margin: "6px 12px" }} />
+          <div style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)", margin: "6px 12px" }} />
         )}
 
         {/* Registered playgrounds */}
         {PLAYGROUNDS.length === 0 ? (
           <p style={{
             fontSize: 13,
-            color: "var(--color-text-muted)",
+            color: "var(--md-sys-color-text-muted)",
             padding: "8px 12px",
             lineHeight: 1.55,
           }}>
@@ -617,9 +617,9 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               width: "100%",
               fontSize: 13,
               fontWeight: 500,
-              color: "var(--color-text-secondary)",
-              background: "var(--color-dark-secondary)",
-              border: "1px solid var(--color-dark-tertiary)",
+              color: "var(--md-sys-color-text-secondary)",
+              background: "var(--md-sys-color-dark-secondary)",
+              border: "1px solid var(--md-sys-color-dark-tertiary)",
               borderRadius: 10,
               padding: "9px 0",
               cursor: "pointer",

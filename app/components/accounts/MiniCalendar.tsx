@@ -72,7 +72,7 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
   return (
     <div
       className="relative p-4"
-      style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-md)" }}
+      style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-md)" }}
     >
       {/* Month header */}
       <div className="flex items-center justify-between mb-4">
@@ -82,13 +82,13 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
           onClick={() => setShowMonthPicker((v) => !v)}
           className="flex items-center gap-0.5 active:opacity-60"
         >
-          <span className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+          <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
             {monthLabel}
           </span>
           <Icon
             name={showMonthPicker ? "arrow_drop_up" : "arrow_drop_down"}
             size={20}
-            style={{ color: "var(--color-text-primary)" }}
+            style={{ color: "var(--md-sys-color-text-primary)" }}
           />
         </button>
 
@@ -98,8 +98,8 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
             onClick={goToday}
             className="px-2 py-0.5 text-xs font-semibold active:opacity-60"
             style={{
-              color: "var(--color-text-primary)",
-              border: "1px solid var(--color-dark-tertiary)",
+              color: "var(--md-sys-color-text-primary)",
+              border: "1px solid var(--md-sys-color-dark-tertiary)",
               borderRadius: "var(--radius-full)",
             }}
           >
@@ -111,10 +111,10 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
             className="p-1 active:opacity-60"
             style={{ opacity: isCurrentMonth ? 0.3 : 1 }}
           >
-            <Icon name="chevron_left" size={18} style={{ color: "var(--color-text-primary)" }} />
+            <Icon name="chevron_left" size={18} style={{ color: "var(--md-sys-color-text-primary)" }} />
           </button>
           <button onClick={goNext} className="p-1 active:opacity-60">
-            <Icon name="chevron_right" size={18} style={{ color: "var(--color-text-primary)" }} />
+            <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-primary)" }} />
           </button>
         </div>
       </div>
@@ -126,9 +126,9 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
           style={{
             top: 52,
             maxHeight: 220,
-            background: "var(--color-dark-secondary)",
+            background: "var(--md-sys-color-dark-secondary)",
             borderRadius: "0 0 var(--radius-md) var(--radius-md)",
-            borderTop: "1px solid var(--color-dark-tertiary)",
+            borderTop: "1px solid var(--md-sys-color-dark-tertiary)",
           }}
         >
           {monthOptions.map((m, i) => {
@@ -140,10 +140,10 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
                 onClick={() => pickMonth(m)}
                 className="w-full text-left px-4 py-2.5 text-sm active:opacity-60"
                 style={{
-                  color: isCurrent ? "var(--color-brand-purple)" : "var(--color-text-primary)",
+                  color: isCurrent ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-primary)",
                   fontWeight: isCurrent ? 700 : 400,
                   background: isCurrent
-                    ? "color-mix(in srgb, var(--color-brand-purple) 10%, transparent)"
+                    ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 10%, transparent)"
                     : "transparent",
                 }}
               >
@@ -157,7 +157,7 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
       {/* Day-of-week headers */}
       <div className="grid grid-cols-7 mb-1">
         {DAY_HEADERS.map((d, i) => (
-          <div key={i} className="text-center text-xs" style={{ color: "var(--color-text-disabled)" }}>
+          <div key={i} className="text-center text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
             {d}
           </div>
         ))}
@@ -182,11 +182,11 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
                 borderRadius: "50%",
                 cursor: past ? "default" : "pointer",
                 background: sel
-                  ? "var(--color-brand-purple)"
+                  ? "var(--md-sys-color-neonindigo)"
                   : tod
-                  ? "var(--color-dark-tertiary)"
+                  ? "var(--md-sys-color-dark-tertiary)"
                   : "transparent",
-                color: "var(--color-text-primary)",
+                color: "var(--md-sys-color-text-primary)",
                 opacity: past ? 0.35 : 1,
                 fontSize: 14,
                 fontWeight: past ? 400 : 600,

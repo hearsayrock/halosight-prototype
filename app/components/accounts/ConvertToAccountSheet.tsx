@@ -4,9 +4,9 @@
  * FLUTTER HANDOFF: ConvertToAccountSheet
  * Widget: StatefulWidget (step: "form" | "success")
  * Props: accountId, accountName, initialContact, onClose, onConverted
- * Tokens: --color-background, --color-dark-secondary, --color-dark-tertiary,
- *         --color-text-primary, --color-text-muted, --color-text-disabled,
- *         --color-text-secondary, --color-brand-purple, --color-brand-teal,
+ * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
+ *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
+ *         --md-sys-color-text-secondary, --md-sys-color-neonindigo, --md-sys-color-brand-teal,
  *         --radius-xl, --radius-md, --radius-sm, --radius-full
  *
  * Covers the standard CRM lead-conversion flow:
@@ -79,7 +79,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
       <motion.div
         className="absolute left-0 right-0 bottom-0"
         style={{
-          background: "var(--color-background)",
+          background: "var(--md-sys-color-background)",
           borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
           maxHeight: "92%",
           overflowY: "auto",
@@ -91,7 +91,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full" style={{ background: "var(--color-dark-tertiary)" }} />
+          <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
         </div>
 
         <AnimatePresence mode="wait" initial={false}>
@@ -109,7 +109,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
               <h2 className="text-[22px] font-semibold mb-1.5" style={serifStyle}>
                 Convert to Account
               </h2>
-              <p className="text-sm mb-7" style={{ color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+              <p className="text-sm mb-7" style={{ color: "var(--md-sys-color-text-muted)", lineHeight: 1.5 }}>
                 {accountName} will be created as an account in Salesforce.
               </p>
 
@@ -125,13 +125,13 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                       className="flex-1 flex flex-col items-center py-3.5 px-1 transition-colors"
                       style={{
                         borderRadius: "var(--radius-md)",
-                        background: sel ? "var(--color-brand-purple)" : "var(--color-dark-secondary)",
+                        background: sel ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
                       }}
                     >
-                      <span className="text-[13px] font-semibold leading-tight" style={{ color: "var(--color-text-primary)" }}>
+                      <span className="text-[13px] font-semibold leading-tight" style={{ color: "var(--md-sys-color-text-primary)" }}>
                         {t.label}
                       </span>
-                      <span className="text-[10px] mt-1" style={{ color: sel ? "rgba(255,255,255,0.6)" : "var(--color-text-disabled)" }}>
+                      <span className="text-[10px] mt-1" style={{ color: sel ? "rgba(255,255,255,0.6)" : "var(--md-sys-color-text-disabled)" }}>
                         {t.sub}
                       </span>
                     </button>
@@ -153,11 +153,11 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 onClick={() => setCreateDeal((d) => !d)}
                 className="w-full flex items-center justify-between px-4 py-3.5 mb-2"
                 style={{
-                  background: "var(--color-dark-secondary)",
+                  background: "var(--md-sys-color-dark-secondary)",
                   borderRadius: "var(--radius-xl)",
                 }}
               >
-                <span className="text-sm" style={{ color: "var(--color-text-primary)" }}>
+                <span className="text-sm" style={{ color: "var(--md-sys-color-text-primary)" }}>
                   Create a deal in Salesforce
                 </span>
                 <Toggle on={createDeal} />
@@ -184,8 +184,8 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 onClick={() => setStep("success")}
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center mt-7"
                 style={{
-                  background: "var(--color-brand-teal)",
-                  color: "var(--color-text-primary)",
+                  background: "var(--md-sys-color-brand-teal)",
+                  color: "var(--md-sys-color-text-primary)",
                   borderRadius: "var(--radius-full)",
                 }}
               >
@@ -208,15 +208,15 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
                 style={{ background: "rgba(107, 157, 176, 0.15)" }}
               >
-                <Icon name="check_circle" fill size={36} style={{ color: "var(--color-brand-teal)" }} />
+                <Icon name="check_circle" fill size={36} style={{ color: "var(--md-sys-color-brand-teal)" }} />
               </div>
 
               <h2 className="text-[22px] font-semibold mb-3" style={serifStyle}>
                 Account created
               </h2>
 
-              <p className="text-sm mb-2" style={{ color: "var(--color-text-muted)", maxWidth: 280, lineHeight: 1.65 }}>
-                <span style={{ color: "var(--color-text-primary)", fontWeight: 600 }}>{accountName}</span> is synced
+              <p className="text-sm mb-2" style={{ color: "var(--md-sys-color-text-muted)", maxWidth: 280, lineHeight: 1.65 }}>
+                <span style={{ color: "var(--md-sys-color-text-primary)", fontWeight: 600 }}>{accountName}</span> is synced
                 to Salesforce as a {selectedType.label}.
                 {name.trim() && (
                   <> {name.trim()} is listed as the primary contact.</>
@@ -224,9 +224,9 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
               </p>
 
               {createDeal && dealName.trim() && (
-                <p className="text-sm" style={{ color: "var(--color-text-muted)", maxWidth: 280, lineHeight: 1.65 }}>
+                <p className="text-sm" style={{ color: "var(--md-sys-color-text-muted)", maxWidth: 280, lineHeight: 1.65 }}>
                   Deal{" "}
-                  <span style={{ color: "var(--color-text-secondary)" }}>"{dealName}"</span>{" "}
+                  <span style={{ color: "var(--md-sys-color-text-secondary)" }}>"{dealName}"</span>{" "}
                   is open in your pipeline.
                 </p>
               )}
@@ -235,8 +235,8 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 onClick={() => setIsVisible(false)}
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center mt-8"
                 style={{
-                  background: "var(--color-brand-teal)",
-                  color: "var(--color-text-primary)",
+                  background: "var(--md-sys-color-brand-teal)",
+                  color: "var(--md-sys-color-text-primary)",
                   borderRadius: "var(--radius-full)",
                 }}
               >
@@ -257,15 +257,15 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 const serifStyle: React.CSSProperties = {
-  color: "var(--color-text-primary)",
+  color: "var(--md-sys-color-text-primary)",
   fontFamily: "Roboto Slab, Georgia, serif",
 };
 
 function SectionHeader({ icon, label }: { icon: string; label: string }) {
   return (
     <div className="flex items-center gap-1.5 mb-3">
-      <Icon name={icon} size={13} style={{ color: "var(--color-brand-purple-dark)" }} />
-      <span className="eyebrow-text" style={{ color: "var(--color-text-muted)" }}>{label}</span>
+      <Icon name={icon} size={13} style={{ color: "var(--md-sys-color-neonindigo-dark)" }} />
+      <span className="eyebrow-text" style={{ color: "var(--md-sys-color-text-muted)" }}>{label}</span>
     </div>
   );
 }
@@ -281,7 +281,7 @@ function Field({ label, value, onChange, placeholder, type = "text" }: {
     <div>
       <p
         className="text-[10px] font-semibold mb-1"
-        style={{ color: "var(--color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}
+        style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}
       >
         {label}
       </p>
@@ -292,9 +292,9 @@ function Field({ label, value, onChange, placeholder, type = "text" }: {
         placeholder={placeholder}
         className="w-full text-[14px] outline-none px-3 py-2.5"
         style={{
-          background: "var(--color-dark-secondary)",
+          background: "var(--md-sys-color-dark-secondary)",
           borderRadius: "var(--radius-sm)",
-          color: "var(--color-text-primary)",
+          color: "var(--md-sys-color-text-primary)",
         }}
       />
     </div>
@@ -308,7 +308,7 @@ function Toggle({ on }: { on: boolean }) {
       style={{
         width: 44, height: 24,
         borderRadius: 12,
-        background: on ? "var(--color-brand-purple)" : "var(--color-dark-tertiary)",
+        background: on ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-tertiary)",
         transition: "background 0.2s",
       }}
     >

@@ -46,20 +46,20 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
           {/* Account name */}
           <span
             className="text-[15px] font-semibold truncate block"
-            style={{ color: "var(--color-text-secondary)" }}
+            style={{ color: "var(--md-sys-color-text-secondary)" }}
           >
             {account.name}
           </span>
 
           {/* Distance • location */}
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+            <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {formatDistance(account.distanceMiles)}
             </span>
             {location && (
               <>
-                <span className="text-sm" style={{ color: "var(--color-text-disabled)" }}>•</span>
-                <span className="text-sm truncate" style={{ color: "var(--color-text-muted)" }}>
+                <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
+                <span className="text-sm truncate" style={{ color: "var(--md-sys-color-text-muted)" }}>
                   {location}
                 </span>
               </>
@@ -75,8 +75,8 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
             style={{
               width: 28,
               height: 28,
-              background: "var(--color-dark-tertiary)",
-              color: "var(--color-text-muted)",
+              background: "var(--md-sys-color-dark-tertiary)",
+              color: "var(--md-sys-color-text-muted)",
             }}
           >
             {initial}

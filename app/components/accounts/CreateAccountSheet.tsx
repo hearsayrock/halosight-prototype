@@ -4,9 +4,9 @@
  * FLUTTER HANDOFF: CreateAccountSheet
  * Widget: StatefulWidget (bottom sheet)
  * State: name, contactName, phone, address, city, state, showDetails
- * Tokens: --color-background, --color-dark-secondary, --color-dark-tertiary,
- *         --color-text-primary, --color-text-muted, --color-text-disabled,
- *         --color-brand-purple, --color-brand-coral,
+ * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
+ *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
+ *         --md-sys-color-neonindigo, --md-sys-color-brand-coral,
  *         --radius-xl, --radius-full, --radius-sm
  *
  * Portals into #phone-overlay-root.
@@ -97,7 +97,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
           <motion.div
             className="absolute left-0 right-0 bottom-0"
             style={{
-              background: "var(--color-background)",
+              background: "var(--md-sys-color-background)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
               maxHeight: "88%",
               overflowY: "auto",
@@ -109,7 +109,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full" style={{ background: "var(--color-dark-tertiary)" }} />
+              <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
             </div>
 
             <div className="px-5 pt-4 pb-10">
@@ -117,7 +117,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               {/* Title */}
               <h2
                 className="text-[28px] font-bold mb-6"
-                style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
+                style={{ color: "var(--md-sys-color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
                 New Lead
               </h2>
@@ -126,7 +126,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               <div className="mb-3">
                 <p
                   className="text-[11px] font-semibold mb-2"
-                  style={{ color: "var(--color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
+                  style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
                 >
                   Company
                 </p>
@@ -141,9 +141,9 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                   onKeyDown={(e) => { if (e.key === "Enter" && name.trim()) handleCreate(); }}
                   className="w-full text-[17px] font-medium outline-none px-4 py-4"
                   style={{
-                    background: "var(--color-dark-secondary)",
+                    background: "var(--md-sys-color-dark-secondary)",
                     borderRadius: "var(--radius-lg)",
-                    color: "var(--color-text-primary)",
+                    color: "var(--md-sys-color-text-primary)",
                     border: `1.5px solid ${focused ? "rgba(139,146,255,0.55)" : "rgba(255,255,255,0.08)"}`,
                     transition: "border-color 0.15s",
                   }}
@@ -154,12 +154,12 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               <div
                 className="flex items-center gap-2.5 px-4 py-3 mb-5"
                 style={{
-                  background: "var(--color-alpha-purple-10)",
+                  background: "var(--md-sys-color-alpha-neonindigo-10)",
                   borderRadius: "var(--radius-lg)",
                 }}
               >
-                <Icon name="auto_awesome" size={15} style={{ color: "var(--color-brand-purple)", flexShrink: 0 }} />
-                <span className="text-[13px] font-medium" style={{ color: "var(--color-brand-purple)" }}>
+                <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+                <span className="text-[13px] font-medium" style={{ color: "var(--md-sys-color-neonindigo)" }}>
                   Name it — AI fills the rest.
                 </span>
               </div>
@@ -171,8 +171,8 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 className="w-full font-semibold text-[16px] transition-opacity"
                 style={{
                   height: 52,
-                  background: "var(--color-brand-purple)",
-                  color: "var(--color-text-primary)",
+                  background: "var(--md-sys-color-neonindigo)",
+                  color: "var(--md-sys-color-text-primary)",
                   borderRadius: "var(--radius-full)",
                   opacity: name.trim() ? 1 : 0.4,
                 }}
@@ -195,7 +195,7 @@ function OptionalField({ label, placeholder, value, onChange, type = "text" }: {
 }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold mb-1.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+      <p className="text-[10px] font-semibold mb-1.5" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
         {label}
       </p>
       <input
@@ -204,7 +204,7 @@ function OptionalField({ label, placeholder, value, onChange, type = "text" }: {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full text-[14px] outline-none px-3 py-2.5"
-        style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-sm)", color: "var(--color-text-primary)" }}
+        style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-sm)", color: "var(--md-sys-color-text-primary)" }}
       />
     </div>
   );

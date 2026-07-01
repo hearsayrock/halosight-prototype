@@ -28,7 +28,7 @@ function CheckIcon() {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
       <path
         d="M3 8L6.5 11.5L13 5"
-        stroke="var(--color-text-primary)"
+        stroke="var(--md-sys-color-text-primary)"
         strokeWidth="1.75"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -79,13 +79,13 @@ export default function SortMenu({ current, onChange }: Props) {
         animate={{ opacity: open ? 0 : 1, scale: open ? 0.85 : 1 }}
         transition={{ duration: 0.12 }}
         className="w-10 h-10 flex items-center justify-center rounded-xl"
-        style={{ background: "var(--color-dark-secondary)" }}
+        style={{ background: "var(--md-sys-color-dark-secondary)" }}
         aria-label="Sort accounts"
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M3 5H17"  stroke="var(--color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
-          <path d="M6 10H14" stroke="var(--color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
-          <path d="M9 15H11" stroke="var(--color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
+          <path d="M3 5H17"  stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
+          <path d="M6 10H14" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
+          <path d="M9 15H11" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
         </svg>
       </motion.button>
 
@@ -105,7 +105,7 @@ export default function SortMenu({ current, onChange }: Props) {
               transition={menuTransition}
               style={{
                 transformOrigin: "top right",
-                background: "var(--color-dark-tertiary)",
+                background: "var(--md-sys-color-dark-tertiary)",
                 borderRadius: "var(--radius-xl)",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
                 paddingTop: 16,
@@ -133,7 +133,7 @@ export default function SortMenu({ current, onChange }: Props) {
                       paddingTop: 10,
                       paddingBottom: 10,
                       background: "transparent",
-                      color: "var(--color-text-primary)",
+                      color: "var(--md-sys-color-text-primary)",
                     }}
                   >
                     <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>

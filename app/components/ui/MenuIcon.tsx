@@ -11,7 +11,7 @@ interface MenuIconProps {
   color?: string;
 }
 
-export default function MenuIcon({ size = 32, color = "var(--color-text-muted)" }: MenuIconProps) {
+export default function MenuIcon({ size = 32, color = "var(--md-sys-color-text-muted)" }: MenuIconProps) {
   return (
     <svg
       width={size}
