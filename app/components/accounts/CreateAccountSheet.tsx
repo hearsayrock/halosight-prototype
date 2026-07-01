@@ -4,9 +4,9 @@
  * FLUTTER HANDOFF: CreateAccountSheet
  * Widget: StatefulWidget (bottom sheet)
  * State: name, contact, city (strings)
- * Tokens: --color-background, --color-dark-secondary, --color-dark-tertiary,
- *         --color-text-primary, --color-text-muted, --color-text-disabled,
- *         --color-brand-teal, --radius-xl, --radius-full, --radius-md
+ * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
+ *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
+ *         --md-sys-color-brand-teal, --radius-xl, --radius-full, --radius-md
  *
  * Portals into #phone-overlay-root.
  * Opens from the "Add new company" CTA after a failed search.
@@ -100,7 +100,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
           <motion.div
             className="absolute left-0 right-0 bottom-0"
             style={{
-              background: "var(--color-background)",
+              background: "var(--md-sys-color-background)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
               maxHeight: "88%",
               overflowY: "auto",
@@ -112,7 +112,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full" style={{ background: "var(--color-dark-tertiary)" }} />
+              <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
             </div>
 
             <div className="px-5 pt-3 pb-10">
@@ -120,15 +120,15 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               {/* Heading */}
               <h2
                 className="text-[22px] font-semibold mb-5"
-                style={{ color: "var(--color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
+                style={{ color: "var(--md-sys-color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
                 New Lead
               </h2>
 
               {/* ── Company name ─────────────────────────────────────────── */}
               <div className="mb-4">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Company Name <span style={{ color: "var(--color-brand-coral)" }}>*</span>
+                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  Company Name <span style={{ color: "var(--md-sys-color-brand-coral)" }}>*</span>
                 </p>
                 <input
                   ref={inputRef}
@@ -139,16 +139,16 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                   onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
                   className="w-full text-[16px] outline-none px-4 py-3.5"
                   style={{
-                    background: "var(--color-dark-secondary)",
+                    background: "var(--md-sys-color-dark-secondary)",
                     borderRadius: "var(--radius-xl)",
-                    color: "var(--color-text-primary)",
+                    color: "var(--md-sys-color-text-primary)",
                   }}
                 />
               </div>
 
               {/* ── Address (optional) ──────────────────────────────────── */}
               <div className="mb-4">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
                   Address
                 </p>
                 <input
@@ -159,16 +159,16 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                   onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
                   className="w-full text-[16px] outline-none px-4 py-3.5"
                   style={{
-                    background: "var(--color-dark-secondary)",
+                    background: "var(--md-sys-color-dark-secondary)",
                     borderRadius: "var(--radius-xl)",
-                    color: "var(--color-text-primary)",
+                    color: "var(--md-sys-color-text-primary)",
                   }}
                 />
               </div>
 
               {/* ── City / State (optional) ──────────────────────────────── */}
               <div className="mb-6">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
                   City / State
                 </p>
                 <div className="flex gap-3 w-full min-w-0">
@@ -181,9 +181,9 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                     className="text-[16px] outline-none px-4 py-3.5 min-w-0"
                     style={{
                       flex: "1 1 0",
-                      background: "var(--color-dark-secondary)",
+                      background: "var(--md-sys-color-dark-secondary)",
                       borderRadius: "var(--radius-xl)",
-                      color: "var(--color-text-primary)",
+                      color: "var(--md-sys-color-text-primary)",
                     }}
                   />
                   <select
@@ -192,9 +192,9 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                     className="text-[16px] outline-none px-3 py-3.5"
                     style={{
                       flex: "0 0 90px",
-                      background: "var(--color-dark-secondary)",
+                      background: "var(--md-sys-color-dark-secondary)",
                       borderRadius: "var(--radius-xl)",
-                      color: state ? "var(--color-text-primary)" : "var(--color-text-disabled)",
+                      color: state ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-disabled)",
                       appearance: "none",
                       WebkitAppearance: "none",
                       textAlign: "center",
@@ -204,7 +204,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                   >
                     <option value="" disabled>State</option>
                     {US_STATES.map((s) => (
-                      <option key={s} value={s} style={{ background: "var(--color-dark-secondary)", color: "var(--color-text-primary)" }}>{s}</option>
+                      <option key={s} value={s} style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-text-primary)" }}>{s}</option>
                     ))}
                   </select>
                 </div>
@@ -212,8 +212,8 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
 
               {/* ── CRM sync disclosure ──────────────────────────────────── */}
               <div className="flex items-center gap-2 mb-5">
-                <Icon name="sync" size={14} style={{ color: "var(--color-text-disabled)", flexShrink: 0 }} />
-                <p className="text-[12px]" style={{ color: "var(--color-text-muted)" }}>
+                <Icon name="sync" size={14} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }} />
+                <p className="text-[12px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
                   This will also create a record in your connected CRM.
                 </p>
               </div>
@@ -224,13 +224,13 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 disabled={!name.trim()}
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center gap-2 transition-opacity"
                 style={{
-                  background: "var(--color-brand-teal)",
-                  color: "var(--color-text-primary)",
+                  background: "var(--md-sys-color-brand-teal)",
+                  color: "var(--md-sys-color-text-primary)",
                   borderRadius: "var(--radius-full)",
                   opacity: name.trim() ? 1 : 0.4,
                 }}
               >
-                <Icon name="add" size={18} style={{ color: "var(--color-text-primary)" }} />
+                <Icon name="add" size={18} style={{ color: "var(--md-sys-color-text-primary)" }} />
                 Add Company
               </button>
 

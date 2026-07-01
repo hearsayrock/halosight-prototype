@@ -115,15 +115,15 @@ Full rules are in the `tokenRules` export in the registry. Summary:
 
 | Purpose | Token |
 |---|---|
-| Card / list item bg | `--color-dark-secondary` |
-| Dropdown / elevated surface | `--color-dark-tertiary` |
-| App background | `--color-background` |
-| Primary text | `--color-text-primary` |
-| Muted / metadata text | `--color-text-muted` |
-| Borders, card edges | `--color-alpha-white-10` |
-| Primary CTA | `--color-brand-coral` |
-| Interactive / accent | `--color-brand-purple` |
-| Secondary action | `--color-brand-blue` |
+| Card / list item bg | `--md-sys-color-dark-secondary` |
+| Dropdown / elevated surface | `--md-sys-color-dark-tertiary` |
+| App background | `--md-sys-color-background` |
+| Primary text | `--md-sys-color-text-primary` |
+| Muted / metadata text | `--md-sys-color-text-muted` |
+| Borders, card edges | `--md-sys-color-alpha-white-10` |
+| Primary CTA | `--md-sys-color-brand-coral` |
+| Interactive / accent | `--md-sys-color-neonindigo` |
+| Secondary action | `--md-sys-color-indigo` |
 | Card radius | `--radius-sm` |
 | Dropdown / button radius | `--radius-xl` |
 | Pill / nav radius | `--radius-full` |
@@ -138,11 +138,11 @@ These rules are embedded in `aiInstructions` in the registry and apply to every 
 
 1. Read the registry before building any UI
 2. Never recreate a component that already exists — check `components[]` first
-3. Never use raw hex or raw px radius — always `var(--color-*)` and `var(--radius-*)`
+3. Never use raw hex or raw px radius — always `var(--md-sys-color-*)` and `var(--radius-*)`
 4. Check `tokens.forbidden` for the target component before writing styles
 5. Use `.text-base`, `.heading-5`, etc. — never inline `fontSize` as raw numbers
 6. Every new component needs a Flutter handoff comment block
-7. Glass/blur effects require `--color-alpha-*` tokens + `backdropFilter`
+7. Glass/blur effects require `--md-sys-color-alpha-*` tokens + `backdropFilter`
 8. After adding a component or token, update the design system page and docs
 
 ---

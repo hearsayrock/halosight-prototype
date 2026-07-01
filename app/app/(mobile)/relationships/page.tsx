@@ -133,11 +133,11 @@ function EngagementRow({
       <div
         className="flex items-center justify-between px-5 py-2.5 active:opacity-60 transition-opacity"
       >
-        <span style={{ fontSize: 15, color: "var(--color-text-primary)", fontWeight: 400 }}>
+        <span style={{ fontSize: 15, color: "var(--md-sys-color-text-primary)", fontWeight: 400 }}>
           {activity.accountName}
         </span>
         {/* Dot indicator — shown when the activity has meaningful content */}
-        <span style={{ fontSize: 8, color: "var(--color-brand-purple)", lineHeight: 1 }}>
+        <span style={{ fontSize: 8, color: "var(--md-sys-color-neonindigo)", lineHeight: 1 }}>
           ●
         </span>
       </div>
@@ -189,8 +189,8 @@ function EngagementsDrawer({
               left: 0,
               bottom: 0,
               width: "78%",
-              background: "var(--color-dark-primary)",
-              borderRight: "1px solid var(--color-dark-tertiary)",
+              background: "var(--md-sys-color-dark-primary)",
+              borderRight: "1px solid var(--md-sys-color-dark-tertiary)",
               zIndex: 201,
               display: "flex",
               flexDirection: "column",
@@ -205,7 +205,7 @@ function EngagementsDrawer({
                 fontWeight: 700,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                color: "var(--color-text-muted)",
+                color: "var(--md-sys-color-text-muted)",
                 margin: 0,
               }}>
                 Engagements
@@ -213,7 +213,7 @@ function EngagementsDrawer({
             </div>
 
             {/* Divider */}
-            <div style={{ height: 1, background: "var(--color-dark-tertiary)", marginBottom: 16 }} />
+            <div style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)", marginBottom: 16 }} />
 
             {/* Today */}
             {todayActivities.length > 0 && (
@@ -221,7 +221,7 @@ function EngagementsDrawer({
                 <p style={{
                   fontSize: 13,
                   fontWeight: 600,
-                  color: "var(--color-brand-teal)",
+                  color: "var(--md-sys-color-brand-teal)",
                   padding: "0 20px 4px",
                   margin: 0,
                 }}>
@@ -239,7 +239,7 @@ function EngagementsDrawer({
                 <p style={{
                   fontSize: 13,
                   fontWeight: 600,
-                  color: "var(--color-brand-teal)",
+                  color: "var(--md-sys-color-brand-teal)",
                   padding: "0 20px 4px",
                   margin: 0,
                 }}>
@@ -284,7 +284,7 @@ function TaskStrip({
   return (
     <div className="px-4 mb-4">
       <div style={{
-        background: "var(--color-dark-secondary)",
+        background: "var(--md-sys-color-dark-secondary)",
         borderRadius: 16,
         overflow: "hidden",
       }}>
@@ -305,7 +305,7 @@ function TaskStrip({
               >
                 {!isLast && (
                   <div className="absolute bottom-0 left-3 right-3"
-                    style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                    style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
                 )}
                 {/* Check circle */}
                 <button
@@ -313,7 +313,7 @@ function TaskStrip({
                   className="flex-shrink-0 w-5 h-5 rounded-full relative active:scale-90 transition-transform"
                 >
                   <div className="absolute inset-0 rounded-full"
-                    style={{ border: `1.5px solid ${isPending ? "#2ECC71" : "var(--color-text-disabled)"}` }} />
+                    style={{ border: `1.5px solid ${isPending ? "#2ECC71" : "var(--md-sys-color-text-disabled)"}` }} />
                   {isPending && (
                     <div className="absolute inset-0 rounded-full flex items-center justify-center"
                       style={{ background: "#2ECC71" }}>
@@ -326,20 +326,20 @@ function TaskStrip({
                   href={`/relationships/${task.accountId}/action-items/${task.itemId}`}
                   className="flex-1 min-w-0"
                 >
-                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.3 }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-text-primary)", lineHeight: 1.3 }}>
                     {task.title}
                   </p>
                   <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
                     <span style={{
                       fontSize: 11,
-                      color: isToday ? "var(--color-brand-coral)" : "var(--color-text-disabled)",
+                      color: isToday ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-disabled)",
                       fontWeight: 500,
                       flexShrink: 0,
                     }}>
                       {formatTaskDue(task.dueDate)}
                     </span>
-                    <span style={{ fontSize: 11, color: "var(--color-text-disabled)", flexShrink: 0 }}>·</span>
-                    <span style={{ fontSize: 11, color: "var(--color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }}>·</span>
+                    <span style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {task.accountName}
                     </span>
                   </div>
@@ -351,7 +351,7 @@ function TaskStrip({
                     className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
                     style={{ width: 44, height: 44 }}
                   >
-                    <Icon name="link" size={16} style={{ color: "var(--color-text-disabled)" }} />
+                    <Icon name="link" size={16} style={{ color: "var(--md-sys-color-text-disabled)" }} />
                   </Link>
                 )}
               </motion.div>
@@ -380,7 +380,7 @@ function DashboardGrid({
         className="relative overflow-hidden"
         style={{
           borderRadius: "var(--radius-xl)",
-          background: "var(--color-dark-primary)",
+          background: "var(--md-sys-color-dark-primary)",
           border: "1px solid rgba(139,146,255,0.2)",
           padding: "18px 18px 16px",
         }}
@@ -409,10 +409,10 @@ function DashboardGrid({
         {/* Row 1: eyebrow label + tasks badge */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1.5">
-            <Icon name="auto_awesome" size={13} style={{ color: "var(--color-brand-purple)" }} />
+            <Icon name="auto_awesome" size={13} style={{ color: "var(--md-sys-color-neonindigo)" }} />
             <span style={{
               fontSize: 10, fontWeight: 700, letterSpacing: "0.09em",
-              textTransform: "uppercase", color: "var(--color-brand-purple)",
+              textTransform: "uppercase", color: "var(--md-sys-color-neonindigo)",
             }}>
               Suggested visit
             </span>
@@ -426,7 +426,7 @@ function DashboardGrid({
             <p style={{
               fontFamily: "Roboto Slab, Georgia, serif",
               fontSize: 21, fontWeight: 700,
-              color: "var(--color-text-primary)",
+              color: "var(--md-sys-color-text-primary)",
               lineHeight: 1.2, marginBottom: 6,
             }}>
               {suggestedAccount.name}
@@ -435,16 +435,16 @@ function DashboardGrid({
             <div className="flex items-center gap-3">
               {/* Distance */}
               <div className="flex items-center gap-1">
-                <Icon name="near_me" size={12} style={{ color: "var(--color-text-muted)" }} />
-                <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>
+                <Icon name="near_me" size={12} style={{ color: "var(--md-sys-color-text-muted)" }} />
+                <span style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>
                   {formatDistance(suggestedAccount.distanceMiles)}
                   {suggestedAccount.city && ` · ${suggestedAccount.city}`}
                 </span>
               </div>
               {/* Last visited */}
               <div className="flex items-center gap-1">
-                <Icon name="history" size={12} style={{ color: "var(--color-text-disabled)" }} />
-                <span style={{ fontSize: 12, color: "var(--color-text-disabled)" }}>
+                <Icon name="history" size={12} style={{ color: "var(--md-sys-color-text-disabled)" }} />
+                <span style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)" }}>
                   {lastVisitedLabel}
                 </span>
               </div>
@@ -458,12 +458,12 @@ function DashboardGrid({
           className="w-full flex items-center justify-center gap-2 active:opacity-85 transition-opacity"
           style={{
             height: 44,
-            background: "var(--color-brand-coral)",
+            background: "var(--md-sys-color-brand-coral)",
             borderRadius: "var(--radius-full)",
-            color: "var(--color-text-primary)",
+            color: "var(--md-sys-color-text-primary)",
           }}
         >
-          <Icon name="border_color" size={16} style={{ color: "var(--color-text-primary)" }} />
+          <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
           <span style={{ fontSize: 14, fontWeight: 700 }}>Log a Visit</span>
         </button>
 
@@ -481,23 +481,23 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
       <div className="flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity relative">
         {!isLast && (
           <div className="absolute bottom-0 left-4 right-4"
-            style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+            style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
         )}
         {/* Type icon */}
         <div className="flex-shrink-0">
           {account.halosightType === "prospect" ? (
-            <Icon name="star" fill size={16} style={{ color: "var(--color-brand-purple)" }} />
+            <Icon name="star" fill size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
           ) : (
-            <Icon name="home" size={16} weight={300} style={{ color: "var(--color-text-disabled)" }} />
+            <Icon name="home" size={16} weight={300} style={{ color: "var(--md-sys-color-text-disabled)" }} />
           )}
         </div>
         {/* Left — name + meta */}
         <div className="flex-1 min-w-0">
-          <p style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.2 }}
+          <p style={{ fontSize: 15, fontWeight: 600, color: "var(--md-sys-color-text-primary)", lineHeight: 1.2 }}
             className="truncate">
             {account.name}
           </p>
-          <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 2 }}>
+          <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", marginTop: 2 }}>
             {[account.distanceMiles < 999 ? `${account.distanceMiles} mi` : null,
               account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null)]
               .filter(Boolean).join(" · ")}
@@ -513,21 +513,21 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
               <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
                 <path
                   d="M4.5 6L5.5 7L7.5 5M2.5 1.5H9.5C10.0523 1.5 10.5 1.94772 10.5 2.5V9.5C10.5 10.0523 10.0523 10.5 9.5 10.5H2.5C1.94772 10.5 1.5 10.0523 1.5 9.5V2.5C1.5 1.94772 1.94772 1.5 2.5 1.5Z"
-                  stroke="var(--color-brand-coral-light)"
+                  stroke="var(--md-sys-color-brand-coral-light)"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               </svg>
               <span
                 className="text-[11px] font-semibold"
-                style={{ color: "var(--color-brand-coral-light)", lineHeight: 1 }}
+                style={{ color: "var(--md-sys-color-brand-coral-light)", lineHeight: 1 }}
               >
                 {account.taskCount}
               </span>
             </span>
           )}
           <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
-            <path d="M1 1L6 6L1 11" stroke="var(--color-text-disabled)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M1 1L6 6L1 11" stroke="var(--md-sys-color-text-disabled)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
       </div>
@@ -540,10 +540,10 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
 function SectionHeader({ label, count }: { label: string; count: number }) {
   return (
     <div className="flex items-center gap-2 px-4 py-2">
-      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
+      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
         {label}
       </span>
-      <span style={{ fontSize: 11, fontWeight: 600, color: "var(--color-text-disabled)", background: "var(--color-dark-secondary)", borderRadius: 10, padding: "1px 7px" }}>
+      <span style={{ fontSize: 11, fontWeight: 600, color: "var(--md-sys-color-text-disabled)", background: "var(--md-sys-color-dark-secondary)", borderRadius: 10, padding: "1px 7px" }}>
         {count}
       </span>
     </div>
@@ -573,18 +573,18 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
       <button
         onClick={onOpen}
         className="w-full flex items-center gap-3 px-4 py-4 active:opacity-70 transition-opacity"
-        style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-xl)", border: "1px dashed var(--color-dark-tertiary)" }}
+        style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-xl)", border: "1px dashed var(--md-sys-color-dark-tertiary)" }}
       >
         <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: "color-mix(in srgb, var(--color-brand-purple) 15%, transparent)" }}>
-          <Icon name="add" size={18} style={{ color: "var(--color-brand-purple)" }} />
+          style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}>
+          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
         </div>
         <div className="text-left">
-          <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+          <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
             Add new lead
-            {query.trim() && <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
+            {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
           </p>
-          <p className="text-xs mt-0.5" style={{ color: "var(--color-text-secondary)" }}>
+          <p className="text-xs mt-0.5" style={{ color: "var(--md-sys-color-text-secondary)" }}>
             Add to Tomorrowland Innovations and start capturing
           </p>
         </div>
@@ -844,7 +844,7 @@ function CombinedPageContent() {
       <button
         onClick={onClick}
         className="active:opacity-50 transition-opacity"
-        style={{ fontSize: 13, fontWeight: 600, color: "var(--color-brand-purple)", cursor: "pointer" }}
+        style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-neonindigo)", cursor: "pointer" }}
       >
         View all
       </button>
@@ -856,10 +856,10 @@ function CombinedPageContent() {
     <Link href="/profile">
       <button className="active:opacity-60 transition-opacity flex-shrink-0" aria-label="Profile">
         <div className="w-9 h-9 rounded-full flex items-center justify-center"
-          style={{ background: "var(--color-dark-secondary)" }}>
+          style={{ background: "var(--md-sys-color-dark-secondary)" }}>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-              stroke="var(--color-text-muted)" strokeLinecap="round" strokeLinejoin="round" />
+              stroke="var(--md-sys-color-text-muted)" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       </button>
@@ -867,7 +867,7 @@ function CombinedPageContent() {
   );
 
   return (
-    <div className="relative flex flex-col h-full" style={{ background: "var(--color-background)" }}>
+    <div className="relative flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 pt-10 pb-3" style={{ flexShrink: 0 }}>
@@ -897,7 +897,7 @@ function CombinedPageContent() {
               aria-label="Back"
               style={{ padding: "4px 2px" }}
             >
-              <Icon name="arrow_back" size={22} style={{ color: "var(--color-text-secondary)" }} />
+              <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-secondary)" }} />
             </motion.button>
           )}
         </AnimatePresence>
@@ -914,7 +914,7 @@ function CombinedPageContent() {
                 style={{
                   fontFamily: "Roboto Slab, Georgia, serif",
                   fontSize: 20, fontWeight: 500,
-                  color: "var(--color-text-primary)",
+                  color: "var(--md-sys-color-text-primary)",
                   margin: 0, lineHeight: 1.15, textAlign: "center",
                 }}
               >
@@ -931,7 +931,7 @@ function CombinedPageContent() {
                 style={{
                   fontFamily: "Roboto Slab, Georgia, serif",
                   fontSize: 22, fontWeight: 500,
-                  color: "var(--color-text-primary)",
+                  color: "var(--md-sys-color-text-primary)",
                   margin: 0, lineHeight: 1.15, textAlign: "center",
                 }}
               >
@@ -958,14 +958,14 @@ function CombinedPageContent() {
             style={{
               margin: "0 16px 12px",
               borderRadius: 999,
-              background: "var(--color-dark-secondary)",
-              outline: showSystemSection ? "1.5px solid var(--color-brand-purple)" : "none",
+              background: "var(--md-sys-color-dark-secondary)",
+              outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
               flexShrink: 0,
             }}
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-              <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
-              <path d="M12 12L16 16" stroke={showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
+              <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
+              <path d="M12 12L16 16" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
             </svg>
             <input
               ref={accountsInputRef}
@@ -974,17 +974,17 @@ function CombinedPageContent() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="flex-1 bg-transparent text-[15px] outline-none"
-              style={{ color: "var(--color-text-primary)", caretColor: "var(--color-brand-coral)" }}
+              style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
             />
             {showSystemSection && (
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--color-brand-purple)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
                 ALL
               </span>
             )}
             {query && (
               <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="7" fill="var(--color-text-disabled)" />
+                  <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
                   <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
               </button>
@@ -1049,12 +1049,12 @@ function CombinedPageContent() {
                   {/* Relationships section */}
                   <div className="mb-3">
                     <div className="flex items-center justify-between px-4 py-2">
-                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Relationships
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
-                    <div style={{ background: "var(--color-dark-secondary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16 }}>
+                    <div style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16 }}>
                       {topAccounts.map((account, i) => (
                         <CompactAccountRow key={account.id} account={account} isLast={i === topAccounts.length - 1} />
                       ))}
@@ -1064,7 +1064,7 @@ function CombinedPageContent() {
                   {/* Priorities section */}
                   <div>
                     <div className="flex items-center justify-between px-4 py-2">
-                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Action Items
                       </span>
                       <MiniSearchPill onClick={() => goToMode("priorities")} />
@@ -1098,16 +1098,16 @@ function CombinedPageContent() {
                 </div>
               ) : hasQuery ? (
                 <div className="mx-4 mt-2 rounded-2xl flex flex-col items-center gap-4 px-5 py-6"
-                  style={{ background: "var(--color-dark-secondary)" }}>
+                  style={{ background: "var(--md-sys-color-dark-secondary)" }}>
                   <div className="w-11 h-11 rounded-full flex items-center justify-center"
                     style={{ background: "rgba(139,146,255,0.12)" }}>
-                    <Icon name="search_off" size={22} style={{ color: "var(--color-brand-purple)" }} />
+                    <Icon name="search_off" size={22} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   </div>
                   <div className="text-center">
                     {systemState === "idle" && (
-                      <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text-primary)" }}>Not in your accounts</p>
+                      <p className="text-sm font-semibold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>Not in your accounts</p>
                     )}
-                    <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
+                    <p className="text-sm leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
                   </div>
                   {systemState === "idle" && (
                     <button onClick={triggerSystemSearch}
@@ -1116,11 +1116,11 @@ function CombinedPageContent() {
                         padding: "13px 20px",
                         borderRadius: "var(--radius-full)",
                         background: "transparent",
-                        border: "1px solid var(--color-dark-tertiary)",
-                        color: "var(--color-text-primary)",
+                        border: "1px solid var(--md-sys-color-dark-tertiary)",
+                        color: "var(--md-sys-color-text-primary)",
                         fontSize: 15,
                       }}>
-                      <Icon name="public" size={18} style={{ color: "var(--color-text-secondary)", flexShrink: 0 }} />
+                      <Icon name="public" size={18} style={{ color: "var(--md-sys-color-text-secondary)", flexShrink: 0 }} />
                       Search all Tomorrowland Innovations
                     </button>
                   )}
@@ -1135,11 +1135,11 @@ function CombinedPageContent() {
                       padding: "13px 20px",
                       borderRadius: "var(--radius-full)",
                       background: "transparent",
-                      border: "1px solid var(--color-dark-tertiary)",
-                      color: "var(--color-text-primary)",
+                      border: "1px solid var(--md-sys-color-dark-tertiary)",
+                      color: "var(--md-sys-color-text-primary)",
                       fontSize: 15,
                     }}>
-                    <Icon name="public" size={18} style={{ color: "var(--color-text-secondary)", flexShrink: 0 }} />
+                    <Icon name="public" size={18} style={{ color: "var(--md-sys-color-text-secondary)", flexShrink: 0 }} />
                     Search all Tomorrowland Innovations
                   </button>
                 </div>
@@ -1158,7 +1158,7 @@ function CombinedPageContent() {
                       <SectionHeader label="All Tomorrowland Innovations Relationships" count={systemResults.length} />
                       {systemResults.length > 0 ? (
                         <div className="flex flex-col mx-4 rounded-2xl overflow-hidden"
-                          style={{ border: "1px solid var(--color-dark-tertiary)" }}>
+                          style={{ border: "1px solid var(--md-sys-color-dark-tertiary)" }}>
                           {systemResults.map((account, i) => (
                             <SystemAccountListItem
                               key={account.id}
@@ -1171,7 +1171,7 @@ function CombinedPageContent() {
                         </div>
                       ) : (
                         <div className="px-4 py-6 text-center">
-                          <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>Not found anywhere in Tomorrowland Innovations.</p>
+                          <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>Not found anywhere in Tomorrowland Innovations.</p>
                         </div>
                       )}
                     </>
@@ -1195,7 +1195,7 @@ function CombinedPageContent() {
               <div className="px-4 pb-3" style={{ flexShrink: 0, paddingTop: 8 }}>
                 <div className="flex items-end justify-between gap-3 mb-3">
                   <h1 style={{
-                    color: "var(--color-text-primary)",
+                    color: "var(--md-sys-color-text-primary)",
                     fontFamily: "Roboto Slab, Georgia, serif",
                     fontSize: 30, fontWeight: 700, lineHeight: "36px",
                   }}>
@@ -1224,11 +1224,11 @@ function CombinedPageContent() {
                 {/* Search bar */}
                 <div
                   className="flex items-center gap-2 h-11 px-3"
-                  style={{ borderRadius: 999, background: "var(--color-dark-secondary)" }}
+                  style={{ borderRadius: 999, background: "var(--md-sys-color-dark-secondary)" }}
                 >
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-                    <circle cx="7.5" cy="7.5" r="6" stroke="var(--color-text-muted)" strokeWidth="1.75" />
-                    <path d="M12 12L16 16" stroke="var(--color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
+                    <circle cx="7.5" cy="7.5" r="6" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" />
+                    <path d="M12 12L16 16" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
                   </svg>
                   <input
                     ref={prioritiesInputRef}
@@ -1237,12 +1237,12 @@ function CombinedPageContent() {
                     value={prioritiesQuery}
                     onChange={(e) => setPrioritiesQuery(e.target.value)}
                     className="flex-1 bg-transparent text-[15px] outline-none"
-                    style={{ color: "var(--color-text-primary)", caretColor: "var(--color-brand-coral)" }}
+                    style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
                   />
                   {prioritiesQuery && (
                     <button onClick={() => setPrioritiesQuery("")} className="active:opacity-60 flex-shrink-0">
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <circle cx="8" cy="8" r="7" fill="var(--color-text-disabled)" />
+                        <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
                         <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
                       </svg>
                     </button>
@@ -1254,7 +1254,7 @@ function CombinedPageContent() {
               <div style={{ flex: 1, overflowY: "auto", paddingBottom: 48 }}>
                 {taskGroups.length === 0 ? (
                   <div className="flex items-center justify-center py-20">
-                    <p className="text-sm" style={{ color: "var(--color-text-disabled)" }}>
+                    <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                       {prioritiesQuery.trim() ? "No matching items" : `No ${taskStatusFilter} items`}
                     </p>
                   </div>
@@ -1263,10 +1263,10 @@ function CombinedPageContent() {
                     <section key={group.key} className="mb-6">
                       {/* Group header */}
                       <div className="flex items-center gap-2 px-4 mb-1 mt-2">
-                        <span className="eyebrow-text" style={{ color: "var(--color-text-disabled)" }}>
+                        <span className="eyebrow-text" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                           {group.label.toUpperCase()}
                         </span>
-                        <span className="text-xs font-bold" style={{ color: "var(--color-brand-purple)" }}>
+                        <span className="text-xs font-bold" style={{ color: "var(--md-sys-color-neonindigo)" }}>
                           {group.items.length}
                         </span>
                       </div>
@@ -1288,7 +1288,7 @@ function CombinedPageContent() {
                             >
                               {i < group.items.length - 1 && (
                                 <div className="absolute bottom-0 left-3 right-3"
-                                  style={{ height: 1, background: "var(--color-dark-tertiary)" }} />
+                                  style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
                               )}
                               {/* Check circle */}
                               <div className="py-3.5">
@@ -1306,7 +1306,7 @@ function CombinedPageContent() {
                                   className="relative flex-shrink-0 w-5 h-5 rounded-full active:scale-90 transition-transform"
                                 >
                                   <div className="absolute inset-0 rounded-full transition-opacity duration-150"
-                                    style={{ border: "1.5px solid var(--color-text-disabled)", opacity: isPending ? 0 : 1 }} />
+                                    style={{ border: "1.5px solid var(--md-sys-color-text-disabled)", opacity: isPending ? 0 : 1 }} />
                                   <AnimatePresence>
                                     {isPending && (
                                       <motion.div
@@ -1327,22 +1327,22 @@ function CombinedPageContent() {
                                 className="flex-1 flex items-center gap-3 py-3.5">
                                 <div className="flex-1 min-w-0">
                                   <p className="text-[16px] font-semibold leading-snug mb-1"
-                                    style={{ color: "var(--color-text-primary)" }}>
+                                    style={{ color: "var(--md-sys-color-text-primary)" }}>
                                     {item.title}
                                   </p>
                                   <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1">
-                                      <Icon name="calendar_today" size={12} style={{ color: "var(--color-brand-purple-dark)" }} />
-                                      <span className="text-xs font-medium" style={{ color: dueToday ? "var(--color-brand-coral)" : "var(--color-text-disabled)" }}>
+                                      <Icon name="calendar_today" size={12} style={{ color: "var(--md-sys-color-neonindigo-dark)" }} />
+                                      <span className="text-xs font-medium" style={{ color: dueToday ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-disabled)" }}>
                                         {item.dueDate ? item.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Due Today"}
                                       </span>
                                     </div>
                                     <div className="flex items-center gap-1">
                                       <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
                                         <path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-                                          stroke="var(--color-text-disabled)" strokeLinecap="round" strokeLinejoin="round" />
+                                          stroke="var(--md-sys-color-text-disabled)" strokeLinecap="round" strokeLinejoin="round" />
                                       </svg>
-                                      <span className="text-xs" style={{ color: "var(--color-text-disabled)" }}>
+                                      <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                                         {ACCOUNT_NAME[item.accountId] ?? item.accountId}
                                       </span>
                                     </div>
@@ -1356,7 +1356,7 @@ function CombinedPageContent() {
                                   className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
                                   style={{ width: 44, height: 44 }}
                                 >
-                                  <Icon name="link" size={16} style={{ color: "var(--color-text-disabled)" }} />
+                                  <Icon name="link" size={16} style={{ color: "var(--md-sys-color-text-disabled)" }} />
                                 </Link>
                               )}
                             </motion.div>
@@ -1380,7 +1380,7 @@ function CombinedPageContent() {
             left: 0,
             right: 0,
             padding: "20px 16px 16px",
-            background: "linear-gradient(to bottom, transparent, var(--color-background) 40%)",
+            background: "linear-gradient(to bottom, transparent, var(--md-sys-color-background) 40%)",
             pointerEvents: "none",
           }}>
             <div style={{ pointerEvents: "auto" }}>
@@ -1414,7 +1414,7 @@ function CombinedPageContent() {
             className="absolute left-4 right-4 flex items-center gap-3 px-4 py-3.5"
             style={{
               bottom: 40,
-              background: "var(--color-dark-secondary)",
+              background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
               boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
               border: "1px solid rgba(46, 204, 113, 0.25)",
@@ -1425,9 +1425,9 @@ function CombinedPageContent() {
               className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
               style={{ background: "rgba(46, 204, 113, 0.15)" }}
             >
-              <Icon name="check" size={15} style={{ color: "var(--color-semantic-success)" }} />
+              <Icon name="check" size={15} style={{ color: "var(--md-sys-color-semantic-success)" }} />
             </div>
-            <p className="text-[14px] font-semibold" style={{ color: "var(--color-text-primary)" }}>
+            <p className="text-[14px] font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
               {successToast}
             </p>
           </motion.div>

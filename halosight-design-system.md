@@ -8,41 +8,41 @@ The design system is M3-aligned (Google Material Design 3), Flutter-ready, and F
 
 ## Color Tokens
 
-Token names use CSS custom property syntax (`--color-*`). Never use raw hex values — always reference by token name.
+Token names use CSS custom property syntax (`--md-sys-color-*`). Never use raw hex values — always reference by token name.
 
 ### App Surface
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-background` | `#111420` | Page / app chrome |
-| `--color-surface-dim` | `#171B29` | Nav, persistent UI |
+| `--md-sys-color-background` | `#111420` | Page / app chrome |
+| `--md-sys-color-surface-dim` | `#171B29` | Nav, persistent UI |
 
 ### Dark Theme Scale
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-dark-base` | `#0D0F1A` | Off-black — deepest dark |
-| `--color-dark-primary` | `#1A1D29` | Primary dark background |
-| `--color-dark-secondary` | `#252A36` | Cards, list items |
-| `--color-dark-tertiary` | `#3D4451` | Dividers, borders |
+| `--md-sys-color-dark-base` | `#0D0F1A` | Off-black — deepest dark |
+| `--md-sys-color-dark-primary` | `#1A1D29` | Primary dark background |
+| `--md-sys-color-dark-secondary` | `#252A36` | Cards, list items |
+| `--md-sys-color-dark-tertiary` | `#3D4451` | Dividers, borders |
 
 ### Light Theme Scale
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-surface-white` | `#FFFFFF` | Pure white background |
-| `--color-surface-light` | `#F8FAFC` | Light background |
-| `--color-surface-gray` | `#F1F5F9` | Subtle gray background |
+| `--md-sys-color-surface-white` | `#FFFFFF` | Pure white background |
+| `--md-sys-color-surface-light` | `#F8FAFC` | Light background |
+| `--md-sys-color-surface-gray` | `#F1F5F9` | Subtle gray background |
 
 ### Text Colors
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-text-primary` | `#F7F8FF` | Primary text |
-| `--color-text-secondary` | `#C3CAD8` | Supporting text, subtitles |
-| `--color-text-muted` | `#8B94A8` | Muted text, metadata |
-| `--color-text-disabled` | `#5D667A` | Placeholders, inactive nav, timestamps |
-| `--color-text-inverse` | `#111420` | Text on light surfaces |
+| `--md-sys-color-text-primary` | `#F7F8FF` | Primary text |
+| `--md-sys-color-text-secondary` | `#C3CAD8` | Supporting text, subtitles |
+| `--md-sys-color-text-muted` | `#8B94A8` | Muted text, metadata |
+| `--md-sys-color-text-disabled` | `#5D667A` | Placeholders, inactive nav, timestamps |
+| `--md-sys-color-text-inverse` | `#111420` | Text on light surfaces |
 
 ### Brand — Neon Indigo (Interactive & Accent)
 
@@ -50,9 +50,9 @@ Use for interactive elements, hover states, active states, and visual accents.
 
 | Token | Value |
 |---|---|
-| `--color-brand-purple-light` | `#B3B8FF` |
-| `--color-brand-purple` | `#8B92FF` |
-| `--color-brand-purple-dark` | `#6B72E8` |
+| `--md-sys-color-neonindigo-light` | `#B3B8FF` |
+| `--md-sys-color-neonindigo` | `#8B92FF` |
+| `--md-sys-color-neonindigo-dark` | `#6B72E8` |
 
 ### Brand — Indigo (Secondary Actions & Links)
 
@@ -60,9 +60,9 @@ Use for secondary CTAs, text links, eyebrow text, and exploratory actions.
 
 | Token | Value |
 |---|---|
-| `--color-brand-blue-light` | `#7E85E6` |
-| `--color-brand-blue` | `#5B63D6` |
-| `--color-brand-blue-dark` | `#4850B8` |
+| `--md-sys-color-indigo-light` | `#7E85E6` |
+| `--md-sys-color-indigo` | `#5B63D6` |
+| `--md-sys-color-indigo-dark` | `#4850B8` |
 
 ### Brand — Coral Ember (Primary CTA)
 
@@ -70,9 +70,9 @@ Use for primary call-to-action buttons and high-priority actions.
 
 | Token | Value |
 |---|---|
-| `--color-brand-coral-light` | `#FF8F82` |
-| `--color-brand-coral` | `#FF6B5A` |
-| `--color-brand-coral-dark` | `#E64A37` |
+| `--md-sys-color-brand-coral-light` | `#FF8F82` |
+| `--md-sys-color-brand-coral` | `#FF6B5A` |
+| `--md-sys-color-brand-coral-dark` | `#E64A37` |
 
 ### Brand — Teal (Relationship Data)
 
@@ -80,8 +80,8 @@ Use for account/relationship data visualization, badges, featured highlights.
 
 | Token | Value |
 |---|---|
-| `--color-brand-teal` | `#6B9DB0` |
-| `--color-brand-teal-hover` | `#8CB5C5` |
+| `--md-sys-color-brand-teal` | `#6B9DB0` |
+| `--md-sys-color-brand-teal-hover` | `#8CB5C5` |
 
 ### Brand — Pink (Special Accents)
 
@@ -89,39 +89,39 @@ Use sparingly for promotional badges, featured items, or unique visual accents.
 
 | Token | Value |
 |---|---|
-| `--color-brand-pink` | `#E85D9C` |
+| `--md-sys-color-brand-pink` | `#E85D9C` |
 
 ### Semantic — Success
 
 | Token | Value |
 |---|---|
-| `--color-success-light` | `#86EFAC` |
-| `--color-success` | `#2ECC71` |
-| `--color-success-dark` | `#16A34A` |
+| `--md-sys-color-success-light` | `#86EFAC` |
+| `--md-sys-color-success` | `#2ECC71` |
+| `--md-sys-color-success-dark` | `#16A34A` |
 
 ### Semantic — Warning
 
 | Token | Value |
 |---|---|
-| `--color-warning-light` | `#FCD384` |
-| `--color-warning` | `#F5A623` |
-| `--color-warning-dark` | `#C47D10` |
+| `--md-sys-color-warning-light` | `#FCD384` |
+| `--md-sys-color-warning` | `#F5A623` |
+| `--md-sys-color-warning-dark` | `#C47D10` |
 
 ### Semantic — Error
 
 | Token | Value |
 |---|---|
-| `--color-error-light` | `#FF8586` |
-| `--color-error` | `#FF4D4F` |
-| `--color-error-dark` | `#CC1F21` |
+| `--md-sys-color-error-light` | `#FF8586` |
+| `--md-sys-color-error` | `#FF4D4F` |
+| `--md-sys-color-error-dark` | `#CC1F21` |
 
 ### Semantic — Info
 
 | Token | Value |
 |---|---|
-| `--color-info-light` | `#93C5FD` |
-| `--color-info` | `#4DA3FF` |
-| `--color-info-dark` | `#1D6FBF` |
+| `--md-sys-color-info-light` | `#93C5FD` |
+| `--md-sys-color-info` | `#4DA3FF` |
+| `--md-sys-color-info-dark` | `#1D6FBF` |
 
 ### Data Visualization
 
@@ -129,16 +129,16 @@ Used exclusively for charts, account health scores, recency indicators.
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-data-account` | `#6B9DB0` | Account data |
-| `--color-data-recency` | `#8B92FF` | Recency indicators |
-| `--color-data-crm-sync` | `#2ECC71` | CRM sync status |
-| `--color-data-review` | `#F5A623` | Review / pending states |
+| `--md-sys-color-data-account` | `#6B9DB0` | Account data |
+| `--md-sys-color-data-recency` | `#8B92FF` | Recency indicators |
+| `--md-sys-color-data-crm-sync` | `#2ECC71` | CRM sync status |
+| `--md-sys-color-data-review` | `#F5A623` | Review / pending states |
 
 ### Recording
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-recording` | `#FF5A4F` | Live recording indicator (distinct from error red) |
+| `--md-sys-color-recording` | `#FF5A4F` | Live recording indicator (distinct from error red) |
 
 ### Neutrals (Un-tinted)
 
@@ -146,12 +146,12 @@ Use for generic backgrounds, dividers, or when brand color is inappropriate.
 
 | Token | Value |
 |---|---|
-| `--color-neutral-950` | `#0A0A0A` |
-| `--color-neutral-800` | `#262626` |
-| `--color-neutral-600` | `#525252` |
-| `--color-neutral-400` | `#A3A3A3` |
-| `--color-neutral-200` | `#E5E5E5` |
-| `--color-neutral-50` | `#FAFAFA` |
+| `--md-ref-palette-neutral-950` | `#0A0A0A` |
+| `--md-ref-palette-neutral-800` | `#262626` |
+| `--md-ref-palette-neutral-600` | `#525252` |
+| `--md-ref-palette-neutral-400` | `#A3A3A3` |
+| `--md-ref-palette-neutral-200` | `#E5E5E5` |
+| `--md-ref-palette-neutral-50` | `#FAFAFA` |
 
 ### Extended Palette (Data Visualization Overflow)
 
@@ -159,12 +159,12 @@ Supplemental accent colors for tags, categories, and data viz when brand colors 
 
 | Token | Value |
 |---|---|
-| `--color-ext-cyan` | `#5BBFCC` |
-| `--color-ext-lime` | `#89B347` |
-| `--color-ext-orange` | `#C97A42` |
-| `--color-ext-gold` | `#C4962B` |
-| `--color-ext-violet` | `#8875C4` |
-| `--color-ext-rose` | `#C97888` |
+| `--md-ref-palette-ext-cyan` | `#5BBFCC` |
+| `--md-ref-palette-ext-lime` | `#89B347` |
+| `--md-ref-palette-ext-orange` | `#C97A42` |
+| `--md-ref-palette-ext-gold` | `#C4962B` |
+| `--md-ref-palette-ext-violet` | `#8875C4` |
+| `--md-ref-palette-ext-rose` | `#C97888` |
 
 ### Alpha / Glass
 
@@ -172,11 +172,11 @@ Transparent overlays for glass effects, borders, and layered surfaces. Always ap
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-alpha-white-10` | `rgba(255,255,255,0.10)` | Borders, card edges |
-| `--color-alpha-white-18` | `rgba(255,255,255,0.18)` | Active fields, emphasized containers |
-| `--color-alpha-purple-10` | `rgba(179,184,255,0.10)` | Subtle purple backgrounds |
-| `--color-alpha-purple-glass` | `rgba(179,184,255,0.10)` | Glass nav background |
-| `--color-alpha-dark-glass` | `rgba(255,255,255,0.18)` | Active pill on glass nav |
+| `--md-sys-color-alpha-white-10` | `rgba(255,255,255,0.10)` | Borders, card edges |
+| `--md-sys-color-alpha-white-18` | `rgba(255,255,255,0.18)` | Active fields, emphasized containers |
+| `--md-sys-color-alpha-neonindigo-10` | `rgba(179,184,255,0.10)` | Subtle purple backgrounds |
+| `--md-sys-color-alpha-neonindigo-glass` | `rgba(179,184,255,0.10)` | Glass nav background |
+| `--md-sys-color-alpha-dark-glass` | `rgba(255,255,255,0.18)` | Active pill on glass nav |
 
 ### Gradients
 
@@ -348,9 +348,9 @@ Self-hosted variable font (`MaterialSymbolsRounded.woff2`). Icon names are ident
 
 ## Token Rules
 
-1. Never use raw hex values — always `var(--color-*)`.
+1. Never use raw hex values — always `var(--md-sys-color-*)`.
 2. Never use raw px values for radius — always `var(--radius-*)`.
-3. Alpha/glass effects use `--color-alpha-*` tokens + `backdrop-filter: blur()`.
+3. Alpha/glass effects use `--md-sys-color-alpha-*` tokens + `backdrop-filter: blur()`.
 4. If a color doesn't have a token, add it to `globals.css` first.
 
 ---

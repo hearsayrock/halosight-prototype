@@ -19,7 +19,7 @@ The design system is defined in:
 
 Key rules:
 - **M3-aligned naming** — all color roles follow Material Design 3 names
-- **CSS custom properties** — all tokens are `--color-*`, `--radius-*`, `--spacing-*`, `--elevation-*`
+- **CSS custom properties** — all tokens are `--md-sys-color-*`, `--radius-*`, `--spacing-*`, `--elevation-*`
 - **No raw hex values in components** — always reference a token
 - **Figma-portable** — token names chosen to map directly to Figma variables with zero renaming
 - **Flutter-portable** — token names map directly to `ThemeData` color roles
@@ -29,7 +29,7 @@ Key rules:
 ## Token Governance Rules
 
 ### Colors
-- New semantic colors must have a container variant: `--color-X` + `--color-X-container` + `--color-on-X` + `--color-on-X-container`
+- New semantic colors must have a container variant: `--md-sys-color-X` + `--md-sys-color-X-container` + `--md-sys-color-on-X` + `--md-sys-color-on-X-container`
 - Do not add new primitive colors without a semantic role
 - Dark surface colors: use surface scale (`background` → `surface-container-low` → `surface` → `surface-container-high` → `outline`)
 - New status colors: only add if there's a genuine new semantic meaning not covered by `error`/`warning`/`tertiary`
@@ -88,15 +88,15 @@ Do NOT update the viewer for:
 
 | CSS Token | Flutter ThemeData |
 |---|---|
-| `--color-primary` | `colorScheme.primary` |
-| `--color-on-primary` | `colorScheme.onPrimary` |
-| `--color-primary-container` | `colorScheme.primaryContainer` |
-| `--color-secondary` | `colorScheme.secondary` |
-| `--color-surface` | `colorScheme.surface` |
-| `--color-surface-container-high` | `colorScheme.surfaceContainerHigh` |
-| `--color-on-surface-variant` | `colorScheme.onSurfaceVariant` |
-| `--color-outline` | `colorScheme.outline` |
-| `--color-error` | `colorScheme.error` |
+| `--md-sys-color-primary` | `colorScheme.primary` |
+| `--md-sys-color-on-primary` | `colorScheme.onPrimary` |
+| `--md-sys-color-primary-container` | `colorScheme.primaryContainer` |
+| `--md-sys-color-secondary` | `colorScheme.secondary` |
+| `--md-sys-color-surface` | `colorScheme.surface` |
+| `--md-sys-color-surface-container-high` | `colorScheme.surfaceContainerHigh` |
+| `--md-sys-color-on-surface-variant` | `colorScheme.onSurfaceVariant` |
+| `--md-sys-color-outline` | `colorScheme.outline` |
+| `--md-sys-color-error` | `colorScheme.error` |
 | `--radius-xl` | `RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))` |
 | `--radius-full` | `StadiumBorder()` |
 

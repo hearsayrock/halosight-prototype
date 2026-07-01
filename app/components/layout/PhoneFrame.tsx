@@ -71,7 +71,7 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
     return (
       <div
         className="phone-screen"
-        style={{ width: "100vw", height: "100dvh", position: "relative", background: "var(--color-background)" }}
+        style={{ width: "100vw", height: "100dvh", position: "relative", background: "var(--md-sys-color-background)" }}
       >
         {children}
         {overlayRoot}
@@ -91,7 +91,7 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
         justifyContent: "center",
         gap: showSidebars ? 40 : 0,
         padding: 32,
-        background: "var(--color-dark-base)",
+        background: "var(--md-sys-color-dark-base)",
         transition: "gap 0.2s ease",
       }}
     >

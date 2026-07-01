@@ -23,7 +23,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
       <h2 style={{
         fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
         color: AMBER, marginBottom: 24, paddingBottom: 12,
-        borderBottom: "1px solid var(--color-dark-tertiary)",
+        borderBottom: "1px solid var(--md-sys-color-dark-tertiary)",
       }}>
         {title}
       </h2>
@@ -34,7 +34,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: 6 }}>
+    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", marginBottom: 6 }}>
       {children}
     </p>
   );
@@ -69,15 +69,15 @@ const NAV_ITEMS = [
 function SidebarNav({ active }: { active: string }) {
   return (
     <nav style={{ position: "sticky", top: 48, width: 180, flexShrink: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-      <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: 8, paddingLeft: 12 }}>
+      <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", marginBottom: 8, paddingLeft: 12 }}>
         Story 4
       </p>
       {NAV_ITEMS.map(item => (
         <a key={item.id} href={`#${item.id}`} style={{
           display: "block", fontSize: 13,
           fontWeight: active === item.id ? 600 : 400,
-          color: active === item.id ? "var(--color-text-primary)" : "var(--color-text-muted)",
-          background: active === item.id ? "var(--color-dark-secondary)" : "transparent",
+          color: active === item.id ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
+          background: active === item.id ? "var(--md-sys-color-dark-secondary)" : "transparent",
           borderLeft: `3px solid ${active === item.id ? AMBER : "transparent"}`,
           padding: "6px 12px", borderRadius: "0 8px 8px 0", textDecoration: "none", transition: "all 0.1s",
         }}>
@@ -95,21 +95,21 @@ function OptionCard({ label, recommended, description, note, children }: {
 }) {
   return (
     <div style={{
-      background: "var(--color-dark-primary)",
-      border: `1px solid ${recommended ? AMBER_BORDER : "var(--color-dark-tertiary)"}`,
+      background: "var(--md-sys-color-dark-primary)",
+      border: `1px solid ${recommended ? AMBER_BORDER : "var(--md-sys-color-dark-tertiary)"}`,
       borderRadius: 12, overflow: "hidden", flex: 1, minWidth: 0,
     }}>
-      <div style={{ padding: "14px 16px 12px", borderBottom: children ? "1px solid var(--color-dark-tertiary)" : "none" }}>
+      <div style={{ padding: "14px 16px 12px", borderBottom: children ? "1px solid var(--md-sys-color-dark-tertiary)" : "none" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-text-primary)" }}>{label}</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--md-sys-color-text-primary)" }}>{label}</span>
           {recommended && (
             <span style={{ fontSize: 10, fontWeight: 700, padding: "1px 7px", borderRadius: 20, background: AMBER_BG, color: AMBER }}>
               Recommended
             </span>
           )}
         </div>
-        <p style={{ fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.55, margin: 0 }}>{description}</p>
-        {note && <p style={{ fontSize: 11, color: "var(--color-text-disabled)", lineHeight: 1.5, margin: "8px 0 0", fontStyle: "italic" }}>{note}</p>}
+        <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", lineHeight: 1.55, margin: 0 }}>{description}</p>
+        {note && <p style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", lineHeight: 1.5, margin: "8px 0 0", fontStyle: "italic" }}>{note}</p>}
       </div>
       {children && <div style={{ padding: "14px 16px" }}>{children}</div>}
     </div>
@@ -122,10 +122,10 @@ function DeliverableHeading({ name, status, sub }: { name: string; status: "buil
   return (
     <div style={{ marginBottom: sub ? 6 : 14 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: sub ? 4 : 0 }}>
-        <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text-primary)", margin: 0 }}>{name}</h3>
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--md-sys-color-text-primary)", margin: 0 }}>{name}</h3>
         <StatusBadge status={status} />
       </div>
-      {sub && <p style={{ fontSize: 13, color: "var(--color-text-muted)", lineHeight: 1.6, margin: 0 }}>{sub}</p>}
+      {sub && <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, margin: 0 }}>{sub}</p>}
     </div>
   );
 }
@@ -135,8 +135,8 @@ function DeliverableHeading({ name, status, sub }: { name: string; status: "buil
 function MockScreen({ children, width = 300, label }: { children: React.ReactNode; width?: number; label?: string }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
-      {label && <p style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-muted)", margin: 0 }}>{label}</p>}
-      <div style={{ width, background: "var(--color-background)", borderRadius: 16, border: "1px solid var(--color-dark-tertiary)", overflow: "hidden" }}>
+      {label && <p style={{ fontSize: 12, fontWeight: 600, color: "var(--md-sys-color-text-muted)", margin: 0 }}>{label}</p>}
+      <div style={{ width, background: "var(--md-sys-color-background)", borderRadius: 16, border: "1px solid var(--md-sys-color-dark-tertiary)", overflow: "hidden" }}>
         {children}
       </div>
     </div>
@@ -146,8 +146,8 @@ function MockScreen({ children, width = 300, label }: { children: React.ReactNod
 function MockSectionLabel({ label, action }: { label: string; action?: string }) {
   return (
     <div style={{ padding: "10px 14px 6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--color-text-muted)" }}>{label}</span>
-      {action && <span style={{ fontSize: 12, fontWeight: 600, color: "var(--color-brand-purple)" }}>{action}</span>}
+      <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--md-sys-color-text-muted)" }}>{label}</span>
+      {action && <span style={{ fontSize: 12, fontWeight: 600, color: "var(--md-sys-color-neonindigo)" }}>{action}</span>}
     </div>
   );
 }
@@ -165,13 +165,13 @@ function MockTopCustomerCard({ name, meta, type = "account", reason, distance, s
   return (
     <div style={{
       margin: "6px 12px", padding: "14px", borderRadius: 14,
-      background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)",
+      background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)",
       opacity: dim ? 0.45 : 1,
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text-primary)", margin: "0 0 3px" }}>{name}</p>
-          {meta && <p style={{ fontSize: 11, color: "var(--color-text-muted)", margin: "0 0 6px" }}>{meta}</p>}
+          <p style={{ fontSize: 15, fontWeight: 700, color: "var(--md-sys-color-text-primary)", margin: "0 0 3px" }}>{name}</p>
+          {meta && <p style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", margin: "0 0 6px" }}>{meta}</p>}
         </div>
         {distance && (
           <span style={{ fontSize: 12, fontWeight: 700, color: AMBER, background: AMBER_BG, padding: "3px 9px", borderRadius: 20, flexShrink: 0, marginLeft: 8 }}>
@@ -190,9 +190,9 @@ function MockTopCustomerCard({ name, meta, type = "account", reason, distance, s
         )}
       </div>
       {reason && (
-        <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 8px", borderRadius: 8, background: "var(--color-dark-secondary)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 8px", borderRadius: 8, background: "var(--md-sys-color-dark-secondary)" }}>
           <span style={{ fontSize: 12 }}>💡</span>
-          <span style={{ fontSize: 11, color: "var(--color-text-muted)" }}>{reason}</span>
+          <span style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)" }}>{reason}</span>
         </div>
       )}
     </div>
@@ -205,23 +205,23 @@ function MockSmallCustomerCard({ name, meta, type = "account", distance, reason,
   name: string; meta?: string; type?: "account" | "lead"; distance?: string; reason?: string; isLast?: boolean; dim?: boolean;
 }) {
   return (
-    <div style={{ padding: "10px 14px", borderBottom: isLast ? "none" : "1px solid var(--color-dark-tertiary)", opacity: dim ? 0.4 : 1 }}>
+    <div style={{ padding: "10px 14px", borderBottom: isLast ? "none" : "1px solid var(--md-sys-color-dark-tertiary)", opacity: dim ? 0.4 : 1 }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-            <p style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)", margin: 0 }}>{name}</p>
+            <p style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-primary)", margin: 0 }}>{name}</p>
             {distance && <span style={{ fontSize: 10, fontWeight: 700, color: AMBER, background: AMBER_BG, padding: "1px 6px", borderRadius: 20, flexShrink: 0 }}>{distance}</span>}
           </div>
-          {meta && <p style={{ fontSize: 11, color: "var(--color-text-muted)", margin: "0 0 4px" }}>{meta}</p>}
+          {meta && <p style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", margin: "0 0 4px" }}>{meta}</p>}
           <div style={{ display: "flex", gap: 4 }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "1px 6px", borderRadius: 20, fontSize: 10, fontWeight: 600, background: type === "account" ? "rgba(139,146,255,0.12)" : AMBER_BG, color: type === "account" ? "#8B92FF" : AMBER }}>
               <span style={{ width: 4, height: 4, borderRadius: "50%", background: type === "account" ? "#8B92FF" : AMBER }} />{type === "account" ? "Account" : "Lead"}
             </span>
-            {reason && <span style={{ fontSize: 10, color: "var(--color-text-disabled)", alignSelf: "center" }}>{reason}</span>}
+            {reason && <span style={{ fontSize: 10, color: "var(--md-sys-color-text-disabled)", alignSelf: "center" }}>{reason}</span>}
           </div>
         </div>
         <svg width="6" height="10" viewBox="0 0 6 10" fill="none" style={{ flexShrink: 0, marginTop: 4 }}>
-          <path d="M1 1L5 5L1 9" stroke="var(--color-text-disabled)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M1 1L5 5L1 9" stroke="var(--md-sys-color-text-disabled)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
     </div>
@@ -238,26 +238,26 @@ function MockActionItem({ title, account, dueLabel, bucket, isLast }: {
   const bucketMap: Record<DueBucket, { dot: string; label: string; strikethrough?: boolean }> = {
     overdue:   { dot: "#FF4D4F", label: "Overdue" },
     today:     { dot: AMBER,     label: "Due today" },
-    upcoming:  { dot: "var(--color-brand-teal)", label: dueLabel ?? "Upcoming" },
-    "no-date": { dot: "var(--color-text-disabled)", label: "No due date" },
+    upcoming:  { dot: "var(--md-sys-color-brand-teal)", label: dueLabel ?? "Upcoming" },
+    "no-date": { dot: "var(--md-sys-color-text-disabled)", label: "No due date" },
     completed: { dot: "#2ECC71", label: "Completed", strikethrough: true },
   };
   const s = bucketMap[bucket];
   return (
-    <div style={{ padding: "11px 14px", borderBottom: isLast ? "none" : "1px solid var(--color-dark-tertiary)", opacity: bucket === "completed" ? 0.45 : 1 }}>
+    <div style={{ padding: "11px 14px", borderBottom: isLast ? "none" : "1px solid var(--md-sys-color-dark-tertiary)", opacity: bucket === "completed" ? 0.45 : 1 }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
         {/* Checkbox */}
-        <div style={{ width: 18, height: 18, borderRadius: 5, border: `2px solid ${bucket === "completed" ? "#2ECC71" : "var(--color-dark-tertiary)"}`, background: bucket === "completed" ? "rgba(46,204,113,0.15)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ width: 18, height: 18, borderRadius: 5, border: `2px solid ${bucket === "completed" ? "#2ECC71" : "var(--md-sys-color-dark-tertiary)"}`, background: bucket === "completed" ? "rgba(46,204,113,0.15)" : "transparent", flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
           {bucket === "completed" && <span style={{ color: "#2ECC71", fontSize: 10, lineHeight: 1 }}>✓</span>}
         </div>
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)", margin: "0 0 3px", textDecoration: s.strikethrough ? "line-through" : "none" }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-primary)", margin: "0 0 3px", textDecoration: s.strikethrough ? "line-through" : "none" }}>
             {title}
           </p>
-          {account && <p style={{ fontSize: 11, color: "var(--color-text-muted)", margin: "0 0 5px" }}>{account}</p>}
+          {account && <p style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", margin: "0 0 5px" }}>{account}</p>}
           <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
             <span style={{ width: 5, height: 5, borderRadius: "50%", background: s.dot, flexShrink: 0 }} />
-            <span style={{ fontSize: 11, fontWeight: 600, color: bucket === "overdue" ? "#FF4D4F" : bucket === "today" ? AMBER : "var(--color-text-muted)" }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: bucket === "overdue" ? "#FF4D4F" : bucket === "today" ? AMBER : "var(--md-sys-color-text-muted)" }}>
               {s.label}
             </span>
           </div>
@@ -271,12 +271,12 @@ function MockActionItem({ title, account, dueLabel, bucket, isLast }: {
 
 function MockShimmerCard({ tall }: { tall?: boolean }) {
   return (
-    <div style={{ margin: "6px 12px", padding: "14px", borderRadius: 14, background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)" }}>
-      <div style={{ height: 14, width: "60%", borderRadius: 6, background: "var(--color-dark-tertiary)", marginBottom: 8 }} />
-      <div style={{ height: 11, width: "40%", borderRadius: 6, background: "var(--color-dark-secondary)", marginBottom: tall ? 32 : 8 }} />
+    <div style={{ margin: "6px 12px", padding: "14px", borderRadius: 14, background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)" }}>
+      <div style={{ height: 14, width: "60%", borderRadius: 6, background: "var(--md-sys-color-dark-tertiary)", marginBottom: 8 }} />
+      <div style={{ height: 11, width: "40%", borderRadius: 6, background: "var(--md-sys-color-dark-secondary)", marginBottom: tall ? 32 : 8 }} />
       <div style={{ display: "flex", gap: 5 }}>
-        <div style={{ height: 18, width: 56, borderRadius: 20, background: "var(--color-dark-tertiary)" }} />
-        <div style={{ height: 18, width: 44, borderRadius: 20, background: "var(--color-dark-secondary)" }} />
+        <div style={{ height: 18, width: 56, borderRadius: 20, background: "var(--md-sys-color-dark-tertiary)" }} />
+        <div style={{ height: 18, width: 44, borderRadius: 20, background: "var(--md-sys-color-dark-secondary)" }} />
       </div>
     </div>
   );
@@ -286,8 +286,8 @@ function MockEmptyState({ icon, title, sub }: { icon: string; title: string; sub
   return (
     <div style={{ padding: "28px 16px", textAlign: "center" }}>
       <p style={{ fontSize: 24, marginBottom: 6 }}>{icon}</p>
-      <p style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)", margin: "0 0 4px" }}>{title}</p>
-      <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.55 }}>{sub}</p>
+      <p style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-primary)", margin: "0 0 4px" }}>{title}</p>
+      <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", margin: 0, lineHeight: 1.55 }}>{sub}</p>
     </div>
   );
 }
@@ -298,7 +298,7 @@ function MockBanner({ icon, text, sub }: { icon: string; text: string; sub?: str
       <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>{icon}</span>
       <div>
         <p style={{ fontSize: 12, fontWeight: 600, color: AMBER, margin: "0 0 2px" }}>{text}</p>
-        {sub && <p style={{ fontSize: 11, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.5 }}>{sub}</p>}
+        {sub && <p style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", margin: 0, lineHeight: 1.5 }}>{sub}</p>}
       </div>
     </div>
   );
@@ -308,11 +308,11 @@ function MockBanner({ icon, text, sub }: { icon: string; text: string; sub?: str
 
 function SortRow({ rank, label, color, note }: { rank: string; label: string; color: string; note: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid var(--color-dark-tertiary)" }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: "var(--color-text-disabled)", width: 20, flexShrink: 0, textAlign: "center" }}>{rank}</span>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid var(--md-sys-color-dark-tertiary)" }}>
+      <span style={{ fontSize: 11, fontWeight: 700, color: "var(--md-sys-color-text-disabled)", width: 20, flexShrink: 0, textAlign: "center" }}>{rank}</span>
       <div style={{ width: 8, height: 8, borderRadius: "50%", background: color, flexShrink: 0 }} />
-      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)", flex: 1 }}>{label}</span>
-      <span style={{ fontSize: 11, color: "var(--color-text-disabled)", fontStyle: "italic", maxWidth: 260, textAlign: "right" }}>{note}</span>
+      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-primary)", flex: 1 }}>{label}</span>
+      <span style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", fontStyle: "italic", maxWidth: 260, textAlign: "right" }}>{note}</span>
     </div>
   );
 }
@@ -332,24 +332,24 @@ export default function Story4Page() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--color-background)", color: "var(--color-text-primary)", fontFamily: "Barlow, system-ui, sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "var(--md-sys-color-background)", color: "var(--md-sys-color-text-primary)", fontFamily: "Barlow, system-ui, sans-serif" }}>
 
       {/* Top bar */}
       <div style={{
-        position: "sticky", top: 0, zIndex: 50, background: "var(--color-dark-primary)",
-        borderBottom: "1px solid var(--color-dark-tertiary)", padding: "0 40px", height: 48,
+        position: "sticky", top: 0, zIndex: 50, background: "var(--md-sys-color-dark-primary)",
+        borderBottom: "1px solid var(--md-sys-color-dark-tertiary)", padding: "0 40px", height: 48,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a href="/handoff" style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", textDecoration: "none" }}>Halosight</a>
-          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          <a href="/story-1" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 1</a>
-          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          <a href="/story-2" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 2</a>
-          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          <a href="/story-3" style={{ fontSize: 14, color: "var(--color-text-muted)", textDecoration: "none" }}>Story 3</a>
-          <span style={{ color: "var(--color-dark-tertiary)" }}>/</span>
-          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--color-text-primary)" }}>Story 4</span>
+          <a href="/handoff" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</a>
+          <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
+          <a href="/story-1" style={{ fontSize: 14, color: "var(--md-sys-color-text-muted)", textDecoration: "none" }}>Story 1</a>
+          <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
+          <a href="/story-2" style={{ fontSize: 14, color: "var(--md-sys-color-text-muted)", textDecoration: "none" }}>Story 2</a>
+          <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
+          <a href="/story-3" style={{ fontSize: 14, color: "var(--md-sys-color-text-muted)", textDecoration: "none" }}>Story 3</a>
+          <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-text-primary)" }}>Story 4</span>
         </div>
         <a href="http://localhost:3000/accounts" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontWeight: 600, color: AMBER, textDecoration: "none", padding: "4px 12px", background: AMBER_BG, borderRadius: 20 }}>
           Open prototype ↗
@@ -362,14 +362,14 @@ export default function Story4Page() {
 
           {/* ── OVERVIEW ─────────────────────────────────────────────────── */}
           <Section id="overview" title="Overview">
-            <div style={{ background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)", borderRadius: 12, padding: "24px 28px", marginBottom: 20 }}>
+            <div style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)", borderRadius: 12, padding: "24px 28px", marginBottom: 20 }}>
               <h1 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>
                 Story 4: Home Page Priority Content
               </h1>
-              <h2 style={{ fontSize: 15, fontWeight: 400, color: "var(--color-text-muted)", margin: "0 0 14px", fontFamily: "inherit" }}>
+              <h2 style={{ fontSize: 15, fontWeight: 400, color: "var(--md-sys-color-text-muted)", margin: "0 0 14px", fontFamily: "inherit" }}>
                 Recommended Customers + Action Items
               </h2>
-              <p style={{ fontSize: 14, color: "var(--color-text-secondary)", lineHeight: 1.7, margin: "0 0 18px" }}>
+              <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.7, margin: "0 0 18px" }}>
                 The home screen is the rep's daily starting point. It needs to answer two questions at a glance:
                 "Who should I visit next?" and "What do I need to do today?" This story defines the ranking model
                 for recommended customers, how leads fit into that model, all fallback and empty states,
@@ -383,14 +383,14 @@ export default function Story4Page() {
                 ].map(s => (
                   <div key={s.label} style={{ background: s.bg, borderRadius: 10, padding: "14px 16px", textAlign: "center" }}>
                     <p style={{ fontSize: 26, fontWeight: 700, color: s.color, margin: "0 0 2px" }}>{s.value}</p>
-                    <p style={{ fontSize: 11, color: "var(--color-text-muted)", margin: 0 }}>{s.label}</p>
+                    <p style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", margin: 0 }}>{s.label}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <div style={{ background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)", borderRadius: 10, padding: "16px 18px" }}>
+              <div style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)", borderRadius: 10, padding: "16px 18px" }}>
                 <Eyebrow>Already built in prototype</Eyebrow>
                 {[
                   "Priority hub / home page layout",
@@ -398,13 +398,13 @@ export default function Story4Page() {
                   "Top 4 account cards (static mock)",
                   "Action items list (static, date-sorted)",
                 ].map((item, i, arr) => (
-                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "5px 0", borderBottom: i < arr.length - 1 ? "1px solid var(--color-dark-tertiary)" : "none" }}>
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "5px 0", borderBottom: i < arr.length - 1 ? "1px solid var(--md-sys-color-dark-tertiary)" : "none" }}>
                     <span style={{ color: "#2ECC71", flexShrink: 0, marginTop: 1 }}>✓</span>
-                    <span style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.45 }}>{item}</span>
+                    <span style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.45 }}>{item}</span>
                   </div>
                 ))}
               </div>
-              <div style={{ background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)", borderRadius: 10, padding: "16px 18px" }}>
+              <div style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)", borderRadius: 10, padding: "16px 18px" }}>
                 <Eyebrow>Outstanding</Eyebrow>
                 {[
                   "Ranking algorithm / signal definition",
@@ -420,9 +420,9 @@ export default function Story4Page() {
                   "Completed item hidden/separate rule",
                   "Action item empty state",
                 ].map((item, i, arr) => (
-                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "5px 0", borderBottom: i < arr.length - 1 ? "1px solid var(--color-dark-tertiary)" : "none" }}>
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "5px 0", borderBottom: i < arr.length - 1 ? "1px solid var(--md-sys-color-dark-tertiary)" : "none" }}>
                     <span style={{ color: AMBER, flexShrink: 0, marginTop: 1 }}>○</span>
-                    <span style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.45 }}>{item}</span>
+                    <span style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.45 }}>{item}</span>
                   </div>
                 ))}
               </div>
@@ -475,7 +475,7 @@ export default function Story4Page() {
             <div style={{ marginBottom: 40 }}>
               <DeliverableHeading name="5. What signals determine recommendation order?" status="decision"
                 sub="The ranking model is a product decision, not just an engineering one. Signal weights should be explicitly defined before dev begins." />
-              <div style={{ background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)", borderRadius: 10, overflow: "hidden" }}>
+              <div style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)", borderRadius: 10, overflow: "hidden" }}>
                 {[
                   { signal: "Proximity (distance from rep's location)", weight: "High",   note: "Most actionable signal for a field rep about to drive somewhere" },
                   { signal: "Last visited date",                        weight: "High",   note: "Accounts not visited recently should rank up" },
@@ -486,18 +486,18 @@ export default function Story4Page() {
                   { signal: "Sync issues / needs details",              weight: "Low",    note: "May surface unresolved records but not a primary visit driver" },
                   { signal: "Recently created lead",                    weight: "Medium (if leads eligible)", note: "A newly created lead is a hot prospect worth following up" },
                 ].map((row, i, arr) => (
-                  <div key={row.signal} style={{ display: "grid", gridTemplateColumns: "2.5fr 1.2fr 2fr", borderBottom: i < arr.length - 1 ? "1px solid var(--color-dark-tertiary)" : "none" }}>
-                    <div style={{ padding: "10px 14px", fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)", borderRight: "1px solid var(--color-dark-tertiary)" }}>{row.signal}</div>
-                    <div style={{ padding: "10px 12px", fontSize: 12, fontWeight: 600, borderRight: "1px solid var(--color-dark-tertiary)",
-                      color: row.weight === "High" ? "#2ECC71" : row.weight === "Medium" ? AMBER : row.weight.startsWith("Medium") ? AMBER : "var(--color-text-muted)" }}>
+                  <div key={row.signal} style={{ display: "grid", gridTemplateColumns: "2.5fr 1.2fr 2fr", borderBottom: i < arr.length - 1 ? "1px solid var(--md-sys-color-dark-tertiary)" : "none" }}>
+                    <div style={{ padding: "10px 14px", fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-primary)", borderRight: "1px solid var(--md-sys-color-dark-tertiary)" }}>{row.signal}</div>
+                    <div style={{ padding: "10px 12px", fontSize: 12, fontWeight: 600, borderRight: "1px solid var(--md-sys-color-dark-tertiary)",
+                      color: row.weight === "High" ? "#2ECC71" : row.weight === "Medium" ? AMBER : row.weight.startsWith("Medium") ? AMBER : "var(--md-sys-color-text-muted)" }}>
                       {row.weight}
                     </div>
-                    <div style={{ padding: "10px 12px", fontSize: 11, color: "var(--color-text-disabled)", fontStyle: "italic" }}>{row.note}</div>
+                    <div style={{ padding: "10px 12px", fontSize: 11, color: "var(--md-sys-color-text-disabled)", fontStyle: "italic" }}>{row.note}</div>
                   </div>
                 ))}
-                <div style={{ display: "grid", gridTemplateColumns: "2.5fr 1.2fr 2fr", background: "var(--color-dark-secondary)" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "2.5fr 1.2fr 2fr", background: "var(--md-sys-color-dark-secondary)" }}>
                   {["Signal", "V1 Weight", "Notes"].map(h => (
-                    <div key={h} style={{ padding: "8px 14px", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--color-text-muted)", borderRight: h !== "Notes" ? "1px solid var(--color-dark-tertiary)" : "none" }}>{h}</div>
+                    <div key={h} style={{ padding: "8px 14px", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--md-sys-color-text-muted)", borderRight: h !== "Notes" ? "1px solid var(--md-sys-color-dark-tertiary)" : "none" }}>{h}</div>
                   ))}
                 </div>
               </div>
@@ -557,9 +557,9 @@ export default function Story4Page() {
                 <OptionCard label="Option A — Yes, show a reason label on each card" recommended
                   description="A single highest-weight reason appears beneath each card. Simple, low-clutter, and helps reps verify the recommendation is relevant."
                   note="Recommended for V1. One reason is enough — a ranked list of signals is noise.">
-                  <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 8px", borderRadius: 8, background: "var(--color-dark-secondary)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 8px", borderRadius: 8, background: "var(--md-sys-color-dark-secondary)" }}>
                     <span style={{ fontSize: 12 }}>💡</span>
-                    <span style={{ fontSize: 11, color: "var(--color-text-muted)" }}>Overdue for a visit · Last seen 3 weeks ago</span>
+                    <span style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)" }}>Overdue for a visit · Last seen 3 weeks ago</span>
                   </div>
                 </OptionCard>
                 <OptionCard label="Option B — No reason label"
@@ -580,10 +580,10 @@ export default function Story4Page() {
                   { q: "16. Completed action items", a: "Hidden from the main list. Show a collapsed 'X completed' section at the bottom, expandable.", recommended: true },
                   { q: "17. Empty state",            a: "Show a positive message: 'All caught up — no action items.' No placeholder items.",    recommended: true },
                 ].map((row, i) => (
-                  <div key={i} style={{ display: "grid", gridTemplateColumns: "1.5fr 3fr", background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)", borderRadius: 10, overflow: "hidden" }}>
-                    <div style={{ padding: "12px 14px", fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)", borderRight: "1px solid var(--color-dark-tertiary)" }}>{row.q}</div>
+                  <div key={i} style={{ display: "grid", gridTemplateColumns: "1.5fr 3fr", background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)", borderRadius: 10, overflow: "hidden" }}>
+                    <div style={{ padding: "12px 14px", fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-primary)", borderRight: "1px solid var(--md-sys-color-dark-tertiary)" }}>{row.q}</div>
                     <div style={{ padding: "12px 14px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
-                      <span style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.5 }}>{row.a}</span>
+                      <span style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.5 }}>{row.a}</span>
                       {row.recommended && <span style={{ fontSize: 10, fontWeight: 700, padding: "1px 7px", borderRadius: 20, background: AMBER_BG, color: AMBER, flexShrink: 0 }}>Recommended</span>}
                     </div>
                   </div>
@@ -598,9 +598,9 @@ export default function Story4Page() {
           <Section id="ranking" title="Recommendation Logic">
             <DeliverableHeading name="Ranking algorithm — V1 model" status="design"
               sub="A weighted scoring model. Signals combine to produce a score for each customer. The top N by score are shown." />
-            <div style={{ background: "var(--color-dark-primary)", border: `1px solid ${AMBER_BORDER}`, borderRadius: 12, padding: "20px 22px", marginBottom: 20 }}>
+            <div style={{ background: "var(--md-sys-color-dark-primary)", border: `1px solid ${AMBER_BORDER}`, borderRadius: 12, padding: "20px 22px", marginBottom: 20 }}>
               <Eyebrow>V1 Recommended Scoring Model</Eyebrow>
-              <p style={{ fontSize: 13, color: "var(--color-text-muted)", lineHeight: 1.6, marginBottom: 16 }}>
+              <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 16 }}>
                 Score each customer with a simple additive model. The weights below are starting points — product should calibrate based on real usage. No ML required for V1.
               </p>
               {[
@@ -611,15 +611,15 @@ export default function Story4Page() {
                 { signal: "Account tier (A/B/C)", formula: "+15 if tier A, +8 if tier B, +0 if tier C or unset", note: "Prioritizes high-value accounts" },
                 { signal: "Recently created lead", formula: "+15 pts if created within 7 days (leads only)", note: "Hot prospect signal" },
               ].map((row, i, arr) => (
-                <div key={row.signal} style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr 1.5fr", padding: "10px 0", borderBottom: i < arr.length - 1 ? "1px solid var(--color-dark-tertiary)" : "none", gap: 12 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)" }}>{row.signal}</div>
-                  <div style={{ fontSize: 12, color: "var(--color-text-secondary)", fontFamily: "monospace", background: "var(--color-dark-secondary)", padding: "3px 8px", borderRadius: 6 }}>{row.formula}</div>
-                  <div style={{ fontSize: 11, color: "var(--color-text-disabled)", fontStyle: "italic", alignSelf: "center" }}>{row.note}</div>
+                <div key={row.signal} style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr 1.5fr", padding: "10px 0", borderBottom: i < arr.length - 1 ? "1px solid var(--md-sys-color-dark-tertiary)" : "none", gap: 12 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-primary)" }}>{row.signal}</div>
+                  <div style={{ fontSize: 12, color: "var(--md-sys-color-text-secondary)", fontFamily: "monospace", background: "var(--md-sys-color-dark-secondary)", padding: "3px 8px", borderRadius: 6 }}>{row.formula}</div>
+                  <div style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", fontStyle: "italic", alignSelf: "center" }}>{row.note}</div>
                 </div>
               ))}
             </div>
-            <div style={{ padding: "12px 14px", borderRadius: 8, background: "rgba(139,146,255,0.05)", border: "1px solid rgba(139,146,255,0.15)", fontSize: 12, color: "var(--color-text-muted)", lineHeight: 1.6 }}>
-              <strong style={{ color: "var(--color-brand-purple)" }}>Top 1 and top 4:</strong> Sort all customers by descending score. Top 4 = ranks 1–4. Top 1 = rank 1. Same model, same sort. When location is unavailable, remove all proximity points and re-score.
+            <div style={{ padding: "12px 14px", borderRadius: 8, background: "rgba(139,146,255,0.05)", border: "1px solid rgba(139,146,255,0.15)", fontSize: 12, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6 }}>
+              <strong style={{ color: "var(--md-sys-color-neonindigo)" }}>Top 1 and top 4:</strong> Sort all customers by descending score. Top 4 = ranks 1–4. Top 1 = rank 1. Same model, same sort. When location is unavailable, remove all proximity points and re-score.
             </div>
           </Section>
 
@@ -705,27 +705,27 @@ export default function Story4Page() {
             <DeliverableHeading name="Sort order — deterministic and fully defined" status="design"
               sub="This is the canonical sort used everywhere action items appear on the home page." />
 
-            <div style={{ background: "var(--color-dark-primary)", border: `1px solid ${AMBER_BORDER}`, borderRadius: 12, padding: "20px 22px", marginBottom: 20 }}>
+            <div style={{ background: "var(--md-sys-color-dark-primary)", border: `1px solid ${AMBER_BORDER}`, borderRadius: 12, padding: "20px 22px", marginBottom: 20 }}>
               <Eyebrow>Recommended V1 sort order</Eyebrow>
               <div style={{ marginTop: 4 }}>
                 <SortRow rank="1" label="Overdue" color="#FF4D4F" note="Due date is in the past and item is not completed" />
                 <SortRow rank="2" label="Due today" color={AMBER} note="Due date matches today's date" />
-                <SortRow rank="3" label="Upcoming — nearest due date first" color="var(--color-brand-teal)" note="Due date is in the future, sorted ascending" />
-                <SortRow rank="4" label="No due date" color="var(--color-text-disabled)" note="After all dated items, before completed" />
+                <SortRow rank="3" label="Upcoming — nearest due date first" color="var(--md-sys-color-brand-teal)" note="Due date is in the future, sorted ascending" />
+                <SortRow rank="4" label="No due date" color="var(--md-sys-color-text-disabled)" note="After all dated items, before completed" />
                 <SortRow rank="5" label="Completed (hidden by default)" color="#2ECC71" note="Collapsed 'X completed' section, expandable" />
               </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <div style={{ background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)", borderRadius: 10, padding: "14px 16px" }}>
+              <div style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)", borderRadius: 10, padding: "14px 16px" }}>
                 <Eyebrow>Tie breaker</Eyebrow>
-                <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: 0 }}>
+                <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: 0 }}>
                   When two active items share the same due date, sort by <strong>older created_at first</strong> — the item that has waited longest surfaces at the top.
                 </p>
               </div>
-              <div style={{ background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)", borderRadius: 10, padding: "14px 16px" }}>
+              <div style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)", borderRadius: 10, padding: "14px 16px" }}>
                 <Eyebrow>Same-day overdue tie breaker</Eyebrow>
-                <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6, margin: 0 }}>
+                <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: 0 }}>
                   Multiple overdue items: sort by <strong>oldest due date first</strong> (most overdue at top), then by older created_at within the same due date.
                 </p>
               </div>
@@ -769,10 +769,10 @@ export default function Story4Page() {
                 </MockScreen>
 
                 <MockScreen label="Completed (shown collapsed)" width={260}>
-                  <div style={{ padding: "10px 14px", borderBottom: "1px solid var(--color-dark-tertiary)" }}>
+                  <div style={{ padding: "10px 14px", borderBottom: "1px solid var(--md-sys-color-dark-tertiary)" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontSize: 12, color: "var(--color-text-muted)" }}>▶</span>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-muted)" }}>3 completed</span>
+                      <span style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)" }}>▶</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-text-muted)" }}>3 completed</span>
                     </div>
                   </div>
                   <MockActionItem title="Confirm Q4 pricing sheet" account="Jack's Tire" bucket="completed" isLast />
@@ -807,9 +807,9 @@ export default function Story4Page() {
                 "Completed action items are hidden in a collapsed section — not mixed into the active list.",
                 "The home page has a defined empty state when there are no action items.",
               ].map((criterion, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 16px", background: "var(--color-dark-primary)", border: "1px solid var(--color-dark-tertiary)", borderRadius: 8 }}>
-                  <span style={{ fontSize: 14, color: "var(--color-text-disabled)", flexShrink: 0, marginTop: 1 }}>◻</span>
-                  <span style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.5 }}>{criterion}</span>
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 16px", background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)", borderRadius: 8 }}>
+                  <span style={{ fontSize: 14, color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 1 }}>◻</span>
+                  <span style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.5 }}>{criterion}</span>
                 </div>
               ))}
             </div>

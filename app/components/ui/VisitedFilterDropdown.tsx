@@ -5,9 +5,9 @@
  * Widget: StatefulWidget
  * Props: value, customFrom, customTo, onChange
  * State: open (bool), showCustom (bool), draftFrom/draftTo (string)
- * Tokens: --color-dark-secondary (pill bg), --color-dark-tertiary (menu bg),
- *         --color-radius-full (pill), --radius-xl (menu), --radius-md (inputs),
- *         --color-text-primary, --color-text-muted, --color-brand-purple
+ * Tokens: --md-sys-color-dark-secondary (pill bg), --md-sys-color-dark-tertiary (menu bg),
+ *         --md-sys-color-radius-full (pill), --radius-xl (menu), --radius-md (inputs),
+ *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-neonindigo
  * Transitions: same spring as FilterDropdown (stiffness 380, damping 22)
  */
 
@@ -46,7 +46,7 @@ function fromInputVal(s: string): Date | null {
 function CheckIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-      <path d="M3 8L6.5 11.5L13 5" stroke="var(--color-text-primary)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 8L6.5 11.5L13 5" stroke="var(--md-sys-color-text-primary)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -106,21 +106,21 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
         className="flex items-center h-8 px-3 text-sm font-semibold active:opacity-70 transition-opacity"
         style={{
           gap: isFiltered ? 4 : 2,
-          background: open ? "var(--color-brand-purple)" : "var(--color-dark-secondary)",
+          background: open ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
           borderRadius: "var(--radius-full)",
-          color: open ? "#fff" : "var(--color-text-primary)",
+          color: open ? "#fff" : "var(--md-sys-color-text-primary)",
         }}
       >
         {isFiltered && !open && (
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginRight: 1 }}>
-            <path d="M3 8L6.5 11.5L13 5" stroke="var(--color-brand-purple)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M3 8L6.5 11.5L13 5" stroke="var(--md-sys-color-neonindigo)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
         {pillLabel}
         <Icon
           name={open ? "keyboard_arrow_up" : "keyboard_arrow_down"}
           size={18}
-          style={{ color: open ? "rgba(255,255,255,0.7)" : "var(--color-text-muted)" }}
+          style={{ color: open ? "rgba(255,255,255,0.7)" : "var(--md-sys-color-text-muted)" }}
         />
       </button>
 
@@ -140,7 +140,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
               transition={menuTransition}
               style={{
                 transformOrigin: "top left",
-                background: "var(--color-dark-tertiary)",
+                background: "var(--md-sys-color-dark-tertiary)",
                 borderRadius: "var(--radius-xl)",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
                 paddingTop: 8,
@@ -159,7 +159,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                   exit="exit"
                   onClick={() => handlePreset(opt.value)}
                   className="w-full flex items-center text-left text-sm font-semibold"
-                  style={{ gap: 12, padding: "10px 16px", background: "transparent", color: "var(--color-text-primary)" }}
+                  style={{ gap: 12, padding: "10px 16px", background: "transparent", color: "var(--md-sys-color-text-primary)" }}
                 >
                   <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
                     {value === opt.value && !showCustom && <CheckIcon />}
@@ -187,7 +187,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                 exit="exit"
                 onClick={() => handlePreset("custom")}
                 className="w-full flex items-center text-left text-sm font-semibold"
-                style={{ gap: 12, padding: "10px 16px", background: "transparent", color: "var(--color-text-primary)" }}
+                style={{ gap: 12, padding: "10px 16px", background: "transparent", color: "var(--md-sys-color-text-primary)" }}
               >
                 <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
                   {value === "custom" && <CheckIcon />}
@@ -208,16 +208,16 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                     <div style={{ padding: "6px 12px 4px", display: "flex", flexDirection: "column", gap: 8 }}>
                       {/* From */}
                       <div>
-                        <p className="text-xs font-semibold mb-1" style={{ color: "var(--color-text-muted)", paddingLeft: 2 }}>From</p>
+                        <p className="text-xs font-semibold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>From</p>
                         <input
                           type="date"
                           value={draftFrom}
                           onChange={e => setDraftFrom(e.target.value)}
                           className="w-full text-sm outline-none px-3 py-2"
                           style={{
-                            background: "var(--color-dark-secondary)",
+                            background: "var(--md-sys-color-dark-secondary)",
                             borderRadius: "var(--radius-md)",
-                            color: "var(--color-text-primary)",
+                            color: "var(--md-sys-color-text-primary)",
                             border: "none",
                             colorScheme: "dark",
                           }}
@@ -225,16 +225,16 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                       </div>
                       {/* To */}
                       <div>
-                        <p className="text-xs font-semibold mb-1" style={{ color: "var(--color-text-muted)", paddingLeft: 2 }}>To</p>
+                        <p className="text-xs font-semibold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>To</p>
                         <input
                           type="date"
                           value={draftTo}
                           onChange={e => setDraftTo(e.target.value)}
                           className="w-full text-sm outline-none px-3 py-2"
                           style={{
-                            background: "var(--color-dark-secondary)",
+                            background: "var(--md-sys-color-dark-secondary)",
                             borderRadius: "var(--radius-md)",
-                            color: "var(--color-text-primary)",
+                            color: "var(--md-sys-color-text-primary)",
                             border: "none",
                             colorScheme: "dark",
                           }}
@@ -245,7 +245,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                         onClick={applyCustom}
                         className="w-full text-sm font-semibold py-2 active:opacity-80 transition-opacity"
                         style={{
-                          background: "var(--color-brand-purple)",
+                          background: "var(--md-sys-color-neonindigo)",
                           borderRadius: "var(--radius-full)",
                           color: "#fff",
                           marginTop: 2,
