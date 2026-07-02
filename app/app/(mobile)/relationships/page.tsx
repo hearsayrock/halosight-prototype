@@ -44,6 +44,7 @@ import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
 import VisitedFilterDropdown, { type VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
 import CreateAccountSheet from "@/components/accounts/CreateAccountSheet";
+import CreateLeadSheet from "@/components/accounts/CreateLeadSheet";
 import FeedbackWidget from "@/components/ui/FeedbackWidget";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import { mockSystemAccounts, systemAccountReps } from "@/lib/mock-data/system-accounts";
@@ -546,15 +547,27 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
 
 // ── Section header ────────────────────────────────────────────────────────────
 
-function SectionHeader({ label, count }: { label: string; count: number }) {
+function SectionHeader({ label, count, onAdd }: { label: string; count: number; onAdd?: () => void }) {
   return (
-    <div className="flex items-center gap-2 px-4 py-2">
-      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
-        {label}
-      </span>
-      <span style={{ fontSize: 11, fontWeight: 600, color: "var(--md-sys-color-text-disabled)", background: "var(--md-sys-color-dark-secondary)", borderRadius: 10, padding: "1px 7px" }}>
-        {count}
-      </span>
+    <div className="flex items-center justify-between px-4 py-2">
+      <div className="flex items-center gap-2">
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+          {label}
+        </span>
+        <span style={{ fontSize: 11, fontWeight: 600, color: "var(--md-sys-color-text-disabled)", background: "var(--md-sys-color-dark-secondary)", borderRadius: 10, padding: "1px 7px" }}>
+          {count}
+        </span>
+      </div>
+      {onAdd && (
+        <button
+          onClick={onAdd}
+          className="flex items-center justify-center active:opacity-60 transition-opacity"
+          style={{ width: 28, height: 28, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}
+          aria-label="Add new lead"
+        >
+          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+        </button>
+      )}
     </div>
   );
 }
@@ -653,8 +666,10 @@ function CombinedPageContent() {
     router.push(`/relationships/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
   }
 
-  // Create account sheet
+  // Create account sheet (from search CTA)
   const [showCreateSheet, setShowCreateSheet] = useState(false);
+  // Create lead sheet (from + button on relationships header)
+  const [showCreateLeadSheet, setShowCreateLeadSheet] = useState(false);
 
   // Accounts search (used in accounts mode)
   const [query, setQuery] = useState("");
@@ -1067,7 +1082,17 @@ function CombinedPageContent() {
                       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Relationships
                       </span>
-                      <MiniSearchPill onClick={() => goToMode("accounts")} />
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setShowCreateLeadSheet(true)}
+                          className="flex items-center justify-center active:opacity-60 transition-opacity"
+                          style={{ width: 28, height: 28, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}
+                          aria-label="Add new lead"
+                        >
+                          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+                        </button>
+                        <MiniSearchPill onClick={() => goToMode("accounts")} />
+                      </div>
                     </div>
                     <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
                       {topAccounts.map((account, i) => (
@@ -1105,8 +1130,8 @@ function CombinedPageContent() {
               style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
             >
               {/* My accounts */}
-              {showSystemSection && <SectionHeader label="Your Relationships" count={myFiltered.length} />}
-              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Relationships" count={myFiltered.length} />}
+              {showSystemSection && <SectionHeader label="Your Relationships" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Relationships" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
 
               {myFiltered.length > 0 ? (
                 <div className="flex flex-col">
@@ -1378,11 +1403,19 @@ function CombinedPageContent() {
       {/* Engagements drawer */}
       <EngagementsDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
-      {/* Create account sheet */}
+      {/* Create account sheet (search CTA) */}
       {showCreateSheet && (
         <CreateAccountSheet
           initialName={query}
           onClose={() => setShowCreateSheet(false)}
+          onCreated={handleAccountCreated}
+        />
+      )}
+
+      {/* Create lead sheet with duplicate detection (+ button) */}
+      {showCreateLeadSheet && (
+        <CreateLeadSheet
+          onClose={() => setShowCreateLeadSheet(false)}
           onCreated={handleAccountCreated}
         />
       )}
