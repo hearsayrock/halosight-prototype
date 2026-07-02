@@ -35,7 +35,6 @@ import AccountListItem from "@/components/accounts/AccountListItem";
 import SystemAccountListItem from "@/components/accounts/SystemAccountListItem";
 import SortMenu from "@/components/accounts/SortMenu";
 import Icon from "@/components/ui/Icon";
-import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
 import { AccountListSkeleton } from "@/components/ui/Skeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import CompletionToast from "@/components/ui/CompletionToast";
@@ -489,14 +488,6 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
           <div className="absolute bottom-0 left-0 right-0"
             style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
         )}
-        {/* Type icon */}
-        <div className="flex-shrink-0">
-          {account.halosightType === "prospect" ? (
-            <LeadStarIcon size={16} style={{ color: "var(--color-brand-purple)" }} />
-          ) : (
-            <CompanyIcon size={16} style={{ color: "var(--color-text-disabled)" }} />
-          )}
-        </div>
         {/* Left — name + meta */}
         <div className="flex-1 min-w-0">
           <p style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text-primary)", lineHeight: 1.2 }}

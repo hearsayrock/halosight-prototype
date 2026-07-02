@@ -15,7 +15,6 @@
 import Link from "next/link";
 import type { Account } from "@/lib/types";
 import { formatLastVisited, formatDistance } from "@/lib/utils";
-import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
 import AccountTypeBadge from "@/components/accounts/AccountTypeBadge";
 import { useAccountState } from "@/lib/context/AccountStateContext";
 
@@ -121,15 +120,6 @@ export default function AccountListItem({ account, isLast = false }: Props) {
       >
         {/* Separator — inset 12px each side, hidden on last item */}
         {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />}
-
-        {/* Type icon */}
-        <div className="flex-shrink-0 mt-[4px]">
-          {account.halosightType === "prospect" ? (
-            <LeadStarIcon size={18} style={{ color: "var(--color-brand-purple)" }} />
-          ) : (
-            <CompanyIcon size={18} style={{ color: "var(--color-text-disabled)" }} />
-          )}
-        </div>
 
         {/* Left — 3-line text stack */}
         <div className="flex-1 min-w-0">
