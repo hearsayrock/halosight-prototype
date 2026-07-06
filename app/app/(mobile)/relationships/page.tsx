@@ -1082,17 +1082,7 @@ function CombinedPageContent() {
                       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Relationships
                       </span>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => setShowCreateLeadSheet(true)}
-                          className="flex items-center justify-center active:opacity-60 transition-opacity"
-                          style={{ width: 28, height: 28, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}
-                          aria-label="Add new lead"
-                        >
-                          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-                        </button>
-                        <MiniSearchPill onClick={() => goToMode("accounts")} />
-                      </div>
+                      <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
                     <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
                       {topAccounts.map((account, i) => (
