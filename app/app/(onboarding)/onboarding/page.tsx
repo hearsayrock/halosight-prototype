@@ -34,7 +34,7 @@ const SLIDES = [
     id: "prep",
     label: "BEFORE EVERY VISIT",
     headline: "Walk in like\nyou never left.",
-    body: "AI surfaces your account history, open commitments, and exactly what to bring up — before you step through the door.",
+    body: "AI surfaces your account history, open action items, and exactly what to bring up — before you step through the door.",
     proof: "30-second briefing per account",
     accent: "#8B92FF",
     accentSoft: "rgba(139,146,255,0.15)",
@@ -57,7 +57,7 @@ const SLIDES = [
     id: "followthrough",
     label: "BETWEEN EVERY STOP",
     headline: "Nothing\nfalls through.",
-    body: "Every commitment you make is captured automatically. Action items tracked. Follow-ups ready. Your manager sees it all.",
+    body: "Every action item you make is captured automatically. Follow-ups ready. Your manager sees it all.",
     proof: "Zero dropped commitments",
     accent: "#2ECC71",
     accentSoft: "rgba(46,204,113,0.15)",
@@ -212,7 +212,7 @@ function IllustrationCapture({ active }: { active: boolean }) {
           borderRadius: "50%",
           border: "1.5px solid rgba(255,107,90,0.5)",
           top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
+          marginTop: -80, marginLeft: -80,
           pointerEvents: "none",
         }}
       />
@@ -227,7 +227,7 @@ function IllustrationCapture({ active }: { active: boolean }) {
           borderRadius: "50%",
           border: "1.5px solid rgba(255,107,90,0.55)",
           top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
+          marginTop: -56, marginLeft: -56,
           pointerEvents: "none",
         }}
       />
@@ -243,7 +243,7 @@ function IllustrationCapture({ active }: { active: boolean }) {
           borderRadius: "50%",
           background: "linear-gradient(135deg, #FF8F82 0%, #FF6B5A 55%, #E64A37 100%)",
           top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
+          marginTop: -36, marginLeft: -36,
           display: "flex", alignItems: "center", justifyContent: "center",
           boxShadow: "0 8px 32px rgba(255,107,90,0.35)",
         }}
@@ -266,7 +266,7 @@ function IllustrationCapture({ active }: { active: boolean }) {
           position: "absolute",
           bottom: 10,
           left: "50%",
-          transform: "translateX(-50%)",
+          marginLeft: -50,
           display: "flex",
           alignItems: "center",
           gap: 4,
@@ -377,26 +377,6 @@ function IllustrationFollowThrough({ active }: { active: boolean }) {
         </div>
       </motion.div>
 
-      {/* "Auto-captured" pill */}
-      <motion.div
-        initial={false}
-        animate={active ? { scale: 1, opacity: 1 } : { scale: 0.6, opacity: 0 }}
-        transition={{ duration: 0.4, delay: 0.6, type: "spring", bounce: 0.4 }}
-        style={{
-          position: "absolute",
-          bottom: 14, right: 22,
-          background: "rgba(46,204,113,0.13)",
-          border: "1px solid rgba(46,204,113,0.38)",
-          borderRadius: 24,
-          padding: "5px 12px",
-          fontSize: 12, fontWeight: 700,
-          color: "#86EFAC",
-          display: "flex", alignItems: "center", gap: 5,
-          whiteSpace: "nowrap",
-        }}
-      >
-        ✦ Auto-captured
-      </motion.div>
     </div>
   );
 }
