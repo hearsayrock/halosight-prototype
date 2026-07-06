@@ -19,6 +19,8 @@
 import { useState, useEffect } from "react";
 import DevPanel, { type DeviceSize } from "./DevPanel";
 import PlaygroundNav from "./PlaygroundNav";
+import MobileKeyboard from "./MobileKeyboard";
+import StatusBar from "./StatusBar";
 
 const SIZES: Record<DeviceSize, { width: number; height: number }> = {
   se:  { width: 375, height: 667 },
@@ -75,6 +77,8 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
       >
         {children}
         {overlayRoot}
+        <StatusBar />
+        <MobileKeyboard />
       </div>
     );
   }
@@ -112,6 +116,8 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
         <div className="phone-screen" style={{ position: "relative", overflow: "hidden" }}>
           {children}
           {overlayRoot}
+          <StatusBar />
+          <MobileKeyboard />
         </div>
       </div>
 
