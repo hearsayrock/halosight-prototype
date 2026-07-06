@@ -52,7 +52,7 @@ import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
 import { useAccountState } from "@/lib/context/AccountStateContext";
 import type { Account, SortOption } from "@/lib/types";
-import { formatLastVisited, formatDistance } from "@/lib/utils";
+import { formatLastVisited, formatDistance, isPastDue } from "@/lib/utils";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -294,7 +294,7 @@ function TaskStrip({
         <AnimatePresence mode="popLayout" initial={false}>
           {tasks.slice(0, 4).map((task, i) => {
             const isPending = task.id === pendingId;
-            const isToday = task.dueDate === null;
+            const pastDue = isPastDue(task.dueDate);
             const isLast = i === Math.min(tasks.length, 4) - 1;
             return (
               <motion.div
@@ -335,7 +335,7 @@ function TaskStrip({
                   <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
                     <span style={{
                       fontSize: 11,
-                      color: isToday ? "var(--color-brand-coral)" : "var(--color-text-disabled)",
+                      color: pastDue ? "var(--color-brand-coral)" : "var(--color-text-disabled)",
                       fontWeight: 500,
                       flexShrink: 0,
                     }}>
@@ -1267,7 +1267,7 @@ function CombinedPageContent() {
                       <AnimatePresence mode="popLayout" initial={false}>
                         {group.items.map((item, i) => {
                           const isPending = item.id === pendingTaskId;
-                          const dueToday = !item.dueDate || item.dueDate.getTime() < startOfToday.getTime() + 86_400_000;
+                          const pastDue = isPastDue(item.dueDate);
                           return (
                             <motion.div
                               key={item.id}
@@ -1325,7 +1325,7 @@ function CombinedPageContent() {
                                   <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1">
                                       <Icon name="calendar_today" size={12} style={{ color: "var(--color-brand-purple-dark)" }} />
-                                      <span className="text-xs font-medium" style={{ color: dueToday ? "var(--color-brand-coral)" : "var(--color-text-disabled)" }}>
+                                      <span className="text-xs font-medium" style={{ color: pastDue ? "var(--color-brand-coral)" : "var(--color-text-disabled)" }}>
                                         {item.dueDate ? item.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Due Today"}
                                       </span>
                                     </div>

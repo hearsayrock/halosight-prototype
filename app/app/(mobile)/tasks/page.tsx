@@ -20,6 +20,7 @@ import FilterDropdown from "@/components/ui/FilterDropdown";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import type { ActionItem } from "@/lib/types";
+import { isPastDue } from "@/lib/utils";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -42,13 +43,6 @@ const startOfToday = (() => {
 
 function dueSortKey(date: Date | null): number {
   return date ? date.getTime() : startOfToday.getTime();
-}
-
-function isToday(date: Date | null): boolean {
-  if (!date) return true;
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime() === startOfToday.getTime();
 }
 
 function formatDate(date: Date | null): string {
@@ -123,7 +117,7 @@ function TaskRow({
   isPending: boolean;
   onCheck: () => void;
 }) {
-  const dueToday = isToday(item.dueDate);
+  const pastDue = isPastDue(item.dueDate);
 
   return (
     <motion.div
@@ -168,7 +162,7 @@ function TaskRow({
               <span
                 className="text-xs font-medium"
                 style={{
-                  color: dueToday
+                  color: pastDue
                     ? "var(--color-brand-coral)"
                     : "var(--color-text-disabled)",
                 }}

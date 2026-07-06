@@ -22,3 +22,12 @@ export function formatDistance(miles: number): string {
 export function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(" ");
 }
+
+/** True only when a task's due date is before today. A null due date means
+ *  "Today", which is not past due. Used to coral-highlight overdue dates only. */
+export function isPastDue(dueDate: Date | null): boolean {
+  if (!dueDate) return false;
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  return dueDate.getTime() < startOfToday.getTime();
+}
