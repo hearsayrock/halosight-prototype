@@ -10,7 +10,7 @@
  *         --color-text-primary, --radius-sm
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const ROW1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
 const ROW2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
@@ -64,6 +64,15 @@ function Key({
 
 export default function MobileKeyboard() {
   const [visible, setVisible] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Publish the keyboard's height as a CSS var so anything (e.g. a sticky CTA)
+  // can pin itself to the top of the keyboard, and fall to 0 when it's hidden.
+  useEffect(() => {
+    const h = visible && rootRef.current ? rootRef.current.offsetHeight : 0;
+    document.documentElement.style.setProperty("--keyboard-inset", `${h}px`);
+    return () => document.documentElement.style.setProperty("--keyboard-inset", "0px");
+  }, [visible]);
 
   useEffect(() => {
     const sync = () => setVisible(isTextField(document.activeElement));
@@ -90,6 +99,7 @@ export default function MobileKeyboard() {
 
   return (
     <div
+      ref={rootRef}
       // Keep the focused field focused when the keyboard itself is tapped.
       onMouseDown={(e) => e.preventDefault()}
       style={{

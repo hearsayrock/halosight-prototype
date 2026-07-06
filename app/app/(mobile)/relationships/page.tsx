@@ -582,27 +582,17 @@ function SystemSearchSkeleton() {
 
 function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void }) {
   return (
-    <div className="px-4 py-5">
-      <button
-        onClick={onOpen}
-        className="w-full flex items-center gap-3 px-4 py-4 active:opacity-70 transition-opacity"
-        style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-xl)", border: "1px dashed var(--color-dark-tertiary)" }}
-      >
-        <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: "color-mix(in srgb, var(--color-brand-purple) 15%, transparent)" }}>
-          <Icon name="add" size={18} style={{ color: "var(--color-brand-purple)" }} />
-        </div>
-        <div className="text-left">
-          <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
-            Add new lead
-            {query.trim() && <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
-          </p>
-          <p className="text-xs mt-0.5" style={{ color: "var(--color-text-secondary)" }}>
-            Add to Tomorrowland Innovations and start capturing
-          </p>
-        </div>
-      </button>
-    </div>
+    <button
+      onClick={onOpen}
+      className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 active:opacity-70 transition-opacity"
+      style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-full)", border: "1px dashed var(--color-dark-tertiary)" }}
+    >
+      <Icon name="add" size={16} style={{ color: "var(--color-brand-purple)" }} />
+      <span className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+        Add a new lead
+        {query.trim() && <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
+      </span>
+    </button>
   );
 }
 
@@ -1364,16 +1354,18 @@ function CombinedPageContent() {
 
         </AnimatePresence>
 
-        {/* Sticky "Add new lead" — floats above scroll when system search is active */}
+        {/* Sticky "Add a new lead" — pinned to the page bottom, or to the top of
+            the keyboard when it's open (via --keyboard-inset). */}
         {mode === "accounts" && hasQuery && systemState === "done" && (
           <div style={{
             position: "absolute",
-            bottom: 0,
+            bottom: "var(--keyboard-inset, 0px)",
             left: 0,
             right: 0,
-            padding: "20px 16px 16px",
-            background: "linear-gradient(to bottom, transparent, var(--color-background) 40%)",
+            padding: "16px 16px 12px",
+            background: "linear-gradient(to bottom, transparent, var(--color-background) 45%)",
             pointerEvents: "none",
+            transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
           }}>
             <div style={{ pointerEvents: "auto" }}>
               <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
