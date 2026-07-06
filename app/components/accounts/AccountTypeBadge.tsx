@@ -23,8 +23,8 @@ export default function AccountTypeBadge({ account }: { account: Account }) {
   if (account.halosightType === "prospect") {
     return (
       <span
-        className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap flex-shrink-0"
-        style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--color-brand-teal)" }}
+        className="text-[11px] font-medium px-2.5 py-0.5 rounded-full whitespace-nowrap flex-shrink-0"
+        style={{ background: "var(--color-alpha-white-10)", color: "var(--color-brand-teal)" }}
       >
         Lead
       </span>
@@ -34,8 +34,8 @@ export default function AccountTypeBadge({ account }: { account: Account }) {
   if (account.crmAccountType) {
     return (
       <span
-        className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap flex-shrink-0"
-        style={{ background: "var(--color-dark-tertiary)", color: "var(--color-text-muted)" }}
+        className="text-[11px] font-medium px-2.5 py-0.5 rounded-full whitespace-nowrap flex-shrink-0"
+        style={{ background: "var(--color-alpha-white-10)", color: "var(--color-text-muted)" }}
       >
         {CRM_LABEL[account.crmAccountType]}
       </span>
