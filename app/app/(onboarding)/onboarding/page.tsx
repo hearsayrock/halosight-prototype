@@ -51,6 +51,7 @@ const SLIDES = [
     accentSoft: "rgba(255,107,90,0.15)",
     accentGlow: "rgba(255,107,90,0.18)",
     glowColor: "rgba(255,107,90,0.22)",
+    illustrationPaddingTop: 72,
   },
   {
     id: "followthrough",
@@ -165,28 +166,6 @@ function IllustrationPrep({ active }: { active: boolean }) {
             </div>
           ))}
         </div>
-      </motion.div>
-
-      {/* "30 sec" pill */}
-      <motion.div
-        initial={false}
-        animate={active ? { scale: 1, opacity: 1 } : { scale: 0.6, opacity: 0 }}
-        transition={{ duration: 0.4, delay: 0.55, type: "spring", bounce: 0.4 }}
-        style={{
-          position: "absolute",
-          bottom: 18, right: 22,
-          background: "rgba(139,146,255,0.14)",
-          border: "1px solid rgba(139,146,255,0.4)",
-          borderRadius: 24,
-          padding: "5px 12px",
-          fontSize: 12, fontWeight: 700,
-          color: "#B3B8FF",
-          letterSpacing: "0.01em",
-          display: "flex", alignItems: "center", gap: 5,
-          whiteSpace: "nowrap",
-        }}
-      >
-        <span style={{ color: "#8B92FF" }}>⚡</span> 30-sec prep
       </motion.div>
 
       {/* Sparkle */}
@@ -309,47 +288,6 @@ function IllustrationCapture({ active }: { active: boolean }) {
         ))}
       </motion.div>
 
-      {/* "CRM Updated" badge */}
-      <motion.div
-        initial={false}
-        animate={active ? { scale: 1, opacity: 1, x: 0 } : { scale: 0.6, opacity: 0, x: 20 }}
-        transition={{ duration: 0.45, delay: 0.65, type: "spring", bounce: 0.4 }}
-        style={{
-          position: "absolute",
-          top: 20, right: 14,
-          background: "rgba(46,204,113,0.13)",
-          border: "1px solid rgba(46,204,113,0.4)",
-          borderRadius: 24,
-          padding: "5px 12px",
-          fontSize: 12, fontWeight: 700,
-          color: "#86EFAC",
-          display: "flex", alignItems: "center", gap: 5,
-          whiteSpace: "nowrap",
-        }}
-      >
-        <span style={{ fontSize: 11 }}>✓</span> Salesforce updated
-      </motion.div>
-
-      {/* Duration pill */}
-      <motion.div
-        initial={false}
-        animate={active ? { scale: 1, opacity: 1, x: 0 } : { scale: 0.6, opacity: 0, x: -20 }}
-        transition={{ duration: 0.45, delay: 0.75, type: "spring", bounce: 0.4 }}
-        style={{
-          position: "absolute",
-          top: 20, left: 14,
-          background: "rgba(255,107,90,0.13)",
-          border: "1px solid rgba(255,107,90,0.3)",
-          borderRadius: 24,
-          padding: "5px 12px",
-          fontSize: 12, fontWeight: 700,
-          color: "#FF8F82",
-          display: "flex", alignItems: "center", gap: 5,
-          whiteSpace: "nowrap",
-        }}
-      >
-        ● 1:47
-      </motion.div>
     </div>
   );
 }
@@ -502,7 +440,7 @@ function Slide({ slide, active }: { slide: typeof SLIDES[number]; active: boolea
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        paddingTop: 64,
+        paddingTop: slide.illustrationPaddingTop ?? 120,
         paddingBottom: 8,
         minHeight: 290,
       }}>
