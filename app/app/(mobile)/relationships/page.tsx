@@ -537,7 +537,20 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
 
 // ── Section header ────────────────────────────────────────────────────────────
 
-function SectionHeader({ label, count }: { label: string; count: number }) {
+function SectionHeader({ label, count, divider }: { label: string; count: number; divider?: boolean }) {
+  // Divider variant: centered label flanked by thin rules (matches the card separator).
+  if (divider) {
+    const line = { flex: 1, height: 1, background: "rgba(255,255,255,0.08)" } as const;
+    return (
+      <div className="flex items-center gap-3 px-4 py-2">
+        <div style={line} />
+        <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.05em", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
+          {label}
+        </span>
+        <div style={line} />
+      </div>
+    );
+  }
   return (
     <div className="flex items-center gap-2 px-4 py-2">
       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
@@ -1128,13 +1141,13 @@ function CombinedPageContent() {
                 <div style={{ marginTop: 16 }}>
                   {systemState === "loading" && (
                     <>
-                      <SectionHeader label="All Tomorrowland Innovations Relationships" count={0} />
+                      <SectionHeader label="Company-Wide Results" count={0} divider />
                       <SystemSearchSkeleton />
                     </>
                   )}
                   {systemState === "done" && (
                     <>
-                      <SectionHeader label="All Tomorrowland Innovations Relationships" count={systemResults.length} />
+                      <SectionHeader label="Company-Wide Results" count={systemResults.length} divider />
                       {systemResults.length > 0 ? (
                         <div className="flex flex-col mx-4 rounded-2xl overflow-hidden"
                           style={{ background: "var(--color-dark-primary)", border: "1px solid rgba(255,255,255,0.08)" }}>
