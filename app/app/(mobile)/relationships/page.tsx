@@ -879,7 +879,8 @@ function CombinedPageContent() {
   return (
     <div className="relative flex flex-col h-full" style={{ background: "var(--color-background)" }}>
 
-      {/* ── HEADER ─────────────────────────────────────────────────────── */}
+      {/* ── HEADER (hidden in accounts mode — the search bar becomes the top) ── */}
+      {mode !== "accounts" && (
       <div className="flex items-center justify-between px-4 pt-10 pb-3" style={{ flexShrink: 0 }}>
         <AnimatePresence mode="wait" initial={false}>
           {mode === "home" ? (
@@ -954,8 +955,9 @@ function CombinedPageContent() {
 
         {ProfileButton}
       </div>
+      )}
 
-      {/* ── PINNED SEARCH BAR (expands from mini pill via layoutId) ───── */}
+      {/* ── PINNED SEARCH BAR (top of the accounts view; back chevron inside) ───── */}
       <AnimatePresence>
         {mode === "accounts" && (
           <motion.div
@@ -964,19 +966,23 @@ function CombinedPageContent() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
-            className="flex items-center gap-2 h-11 px-3"
+            className="flex items-center gap-2 h-11 pl-1.5 pr-3"
             style={{
-              margin: "0 16px 12px",
+              margin: "50px 16px 12px",
               borderRadius: 999,
               background: "var(--color-dark-secondary)",
               outline: showSystemSection ? "1.5px solid var(--color-brand-purple)" : "none",
               flexShrink: 0,
             }}
           >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-              <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
-              <path d="M12 12L16 16" stroke={showSystemSection ? "var(--color-brand-purple)" : "var(--color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
-            </svg>
+            <button
+              onClick={goHome}
+              className="active:opacity-60 transition-opacity flex-shrink-0"
+              aria-label="Back"
+              style={{ padding: "2px 0", display: "flex" }}
+            >
+              <Icon name="chevron_left" size={24} style={{ color: "var(--color-text-secondary)" }} />
+            </button>
             <input
               ref={accountsInputRef}
               type="text"
@@ -1095,8 +1101,6 @@ function CombinedPageContent() {
               style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
             >
               {/* My accounts */}
-              {showSystemSection && <SectionHeader label="Your Relationships" count={myFiltered.length} />}
-              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Relationships" count={myFiltered.length} />}
 
               {myFiltered.length > 0 ? (
                 <div className="flex flex-col">
