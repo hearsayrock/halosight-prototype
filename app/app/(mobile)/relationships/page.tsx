@@ -935,23 +935,6 @@ function CombinedPageContent() {
                 {greeting()}, Nate
               </motion.h1>
             )}
-            {mode === "accounts" && (
-              <motion.h1
-                key="accounts-title"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.18 }}
-                style={{
-                  fontFamily: "Roboto Slab, Georgia, serif",
-                  fontSize: 22, fontWeight: 500,
-                  color: "var(--color-text-primary)",
-                  margin: 0, lineHeight: 1.15, textAlign: "center",
-                }}
-              >
-                Relationships
-              </motion.h1>
-            )}
             {/* priorities mode: title lives inside the body, not here */}
           </AnimatePresence>
         </div>
