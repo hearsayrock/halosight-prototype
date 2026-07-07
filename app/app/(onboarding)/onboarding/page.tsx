@@ -40,6 +40,7 @@ const SLIDES = [
     accentSoft: "rgba(139,146,255,0.15)",
     accentGlow: "rgba(139,146,255,0.18)",
     glowColor: "rgba(139,146,255,0.22)",
+    illustrationPaddingTop: 120,
   },
   {
     id: "capture",
@@ -63,6 +64,7 @@ const SLIDES = [
     accentSoft: "rgba(46,204,113,0.15)",
     accentGlow: "rgba(46,204,113,0.18)",
     glowColor: "rgba(46,204,113,0.22)",
+    illustrationPaddingTop: 120,
   },
 ] as const;
 
