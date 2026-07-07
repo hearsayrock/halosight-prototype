@@ -53,6 +53,15 @@ export const CURRENT_APP_URL = "https://halosight-prototype.vercel.app";
 
 export const PLAYGROUNDS: Playground[] = [
   {
+    id: "playground/july-13-prospecting-goals",
+    name: "July 13 Prospecting Goals",
+    description: "Explore prospecting goals and visit tracking features for the July 13 demo.",
+    url: "https://halosight-prototype-git-playg-60b352-nate-natesdesigns-projects.vercel.app",
+    author: "Nate",
+    status: "exploring",
+    startedAt: "2026-07-13",
+  },
+  {
     id: "playground/lead-create-required-fields",
     name: "Lead Create Required Fields",
     description: "Explore the flow for having to fill out all required fields needed for CRM sync.",
