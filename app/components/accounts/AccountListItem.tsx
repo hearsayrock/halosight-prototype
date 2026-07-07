@@ -133,7 +133,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         {/* Separator — inset 12px each side, hidden on last item */}
         {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />}
 
-        {/* Type icon */}
+        {/* Type icon — hidden for now, may restore later
         <div className="flex-shrink-0 mt-[4px]">
           {account.halosightType === "prospect" ? (
             <LeadStarIcon size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
@@ -141,6 +141,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
             <CompanyIcon size={18} style={{ color: "var(--md-sys-color-text-disabled)" }} />
           )}
         </div>
+        */}
 
         {/* Left — 3-line text stack */}
         <div className="flex-1 min-w-0">

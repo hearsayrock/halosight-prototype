@@ -490,7 +490,7 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
           <div className="absolute bottom-0 left-0 right-0"
             style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
         )}
-        {/* Type icon */}
+        {/* Type icon — hidden for now, may restore later
         <div className="flex-shrink-0">
           {account.halosightType === "prospect" ? (
             <LeadStarIcon size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
@@ -498,6 +498,7 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
             <CompanyIcon size={16} style={{ color: "var(--md-sys-color-text-disabled)" }} />
           )}
         </div>
+        */}
         {/* Left — name + meta */}
         <div className="flex-1 min-w-0">
           <p style={{ fontSize: 15, fontWeight: 600, color: "var(--md-sys-color-text-primary)", lineHeight: 1.2 }}
@@ -932,7 +933,7 @@ function CombinedPageContent() {
           )}
         </AnimatePresence>
 
-        <div style={{ flex: 1, overflow: "hidden", padding: "0 10px" }}>
+        <div style={{ flex: 1, overflow: mode === "accounts" ? "visible" : "hidden", padding: "0 10px" }}>
           <AnimatePresence mode="wait" initial={false}>
             {mode === "home" && (
               <motion.h1
@@ -952,81 +953,72 @@ function CombinedPageContent() {
               </motion.h1>
             )}
             {mode === "accounts" && (
-              <motion.h1
-                key="accounts-title"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.18 }}
+              <motion.div
+                key="accounts-search-bar-header"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22 }}
+                className="flex items-center gap-2 h-11 px-3"
                 style={{
-                  fontFamily: "Roboto Slab, Georgia, serif",
-                  fontSize: 22, fontWeight: 500,
-                  color: "var(--md-sys-color-text-primary)",
-                  margin: 0, lineHeight: 1.15, textAlign: "center",
+                  borderRadius: 999,
+                  background: "var(--md-sys-color-dark-secondary)",
+                  outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
                 }}
               >
-                Relationships
-              </motion.h1>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+                  <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
+                  <path d="M12 12L16 16" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
+                </svg>
+                <input
+                  ref={accountsInputRef}
+                  type="text"
+                  placeholder={showSystemSection ? "Searching all relationships…" : "Search relationships…"}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="flex-1 bg-transparent text-[15px] outline-none"
+                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
+                />
+                {showSystemSection && (
+                  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
+                    ALL
+                  </span>
+                )}
+                {query && (
+                  <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
+                      <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
+                <SortMenu
+                  current={sort}
+                  onChange={setSort}
+                  visitedFilter={visitedFilter}
+                  onVisitedChange={(v) => { setVisitedFilter(v); setVisitedFrom(null); setVisitedTo(null); }}
+                />
+              </motion.div>
             )}
             {/* priorities mode: title lives inside the body, not here */}
           </AnimatePresence>
         </div>
 
-        {ProfileButton}
+        {mode !== "accounts" && ProfileButton}
       </div>
 
-      {/* ── PINNED SEARCH BAR (expands from mini pill via layoutId) ───── */}
-      <AnimatePresence>
+      {/* ── PINNED SEARCH BAR — moved into header row for accounts mode ── */}
+      {/* <AnimatePresence>
         {mode === "accounts" && (
           <motion.div
             key="accounts-search-bar"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            className="flex items-center gap-2 h-11 px-3"
-            style={{
-              margin: "0 16px 12px",
-              borderRadius: 999,
-              background: "var(--md-sys-color-dark-secondary)",
-              outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
-              flexShrink: 0,
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-              <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
-              <path d="M12 12L16 16" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
-            </svg>
-            <input
-              ref={accountsInputRef}
-              type="text"
-              placeholder={showSystemSection ? "Searching all relationships…" : "Search relationships…"}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent text-[15px] outline-none"
-              style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
-            />
-            {showSystemSection && (
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
-                ALL
-              </span>
-            )}
-            {query && (
-              <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
-                  <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </button>
-            )}
-            <SortMenu current={sort} onChange={setSort} />
-          </motion.div>
+            ...
+          />
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
-      {/* ── TYPE FILTER (accounts mode only) ───────────────────────────── */}
-      <AnimatePresence>
-        {mode === "accounts" && (
+      {/* ── TYPE FILTER — moved into SortMenu; hidden for now ──────────── */}
+      {false && mode === "accounts" && (
           <motion.div
             key="type-filter"
             initial={{ opacity: 0 }}
@@ -1047,8 +1039,7 @@ function CombinedPageContent() {
               }}
             />
           </motion.div>
-        )}
-      </AnimatePresence>
+      )}
 
       {/* ── BODY ───────────────────────────────────────────────────────── */}
       <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
