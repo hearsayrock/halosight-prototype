@@ -41,6 +41,7 @@ const SLIDES = [
     accentGlow: "rgba(139,146,255,0.18)",
     glowColor: "rgba(139,146,255,0.22)",
     illustrationPaddingTop: 120,
+    illustrationPaddingBottom: 8,
   },
   {
     id: "capture",
@@ -53,6 +54,7 @@ const SLIDES = [
     accentGlow: "rgba(255,107,90,0.18)",
     glowColor: "rgba(255,107,90,0.22)",
     illustrationPaddingTop: 72,
+    illustrationPaddingBottom: 56,
   },
   {
     id: "followthrough",
@@ -65,6 +67,7 @@ const SLIDES = [
     accentGlow: "rgba(46,204,113,0.18)",
     glowColor: "rgba(46,204,113,0.22)",
     illustrationPaddingTop: 120,
+    illustrationPaddingBottom: 8,
   },
 ] as const;
 
@@ -422,8 +425,8 @@ function Slide({ slide, active }: { slide: typeof SLIDES[number]; active: boolea
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        paddingTop: slide.illustrationPaddingTop ?? 120,
-        paddingBottom: 8,
+        paddingTop: slide.illustrationPaddingTop,
+        paddingBottom: slide.illustrationPaddingBottom,
         minHeight: 290,
       }}>
         <Illustration active={active} />
