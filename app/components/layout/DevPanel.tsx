@@ -30,37 +30,37 @@ const DEFAULT_NAV = [
   {
     group: "Root",
     routes: [
-      { label: "Home",      path: "/home" },
-      { label: "Accounts",  path: "/accounts" },
+      { label: "Home",      path: "/relationships" },
+      { label: "Relationships",  path: "/relationships" },
       { label: "All Items", path: "/tasks" },
       { label: "Profile",   path: "/profile" },
     ],
   },
   {
-    group: "Accounts",
+    group: "Relationships",
     routes: [
-      { label: "Jack's Tire",       path: "/accounts/jacks-tire-elko" },
-      { label: "ProFleet Corp",     path: "/accounts/profleet-corp" },
-      { label: "Cedar City",        path: "/accounts/walmart-cedar-city" },
-      { label: "Innovative Tech",   path: "/accounts/innovative-tech-tucson" },
-      { label: "No data (empty)",   path: "/accounts/profleet-glendale-1" },
+      { label: "Jack's Tire",       path: "/relationships/jacks-tire-elko" },
+      { label: "ProFleet Corp",     path: "/relationships/profleet-corp" },
+      { label: "Cedar City",        path: "/relationships/walmart-cedar-city" },
+      { label: "Innovative Tech",   path: "/relationships/innovative-tech-tucson" },
+      { label: "No data (empty)",   path: "/relationships/profleet-glendale-1" },
     ],
   },
   {
     group: "Detail",
     routes: [
-      { label: "Activity + AI",     path: "/accounts/jacks-tire-elko/activity/ja-1" },
-      { label: "Activity (ops)",    path: "/accounts/walmart-cedar-city/activity/wc-1" },
-      { label: "Action Item",       path: "/accounts/jacks-tire-elko/action-items/ja-t1" },
+      { label: "Activity + AI",     path: "/relationships/jacks-tire-elko/activity/ja-1" },
+      { label: "Activity (ops)",    path: "/relationships/walmart-cedar-city/activity/wc-1" },
+      { label: "Action Item",       path: "/relationships/jacks-tire-elko/action-items/ja-t1" },
     ],
   },
   {
     group: "States",
     routes: [
-      { label: "List → loading",    path: "/accounts?preview=loading" },
-      { label: "List → error",      path: "/accounts?preview=error" },
-      { label: "Detail → loading",  path: "/accounts/jacks-tire-elko?preview=loading" },
-      { label: "Detail → error",    path: "/accounts/jacks-tire-elko?preview=error" },
+      { label: "List → loading",    path: "/relationships?preview=loading" },
+      { label: "List → error",      path: "/relationships?preview=error" },
+      { label: "Detail → loading",  path: "/relationships/jacks-tire-elko?preview=loading" },
+      { label: "Detail → error",    path: "/relationships/jacks-tire-elko?preview=error" },
     ],
   },
 ];
@@ -95,7 +95,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
   function handleReset() {
     reset();
     dismissCapture();
-    router.push("/home");
+    router.push("/relationships");
   }
 
   // ── Collapsed strip ─────────────────────────────────────────────────────────

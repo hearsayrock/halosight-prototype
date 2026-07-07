@@ -8,13 +8,24 @@ export type AccountType = "corporate" | "branch" | "standalone";
 
 export type CrmAccountType = "sold-to" | "shipped-to" | "distributor" | "prospect";
 
+/**
+ * Halosight-native account classification.
+ * Set once at creation time — cannot be changed in-app.
+ * "prospect"  = a new relationship being developed (not yet a customer)
+ * "account"   = an established customer / CRM account
+ * undefined   = came from CRM sync (treated as "account" for display)
+ */
+export type HalosightAccountType = "prospect" | "account";
+
 export interface Account {
   id: string;
   name: string;
   type: AccountType;
-  crmAccountType?: CrmAccountType; // CRM classification shown on card badge
-  assignedInitial?: string;        // team member initial shown on card (e.g. "A")
+  halosightType?: HalosightAccountType; // Set at creation — prospect vs established account
+  crmAccountType?: CrmAccountType;      // CRM classification shown on card badge
+  assignedInitial?: string;             // team member initial shown on card (e.g. "A")
   taskCount?: number;              // open to-dos for this account
+  openOpportunities?: number;      // open opportunities/deals shown on card
   city?: string;
   state?: string;
   distanceMiles: number;
@@ -37,6 +48,10 @@ export interface ActionItem {
   title: string;
   dueDate: Date | null;   // null = TBD
   status: ActionItemStatus;
+  note?: string;          // optional completion note
+  description?: string;   // why this action item was created
+  originActivity?: string; // name of the visit/call this item was generated from
+  originActivityId?: string; // links to /relationships/[accountId]/activity/[originActivityId]
 }
 
 export interface AccountDetail extends Account {

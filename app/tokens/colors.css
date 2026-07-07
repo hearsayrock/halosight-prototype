@@ -22,92 +22,93 @@
 @theme {
 
   /* ── App Surface ────────────────────────────────────────────────────────── */
-  --md-sys-color-background:  #111420;  /* page / app chrome   */
-  --md-sys-color-surface-dim: #171B29;  /* nav, persistent UI  */
+  --color-background:  #111420;  /* page / app chrome   */
+  --color-surface-dim: #171B29;  /* nav, persistent UI  */
 
   /* ── Dark Scale ─────────────────────────────────────────────────────────── */
-  --md-sys-color-dark-base:      #0D0F1A;  /* Off-black — deepest dark  */
-  --md-sys-color-dark-primary:   #1A1D29;  /* Primary dark background   */
-  --md-sys-color-dark-secondary: #252A36;  /* Secondary dark background */
-  --md-sys-color-dark-tertiary:  #3D4451;  /* Tertiary dark elements    */
+  --color-dark-void:      #04050B;  /* Near-black — app chrome background */
+  --color-dark-base:      #0D0F1A;  /* Off-black — deepest dark  */
+  --color-dark-primary:   #1A1D29;  /* Primary dark background   */
+  --color-dark-secondary: #252A36;  /* Secondary dark background */
+  --color-dark-tertiary:  #3D4451;  /* Tertiary dark elements    */
 
   /* ── Text ───────────────────────────────────────────────────────────────── */
-  --md-sys-color-text-primary:   #F7F8FF;  /* Primary text           */
-  --md-sys-color-text-secondary: #C3CAD8;  /* Supporting text        */
-  --md-sys-color-text-muted:     #8B94A8;  /* Muted text, metadata   */
-  --md-sys-color-text-disabled:  #5D667A;  /* Placeholders, inactive */
-  --md-sys-color-text-inverse:   #111420;  /* Text on light surfaces */
+  --color-text-primary:   #F7F8FF;  /* Primary text           */
+  --color-text-secondary: #C3CAD8;  /* Supporting text        */
+  --color-text-muted:     #8B94A8;  /* Muted text, metadata   */
+  --color-text-disabled:  #5D667A;  /* Placeholders, inactive */
+  --color-text-inverse:   #111420;  /* Text on light surfaces */
 
   /* ── Light Surfaces ─────────────────────────────────────────────────────── */
-  --md-sys-color-surface-white: #FFFFFF;
-  --md-sys-color-surface-light: #F8FAFC;
-  --md-sys-color-surface-gray:  #F1F5F9;
+  --color-surface-white: #FFFFFF;
+  --color-surface-light: #F8FAFC;
+  --color-surface-gray:  #F1F5F9;
 
   /* ── Brand — Neon Indigo ─────────────────────────────────────────────────── */
-  --md-sys-color-neonindigo-light: #B3B8FF;
-  --md-sys-color-neonindigo:       #8B92FF;
-  --md-sys-color-neonindigo-dark:  #6B72E8;
+  --color-brand-purple-light: #B3B8FF;
+  --color-brand-purple:       #8B92FF;
+  --color-brand-purple-dark:  #6B72E8;
 
   /* ── Brand — Coral Ember ─────────────────────────────────────────────────── */
-  --md-sys-color-brand-coral-light: #FF8F82;
-  --md-sys-color-brand-coral:       #FF6B5A;
-  --md-sys-color-brand-coral-dark:  #E64A37;
+  --color-brand-coral-light: #FF8F82;
+  --color-brand-coral:       #FF6B5A;
+  --color-brand-coral-dark:  #E64A37;
 
   /* ── Brand — Indigo ─────────────────────────────────────────────────────── */
-  --md-sys-color-indigo-light: #7E85E6;
-  --md-sys-color-indigo:       #5B63D6;
-  --md-sys-color-indigo-dark:  #4850B8;
+  --color-brand-blue-light: #7E85E6;
+  --color-brand-blue:       #5B63D6;
+  --color-brand-blue-dark:  #4850B8;
 
   /* ── Brand — Halosight Custom ────────────────────────────────────────────── */
-  --md-sys-color-brand-teal:       #6B9DB0;
-  --md-sys-color-brand-teal-hover: #8CB5C5;
-  --md-sys-color-brand-pink:       #E85D9C;
-  --md-sys-color-recording:        #FF5A4F;  /* live recording indicator */
+  --color-brand-teal:       #6B9DB0;
+  --color-brand-teal-hover: #8CB5C5;
+  --color-brand-pink:       #E85D9C;
+  --color-recording:        #FF5A4F;  /* live recording indicator */
 
   /* ── Semantic ────────────────────────────────────────────────────────────── */
-  --md-sys-color-success-light: #86EFAC;
-  --md-sys-color-success:       #2ECC71;
-  --md-sys-color-success-dark:  #16A34A;
+  --color-success-light: #86EFAC;
+  --color-success:       #2ECC71;
+  --color-success-dark:  #16A34A;
 
-  --md-sys-color-warning-light: #FCD384;
-  --md-sys-color-warning:       #F5A623;
-  --md-sys-color-warning-dark:  #C47D10;
+  --color-warning-light: #FCD384;
+  --color-warning:       #F5A623;
+  --color-warning-dark:  #C47D10;
 
-  --md-sys-color-error-light: #FF8586;
-  --md-sys-color-error:       #FF4D4F;
-  --md-sys-color-error-dark:  #CC1F21;
+  --color-error-light: #FF8586;
+  --color-error:       #FF4D4F;
+  --color-error-dark:  #CC1F21;
 
-  --md-sys-color-info-light: #93C5FD;
-  --md-sys-color-info:       #4DA3FF;
-  --md-sys-color-info-dark:  #1D6FBF;
+  --color-info-light: #93C5FD;
+  --color-info:       #4DA3FF;
+  --color-info-dark:  #1D6FBF;
 
   /* ── Data Visualization ──────────────────────────────────────────────────── */
-  --md-sys-color-data-account:  #6B9DB0;
-  --md-sys-color-data-recency:  #8B92FF;
-  --md-sys-color-data-crm-sync: #2ECC71;
-  --md-sys-color-data-review:   #F5A623;
+  --color-data-account:  #6B9DB0;
+  --color-data-recency:  #8B92FF;
+  --color-data-crm-sync: #2ECC71;
+  --color-data-review:   #F5A623;
 
   /* ── Alpha ───────────────────────────────────────────────────────────────── */
-  --md-sys-color-alpha-white-10:     rgba(255, 255, 255, 0.10);
-  --md-sys-color-alpha-white-18:     rgba(255, 255, 255, 0.18);
-  --md-sys-color-alpha-neonindigo-10:    rgba(179, 184, 255, 0.10);
-  --md-sys-color-alpha-neonindigo-glass: rgba(179, 184, 255, 0.10);
-  --md-sys-color-alpha-dark-glass:   rgba(255, 255, 255, 0.18);
+  --color-alpha-white-10:     rgba(255, 255, 255, 0.10);
+  --color-alpha-white-18:     rgba(255, 255, 255, 0.18);
+  --color-alpha-purple-10:    rgba(179, 184, 255, 0.10);
+  --color-alpha-purple-glass: rgba(179, 184, 255, 0.10);
+  --color-alpha-dark-glass:   rgba(255, 255, 255, 0.18);
 
   /* ── Extended Palette ────────────────────────────────────────────────────── */
-  --md-ref-palette-ext-cyan:   #5BBFCC;
-  --md-ref-palette-ext-lime:   #89B347;
-  --md-ref-palette-ext-orange: #C97A42;
-  --md-ref-palette-ext-gold:   #C4962B;
-  --md-ref-palette-ext-violet: #8875C4;
-  --md-ref-palette-ext-rose:   #C97888;
+  --color-ext-cyan:   #5BBFCC;
+  --color-ext-lime:   #89B347;
+  --color-ext-orange: #C97A42;
+  --color-ext-gold:   #C4962B;
+  --color-ext-violet: #8875C4;
+  --color-ext-rose:   #C97888;
 
   /* ── Neutrals ────────────────────────────────────────────────────────────── */
-  --md-ref-palette-neutral-950: #0A0A0A;
-  --md-ref-palette-neutral-800: #262626;
-  --md-ref-palette-neutral-600: #525252;
-  --md-ref-palette-neutral-400: #A3A3A3;
-  --md-ref-palette-neutral-200: #E5E5E5;
-  --md-ref-palette-neutral-50:  #FAFAFA;
+  --color-neutral-950: #0A0A0A;
+  --color-neutral-800: #262626;
+  --color-neutral-600: #525252;
+  --color-neutral-400: #A3A3A3;
+  --color-neutral-200: #E5E5E5;
+  --color-neutral-50:  #FAFAFA;
 
 }

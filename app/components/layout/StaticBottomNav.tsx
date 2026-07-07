@@ -11,7 +11,8 @@ import BottomNav from "./BottomNav";
 
 export default function StaticBottomNav() {
   const pathname = usePathname();
-  const ROOT_PAGES = ["/home", "/accounts"];
+  // Bottom nav is hidden on all screens in this playground
+  const ROOT_PAGES: string[] = [];
   if (!ROOT_PAGES.includes(pathname)) return null;
 
   return (

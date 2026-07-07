@@ -2,9 +2,9 @@
  * FLUTTER HANDOFF: LoginScreen
  * Route: / (initial route)
  * Widget: StatelessWidget
- * State: none — auth buttons navigate to /accounts (prototype skips real auth)
- * Tokens: --gradient-login, --md-sys-color-brand-coral, --md-sys-color-surface-white,
- *         --md-sys-color-text-primary, --md-sys-color-text-inverse, --md-sys-color-neonindigo, --radius-xl
+ * State: none — auth buttons navigate to /relationships (prototype skips real auth)
+ * Tokens: --gradient-login, --color-brand-coral, --color-surface-white,
+ *         --color-text-primary, --color-text-inverse, --color-brand-purple, --radius-xl
  * Flutter equivalent: login_page.dart
  */
 
@@ -57,24 +57,24 @@ export default function LoginPage() {
 
       {/* Tagline */}
       <div className="text-center mb-12 relative z-10">
-        <p className="text-xl font-semibold leading-snug" style={{ color: "var(--md-sys-color-text-primary)" }}>
+        <p className="text-xl font-semibold leading-snug" style={{ color: "var(--color-text-primary)" }}>
           Smarter meetings.
           <br />
           Anywhere.
           <br />
           Synced with your{" "}
-          <span style={{ color: "var(--md-sys-color-neonindigo)" }}>CRM</span>.
+          <span style={{ color: "var(--color-brand-purple)" }}>CRM</span>.
         </p>
       </div>
 
       {/* Auth buttons */}
       <div className="w-full flex flex-col gap-3 relative z-10">
-        <Link href="/home" className="block">
+        <Link href="/relationships" className="block">
           <button
             className="w-full flex items-center justify-center gap-3 h-14 font-semibold text-base transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-brand-coral)",
-              color: "var(--md-sys-color-text-primary)",
+              background: "var(--color-brand-coral)",
+              color: "var(--color-text-primary)",
               borderRadius: "var(--radius-xl)",
             }}
           >
@@ -83,12 +83,12 @@ export default function LoginPage() {
           </button>
         </Link>
 
-        <Link href="/home" className="block">
+        <Link href="/relationships" className="block">
           <button
             className="w-full flex items-center justify-center gap-3 h-14 font-semibold text-base transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
+              background: "var(--color-surface-white)",
+              color: "var(--color-text-inverse)",
               borderRadius: "var(--radius-xl)",
             }}
           >
@@ -97,12 +97,12 @@ export default function LoginPage() {
           </button>
         </Link>
 
-        <Link href="/home" className="block">
+        <Link href="/relationships" className="block">
           <button
             className="w-full flex items-center justify-center gap-3 h-14 font-semibold text-base transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
+              background: "var(--color-surface-white)",
+              color: "var(--color-text-inverse)",
               borderRadius: "var(--radius-xl)",
             }}
           >
@@ -115,9 +115,9 @@ export default function LoginPage() {
       {/* Email login */}
       <div className="mt-8 relative z-10">
         <Link
-          href="/home"
+          href="/relationships"
           className="text-sm font-medium"
-          style={{ color: "var(--md-sys-color-neonindigo)" }}
+          style={{ color: "var(--color-brand-purple)" }}
         >
           Log in with Email
         </Link>

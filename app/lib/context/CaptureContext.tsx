@@ -15,7 +15,9 @@ interface CaptureContextValue {
   status: CaptureStatus;
   accountId: string | null;
   accountName: string | null;
-  startCapture: (accountId: string, accountName: string) => void;
+  canSwitchAccount: boolean;
+  startCapture: (accountId: string, accountName: string, allowSwitch?: boolean) => void;
+  switchAccount: (accountId: string, accountName: string) => void;
   finishCapture: () => void;
   readyCapture: () => void;
   dismissCapture: () => void;
@@ -24,14 +26,21 @@ interface CaptureContextValue {
 const CaptureContext = createContext<CaptureContextValue | null>(null);
 
 export function CaptureProvider({ children }: { children: React.ReactNode }) {
-  const [status, setStatus]           = useState<CaptureStatus>("idle");
-  const [accountId, setAccountId]     = useState<string | null>(null);
-  const [accountName, setAccountName] = useState<string | null>(null);
+  const [status, setStatus]                   = useState<CaptureStatus>("idle");
+  const [accountId, setAccountId]             = useState<string | null>(null);
+  const [accountName, setAccountName]         = useState<string | null>(null);
+  const [canSwitchAccount, setCanSwitch]      = useState(false);
 
-  const startCapture = useCallback((id: string, name: string) => {
+  const startCapture = useCallback((id: string, name: string, allowSwitch = false) => {
     setAccountId(id);
     setAccountName(name);
+    setCanSwitch(allowSwitch);
     setStatus("recording");
+  }, []);
+
+  const switchAccount  = useCallback((id: string, name: string) => {
+    setAccountId(id);
+    setAccountName(name);
   }, []);
 
   const finishCapture  = useCallback(() => setStatus("finalizing"), []);
@@ -40,10 +49,11 @@ export function CaptureProvider({ children }: { children: React.ReactNode }) {
     setStatus("idle");
     setAccountId(null);
     setAccountName(null);
+    setCanSwitch(false);
   }, []);
 
   return (
-    <CaptureContext.Provider value={{ status, accountId, accountName, startCapture, finishCapture, readyCapture, dismissCapture }}>
+    <CaptureContext.Provider value={{ status, accountId, accountName, canSwitchAccount, startCapture, switchAccount, finishCapture, readyCapture, dismissCapture }}>
       {children}
     </CaptureContext.Provider>
   );

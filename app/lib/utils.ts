@@ -3,14 +3,14 @@ export function formatLastVisited(date: Date): { label: string; isToday: boolean
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return { label: "Visited Today", isToday: true };
-  if (diffDays === 1) return { label: "Visited yesterday", isToday: false };
-  if (diffDays < 7) return { label: `Visited ${diffDays} days ago`, isToday: false };
-  if (diffDays < 14) return { label: "Visited 1 week ago", isToday: false };
-  if (diffDays < 30) return { label: `Visited ${Math.floor(diffDays / 7)} weeks ago`, isToday: false };
-  if (diffDays < 60) return { label: "Visited 1 month ago", isToday: false };
-  if (diffDays < 365) return { label: `Visited ${Math.floor(diffDays / 30)} months ago`, isToday: false };
-  return { label: "Visited 1 year ago", isToday: false };
+  if (diffDays === 0) return { label: "today", isToday: true };
+  if (diffDays === 1) return { label: "yesterday", isToday: false };
+  if (diffDays < 7) return { label: `${diffDays} days ago`, isToday: false };
+  if (diffDays < 14) return { label: "1 week ago", isToday: false };
+  if (diffDays < 30) return { label: `${Math.floor(diffDays / 7)} weeks ago`, isToday: false };
+  if (diffDays < 60) return { label: "1 month ago", isToday: false };
+  if (diffDays < 365) return { label: `${Math.floor(diffDays / 30)} months ago`, isToday: false };
+  return { label: "1 year ago", isToday: false };
 }
 
 export function formatDistance(miles: number): string {
@@ -21,4 +21,13 @@ export function formatDistance(miles: number): string {
 
 export function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(" ");
+}
+
+/** True only when a task's due date is before today. A null due date means
+ *  "Today", which is not past due. Used to coral-highlight overdue dates only. */
+export function isPastDue(dueDate: Date | null): boolean {
+  if (!dueDate) return false;
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  return dueDate.getTime() < startOfToday.getTime();
 }

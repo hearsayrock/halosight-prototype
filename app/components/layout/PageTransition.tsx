@@ -19,8 +19,7 @@ import { useRef } from "react";
 
 // Tab order — determines slide direction when switching between root tabs.
 const TAB_ORDER: { prefix: string; order: number }[] = [
-  { prefix: "/home",     order: 0 },
-  { prefix: "/accounts", order: 1 },
+  { prefix: "/relationships", order: 0 },
 ];
 
 function routeDepth(path: string): number {
