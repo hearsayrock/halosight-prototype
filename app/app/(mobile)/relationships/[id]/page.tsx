@@ -214,7 +214,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   const [showConvertSheet, setShowConvertSheet] = useState(false);
 
-  // Disqualify flow — pending toast, then commit + navigate back
+  // Disqualify flow — confirmation dialog, then pending toast, then commit + navigate back
+  const [showDisqualifyConfirm, setShowDisqualifyConfirm] = useState(false);
   const [disqualifyPending, setDisqualifyPending] = useState(false);
   const disqualifyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -329,7 +330,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             <KebabMenu
               items={[
                 { label: "Convert to Account", onClick: () => setShowConvertSheet(true) },
-                { label: "Disqualify", onClick: handleDisqualify, destructive: true },
+                { label: "Disqualify", onClick: () => setShowDisqualifyConfirm(true), destructive: true },
               ]}
             />
           )}
@@ -711,6 +712,64 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       <NoteSheet visible={noteSheetOpen} onDone={handleNoteDone} />
 
       {/* Disqualify toast */}
+      {typeof document !== "undefined" && document.getElementById("phone-overlay-root") && createPortal(
+        <AnimatePresence>
+          {showDisqualifyConfirm && (
+            <>
+              {/* Scrim */}
+              <motion.div
+                key="disqualify-scrim"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setShowDisqualifyConfirm(false)}
+                style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 70, pointerEvents: "auto" }}
+              />
+              {/* Sheet */}
+              <motion.div
+                key="disqualify-confirm"
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", stiffness: 340, damping: 30 }}
+                style={{
+                  position: "absolute",
+                  bottom: 0, left: 0, right: 0,
+                  zIndex: 71,
+                  pointerEvents: "auto",
+                  background: "var(--md-sys-color-dark-secondary)",
+                  borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+                  padding: "28px 24px 44px",
+                }}
+              >
+                <p style={{ fontSize: 18, fontWeight: 700, color: "var(--md-sys-color-text-primary)", marginBottom: 8 }}>
+                  Disqualify this lead?
+                </p>
+                <p style={{ fontSize: 14, lineHeight: 1.5, color: "var(--md-sys-color-text-secondary)", marginBottom: 28 }}>
+                  This lead will disappear from your list. You'll need to go into your CRM to undo this.
+                </p>
+                <button
+                  onClick={() => { setShowDisqualifyConfirm(false); handleDisqualify(); }}
+                  className="w-full py-3.5 rounded-full text-base font-semibold active:opacity-80 transition-opacity mb-3"
+                  style={{ background: "var(--md-sys-color-brand-coral)", color: "#fff" }}
+                >
+                  Yes, disqualify
+                </button>
+                <button
+                  onClick={() => setShowDisqualifyConfirm(false)}
+                  className="w-full py-3.5 rounded-full text-base font-semibold active:opacity-80 transition-opacity"
+                  style={{ background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)" }}
+                >
+                  Cancel
+                </button>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.getElementById("phone-overlay-root")!
+      )}
+
       {typeof document !== "undefined" && document.getElementById("phone-overlay-root") && createPortal(
         <AnimatePresence>
           {disqualifyPending && (
