@@ -329,7 +329,6 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           {account.halosightType === "prospect" && !effectiveJustCreated && (
             <KebabMenu
               items={[
-                { label: "Convert to Account", onClick: () => setShowConvertSheet(true) },
                 { label: "Disqualify", onClick: () => setShowDisqualifyConfirm(true), destructive: true },
               ]}
             />

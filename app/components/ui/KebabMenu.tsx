@@ -67,7 +67,7 @@ export default function KebabMenu({ items }: Props) {
           <>
             <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
             <motion.div
-              className="absolute right-0 top-0 z-20 w-52"
+              className="absolute right-0 top-0 z-20 w-36"
               variants={menuVariants}
               initial="hidden"
               animate="visible"
