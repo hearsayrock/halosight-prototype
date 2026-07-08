@@ -1353,16 +1353,17 @@ function CombinedPageContent() {
 
         </AnimatePresence>
 
-        {/* Sticky "Add new lead" — floats above scroll when system search is active */}
+        {/* Sticky "Add new lead" — pinned to page bottom, rises with keyboard */}
         {mode === "accounts" && hasQuery && systemState === "done" && (
           <div style={{
             position: "absolute",
-            bottom: 0,
+            bottom: "var(--keyboard-inset, 0px)",
             left: 0,
             right: 0,
-            padding: "20px 16px 16px",
-            background: "linear-gradient(to bottom, transparent, var(--md-sys-color-background) 40%)",
+            padding: "16px 16px 12px",
+            background: "linear-gradient(to bottom, transparent, var(--md-sys-color-background) 45%)",
             pointerEvents: "none",
+            transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
           }}>
             <div style={{ pointerEvents: "auto" }}>
               <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
