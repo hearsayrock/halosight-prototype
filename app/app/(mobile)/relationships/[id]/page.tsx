@@ -517,10 +517,10 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             <Icon name="auto_awesome" size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
             <div className="flex-1 min-w-0 text-left">
               <p className="text-[15px] font-bold leading-snug mb-1" style={{ color: "var(--md-sys-color-neonindigo)" }}>
-                Take your first note to populate this lead
+                Log your first visit
               </p>
               <p className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                We'll fill the Salesforce fields automatically.
+                We'll fill Salesforce automatically.
               </p>
             </div>
             <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
