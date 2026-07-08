@@ -20,6 +20,24 @@
 .text-sm-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 14px; line-height: 21px; }
 .text-xs-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 12px; line-height: 18px; }
 
+/* ── Body Regular — Barlow 400 ───────────────────────────────────────────── */
+/* Named body-* to avoid collision with Tailwind's text-* size utilities.   */
+.body-xl   { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 20px; line-height: 30px; }
+.body-lg   { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 18px; line-height: 27px; }
+.body-base { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; }
+.body-sm   { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 14px; line-height: 21px; }
+.body-xs   { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 12px; line-height: 18px; }
+
+/* ── In-between sizes — fills the 11 / 13 / 15 / 17px gap ──────────────── */
+/* These sizes appear frequently in UI but fall between the standard scale.  */
+.text-17      { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 17px; line-height: 24px; } /* form inputs */
+.text-15      { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 15px; line-height: 22px; }
+.text-15-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 15px; line-height: 22px; }
+.text-13      { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 13px; line-height: 19px; }
+.text-13-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 13px; line-height: 19px; }
+.text-11      { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 11px; line-height: 16px; }
+.text-11-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 11px; line-height: 16px; }
+
 /* ── Subheadlines — Barlow 400 ───────────────────────────────────────────── */
 .subheadline-lg { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 24px; line-height: 36px; }
 .subheadline-md { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 20px; line-height: 30px; }
@@ -37,3 +55,4 @@
 /* ── Labels & Captions ───────────────────────────────────────────────────── */
 .label-serif { font-family: "Roboto Slab", Georgia, serif; font-weight: 400; font-size: 10px; line-height: 14px; }
 .text-2xs    { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 10px; line-height: 14px; }
+.text-2xs-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 10px; line-height: 14px; }

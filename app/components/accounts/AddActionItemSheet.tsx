@@ -125,7 +125,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
             placeholder="What needs to be done?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full text-[15px] outline-none px-4 py-3.5"
+            className="w-full text-15 outline-none px-4 py-3.5"
             style={{
               background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
@@ -163,10 +163,10 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
                           background: isSel ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
                         }}
                       >
-                        <span className="text-xs font-bold" style={{ color: isSel ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)" }}>
+                        <span className="text-xs-bold" style={{ color: isSel ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)" }}>
                           {getDayLabel(date, today)}
                         </span>
-                        <span className="text-lg font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+                        <span className="text-lg-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                           {date.getDate()}
                         </span>
                         <span className="text-xs" style={{ color: isSel ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)" }}>
@@ -210,7 +210,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
                     <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>Hide calendar</span>
                   </button>
                   {selectedDate && (
-                    <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+                    <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                       {selectedDate.toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric" })}
                     </p>
                   )}
@@ -227,7 +227,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
           <button
             onClick={handleAdd}
             disabled={!title.trim()}
-            className="w-full h-12 font-semibold text-[15px] flex items-center justify-center transition-opacity"
+            className="w-full h-12 text-15-bold flex items-center justify-center transition-opacity"
             style={{
               background: "var(--md-sys-color-brand-coral)",
               color: "var(--md-sys-color-text-primary)",

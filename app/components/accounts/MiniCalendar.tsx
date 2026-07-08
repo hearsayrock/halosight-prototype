@@ -82,7 +82,7 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
           onClick={() => setShowMonthPicker((v) => !v)}
           className="flex items-center gap-0.5 active:opacity-60"
         >
-          <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+          <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
             {monthLabel}
           </span>
           <Icon
@@ -96,7 +96,7 @@ export default function MiniCalendar({ selected, onSelect }: Props) {
         <div className="flex items-center gap-1">
           <button
             onClick={goToday}
-            className="px-2 py-0.5 text-xs font-semibold active:opacity-60"
+            className="px-2 py-0.5 text-xs-bold active:opacity-60"
             style={{
               color: "var(--md-sys-color-text-primary)",
               border: "1px solid var(--md-sys-color-dark-tertiary)",

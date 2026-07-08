@@ -137,7 +137,7 @@ function EngagementRow({
       <div
         className="flex items-center justify-between px-5 py-2.5 active:opacity-60 transition-opacity"
       >
-        <span style={{ fontSize: 15, color: "var(--md-sys-color-text-primary)", fontWeight: 400 }}>
+        <span className="text-15" style={{ color: "var(--md-sys-color-text-primary)" }}>
           {activity.accountName}
         </span>
         {/* Dot indicator — shown when the activity has meaningful content */}
@@ -204,9 +204,7 @@ function EngagementsDrawer({
           >
             {/* Header */}
             <div style={{ padding: "56px 20px 12px" }}>
-              <p style={{
-                fontSize: 13,
-                fontWeight: 700,
+              <p className="text-13-bold" style={{
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 color: "var(--md-sys-color-text-muted)",
@@ -222,9 +220,7 @@ function EngagementsDrawer({
             {/* Today */}
             {todayActivities.length > 0 && (
               <div style={{ marginBottom: 8 }}>
-                <p style={{
-                  fontSize: 13,
-                  fontWeight: 600,
+                <p className="text-13-bold" style={{
                   color: "var(--md-sys-color-brand-teal)",
                   padding: "0 20px 4px",
                   margin: 0,
@@ -240,9 +236,7 @@ function EngagementsDrawer({
             {/* Previous */}
             {previousActivities.length > 0 && (
               <div style={{ marginTop: todayActivities.length > 0 ? 12 : 0 }}>
-                <p style={{
-                  fontSize: 13,
-                  fontWeight: 600,
+                <p className="text-13-bold" style={{
                   color: "var(--md-sys-color-brand-teal)",
                   padding: "0 20px 4px",
                   margin: 0,
@@ -331,7 +325,7 @@ function TaskStrip({
                   href={`/relationships/${task.accountId}/action-items/${task.itemId}`}
                   className="flex-1 min-w-0"
                 >
-                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-text-primary)", lineHeight: 1.3 }}>
+                  <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)", lineHeight: 1.3 }}>
                     {task.title}
                   </p>
                   <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
@@ -343,8 +337,8 @@ function TaskStrip({
                     }}>
                       {formatTaskDue(task.dueDate)}
                     </span>
-                    <span style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }}>·</span>
-                    <span style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span className="text-11" style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }}>·</span>
+                    <span className="text-11" style={{ color: "var(--md-sys-color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {task.accountName}
                     </span>
                   </div>
@@ -415,8 +409,8 @@ function DashboardGrid({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1.5">
             <Icon name="auto_awesome" size={13} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-            <span style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: "0.09em",
+            <span className="text-2xs-bold" style={{
+              letterSpacing: "0.09em",
               textTransform: "uppercase", color: "var(--md-sys-color-neonindigo)",
             }}>
               Suggested visit
@@ -441,7 +435,7 @@ function DashboardGrid({
               {/* Distance */}
               <div className="flex items-center gap-1">
                 <Icon name="near_me" size={12} style={{ color: "var(--md-sys-color-text-muted)" }} />
-                <span style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>
+                <span className="text-13" style={{ color: "var(--md-sys-color-text-muted)" }}>
                   {formatDistance(suggestedAccount.distanceMiles)}
                   {suggestedAccount.city && ` · ${suggestedAccount.city}`}
                 </span>
@@ -449,7 +443,7 @@ function DashboardGrid({
               {/* Last visited */}
               <div className="flex items-center gap-1">
                 <Icon name="history" size={12} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-                <span style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)" }}>
+                <span className="body-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                   {lastVisitedLabel}
                 </span>
               </div>
@@ -469,7 +463,7 @@ function DashboardGrid({
           }}
         >
           <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
-          <span style={{ fontSize: 14, fontWeight: 700 }}>Log a Visit</span>
+          <span className="text-sm-bold">Log a Visit</span>
         </button>
 
       </div>
@@ -501,11 +495,10 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
         */}
         {/* Left — name + meta */}
         <div className="flex-1 min-w-0">
-          <p style={{ fontSize: 15, fontWeight: 600, color: "var(--md-sys-color-text-primary)", lineHeight: 1.2 }}
-            className="truncate">
+          <p className="text-15-bold truncate" style={{ color: "var(--md-sys-color-text-primary)", lineHeight: 1.2 }}>
             {account.name}
           </p>
-          <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", marginTop: 2 }}>
+          <p className="body-xs" style={{ color: "var(--md-sys-color-text-muted)", marginTop: 2 }}>
             {[account.distanceMiles < 999 ? `${account.distanceMiles} mi` : null,
               account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null)]
               .filter(Boolean).join(" · ")}
@@ -530,7 +523,7 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
                 />
               </svg>
               <span
-                className="text-[11px] font-semibold"
+                className="text-11-bold"
                 style={{ color: "var(--md-sys-color-neonindigo)", lineHeight: 1 }}
               >
                 {account.taskCount}
@@ -564,10 +557,10 @@ function SectionHeader({ label, count, onAdd, divider }: { label: string; count:
   return (
     <div className="flex items-center justify-between px-4 py-2">
       <div className="flex items-center gap-2">
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+        <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
           {label}
         </span>
-        <span style={{ fontSize: 11, fontWeight: 600, color: "var(--md-sys-color-text-disabled)", background: "var(--md-sys-color-dark-secondary)", borderRadius: 10, padding: "1px 7px" }}>
+        <span className="text-11-bold" style={{ color: "var(--md-sys-color-text-disabled)", background: "var(--md-sys-color-dark-secondary)", borderRadius: 10, padding: "1px 7px" }}>
           {count}
         </span>
       </div>
@@ -611,7 +604,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
       style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-full)", border: "1px dashed var(--md-sys-color-dark-tertiary)" }}
     >
       <Icon name="add" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-      <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
         Add a new lead
         {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
       </span>
@@ -877,8 +870,8 @@ function CombinedPageContent() {
     return (
       <button
         onClick={onClick}
-        className="active:opacity-50 transition-opacity"
-        style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-neonindigo)", cursor: "pointer" }}
+        className="text-13-bold active:opacity-50 transition-opacity"
+        style={{ color: "var(--md-sys-color-neonindigo)", cursor: "pointer" }}
       >
         View all
       </button>
@@ -1016,7 +1009,6 @@ function CombinedPageContent() {
           <motion.div
             key="accounts-search-bar"
             ...
-          />
         )}
       </AnimatePresence> */}
 
@@ -1073,7 +1065,7 @@ function CombinedPageContent() {
                   {/* Relationships section */}
                   <div className="mb-3">
                     <div className="flex items-center justify-between px-4 py-2">
-                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+                      <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Relationships
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
@@ -1088,7 +1080,7 @@ function CombinedPageContent() {
                   {/* Priorities section */}
                   <div>
                     <div className="flex items-center justify-between px-4 py-2">
-                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+                      <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Action Items
                       </span>
                       <MiniSearchPill onClick={() => goToMode("priorities")} />
@@ -1132,7 +1124,7 @@ function CombinedPageContent() {
                   </div>
                   <div className="text-center">
                     {systemState === "idle" && (
-                      <p className="text-sm font-semibold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>Not in your accounts</p>
+                      <p className="text-sm-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>Not in your accounts</p>
                     )}
                     <p className="text-sm leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
                   </div>
@@ -1230,7 +1222,7 @@ function CombinedPageContent() {
                     placeholder="Search items…"
                     value={prioritiesQuery}
                     onChange={(e) => setPrioritiesQuery(e.target.value)}
-                    className="flex-1 bg-transparent text-[15px] outline-none"
+                    className="flex-1 bg-transparent text-15 outline-none"
                     style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
                   />
                   {prioritiesQuery && (
@@ -1320,7 +1312,7 @@ function CombinedPageContent() {
                               <Link href={`/relationships/${item.accountId}/action-items/${item.id}`}
                                 className="flex-1 flex items-center gap-3 py-3.5">
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-[16px] font-semibold leading-snug mb-1"
+                                  <p className="text-base-bold leading-snug mb-1"
                                     style={{ color: "var(--md-sys-color-text-primary)" }}>
                                     {item.title}
                                   </p>
@@ -1430,7 +1422,7 @@ function CombinedPageContent() {
             >
               <Icon name="check" size={15} style={{ color: "var(--md-sys-color-semantic-success)" }} />
             </div>
-            <p className="text-[14px] font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+            <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
               {successToast}
             </p>
           </motion.div>

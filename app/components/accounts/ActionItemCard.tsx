@@ -48,7 +48,7 @@ export default function ActionItemCard({ item, onComplete, pending = false }: Pr
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <p className="text-[15px] font-semibold leading-snug" style={{ color: "var(--md-sys-color-text-primary)" }}>
+        <p className="text-15-bold leading-snug" style={{ color: "var(--md-sys-color-text-primary)" }}>
           {item.title}
         </p>
         <div className="flex items-center gap-1 mt-0.5">

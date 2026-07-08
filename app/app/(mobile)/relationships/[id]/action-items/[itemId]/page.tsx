@@ -118,12 +118,12 @@ function ActionItemDetailPageContent({
             {saved && (
               <div className="flex items-center gap-1">
                 <Icon name="check" size={14} style={{ color: "var(--md-sys-color-success)" }} />
-                <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-success)" }}>Saved</span>
+                <span className="text-sm-bold" style={{ color: "var(--md-sys-color-success)" }}>Saved</span>
               </div>
             )}
             <button
               onClick={handleDoneEditing}
-              className="px-4 h-8 text-sm font-semibold rounded-full active:opacity-70 transition-opacity"
+              className="px-4 h-8 text-sm-bold rounded-full active:opacity-70 transition-opacity"
               style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-text-primary)" }}
             >
               Done
@@ -144,7 +144,7 @@ function ActionItemDetailPageContent({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             rows={1}
-            className="w-full text-[16px] font-semibold outline-none resize-none px-4 py-3.5 mb-6"
+            className="w-full text-base-bold outline-none resize-none px-4 py-3.5 mb-6"
             style={{
               background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
@@ -167,7 +167,7 @@ function ActionItemDetailPageContent({
               <button
                 key={opt.value}
                 onClick={() => setStatus(opt.value)}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-semibold transition-all"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm-bold transition-all"
                 style={{
                   borderRadius: "var(--radius-full)",
                   background: status === opt.value ? "var(--md-sys-color-dark-secondary)" : "transparent",
@@ -186,7 +186,7 @@ function ActionItemDetailPageContent({
             <span className="eyebrow-text" style={{ color: "var(--md-sys-color-text-muted)" }}>Due Date</span>
           </div>
           {dueDate && (
-            <p className="text-sm font-semibold mb-3" style={{ color: "var(--md-sys-color-text-muted)" }}>
+            <p className="text-sm-bold mb-3" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {formatDate(dueDate)}
             </p>
           )}
@@ -198,7 +198,7 @@ function ActionItemDetailPageContent({
         <div className="absolute left-0 right-0 px-4" style={{ bottom: 32 }}>
           <button
             onClick={() => setShowDelete(true)}
-            className="w-full h-12 font-semibold text-[14px] flex items-center justify-center gap-2 active:opacity-70 transition-opacity"
+            className="w-full h-12 text-sm-bold flex items-center justify-center gap-2 active:opacity-70 transition-opacity"
             style={{
               border: "1px solid color-mix(in srgb, var(--md-sys-color-brand-coral) 60%, transparent)",
               borderRadius: "var(--radius-full)",
@@ -223,7 +223,7 @@ function ActionItemDetailPageContent({
               }}
             >
               <div className="text-center">
-                <p className="text-lg font-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}>
+                <p className="heading-6 mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
                   Delete item?
                 </p>
                 <p className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
@@ -232,14 +232,14 @@ function ActionItemDetailPageContent({
               </div>
               <button
                 onClick={handleDelete}
-                className="w-full h-12 font-semibold text-[15px] rounded-full active:opacity-70 transition-opacity"
+                className="w-full h-12 text-15-bold rounded-full active:opacity-70 transition-opacity"
                 style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 30%, var(--md-sys-color-dark-tertiary))", color: "var(--md-sys-color-text-primary)" }}
               >
                 Yes, delete
               </button>
               <button
                 onClick={() => setShowDelete(false)}
-                className="w-full h-12 font-semibold text-[15px] rounded-full active:opacity-70 transition-opacity"
+                className="w-full h-12 text-15-bold rounded-full active:opacity-70 transition-opacity"
                 style={{ background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)" }}
               >
                 Cancel
@@ -265,7 +265,7 @@ function ActionItemDetailPageContent({
         </button>
         <button
           onClick={() => setIsEditing(true)}
-          className="flex items-center gap-1.5 px-4 h-8 text-sm font-semibold rounded-full active:opacity-70 transition-opacity"
+          className="flex items-center gap-1.5 px-4 h-8 text-sm-bold rounded-full active:opacity-70 transition-opacity"
           style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-text-primary)" }}
         >
           <Icon name="border_color" size={13} style={{ color: "var(--md-sys-color-text-muted)" }} />
@@ -307,7 +307,7 @@ function ActionItemDetailPageContent({
                 style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-full)" }}
               >
                 <CompanyIcon size={13} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-                <span className="text-[13px] font-semibold" style={{ color: "var(--md-sys-color-text-secondary)" }}>{account.name}</span>
+                <span className="text-13-bold" style={{ color: "var(--md-sys-color-text-secondary)" }}>{account.name}</span>
               </div>
             </Link>
           )}
@@ -318,7 +318,7 @@ function ActionItemDetailPageContent({
                 style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-full)" }}
               >
                 <Icon name="link" size={13} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-                <span className="text-[13px] font-semibold" style={{ color: "var(--md-sys-color-text-secondary)" }}>{item.originActivity}</span>
+                <span className="text-13-bold" style={{ color: "var(--md-sys-color-text-secondary)" }}>{item.originActivity}</span>
               </div>
             </Link>
           )}
@@ -360,7 +360,7 @@ function ActionItemDetailPageContent({
         >
           <button
             onClick={handleComplete}
-            className="w-full h-12 font-semibold text-[15px] flex items-center justify-center gap-2 active:opacity-80 transition-opacity"
+            className="w-full h-12 text-15-bold flex items-center justify-center gap-2 active:opacity-80 transition-opacity"
             style={{
               background: "var(--md-sys-color-brand-teal)",
               borderRadius: "var(--radius-full)",

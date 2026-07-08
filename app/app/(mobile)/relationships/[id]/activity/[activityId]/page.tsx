@@ -70,7 +70,7 @@ function AISummaryCard({ summary, durationMinutes }: { summary: ActivityAISummar
       }}
     >
       {/* Title */}
-      <p className="text-[15px] font-bold leading-snug mb-3" style={{ color: "var(--md-sys-color-text-primary)" }}>
+      <p className="text-15-bold leading-snug mb-3" style={{ color: "var(--md-sys-color-text-primary)" }}>
         {summary.title}
       </p>
 
@@ -244,7 +244,7 @@ function ActivityDetailPageContent({
             <div className="flex items-center gap-2 pr-1">
               <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>Captured by</span>
               <div
-                className="flex items-center justify-center rounded-full text-[13px] font-semibold"
+                className="flex items-center justify-center rounded-full text-13-bold"
                 style={{
                   width: 28,
                   height: 28,
@@ -286,7 +286,7 @@ function ActivityDetailPageContent({
         {isExternalAccount && (
           <div className="flex justify-center mt-2">
             <span
-              className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+              className="text-11-bold px-2.5 py-1 rounded-full"
               style={{
                 background: "rgba(139,146,255,0.1)",
                 color: "var(--md-sys-color-neonindigo)",
@@ -316,7 +316,7 @@ function ActivityDetailPageContent({
               borderRadius: "var(--radius-xl)",
             }}
           >
-            <p className="text-[15px] font-bold mb-2" style={{ color: "var(--md-sys-color-text-primary)" }}>
+            <p className="text-15-bold mb-2" style={{ color: "var(--md-sys-color-text-primary)" }}>
               {activity.title}
             </p>
             <p className="text-sm leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>
@@ -367,7 +367,7 @@ function ActivityDetailPageContent({
                 <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
               </div>
               <div className="text-left">
-                <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+                <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                   Add your first action item
                 </p>
                 <p className="text-xs mt-0.5" style={{ color: "var(--md-sys-color-text-secondary)" }}>

@@ -20,6 +20,7 @@ import { useState, useEffect } from "react";
 import DevPanel, { type DeviceSize } from "./DevPanel";
 import PlaygroundNav from "./PlaygroundNav";
 import MobileKeyboard from "./MobileKeyboard";
+import DevModeOverlay from "./DevModeOverlay";
 
 const SIZES: Record<DeviceSize, { width: number; height: number }> = {
   se:  { width: 375, height: 667 },
@@ -77,6 +78,7 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
         {children}
         {overlayRoot}
         <MobileKeyboard />
+        <DevModeOverlay />
       </div>
     );
   }
@@ -127,6 +129,8 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
           onToggle={() => setRightCollapsed(c => !c)}
         />
       )}
+
+      <DevModeOverlay />
     </div>
   );
 }

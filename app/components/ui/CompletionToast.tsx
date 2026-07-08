@@ -77,7 +77,7 @@ export default function CompletionToast({
 
               {/* Label */}
               <span
-                className="flex-1 text-sm font-semibold"
+                className="flex-1 text-sm-bold"
                 style={{ color: "var(--md-sys-color-text-primary)" }}
               >
                 Item complete
@@ -86,7 +86,7 @@ export default function CompletionToast({
               {/* Undo */}
               <button
                 onClick={onUndo}
-                className="text-sm font-semibold active:opacity-60 transition-opacity"
+                className="text-sm-bold active:opacity-60 transition-opacity"
                 style={{ color: "var(--md-sys-color-neonindigo)" }}
               >
                 undo
@@ -111,7 +111,7 @@ export default function CompletionToast({
               >
                 <Icon name="edit" size={13} style={{ color: "var(--md-sys-color-brand-teal)" }} />
                 <span
-                  className="text-xs font-semibold"
+                  className="text-xs-bold"
                   style={{ color: "var(--md-sys-color-brand-teal)" }}
                 >
                   Add a note

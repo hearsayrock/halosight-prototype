@@ -153,7 +153,7 @@ function TaskRow({
       >
         <div className="flex-1 min-w-0">
           <p
-            className="text-[16px] font-semibold leading-snug mb-1"
+            className="text-base-bold leading-snug mb-1"
             style={{ color: "var(--md-sys-color-text-primary)" }}
           >
             {item.title}
@@ -403,7 +403,7 @@ export default function TasksPage() {
             placeholder="Search items…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-[15px] outline-none"
+            className="flex-1 bg-transparent text-15 outline-none"
             style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
           />
           {query && (

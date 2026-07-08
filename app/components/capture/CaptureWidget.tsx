@@ -80,7 +80,10 @@ function AccountButton({ name, onPress }: { name: string; onPress: () => void })
       className="flex items-center gap-1 active:opacity-60 transition-opacity"
       style={{ maxWidth: "100%" }}
     >
-      <span className="truncate font-semibold" style={{ fontSize: 15, color: "var(--md-sys-color-text-secondary)" }}>
+      <span
+        className="text-15-bold truncate"
+        style={{ color: "var(--md-sys-color-text-secondary)" }}
+      >
         {name}
       </span>
       <Icon name="expand_more" size={16} style={{ color: "var(--md-sys-color-text-muted)", flexShrink: 0 }} />
@@ -184,8 +187,8 @@ export default function CaptureWidget() {
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className="w-2 h-2 rounded-full" style={{ background: "#ff4444" }} />
                       <span
-                        className="font-bold tabular-nums"
-                        style={{ fontSize: 14, color: "var(--md-sys-color-text-primary)", minWidth: 44 }}
+                        className="text-sm-bold tabular-nums"
+                        style={{ color: "var(--md-sys-color-text-primary)", minWidth: 44 }}
                       >
                         {formatTime(elapsed)}
                       </span>
@@ -198,7 +201,7 @@ export default function CaptureWidget() {
                       {canSwitchAccount ? (
                         <AccountButton name={accountName ?? ""} onPress={() => setShowPicker(true)} />
                       ) : (
-                        <p className="truncate" style={{ fontSize: 15, fontWeight: 600, color: "var(--md-sys-color-text-secondary)" }}>
+                        <p className="text-15-bold truncate" style={{ color: "var(--md-sys-color-text-secondary)" }}>
                           {accountName}
                         </p>
                       )}
@@ -206,8 +209,8 @@ export default function CaptureWidget() {
 
                     <button
                       onClick={finishCapture}
-                      className="flex-shrink-0 h-9 px-4 font-bold rounded-full active:opacity-70 transition-opacity"
-                      style={{ fontSize: 14, background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-primary)" }}
+                      className="flex-shrink-0 h-9 px-4 text-sm-bold rounded-full active:opacity-70 transition-opacity"
+                      style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-primary)" }}
                     >
                       Finish
                     </button>
@@ -244,8 +247,8 @@ export default function CaptureWidget() {
                     className="px-4 pt-4 pb-7"
                   >
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <p className="text-sm font-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                        Note is ready! 🎉
+                      <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+                        {status === "ready" ? "Note is ready! 🎉" : "Finalizing your note…"}
                       </p>
                       <button
                         onClick={dismissCapture}
@@ -260,7 +263,7 @@ export default function CaptureWidget() {
                       {canSwitchAccount ? (
                         <AccountButton name={accountName ?? ""} onPress={() => setShowPicker(true)} />
                       ) : (
-                        <p className="truncate" style={{ fontSize: 15, fontWeight: 600, color: "var(--md-sys-color-text-secondary)" }}>
+                        <p className="text-15-bold truncate" style={{ color: "var(--md-sys-color-text-secondary)" }}>
                           {accountName}
                         </p>
                       )}
@@ -269,7 +272,7 @@ export default function CaptureWidget() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.2 }}
                         onClick={handleViewNote}
-                        className="flex-shrink-0 h-8 px-4 text-sm font-bold rounded-full active:opacity-70 transition-opacity"
+                        className="flex-shrink-0 h-8 px-4 text-sm-bold rounded-full active:opacity-70 transition-opacity"
                         style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-primary)" }}
                       >
                         View Note

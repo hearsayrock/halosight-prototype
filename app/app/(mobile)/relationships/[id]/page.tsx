@@ -70,7 +70,7 @@ function ActivityCard({ item, accountId, isExternal, href }: { item: ActivityIte
       }}
     >
       <div className="flex-1 min-w-0">
-        <p className="text-[16px] font-semibold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
+        <p className="text-base-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
           {item.title}
         </p>
         <p
@@ -101,7 +101,7 @@ function ActivityCard({ item, accountId, isExternal, href }: { item: ActivityIte
             <>
               <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
               <div
-                className="flex items-center justify-center rounded-full text-[10px] font-bold flex-shrink-0"
+                className="flex items-center justify-center rounded-full text-2xs-bold flex-shrink-0"
                 style={{
                   width: 18,
                   height: 18,
@@ -116,7 +116,7 @@ function ActivityCard({ item, accountId, isExternal, href }: { item: ActivityIte
           )}
           {isExternal && (
             <span
-              className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+              className="text-2xs-bold px-1.5 py-0.5 rounded-full"
               style={{
                 background: "rgba(139,146,255,0.10)",
                 color: "var(--md-sys-color-neonindigo)",
@@ -372,7 +372,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               }}
             >
               <Icon name="info" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, marginTop: 1 }} />
-              <span className="text-[12px] leading-snug" style={{ color: "var(--md-sys-color-text-secondary)" }}>
+              <span className="body-xs leading-snug" style={{ color: "var(--md-sys-color-text-secondary)" }}>
                 {message}
               </span>
             </div>
@@ -474,7 +474,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className="flex-1 py-2 text-sm font-semibold transition-all capitalize"
+              className="flex-1 py-2 text-sm-bold transition-all capitalize"
               style={{
                 borderRadius: "var(--radius-full)",
                 background: activeTab === tab ? "var(--md-sys-color-dark-secondary)" : "transparent",
@@ -501,7 +501,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           >
             And just like that,<br />{account.name} exists.
           </h2>
-          <p style={{ fontSize: 15, lineHeight: 1.6, color: "var(--md-sys-color-text-muted)", maxWidth: 280, marginBottom: 32 }}>
+          <p className="text-15" style={{ lineHeight: 1.6, color: "var(--md-sys-color-text-muted)", maxWidth: 280, marginBottom: 32 }}>
             No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and nowhere to go but up.
           </p>
 
@@ -614,7 +614,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                     <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+                    <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                       Add your first action item
                     </p>
                     <p className="text-xs mt-0.5" style={{ color: "var(--md-sys-color-text-secondary)" }}>
@@ -662,7 +662,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         >
           <button
             onClick={() => startCapture(id, account.name)}
-            className="h-11 px-6 font-semibold text-[14px] flex items-center gap-2 transition-opacity active:opacity-80"
+            className="h-11 px-6 text-sm-bold flex items-center gap-2 transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-brand-coral)",
               color: "var(--md-sys-color-text-primary)",
@@ -803,12 +803,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   >
                     <div className="w-2 h-2 rounded-full" style={{ background: "var(--md-sys-color-brand-teal)" }} />
                   </div>
-                  <span className="flex-1 text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+                  <span className="flex-1 text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                     Lead disqualified
                   </span>
                   <button
                     onClick={handleUndoDisqualify}
-                    className="text-sm font-semibold active:opacity-60 transition-opacity"
+                    className="text-sm-bold active:opacity-60 transition-opacity"
                     style={{ color: "var(--md-sys-color-neonindigo)" }}
                   >
                     undo

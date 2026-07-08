@@ -57,7 +57,7 @@ export default function LoginPage() {
 
       {/* Tagline */}
       <div className="text-center mb-12 relative z-10">
-        <p className="text-xl font-semibold leading-snug" style={{ color: "var(--md-sys-color-text-primary)" }}>
+        <p className="text-xl-bold leading-snug" style={{ color: "var(--md-sys-color-text-primary)" }}>
           Smarter meetings.
           <br />
           Anywhere.
@@ -71,7 +71,7 @@ export default function LoginPage() {
       <div className="w-full flex flex-col gap-3 relative z-10">
         <Link href="/relationships" className="block">
           <button
-            className="w-full flex items-center justify-center gap-3 h-14 font-semibold text-base transition-opacity active:opacity-80"
+            className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-brand-coral)",
               color: "var(--md-sys-color-text-primary)",
@@ -85,7 +85,7 @@ export default function LoginPage() {
 
         <Link href="/relationships" className="block">
           <button
-            className="w-full flex items-center justify-center gap-3 h-14 font-semibold text-base transition-opacity active:opacity-80"
+            className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-surface-white)",
               color: "var(--md-sys-color-text-inverse)",
@@ -99,7 +99,7 @@ export default function LoginPage() {
 
         <Link href="/relationships" className="block">
           <button
-            className="w-full flex items-center justify-center gap-3 h-14 font-semibold text-base transition-opacity active:opacity-80"
+            className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-surface-white)",
               color: "var(--md-sys-color-text-inverse)",

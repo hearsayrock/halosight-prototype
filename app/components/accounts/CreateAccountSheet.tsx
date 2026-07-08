@@ -127,7 +127,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               {/* Company field */}
               <div className="mb-3">
                 <p
-                  className="text-[11px] font-semibold mb-2"
+                  className="text-11-bold mb-2"
                   style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
                 >
                   Company
@@ -141,7 +141,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                   onFocus={() => setFocused(true)}
                   onBlur={() => setFocused(false)}
                   onKeyDown={(e) => { if (e.key === "Enter" && name.trim()) handleCreate(); }}
-                  className="w-full text-[17px] font-medium outline-none px-4 py-4"
+                  className="w-full text-17 outline-none px-4 py-4"
                   style={{
                     background: "var(--md-sys-color-dark-secondary)",
                     borderRadius: "var(--radius-lg)",
@@ -161,7 +161,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 }}
               >
                 <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-                <span className="text-[13px] font-medium" style={{ color: "var(--md-sys-color-neonindigo)" }}>
+                <span className="text-13" style={{ color: "var(--md-sys-color-neonindigo)" }}>
                   Name it — AI fills the rest.
                 </span>
               </div>
@@ -171,7 +171,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={handleCreate}
                 disabled={!name.trim()}
-                className="w-full font-semibold text-[16px] transition-opacity"
+                className="w-full text-base-bold transition-opacity"
                 style={{
                   height: 52,
                   background: "var(--md-sys-color-neonindigo)",

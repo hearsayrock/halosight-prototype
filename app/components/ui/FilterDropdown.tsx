@@ -76,7 +76,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
       {/* Pill trigger */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center h-8 px-3 text-sm font-semibold active:opacity-70 transition-opacity"
+        className="flex items-center h-8 px-3 text-sm-bold active:opacity-70 transition-opacity"
         style={{
           gap: isFiltered ? 4 : 2,
           background: open ? "var(--md-sys-color-neonindigo)" : isFiltered ? "var(--md-sys-color-dark-secondary)" : "var(--md-sys-color-dark-secondary)",
@@ -138,7 +138,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
                     animate="visible"
                     exit="exit"
                     onClick={() => { onChange(opt.value); setOpen(false); }}
-                    className="w-full flex items-center text-left text-sm font-semibold"
+                    className="w-full flex items-center text-left text-sm-bold"
                     style={{
                       gap: 12,
                       paddingTop: 10,

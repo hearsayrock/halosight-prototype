@@ -22,7 +22,7 @@ import { useAccountState } from "@/lib/context/AccountStateContext";
 function ProspectBadge() {
   return (
     <span
-      className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+      className="text-11-bold px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{
         background: "rgba(107, 157, 176, 0.18)",
         color: "var(--md-sys-color-brand-teal)",
@@ -45,7 +45,7 @@ const CRM_LABEL: Record<CrmAccountType, string> = {
 function CrmTypeBadge({ type }: { type: CrmAccountType }) {
   return (
     <span
-      className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+      className="text-11-bold px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{
         background: "var(--md-sys-color-dark-tertiary)",
         color: "var(--md-sys-color-text-muted)",
@@ -85,7 +85,7 @@ function TaskIndicator({ count }: { count: number }) {
     >
       <TaskIcon color="var(--md-sys-color-neonindigo)" />
       <span
-        className="text-[11px] font-semibold"
+        className="text-11-bold"
         style={{ color: "var(--md-sys-color-neonindigo)", lineHeight: 1 }}
       >
         {count}
@@ -99,7 +99,7 @@ function TaskIndicator({ count }: { count: number }) {
 function AssigneeCircle({ initial }: { initial: string }) {
   return (
     <span
-      className="flex items-center justify-center rounded-full text-[11px] font-semibold flex-shrink-0"
+      className="flex items-center justify-center rounded-full text-11-bold flex-shrink-0"
       style={{
         width: 22,
         height: 22,
@@ -147,7 +147,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <span
-              className="text-[16px] font-semibold truncate"
+              className="text-base-bold truncate"
               style={{ color: "var(--md-sys-color-text-primary)" }}
             >
               {account.name}

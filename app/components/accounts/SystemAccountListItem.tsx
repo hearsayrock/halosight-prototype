@@ -45,7 +45,7 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
         <div className="flex-1 min-w-0">
           {/* Account name */}
           <span
-            className="text-[15px] font-semibold truncate block"
+            className="text-15-bold truncate block"
             style={{ color: "var(--md-sys-color-text-secondary)" }}
           >
             {account.name}
@@ -71,7 +71,7 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
         {/* Right — assignee initial avatar */}
         <div className="flex items-start pt-0.5 flex-shrink-0">
           <div
-            className="flex items-center justify-center rounded-full text-[13px] font-semibold"
+            className="flex items-center justify-center rounded-full text-13-bold"
             style={{
               width: 28,
               height: 28,

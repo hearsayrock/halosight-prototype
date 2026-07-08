@@ -141,7 +141,7 @@ export default function SortMenu({ current, onChange, visitedFilter = "all", onV
                     animate="visible"
                     exit="exit"
                     onClick={() => { onChange(opt.value); setOpen(false); }}
-                    className="w-full flex items-center text-left text-base"
+                    className="w-full flex items-center text-left body-base"
                     style={{
                       gap: 12,
                       paddingTop: 10,

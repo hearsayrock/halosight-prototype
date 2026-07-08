@@ -54,9 +54,8 @@ function AccountRow({
       )}
       <div className="flex-1 min-w-0">
         <p
-          className="font-semibold truncate"
+          className="text-15-bold truncate"
           style={{
-            fontSize: 15,
             color: isSelected ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-primary)",
           }}
         >
@@ -135,10 +134,8 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-2 pb-3 flex-shrink-0">
           <h3
+            className="heading-6"
             style={{
-              fontFamily: "Roboto Slab, Georgia, serif",
-              fontSize: 18,
-              fontWeight: 700,
               color: "var(--md-sys-color-text-primary)",
             }}
           >
