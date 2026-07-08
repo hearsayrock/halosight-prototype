@@ -168,6 +168,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
 
               {/* Create CTA */}
               <button
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={handleCreate}
                 disabled={!name.trim()}
                 className="w-full font-semibold text-[16px] transition-opacity"

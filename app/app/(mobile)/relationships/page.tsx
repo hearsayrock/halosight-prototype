@@ -593,6 +593,7 @@ function SystemSearchSkeleton() {
 function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void }) {
   return (
     <button
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onOpen}
       className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 active:opacity-70 transition-opacity"
       style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-full)", border: "1px dashed var(--md-sys-color-dark-tertiary)" }}
