@@ -592,27 +592,17 @@ function SystemSearchSkeleton() {
 
 function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void }) {
   return (
-    <div className="px-4 py-5">
-      <button
-        onClick={onOpen}
-        className="w-full flex items-center gap-3 px-4 py-4 active:opacity-70 transition-opacity"
-        style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-xl)", border: "1px dashed var(--md-sys-color-dark-tertiary)" }}
-      >
-        <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}>
-          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-        </div>
-        <div className="text-left">
-          <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-            Add new lead
-            {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
-          </p>
-          <p className="text-xs mt-0.5" style={{ color: "var(--md-sys-color-text-secondary)" }}>
-            Add to Tomorrowland Innovations and start capturing
-          </p>
-        </div>
-      </button>
-    </div>
+    <button
+      onClick={onOpen}
+      className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 active:opacity-70 transition-opacity"
+      style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-full)", border: "1px dashed var(--md-sys-color-dark-tertiary)" }}
+    >
+      <Icon name="add" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+      <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+        Add a new lead
+        {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
+      </span>
+    </button>
   );
 }
 
