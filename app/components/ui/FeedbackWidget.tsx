@@ -76,8 +76,10 @@ function FeedbackSheet({
 
           {/* Sheet */}
           <motion.div
-            className="absolute left-0 right-0 bottom-0"
+            className="absolute left-0 right-0"
             style={{
+              bottom: "var(--keyboard-inset, 0px)",
+              transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
               background: "var(--md-sys-color-background)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
               maxHeight: "90%",
@@ -162,6 +164,7 @@ function FeedbackSheet({
 
               {/* Send button */}
               <button
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={handleSend}
                 disabled={!text.trim() || sent}
                 className="w-full flex items-center justify-center font-semibold active:opacity-85 transition-opacity"
