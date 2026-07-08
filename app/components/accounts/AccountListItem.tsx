@@ -79,14 +79,14 @@ function TaskIndicator({ count }: { count: number }) {
     <span
       className="flex items-center gap-1 px-1.5 rounded-full"
       style={{
-        background: "rgba(255, 143, 130, 0.20)",
+        background: "rgba(139, 146, 255, 0.18)",
         height: 20,
       }}
     >
-      <TaskIcon color="var(--md-sys-color-brand-coral-light)" />
+      <TaskIcon color="var(--md-sys-color-neonindigo)" />
       <span
         className="text-[11px] font-semibold"
-        style={{ color: "var(--md-sys-color-brand-coral-light)", lineHeight: 1 }}
+        style={{ color: "var(--md-sys-color-neonindigo)", lineHeight: 1 }}
       >
         {count}
       </span>
