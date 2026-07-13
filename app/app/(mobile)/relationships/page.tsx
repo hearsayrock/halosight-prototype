@@ -584,8 +584,8 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
   return (
     <button
       onClick={onOpen}
-      className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 active:opacity-70 transition-opacity"
-      style={{ background: "var(--color-dark-secondary)", borderRadius: "var(--radius-full)", border: "1px dashed var(--color-dark-tertiary)" }}
+      className="w-full flex items-center gap-1.5 px-4 py-2.5 active:opacity-70 transition-opacity"
+      style={{ background: "var(--color-dark-tertiary)", borderRadius: "var(--radius-md)", boxShadow: "0 4px 12px rgba(0,0,0,0.35)" }}
     >
       <Icon name="add" size={16} style={{ color: "var(--color-brand-purple)" }} />
       <span className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
