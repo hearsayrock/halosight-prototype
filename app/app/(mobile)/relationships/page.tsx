@@ -52,7 +52,7 @@ import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
 import { useAccountState } from "@/lib/context/AccountStateContext";
 import type { Account, SortOption } from "@/lib/types";
-import { formatLastVisited, formatDistance, isPastDue } from "@/lib/utils";
+import { formatLastVisited, isPastDue } from "@/lib/utils";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -371,9 +371,11 @@ function TaskStrip({
 function DashboardGrid({
   suggestedAccount,
   onStartVisit,
+  onDismiss,
 }: {
   suggestedAccount: Account;
   onStartVisit: () => void;
+  onDismiss: () => void;
 }) {
   const { label: lastVisitedLabel } = formatLastVisited(suggestedAccount.lastVisited);
 
@@ -421,6 +423,13 @@ function DashboardGrid({
             </span>
           </div>
 
+          <button
+            onClick={onDismiss}
+            className="active:opacity-60 transition-opacity flex-shrink-0 -mr-1 p-1"
+            aria-label="Dismiss suggested visit"
+          >
+            <Icon name="close" size={16} style={{ color: "var(--color-text-muted)" }} />
+          </button>
         </div>
 
         {/* Row 2: account name + meta — tappable to account detail */}
@@ -440,7 +449,7 @@ function DashboardGrid({
               <div className="flex items-center gap-1">
                 <Icon name="near_me" size={12} style={{ color: "var(--color-text-muted)" }} />
                 <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>
-                  {formatDistance(suggestedAccount.distanceMiles)}
+                  0.2 miles
                   {suggestedAccount.city && ` · ${suggestedAccount.city}`}
                 </span>
               </div>
@@ -461,7 +470,7 @@ function DashboardGrid({
           className="w-full flex items-center justify-center gap-2 active:opacity-85 transition-opacity"
           style={{
             height: 44,
-            background: "var(--color-brand-coral)",
+            background: "var(--color-brand-purple)",
             borderRadius: "var(--radius-full)",
             color: "var(--color-text-primary)",
           }}
@@ -659,6 +668,8 @@ function CombinedPageContent() {
   const [visitedTo, setVisitedTo]           = useState<Date | null>(null);
   const [systemState, setSystemState] = useState<SystemSearchState>("idle");
   const [systemResults, setSystemResults] = useState<Account[]>([]);
+  // Dismiss the suggested-visit widget from the home page (as if none today).
+  const [suggestedDismissed, setSuggestedDismissed] = useState(false);
   // Global search is on by default — typing a query auto-searches all relationships,
   // no separate "Search all" tap required.
   const [globalMode] = useState(true);
@@ -1037,11 +1048,14 @@ function CombinedPageContent() {
               )}
               {!preview && (
                 <>
-                  {/* Dashboard */}
-                  <DashboardGrid
-                    suggestedAccount={topAccounts[0]}
-                    onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
-                  />
+                  {/* Dashboard — dismissable (simulates no suggested visit) */}
+                  {!suggestedDismissed && topAccounts[0] && (
+                    <DashboardGrid
+                      suggestedAccount={topAccounts[0]}
+                      onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
+                      onDismiss={() => setSuggestedDismissed(true)}
+                    />
+                  )}
 
                   {/* Companies section */}
                   <div className="mb-3">
