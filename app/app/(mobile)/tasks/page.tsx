@@ -381,7 +381,7 @@ export default function TasksPage() {
             <FilterDropdown
               options={[
                 { value: "dueDate" as SortMode, label: "Due Date" },
-                { value: "account" as SortMode, label: "Relationship" },
+                { value: "account" as SortMode, label: "Company" },
               ]}
               value={sortMode}
               onChange={setSortMode}
