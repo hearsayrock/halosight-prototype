@@ -301,7 +301,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
         {/* Account name — font size scales down so long names stay 2–3 lines max */}
         <h1
-          className="w-full text-center font-bold leading-snug px-6 mb-2"
+          className="w-full text-center font-bold leading-snug px-6 mb-2 line-clamp-2"
           style={{
             color: "var(--color-text-primary)",
             fontFamily: "Roboto Slab, Georgia, serif",
