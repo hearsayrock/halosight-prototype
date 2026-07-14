@@ -31,13 +31,13 @@ const DEFAULT_NAV = [
     group: "Root",
     routes: [
       { label: "Home",      path: "/relationships" },
-      { label: "Relationships",  path: "/relationships" },
+      { label: "Companies",  path: "/relationships" },
       { label: "All Items", path: "/tasks" },
       { label: "Profile",   path: "/profile" },
     ],
   },
   {
-    group: "Relationships",
+    group: "Companies",
     routes: [
       { label: "Jack's Tire",       path: "/relationships/jacks-tire-elko" },
       { label: "ProFleet Corp",     path: "/relationships/profleet-corp" },

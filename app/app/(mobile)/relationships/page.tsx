@@ -935,7 +935,7 @@ function CombinedPageContent() {
                   margin: 0, lineHeight: 1.15, textAlign: "center",
                 }}
               >
-                Relationships
+                Companies
               </motion.h1>
             )}
             {/* priorities mode: title lives inside the body, not here */}
@@ -1046,11 +1046,16 @@ function CombinedPageContent() {
                     onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
                   />
 
-                  {/* Relationships section */}
+                  {/* Companies section */}
                   <div className="mb-3">
                     <div className="flex items-center justify-between px-4 py-2">
+<<<<<<< HEAD
                       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Relationships
+=======
+                      <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+                        Companies
+>>>>>>> ee9690e (Rename "Relationships" label to "Companies" throughout UI)
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
@@ -1087,8 +1092,13 @@ function CombinedPageContent() {
               style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
             >
               {/* My accounts */}
+<<<<<<< HEAD
               {showSystemSection && <SectionHeader label="Your Relationships" count={myFiltered.length} />}
               {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Relationships" count={myFiltered.length} />}
+=======
+              {showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+>>>>>>> ee9690e (Rename "Relationships" label to "Companies" throughout UI)
 
               {myFiltered.length > 0 ? (
                 <div className="flex flex-col">
@@ -1213,7 +1223,7 @@ function CombinedPageContent() {
                     <FilterDropdown
                       options={[
                         { value: "dueDate" as TaskSortMode, label: "Due Date" },
-                        { value: "account" as TaskSortMode, label: "Relationship" },
+                        { value: "account" as TaskSortMode, label: "Company" },
                       ]}
                       value={taskSortMode}
                       onChange={setTaskSortMode}
