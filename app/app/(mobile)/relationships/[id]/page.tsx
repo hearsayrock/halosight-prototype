@@ -279,7 +279,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           </button>
         </div>
         <ErrorState
-          title="Relationship not found"
+          title="Company not found"
           message="This account doesn't exist or may have been removed."
         />
       </div>

@@ -1043,11 +1043,11 @@ function CombinedPageContent() {
                     onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
                   />
 
-                  {/* Relationships section */}
+                  {/* Companies section */}
                   <div className="mb-3">
                     <div className="flex items-center justify-between px-4 py-2">
                       <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
-                        Relationships
+                        Companies
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
@@ -1178,7 +1178,7 @@ function CombinedPageContent() {
                     <FilterDropdown
                       options={[
                         { value: "dueDate" as TaskSortMode, label: "Due Date" },
-                        { value: "account" as TaskSortMode, label: "Relationship" },
+                        { value: "account" as TaskSortMode, label: "Company" },
                       ]}
                       value={taskSortMode}
                       onChange={setTaskSortMode}
