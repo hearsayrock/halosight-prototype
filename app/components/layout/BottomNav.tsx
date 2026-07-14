@@ -86,14 +86,14 @@ export default function BottomNav() {
           </span>
         </Link>
 
-        {/* Relationships */}
+        {/* Companies */}
         <Link
           href="/relationships"
           className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1 h-full"
         >
           <AccountsIcon active={isAccounts} />
           <span className="label-serif" style={{ color: isAccounts ? "var(--color-text-primary)" : "var(--color-text-muted)" }}>
-            Relationships
+            Companies
           </span>
         </Link>
       </nav>
