@@ -174,6 +174,24 @@ export const mockAccounts: Account[] = [
     contactTitle: "Owner",
     healthScore: 30,
   },
+  {
+    id: "southwestern-consolidated",
+    name: "Southwestern Consolidated Fleet Management & Distribution Services, LLC",
+    type: "corporate",
+    crmAccountType: "distributor",
+    assignedInitial: "N",
+    taskCount: 2,
+    openOpportunities: 1,
+    address: "4801 N Central Ave",
+    city: "Phoenix",
+    state: "AZ",
+    distanceMiles: 8.3,
+    lastVisited: daysAgo(14),
+    contactName: "Patricia Delgado",
+    contactTitle: "VP of Fleet Operations",
+    crmId: "SF-099",
+    healthScore: 71,
+  },
 ];
 
 const daysFromNow = (n: number) => new Date(now.getTime() + n * 24 * 60 * 60 * 1000);
@@ -487,6 +505,41 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
         title: "Intro Call",
         summary: "Cold outreach. Dana picked up — was friendly but noncommittal. Agreed to an in-person visit when a rep was in the area.",
         durationMinutes: 8, hasTranscript: false, repName: "Jordan Mills",
+      },
+    ],
+  },
+  "southwestern-consolidated": {
+    ...mockAccounts.find(a => a.id === "southwestern-consolidated")!,
+    relatedAccountCount: 6,
+    lastVisitSummary:
+      "Visited 2 weeks ago. Patricia walked me through their regional fleet footprint — 400+ vehicles across 3 states. They're actively evaluating new parts suppliers after a rough Q1 with their current vendor.",
+    ideasForThisTime: [
+      "Ask about their Q3 restocking schedule",
+      "Pitch the vendor-managed inventory model",
+      "Get intro to their procurement lead",
+      "Confirm decision timeline before end of quarter",
+    ],
+    actionItems: [
+      { id: "swc-t1", title: "Send regional coverage map", dueDate: daysFromNow(7),  status: "open", originActivity: "Site Visit", originActivityId: "swc-1" },
+      { id: "swc-t2", title: "Draft VMI proposal",         dueDate: daysFromNow(14), status: "open", originActivity: "Site Visit", originActivityId: "swc-1" },
+    ],
+    recentActivity: [
+      {
+        id: "swc-1", accountId: "southwestern-consolidated", date: at(14, 10, 30), type: "visit",
+        title: "Patricia outlined fleet footprint and flagged Q1 supplier failures as a breaking point",
+        summary: "On-site with Patricia Delgado. 400+ vehicles across AZ, NV, and NM. Q1 parts delays caused 3 fleet groundings. They're now actively shopping for a new primary parts supplier.",
+        durationMinutes: 65, hasTranscript: true, repName: "Jordan Mills",
+        aiSummary: {
+          title: "400-vehicle fleet actively switching suppliers after Q1 parts failures — strong opportunity",
+          tldr: "Sat down with Patricia and two members of her fleet ops team at their Phoenix HQ. Three fleet groundings in Q1 due to delayed parts have made switching suppliers a board-level priority. Patricia has budget authority and a tight decision window — they want a new vendor locked in before Q3 peak.",
+          keyPoints: [
+            "**400+ vehicles** across Arizona, Nevada, and New Mexico — one of the largest regional fleets we've engaged.",
+            "**3 fleet groundings in Q1** caused by parts delays — Patricia described this as a 'breaking point' with their current vendor.",
+            "Board has **approved a vendor switch** and Patricia has budget authority up to $2M annually.",
+            "Decision needs to be made **before July 31** to align with Q3 fleet maintenance cycle.",
+            "Strong interest in **vendor-managed inventory** — they want to stop holding large safety stock in-house.",
+          ],
+        },
       },
     ],
   },

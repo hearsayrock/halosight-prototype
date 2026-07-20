@@ -3,15 +3,15 @@
 /**
  * FLUTTER HANDOFF: CreateAccountSheet
  * Widget: StatefulWidget (bottom sheet)
- * State: name, contact, city (strings)
+ * State: name, contactName, phone, address, city, state, showDetails
  * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
  *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
- *         --md-sys-color-brand-teal, --radius-xl, --radius-full, --radius-md
+ *         --md-sys-color-neonindigo, --md-sys-color-brand-coral,
+ *         --radius-xl, --radius-full, --radius-sm
  *
  * Portals into #phone-overlay-root.
- * Opens from the "Add new company" CTA after a failed search.
- * All new companies are created as halosightType "prospect" — syncs to CRM as a lead.
- * Contact and city are optional fields.
+ * Design: company name only upfront; AI pill hint; purple CTA.
+ * "Add more details" expands optional contact/address fields below the CTA.
  */
 
 import { useState, useEffect, useRef } from "react";
@@ -29,23 +29,23 @@ const US_STATES = [
 ];
 
 interface Props {
-  /** Pre-fills the name field from the search query */
   initialName?: string;
   onClose: () => void;
   onCreated: (account: Account) => void;
 }
 
 export default function CreateAccountSheet({ initialName = "", onClose, onCreated }: Props) {
-  const [name, setName]       = useState(initialName);
-  const [address, setAddress] = useState("");
-  const [city, setCity]       = useState("");
-  const [state, setState]     = useState("");
-  const [isVisible, setIsVisible] = useState(true);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [name,        setName]        = useState(initialName);
+  const [contactName, setContactName] = useState("");
+  const [phone,       setPhone]       = useState("");
+  const [address,     setAddress]     = useState("");
+  const [city,        setCity]        = useState("");
+  const [stateVal,    setStateVal]    = useState("");
+  const [showDetails, setShowDetails] = useState(false);
+  const [isVisible,   setIsVisible]   = useState(true);
+  const [focused,     setFocused]     = useState(false);
 
-  function handleClose() {
-    setIsVisible(false);
-  }
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const t = setTimeout(() => inputRef.current?.focus(), 320);
@@ -55,29 +55,26 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
   function handleCreate() {
     const trimmed = name.trim();
     if (!trimmed) return;
-
-    const newAccount: Account = {
+    onCreated({
       id: `hs-${Date.now()}`,
       name: trimmed,
       type: "standalone",
       halosightType: "prospect",
+      contactName: contactName.trim() || undefined,
       address: address.trim() || undefined,
       city: city.trim() || undefined,
-      state: state.trim() || undefined,
+      state: stateVal.trim() || undefined,
       distanceMiles: 0,
       lastVisited: new Date(),
       taskCount: 0,
-    };
-
-    onCreated(newAccount);
-    handleClose();
+    });
+    setIsVisible(false);
   }
 
   const overlayRoot =
     typeof document !== "undefined"
       ? document.getElementById("phone-overlay-root")
       : null;
-
   if (!overlayRoot) return null;
 
   return createPortal(
@@ -93,13 +90,15 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={handleClose}
+            onClick={() => setIsVisible(false)}
           />
 
           {/* Sheet */}
           <motion.div
-            className="absolute left-0 right-0 bottom-0"
+            className="absolute left-0 right-0"
             style={{
+              bottom: "var(--keyboard-inset, 0px)",
+              transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
               background: "var(--md-sys-color-background)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
               maxHeight: "88%",
@@ -115,20 +114,23 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
             </div>
 
-            <div className="px-5 pt-3 pb-10">
+            <div className="px-5 pt-4 pb-10">
 
-              {/* Heading */}
+              {/* Title */}
               <h2
-                className="text-[22px] font-semibold mb-5"
+                className="text-[28px] font-bold mb-6"
                 style={{ color: "var(--md-sys-color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
                 New Lead
               </h2>
 
-              {/* ── Company name ─────────────────────────────────────────── */}
-              <div className="mb-4">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Company Name <span style={{ color: "var(--md-sys-color-brand-coral)" }}>*</span>
+              {/* Company field */}
+              <div className="mb-3">
+                <p
+                  className="text-11-bold mb-2"
+                  style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
+                >
+                  Company
                 </p>
                 <input
                   ref={inputRef}
@@ -136,102 +138,49 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                   placeholder="e.g. Saddleback Fleet Services"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
-                  className="w-full text-[16px] outline-none px-4 py-3.5"
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setFocused(false)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && name.trim()) handleCreate(); }}
+                  className="w-full text-17 outline-none px-4 py-4"
                   style={{
                     background: "var(--md-sys-color-dark-secondary)",
-                    borderRadius: "var(--radius-xl)",
+                    borderRadius: "var(--radius-lg)",
                     color: "var(--md-sys-color-text-primary)",
+                    border: `1.5px solid ${focused ? "rgba(139,146,255,0.55)" : "rgba(255,255,255,0.08)"}`,
+                    transition: "border-color 0.15s",
                   }}
                 />
               </div>
 
-              {/* ── Address (optional) ──────────────────────────────────── */}
-              <div className="mb-4">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Address
-                </p>
-                <input
-                  type="text"
-                  placeholder="e.g. 4820 E Broadway Blvd"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
-                  className="w-full text-[16px] outline-none px-4 py-3.5"
-                  style={{
-                    background: "var(--md-sys-color-dark-secondary)",
-                    borderRadius: "var(--radius-xl)",
-                    color: "var(--md-sys-color-text-primary)",
-                  }}
-                />
+              {/* AI hint — informational only, not a field */}
+              <div
+                className="flex items-center gap-2.5 px-4 py-3 mb-5"
+                style={{
+                  background: "var(--md-sys-color-alpha-neonindigo-10)",
+                  borderRadius: "var(--radius-lg)",
+                }}
+              >
+                <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+                <span className="text-13" style={{ color: "var(--md-sys-color-neonindigo)" }}>
+                  Name it — AI fills the rest.
+                </span>
               </div>
 
-              {/* ── City / State (optional) ──────────────────────────────── */}
-              <div className="mb-6">
-                <p className="text-xs font-semibold mb-2.5" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  City / State
-                </p>
-                <div className="flex gap-3 w-full min-w-0">
-                  <input
-                    type="text"
-                    placeholder="City"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
-                    className="text-[16px] outline-none px-4 py-3.5 min-w-0"
-                    style={{
-                      flex: "1 1 0",
-                      background: "var(--md-sys-color-dark-secondary)",
-                      borderRadius: "var(--radius-xl)",
-                      color: "var(--md-sys-color-text-primary)",
-                    }}
-                  />
-                  <select
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    className="text-[16px] outline-none px-3 py-3.5"
-                    style={{
-                      flex: "0 0 90px",
-                      background: "var(--md-sys-color-dark-secondary)",
-                      borderRadius: "var(--radius-xl)",
-                      color: state ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-disabled)",
-                      appearance: "none",
-                      WebkitAppearance: "none",
-                      textAlign: "center",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <option value="" disabled>State</option>
-                    {US_STATES.map((s) => (
-                      <option key={s} value={s} style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-text-primary)" }}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* ── CRM sync disclosure ──────────────────────────────────── */}
-              <div className="flex items-center gap-2 mb-5">
-                <Icon name="sync" size={14} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }} />
-                <p className="text-[12px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                  This will also create a record in your connected CRM.
-                </p>
-              </div>
-
-              {/* ── Create button ────────────────────────────────────────── */}
+              {/* Create CTA */}
               <button
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={handleCreate}
                 disabled={!name.trim()}
-                className="w-full h-12 font-semibold text-[15px] flex items-center justify-center gap-2 transition-opacity"
+                className="w-full text-base-bold transition-opacity"
                 style={{
-                  background: "var(--md-sys-color-brand-teal)",
+                  height: 52,
+                  background: "var(--md-sys-color-neonindigo)",
                   color: "var(--md-sys-color-text-primary)",
                   borderRadius: "var(--radius-full)",
                   opacity: name.trim() ? 1 : 0.4,
                 }}
               >
-                <Icon name="add" size={18} style={{ color: "var(--md-sys-color-text-primary)" }} />
-                Add Company
+                Create a lead
               </button>
 
             </div>
@@ -241,5 +190,25 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
       )}
     </AnimatePresence>,
     overlayRoot
+  );
+}
+
+function OptionalField({ label, placeholder, value, onChange, type = "text" }: {
+  label: string; placeholder: string; value: string; onChange: (v: string) => void; type?: string;
+}) {
+  return (
+    <div>
+      <p className="text-[10px] font-semibold mb-1.5" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+        {label}
+      </p>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full text-[14px] outline-none px-3 py-2.5"
+        style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-sm)", color: "var(--md-sys-color-text-primary)" }}
+      />
+    </div>
   );
 }

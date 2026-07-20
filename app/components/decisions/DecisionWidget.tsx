@@ -112,8 +112,8 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
       transition: "border-color 0.15s, background 0.15s",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-        <span style={{
-          fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+        <span className="text-2xs-bold" style={{
+          letterSpacing: "0.08em", textTransform: "uppercase",
           color: decided ? "var(--md-sys-color-warning)" : "var(--md-sys-color-text-disabled)",
           flexShrink: 0, marginRight: 2,
         }}>
@@ -155,8 +155,8 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
                 {name}
               </button>
             ))}
-            <span style={{
-              fontSize: 11, minWidth: 52, textAlign: "right",
+            <span className="text-11" style={{
+              minWidth: 52, textAlign: "right",
               color: saveStatus === "saving" ? "var(--md-sys-color-warning)" : saveStatus === "saved" ? "var(--md-sys-color-success)" : "transparent",
             }}>
               {saveStatus === "saving" ? "Saving…" : saveStatus === "saved" ? "Saved ✓" : "."}
@@ -170,13 +170,14 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
           value={note}
           onChange={handleNote}
           placeholder="Add reasoning or notes… (auto-saves)"
+          className="body-xs"
           style={{
             display: "block", width: "100%", boxSizing: "border-box", marginTop: 8,
             background: "var(--md-sys-color-background)",
             border: "1px solid var(--md-sys-color-dark-tertiary)",
             borderRadius: "var(--radius-sm)",
             padding: "7px 10px",
-            fontSize: 12, color: "var(--md-sys-color-text-secondary)",
+            color: "var(--md-sys-color-text-secondary)",
             lineHeight: 1.55, resize: "vertical", minHeight: 52,
             fontFamily: "inherit", outline: "none",
           }}

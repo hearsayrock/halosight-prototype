@@ -15,12 +15,21 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { SortOption } from "@/lib/types";
+import type { VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: "alphabetical", label: "Sort Alphabetically" },
   { value: "distance",     label: "Sort by Distance" },
   { value: "lastVisited",  label: "Sort by Last Visited" },
   { value: "company",      label: "Sort by Company" },
+];
+
+const VISIT_PRESETS: { value: VisitedFilter; label: string }[] = [
+  { value: "all",  label: "All time"      },
+  { value: "7d",   label: "Last 7 days"   },
+  { value: "14d",  label: "Last 2 weeks"  },
+  { value: "30d",  label: "Last 30 days"  },
+  { value: "90d",  label: "Last 90 days"  },
 ];
 
 function CheckIcon() {
@@ -65,9 +74,11 @@ const itemVariants = {
 interface Props {
   current: SortOption;
   onChange: (sort: SortOption) => void;
+  visitedFilter?: VisitedFilter;
+  onVisitedChange?: (v: VisitedFilter) => void;
 }
 
-export default function SortMenu({ current, onChange }: Props) {
+export default function SortMenu({ current, onChange, visitedFilter = "all", onVisitedChange }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -116,6 +127,9 @@ export default function SortMenu({ current, onChange }: Props) {
                 flexDirection: "column",
               }}
             >
+              {/* Sort section label */}
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", padding: "0 20px 6px" }}>Sort</p>
+
               {SORT_OPTIONS.map((opt, i) => {
                 const isSelected = current === opt.value;
                 return (
@@ -127,6 +141,47 @@ export default function SortMenu({ current, onChange }: Props) {
                     animate="visible"
                     exit="exit"
                     onClick={() => { onChange(opt.value); setOpen(false); }}
+                    className="w-full flex items-center text-left body-base"
+                    style={{
+                      gap: 12,
+                      paddingTop: 10,
+                      paddingBottom: 10,
+                      background: "transparent",
+                      color: "var(--md-sys-color-text-primary)",
+                    }}
+                  >
+                    <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
+                      {isSelected && <CheckIcon />}
+                    </span>
+                    {opt.label}
+                  </motion.button>
+                );
+              })}
+
+              {/* Divider */}
+              <motion.div
+                custom={SORT_OPTIONS.length}
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "8px 0" }}
+              />
+
+              {/* Visit date section label */}
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", padding: "0 20px 6px" }}>Visit Date</p>
+
+              {VISIT_PRESETS.map((opt, i) => {
+                const isSelected = visitedFilter === opt.value;
+                return (
+                  <motion.button
+                    key={opt.value}
+                    custom={SORT_OPTIONS.length + 2 + i}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    onClick={() => { onVisitedChange?.(opt.value); setOpen(false); }}
                     className="w-full flex items-center text-left text-base"
                     style={{
                       gap: 12,

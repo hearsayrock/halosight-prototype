@@ -44,7 +44,7 @@ export default function ErrorState({
 
       {/* Title */}
       <p
-        className="text-base font-semibold mb-1.5"
+        className="text-base-bold mb-1.5"
         style={{ color: "var(--md-sys-color-text-primary)" }}
       >
         {title}
@@ -62,7 +62,7 @@ export default function ErrorState({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-5 py-2.5 text-sm font-semibold transition-opacity active:opacity-70"
+          className="px-5 py-2.5 text-sm-bold transition-opacity active:opacity-70"
           style={{
             background: "var(--md-sys-color-dark-secondary)",
             color: "var(--md-sys-color-text-primary)",

@@ -62,15 +62,6 @@ export const PLAYGROUNDS: Playground[] = [
     startedAt: "2026-07-13",
   },
   {
-    id: "playground/lead-create-required-fields",
-    name: "Lead Create Required Fields",
-    description: "Explore the flow for having to fill out all required fields needed for CRM sync.",
-    url: "https://halosight-prototype-git-playg-01d9b2-nate-natesdesigns-projects.vercel.app",
-    author: "Nate",
-    status: "exploring",
-    startedAt: "2026-06-22",
-  },
-  {
     id: "board-meeeting-ai-brainstorm",
     name: "Board Meeting AI",
     description: "Explore adding an AI chat agent.",

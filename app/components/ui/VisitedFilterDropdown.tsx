@@ -103,7 +103,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
       {/* Pill trigger */}
       <button
         onClick={() => open ? setOpen(false) : openDropdown()}
-        className="flex items-center h-8 px-3 text-sm font-semibold active:opacity-70 transition-opacity"
+        className="flex items-center h-8 px-3 text-sm-bold active:opacity-70 transition-opacity"
         style={{
           gap: isFiltered ? 4 : 2,
           background: open ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
@@ -158,7 +158,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                   animate="visible"
                   exit="exit"
                   onClick={() => handlePreset(opt.value)}
-                  className="w-full flex items-center text-left text-sm font-semibold"
+                  className="w-full flex items-center text-left text-sm-bold"
                   style={{ gap: 12, padding: "10px 16px", background: "transparent", color: "var(--md-sys-color-text-primary)" }}
                 >
                   <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
@@ -186,7 +186,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                 animate="visible"
                 exit="exit"
                 onClick={() => handlePreset("custom")}
-                className="w-full flex items-center text-left text-sm font-semibold"
+                className="w-full flex items-center text-left text-sm-bold"
                 style={{ gap: 12, padding: "10px 16px", background: "transparent", color: "var(--md-sys-color-text-primary)" }}
               >
                 <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
@@ -208,7 +208,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                     <div style={{ padding: "6px 12px 4px", display: "flex", flexDirection: "column", gap: 8 }}>
                       {/* From */}
                       <div>
-                        <p className="text-xs font-semibold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>From</p>
+                        <p className="text-xs-bold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>From</p>
                         <input
                           type="date"
                           value={draftFrom}
@@ -225,7 +225,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                       </div>
                       {/* To */}
                       <div>
-                        <p className="text-xs font-semibold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>To</p>
+                        <p className="text-xs-bold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>To</p>
                         <input
                           type="date"
                           value={draftTo}
@@ -243,7 +243,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                       {/* Apply */}
                       <button
                         onClick={applyCustom}
-                        className="w-full text-sm font-semibold py-2 active:opacity-80 transition-opacity"
+                        className="w-full text-sm-bold py-2 active:opacity-80 transition-opacity"
                         style={{
                           background: "var(--md-sys-color-neonindigo)",
                           borderRadius: "var(--radius-full)",

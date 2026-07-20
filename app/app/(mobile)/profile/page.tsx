@@ -40,7 +40,7 @@ export default function ProfilePage() {
           Profile
         </h1>
         <button
-          className="text-sm font-semibold active:opacity-60 transition-opacity"
+          className="text-sm-bold active:opacity-60 transition-opacity"
           style={{ color: "var(--md-sys-color-brand-coral)" }}
         >
           Log Out
@@ -80,7 +80,7 @@ export default function ProfilePage() {
               borderRadius: "var(--radius-md)",
             }}
           >
-            <span className="text-[16px] font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+            <span className="text-base-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
               {item.label}
             </span>
             <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)" }} />

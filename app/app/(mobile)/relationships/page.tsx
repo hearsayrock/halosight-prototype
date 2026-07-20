@@ -15,8 +15,9 @@
  *   logged activities grouped by "Today" and "Previous." Portals into
  *   #phone-overlay-root so it layers above the page content.
  *
- * ADVANCED SEARCH (same as before)
- *   Zero-result prompt → "Search all Tomorrowland Innovations" → system results
+ * ADVANCED SEARCH
+ *   Global search is on by default — typing a query searches your relationships
+ *   and all system relationships at once (no separate "Search all" tap).
  *   + "Create new account" CTA at bottom.
  *
  * Flutter notes:
@@ -34,6 +35,7 @@ import AccountListItem from "@/components/accounts/AccountListItem";
 import SystemAccountListItem from "@/components/accounts/SystemAccountListItem";
 import SortMenu from "@/components/accounts/SortMenu";
 import Icon from "@/components/ui/Icon";
+import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
 import { AccountListSkeleton } from "@/components/ui/Skeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import CompletionToast from "@/components/ui/CompletionToast";
@@ -42,6 +44,8 @@ import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
 import VisitedFilterDropdown, { type VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
 import CreateAccountSheet from "@/components/accounts/CreateAccountSheet";
+import CreateLeadSheet from "@/components/accounts/CreateLeadSheet";
+import FeedbackWidget from "@/components/ui/FeedbackWidget";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import { mockSystemAccounts, systemAccountReps } from "@/lib/mock-data/system-accounts";
 import { mockTasks, mockActivities } from "@/lib/mock-data/home";
@@ -133,7 +137,7 @@ function EngagementRow({
       <div
         className="flex items-center justify-between px-5 py-2.5 active:opacity-60 transition-opacity"
       >
-        <span style={{ fontSize: 15, color: "var(--md-sys-color-text-primary)", fontWeight: 400 }}>
+        <span className="text-15" style={{ color: "var(--md-sys-color-text-primary)" }}>
           {activity.accountName}
         </span>
         {/* Dot indicator — shown when the activity has meaningful content */}
@@ -200,9 +204,7 @@ function EngagementsDrawer({
           >
             {/* Header */}
             <div style={{ padding: "56px 20px 12px" }}>
-              <p style={{
-                fontSize: 13,
-                fontWeight: 700,
+              <p className="text-13-bold" style={{
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 color: "var(--md-sys-color-text-muted)",
@@ -218,9 +220,7 @@ function EngagementsDrawer({
             {/* Today */}
             {todayActivities.length > 0 && (
               <div style={{ marginBottom: 8 }}>
-                <p style={{
-                  fontSize: 13,
-                  fontWeight: 600,
+                <p className="text-13-bold" style={{
                   color: "var(--md-sys-color-brand-teal)",
                   padding: "0 20px 4px",
                   margin: 0,
@@ -236,9 +236,7 @@ function EngagementsDrawer({
             {/* Previous */}
             {previousActivities.length > 0 && (
               <div style={{ marginTop: todayActivities.length > 0 ? 12 : 0 }}>
-                <p style={{
-                  fontSize: 13,
-                  fontWeight: 600,
+                <p className="text-13-bold" style={{
                   color: "var(--md-sys-color-brand-teal)",
                   padding: "0 20px 4px",
                   margin: 0,
@@ -284,9 +282,10 @@ function TaskStrip({
   return (
     <div className="px-4 mb-4">
       <div style={{
-        background: "var(--md-sys-color-dark-secondary)",
+        background: "var(--md-sys-color-dark-primary)",
         borderRadius: 16,
         overflow: "hidden",
+        border: "1px solid rgba(255,255,255,0.08)",
       }}>
         <AnimatePresence mode="popLayout" initial={false}>
           {tasks.slice(0, 4).map((task, i) => {
@@ -304,8 +303,8 @@ function TaskStrip({
                 className="flex items-center gap-3 px-3.5 py-3 relative"
               >
                 {!isLast && (
-                  <div className="absolute bottom-0 left-3 right-3"
-                    style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
+                  <div className="absolute bottom-0 left-0 right-0"
+                    style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
                 )}
                 {/* Check circle */}
                 <button
@@ -326,7 +325,7 @@ function TaskStrip({
                   href={`/relationships/${task.accountId}/action-items/${task.itemId}`}
                   className="flex-1 min-w-0"
                 >
-                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-text-primary)", lineHeight: 1.3 }}>
+                  <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)", lineHeight: 1.3 }}>
                     {task.title}
                   </p>
                   <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
@@ -338,8 +337,8 @@ function TaskStrip({
                     }}>
                       {formatTaskDue(task.dueDate)}
                     </span>
-                    <span style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }}>·</span>
-                    <span style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span className="text-11" style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }}>·</span>
+                    <span className="text-11" style={{ color: "var(--md-sys-color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {task.accountName}
                     </span>
                   </div>
@@ -410,8 +409,8 @@ function DashboardGrid({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1.5">
             <Icon name="auto_awesome" size={13} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-            <span style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: "0.09em",
+            <span className="text-2xs-bold" style={{
+              letterSpacing: "0.09em",
               textTransform: "uppercase", color: "var(--md-sys-color-neonindigo)",
             }}>
               Suggested visit
@@ -436,7 +435,7 @@ function DashboardGrid({
               {/* Distance */}
               <div className="flex items-center gap-1">
                 <Icon name="near_me" size={12} style={{ color: "var(--md-sys-color-text-muted)" }} />
-                <span style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>
+                <span className="text-13" style={{ color: "var(--md-sys-color-text-muted)" }}>
                   {formatDistance(suggestedAccount.distanceMiles)}
                   {suggestedAccount.city && ` · ${suggestedAccount.city}`}
                 </span>
@@ -444,7 +443,7 @@ function DashboardGrid({
               {/* Last visited */}
               <div className="flex items-center gap-1">
                 <Icon name="history" size={12} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-                <span style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)" }}>
+                <span className="body-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
                   {lastVisitedLabel}
                 </span>
               </div>
@@ -458,13 +457,13 @@ function DashboardGrid({
           className="w-full flex items-center justify-center gap-2 active:opacity-85 transition-opacity"
           style={{
             height: 44,
-            background: "var(--md-sys-color-brand-coral)",
+            background: "var(--md-sys-color-neonindigo)",
             borderRadius: "var(--radius-full)",
             color: "var(--md-sys-color-text-primary)",
           }}
         >
           <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
-          <span style={{ fontSize: 14, fontWeight: 700 }}>Log a Visit</span>
+          <span className="text-sm-bold">Log a Visit</span>
         </button>
 
       </div>
@@ -476,51 +475,56 @@ function DashboardGrid({
 
 function CompactAccountRow({ account, isLast }: { account: Account; isLast: boolean }) {
   const hasTask = (account.taskCount ?? 0) > 0;
+  const { needsAttention } = useAccountState();
+  const showAttention = account.halosightType === "prospect" && needsAttention(account.id);
   return (
     <Link href={`/relationships/${account.id}`}>
       <div className="flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity relative">
         {!isLast && (
-          <div className="absolute bottom-0 left-4 right-4"
-            style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
+          <div className="absolute bottom-0 left-0 right-0"
+            style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
         )}
-        {/* Type icon */}
+        {/* Type icon — hidden for now, may restore later
         <div className="flex-shrink-0">
           {account.halosightType === "prospect" ? (
-            <Icon name="star" fill size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+            <LeadStarIcon size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
           ) : (
-            <Icon name="home" size={16} weight={300} style={{ color: "var(--md-sys-color-text-disabled)" }} />
+            <CompanyIcon size={16} style={{ color: "var(--md-sys-color-text-disabled)" }} />
           )}
         </div>
+        */}
         {/* Left — name + meta */}
         <div className="flex-1 min-w-0">
-          <p style={{ fontSize: 15, fontWeight: 600, color: "var(--md-sys-color-text-primary)", lineHeight: 1.2 }}
-            className="truncate">
+          <p className="text-15-bold truncate" style={{ color: "var(--md-sys-color-text-primary)", lineHeight: 1.2 }}>
             {account.name}
           </p>
-          <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", marginTop: 2 }}>
+          <p className="body-xs" style={{ color: "var(--md-sys-color-text-muted)", marginTop: 2 }}>
             {[account.distanceMiles < 999 ? `${account.distanceMiles} mi` : null,
               account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null)]
               .filter(Boolean).join(" · ")}
           </p>
         </div>
-        {/* Right — task badge + chevron */}
+        {/* Right — attention indicator + task badge + chevron */}
         <div className="flex items-center gap-2 flex-shrink-0">
+          {showAttention && (
+            <Icon name="error" fill size={15} style={{ color: "var(--md-sys-color-warning)" }} />
+          )}
           {hasTask && (
             <span
               className="flex items-center gap-1 px-1.5 rounded-full"
-              style={{ background: "rgba(255, 143, 130, 0.20)", height: 20 }}
+              style={{ background: "rgba(139, 146, 255, 0.18)", height: 20 }}
             >
               <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
                 <path
                   d="M4.5 6L5.5 7L7.5 5M2.5 1.5H9.5C10.0523 1.5 10.5 1.94772 10.5 2.5V9.5C10.5 10.0523 10.0523 10.5 9.5 10.5H2.5C1.94772 10.5 1.5 10.0523 1.5 9.5V2.5C1.5 1.94772 1.94772 1.5 2.5 1.5Z"
-                  stroke="var(--md-sys-color-brand-coral-light)"
+                  stroke="var(--md-sys-color-neonindigo)"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               </svg>
               <span
-                className="text-[11px] font-semibold"
-                style={{ color: "var(--md-sys-color-brand-coral-light)", lineHeight: 1 }}
+                className="text-11-bold"
+                style={{ color: "var(--md-sys-color-neonindigo)", lineHeight: 1 }}
               >
                 {account.taskCount}
               </span>
@@ -537,15 +541,39 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
 
 // ── Section header ────────────────────────────────────────────────────────────
 
-function SectionHeader({ label, count }: { label: string; count: number }) {
+function SectionHeader({ label, count, onAdd, divider }: { label: string; count: number; onAdd?: () => void; divider?: boolean }) {
+  if (divider) {
+    const line = { flex: 1, height: 1, background: "rgba(255,255,255,0.08)" } as const;
+    return (
+      <div className="flex items-center gap-3 px-4 py-2">
+        <div style={line} />
+        <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.05em", color: "var(--md-sys-color-text-muted)", whiteSpace: "nowrap" }}>
+          {label}
+        </span>
+        <div style={line} />
+      </div>
+    );
+  }
   return (
-    <div className="flex items-center gap-2 px-4 py-2">
-      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
-        {label}
-      </span>
-      <span style={{ fontSize: 11, fontWeight: 600, color: "var(--md-sys-color-text-disabled)", background: "var(--md-sys-color-dark-secondary)", borderRadius: 10, padding: "1px 7px" }}>
-        {count}
-      </span>
+    <div className="flex items-center justify-between px-4 py-2">
+      <div className="flex items-center gap-2">
+        <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+          {label}
+        </span>
+        <span className="text-11-bold" style={{ color: "var(--md-sys-color-text-disabled)", background: "var(--md-sys-color-dark-secondary)", borderRadius: 10, padding: "1px 7px" }}>
+          {count}
+        </span>
+      </div>
+      {onAdd && (
+        <button
+          onClick={onAdd}
+          className="flex items-center justify-center active:opacity-60 transition-opacity"
+          style={{ width: 28, height: 28, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}
+          aria-label="Add new lead"
+        >
+          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+        </button>
+      )}
     </div>
   );
 }
@@ -569,27 +597,18 @@ function SystemSearchSkeleton() {
 
 function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void }) {
   return (
-    <div className="px-4 py-5">
-      <button
-        onClick={onOpen}
-        className="w-full flex items-center gap-3 px-4 py-4 active:opacity-70 transition-opacity"
-        style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-xl)", border: "1px dashed var(--md-sys-color-dark-tertiary)" }}
-      >
-        <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}>
-          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-        </div>
-        <div className="text-left">
-          <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-            Add new lead
-            {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
-          </p>
-          <p className="text-xs mt-0.5" style={{ color: "var(--md-sys-color-text-secondary)" }}>
-            Add to Tomorrowland Innovations and start capturing
-          </p>
-        </div>
-      </button>
-    </div>
+    <button
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={onOpen}
+      className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 active:opacity-70 transition-opacity"
+      style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-full)", border: "1px dashed var(--md-sys-color-dark-tertiary)" }}
+    >
+      <Icon name="add" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+        Add a new lead
+        {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
+      </span>
+    </button>
   );
 }
 
@@ -623,7 +642,7 @@ function CombinedPageContent() {
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { isDisqualified } = useAccountState();
+  const { isDisqualified, markNeedsAttention } = useAccountState();
 
   // Dynamic account list — starts with mock data, grows as user creates accounts
   const [allAccounts, setAllAccounts] = useState<Account[]>(mockAccounts);
@@ -638,13 +657,16 @@ function CombinedPageContent() {
 
   function handleAccountCreated(newAccount: Account) {
     setAllAccounts((prev) => [newAccount, ...prev]);
+    markNeedsAttention(newAccount.id);
     setQuery("");
     setTypeFilter("all");
     router.push(`/relationships/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
   }
 
-  // Create account sheet
+  // Create account sheet (from search CTA)
   const [showCreateSheet, setShowCreateSheet] = useState(false);
+  // Create lead sheet (from + button on relationships header)
+  const [showCreateLeadSheet, setShowCreateLeadSheet] = useState(false);
 
   // Accounts search (used in accounts mode)
   const [query, setQuery] = useState("");
@@ -655,6 +677,9 @@ function CombinedPageContent() {
   const [visitedTo, setVisitedTo]           = useState<Date | null>(null);
   const [systemState, setSystemState] = useState<SystemSearchState>("idle");
   const [systemResults, setSystemResults] = useState<Account[]>([]);
+  // Global search is on by default — typing a query auto-searches all relationships,
+  // no separate "Search all" tap required.
+  const [globalMode] = useState(true);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accountsInputRef = useRef<HTMLInputElement>(null);
 
@@ -719,11 +744,22 @@ function CombinedPageContent() {
     setPendingNoteInfo(null);
   }
 
-  // Reset system search when accounts query changes
+  // In global mode, auto-search both locally and globally on every keystroke
   useEffect(() => {
-    setSystemState("idle");
-    setSystemResults([]);
-  }, [query]);
+    if (!query.trim()) {
+      setSystemState("idle");
+      setSystemResults([]);
+      return;
+    }
+    if (globalMode) {
+      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+      setSystemState("loading");
+      searchTimerRef.current = setTimeout(() => {
+        setSystemResults(searchAccounts(mockSystemAccounts, query));
+        setSystemState("done");
+      }, 500);
+    }
+  }, [query, globalMode]);
 
   // Auto-focus the right input when switching modes
   useEffect(() => {
@@ -827,15 +863,6 @@ function CombinedPageContent() {
   [visibleAccounts]);
   const hasQuery = query.trim().length > 0;
 
-  function triggerSystemSearch() {
-    setSystemState("loading");
-    setSystemResults([]);
-    searchTimerRef.current = setTimeout(() => {
-      setSystemResults(searchAccounts(mockSystemAccounts, query));
-      setSystemState("done");
-    }, 700);
-  }
-
   const showSystemSection = systemState === "loading" || systemState === "done";
 
   // ── View all button (lives in section headers in home mode) ──────────────────
@@ -843,8 +870,8 @@ function CombinedPageContent() {
     return (
       <button
         onClick={onClick}
-        className="active:opacity-50 transition-opacity"
-        style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-neonindigo)", cursor: "pointer" }}
+        className="text-13-bold active:opacity-50 transition-opacity"
+        style={{ color: "var(--md-sys-color-neonindigo)", cursor: "pointer" }}
       >
         View all
       </button>
@@ -902,7 +929,7 @@ function CombinedPageContent() {
           )}
         </AnimatePresence>
 
-        <div style={{ flex: 1, overflow: "hidden", padding: "0 10px" }}>
+        <div style={{ flex: 1, overflow: mode === "accounts" ? "visible" : "hidden", padding: "0 10px" }}>
           <AnimatePresence mode="wait" initial={false}>
             {mode === "home" && (
               <motion.h1
@@ -922,81 +949,71 @@ function CombinedPageContent() {
               </motion.h1>
             )}
             {mode === "accounts" && (
-              <motion.h1
-                key="accounts-title"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.18 }}
+              <motion.div
+                key="accounts-search-bar-header"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22 }}
+                className="flex items-center gap-2 h-11 px-3"
                 style={{
-                  fontFamily: "Roboto Slab, Georgia, serif",
-                  fontSize: 22, fontWeight: 500,
-                  color: "var(--md-sys-color-text-primary)",
-                  margin: 0, lineHeight: 1.15, textAlign: "center",
+                  borderRadius: 999,
+                  background: "var(--md-sys-color-dark-secondary)",
+                  outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
                 }}
               >
-                Companies
-              </motion.h1>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+                  <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
+                  <path d="M12 12L16 16" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
+                </svg>
+                <input
+                  ref={accountsInputRef}
+                  type="text"
+                  placeholder={showSystemSection ? "Searching all companies…" : "Search companies…"}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="flex-1 bg-transparent text-[15px] outline-none"
+                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
+                />
+                {showSystemSection && (
+                  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
+                    ALL
+                  </span>
+                )}
+                {query && (
+                  <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
+                      <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
+                <SortMenu
+                  current={sort}
+                  onChange={setSort}
+                  visitedFilter={visitedFilter}
+                  onVisitedChange={(v) => { setVisitedFilter(v); setVisitedFrom(null); setVisitedTo(null); }}
+                />
+              </motion.div>
             )}
             {/* priorities mode: title lives inside the body, not here */}
           </AnimatePresence>
         </div>
 
-        {ProfileButton}
+        {mode !== "accounts" && ProfileButton}
       </div>
 
-      {/* ── PINNED SEARCH BAR (expands from mini pill via layoutId) ───── */}
-      <AnimatePresence>
+      {/* ── PINNED SEARCH BAR — moved into header row for accounts mode ── */}
+      {/* <AnimatePresence>
         {mode === "accounts" && (
           <motion.div
             key="accounts-search-bar"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            className="flex items-center gap-2 h-11 px-3"
-            style={{
-              margin: "0 16px 12px",
-              borderRadius: 999,
-              background: "var(--md-sys-color-dark-secondary)",
-              outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
-              flexShrink: 0,
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-              <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
-              <path d="M12 12L16 16" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
-            </svg>
-            <input
-              ref={accountsInputRef}
-              type="text"
-              placeholder={showSystemSection ? "Searching all relationships…" : "Search relationships…"}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent text-[15px] outline-none"
-              style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
-            />
-            {showSystemSection && (
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
-                ALL
-              </span>
-            )}
-            {query && (
-              <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
-                  <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </button>
-            )}
-            <SortMenu current={sort} onChange={setSort} />
-          </motion.div>
+            ...
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
-      {/* ── TYPE FILTER (accounts mode only) ───────────────────────────── */}
-      <AnimatePresence>
-        {mode === "accounts" && (
+      {/* ── TYPE FILTER — moved into SortMenu; hidden for now ──────────── */}
+      {false && mode === "accounts" && (
           <motion.div
             key="type-filter"
             initial={{ opacity: 0 }}
@@ -1017,8 +1034,7 @@ function CombinedPageContent() {
               }}
             />
           </motion.div>
-        )}
-      </AnimatePresence>
+      )}
 
       {/* ── BODY ───────────────────────────────────────────────────────── */}
       <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
@@ -1049,12 +1065,12 @@ function CombinedPageContent() {
                   {/* Companies section */}
                   <div className="mb-3">
                     <div className="flex items-center justify-between px-4 py-2">
-                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+                      <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Companies
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
-                    <div style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16 }}>
+                    <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
                       {topAccounts.map((account, i) => (
                         <CompactAccountRow key={account.id} account={account} isLast={i === topAccounts.length - 1} />
                       ))}
@@ -1064,13 +1080,16 @@ function CombinedPageContent() {
                   {/* Priorities section */}
                   <div>
                     <div className="flex items-center justify-between px-4 py-2">
-                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+                      <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Action Items
                       </span>
                       <MiniSearchPill onClick={() => goToMode("priorities")} />
                     </div>
                     <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
                   </div>
+
+                  {/* Feedback widget */}
+                  <FeedbackWidget />
                 </>
               )}
             </motion.div>
@@ -1087,8 +1106,8 @@ function CombinedPageContent() {
               style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
             >
               {/* My accounts */}
-              {showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} />}
-              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} />}
+              {showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
 
               {myFiltered.length > 0 ? (
                 <div className="flex flex-col">
@@ -1105,60 +1124,27 @@ function CombinedPageContent() {
                   </div>
                   <div className="text-center">
                     {systemState === "idle" && (
-                      <p className="text-sm font-semibold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>Not in your accounts</p>
+                      <p className="text-sm-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>Not in your accounts</p>
                     )}
                     <p className="text-sm leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
                   </div>
-                  {systemState === "idle" && (
-                    <button onClick={triggerSystemSearch}
-                      className="w-full font-semibold active:opacity-80 transition-opacity flex items-center justify-center gap-2"
-                      style={{
-                        padding: "13px 20px",
-                        borderRadius: "var(--radius-full)",
-                        background: "transparent",
-                        border: "1px solid var(--md-sys-color-dark-tertiary)",
-                        color: "var(--md-sys-color-text-primary)",
-                        fontSize: 15,
-                      }}>
-                      <Icon name="public" size={18} style={{ color: "var(--md-sys-color-text-secondary)", flexShrink: 0 }} />
-                      Search all Tomorrowland Innovations
-                    </button>
-                  )}
                 </div>
               ) : null}
-
-              {hasQuery && myFiltered.length > 0 && systemState === "idle" && (
-                <div className="mt-2 mb-1 px-5">
-                  <button onClick={triggerSystemSearch}
-                    className="w-full font-semibold active:opacity-80 transition-opacity flex items-center justify-center gap-2"
-                    style={{
-                      padding: "13px 20px",
-                      borderRadius: "var(--radius-full)",
-                      background: "transparent",
-                      border: "1px solid var(--md-sys-color-dark-tertiary)",
-                      color: "var(--md-sys-color-text-primary)",
-                      fontSize: 15,
-                    }}>
-                    <Icon name="public" size={18} style={{ color: "var(--md-sys-color-text-secondary)", flexShrink: 0 }} />
-                    Search all Tomorrowland Innovations
-                  </button>
-                </div>
-              )}
 
               {showSystemSection && (
                 <div style={{ marginTop: 16 }}>
                   {systemState === "loading" && (
                     <>
-                      <SectionHeader label="All Tomorrowland Innovations Relationships" count={0} />
+                      <SectionHeader label="Company-Wide Results" count={0} divider />
                       <SystemSearchSkeleton />
                     </>
                   )}
                   {systemState === "done" && (
                     <>
-                      <SectionHeader label="All Tomorrowland Innovations Relationships" count={systemResults.length} />
+                      <SectionHeader label="Company-Wide Results" count={systemResults.length} divider />
                       {systemResults.length > 0 ? (
                         <div className="flex flex-col mx-4 rounded-2xl overflow-hidden"
-                          style={{ border: "1px solid var(--md-sys-color-dark-tertiary)" }}>
+                          style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid rgba(255,255,255,0.08)" }}>
                           {systemResults.map((account, i) => (
                             <SystemAccountListItem
                               key={account.id}
@@ -1236,7 +1222,7 @@ function CombinedPageContent() {
                     placeholder="Search items…"
                     value={prioritiesQuery}
                     onChange={(e) => setPrioritiesQuery(e.target.value)}
-                    className="flex-1 bg-transparent text-[15px] outline-none"
+                    className="flex-1 bg-transparent text-15 outline-none"
                     style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
                   />
                   {prioritiesQuery && (
@@ -1288,7 +1274,7 @@ function CombinedPageContent() {
                             >
                               {i < group.items.length - 1 && (
                                 <div className="absolute bottom-0 left-3 right-3"
-                                  style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
+                                  style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
                               )}
                               {/* Check circle */}
                               <div className="py-3.5">
@@ -1326,7 +1312,7 @@ function CombinedPageContent() {
                               <Link href={`/relationships/${item.accountId}/action-items/${item.id}`}
                                 className="flex-1 flex items-center gap-3 py-3.5">
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-[16px] font-semibold leading-snug mb-1"
+                                  <p className="text-base-bold leading-snug mb-1"
                                     style={{ color: "var(--md-sys-color-text-primary)" }}>
                                     {item.title}
                                   </p>
@@ -1372,16 +1358,17 @@ function CombinedPageContent() {
 
         </AnimatePresence>
 
-        {/* Sticky "Add new lead" — floats above scroll when system search is active */}
+        {/* Sticky "Add new lead" — pinned to page bottom, rises with keyboard */}
         {mode === "accounts" && hasQuery && systemState === "done" && (
           <div style={{
             position: "absolute",
-            bottom: 0,
+            bottom: "var(--keyboard-inset, 0px)",
             left: 0,
             right: 0,
-            padding: "20px 16px 16px",
-            background: "linear-gradient(to bottom, transparent, var(--md-sys-color-background) 40%)",
+            padding: "16px 16px 12px",
+            background: "linear-gradient(to bottom, transparent, var(--md-sys-color-background) 45%)",
             pointerEvents: "none",
+            transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
           }}>
             <div style={{ pointerEvents: "auto" }}>
               <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
@@ -1393,11 +1380,19 @@ function CombinedPageContent() {
       {/* Engagements drawer */}
       <EngagementsDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
-      {/* Create account sheet */}
+      {/* Create account sheet (search CTA) */}
       {showCreateSheet && (
         <CreateAccountSheet
           initialName={query}
           onClose={() => setShowCreateSheet(false)}
+          onCreated={handleAccountCreated}
+        />
+      )}
+
+      {/* Create lead sheet with duplicate detection (+ button) */}
+      {showCreateLeadSheet && (
+        <CreateLeadSheet
+          onClose={() => setShowCreateLeadSheet(false)}
           onCreated={handleAccountCreated}
         />
       )}
@@ -1427,7 +1422,7 @@ function CombinedPageContent() {
             >
               <Icon name="check" size={15} style={{ color: "var(--md-sys-color-semantic-success)" }} />
             </div>
-            <p className="text-[14px] font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+            <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
               {successToast}
             </p>
           </motion.div>

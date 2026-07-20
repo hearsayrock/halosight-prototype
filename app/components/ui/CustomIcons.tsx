@@ -14,7 +14,7 @@ interface IconProps {
   className?: string;
 }
 
-/** 4-pointed sparkle star used to mark leads */
+/** 4-pointed star used to mark leads */
 export function LeadStarIcon({ size = 18, style, className }: IconProps) {
   return (
     <svg
@@ -27,7 +27,33 @@ export function LeadStarIcon({ size = 18, style, className }: IconProps) {
       style={style}
       className={className}
     >
-      <path d="M10.54,22.92c-1.39-4.52-4.93-8.06-9.45-9.46-.64-.2-1.08-.79-1.08-1.47s.44-1.27,1.08-1.46c4.52-1.4,8.06-4.93,9.45-9.46.2-.64.79-1.08,1.47-1.08s1.27.44,1.47,1.08c1.39,4.52,4.93,8.06,9.45,9.46.64.2,1.08.79,1.08,1.46s-.44,1.27-1.08,1.47c-4.52,1.4-8.06,4.93-9.45,9.46-.2.64-.79,1.08-1.47,1.08s-1.27-.44-1.47-1.08Z"/>
+      <path d="M12,1L9,9L1,12L9,15L12,23L15,15L23,12L15,9L12,1Z" />
+    </svg>
+  );
+}
+
+/** Building icon used to mark accounts / companies */
+export function CompanyIcon({ size = 18, style, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      style={style}
+      className={className}
+    >
+      <path d="M10 12h4" />
+      <path d="M10 8h4" />
+      <path d="M14 21v-3a2 2 0 0 0-4 0v3" />
+      <path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2" />
+      <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16" />
     </svg>
   );
 }

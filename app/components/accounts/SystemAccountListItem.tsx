@@ -25,6 +25,7 @@ interface Props {
 
 export default function SystemAccountListItem({ account, assignedRep, isLast = false, onSelect }: Props) {
   const initial = assignedRep.charAt(0).toUpperCase();
+  const location = account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null);
 
   return (
     <button
@@ -35,8 +36,8 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
         {/* Separator */}
         {!isLast && (
           <div
-            className="absolute bottom-0 left-3 right-3"
-            style={{ height: 1, background: "var(--md-sys-color-dark-secondary)" }}
+            className="absolute bottom-0 left-0 right-0"
+            style={{ height: 1, background: "rgba(255,255,255,0.08)" }}
           />
         )}
 
@@ -44,7 +45,7 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
         <div className="flex-1 min-w-0">
           {/* Account name */}
           <span
-            className="text-[15px] font-semibold truncate block"
+            className="text-15-bold truncate block"
             style={{ color: "var(--md-sys-color-text-secondary)" }}
           >
             {account.name}
@@ -55,11 +56,11 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
             <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {formatDistance(account.distanceMiles)}
             </span>
-            {account.city && account.state && (
+            {location && (
               <>
                 <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
-                <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                  {account.city}, {account.state}
+                <span className="text-sm truncate" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                  {location}
                 </span>
               </>
             )}
@@ -70,7 +71,7 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
         {/* Right — assignee initial avatar */}
         <div className="flex items-start pt-0.5 flex-shrink-0">
           <div
-            className="flex items-center justify-center rounded-full text-[13px] font-semibold"
+            className="flex items-center justify-center rounded-full text-13-bold"
             style={{
               width: 28,
               height: 28,

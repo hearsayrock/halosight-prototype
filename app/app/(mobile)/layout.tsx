@@ -5,6 +5,7 @@ import { ActionItemsProvider } from "@/lib/context/ActionItemsContext";
 import { CaptureProvider } from "@/lib/context/CaptureContext";
 import { AccountStateProvider } from "@/lib/context/AccountStateContext";
 import CaptureWidget from "@/components/capture/CaptureWidget";
+import DemoReset from "@/components/layout/DemoReset";
 
 /**
  * Shared mobile layout — single PhoneFrame instance so AnimatePresence
@@ -23,6 +24,7 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
             <PageTransition>{children}</PageTransition>
             <StaticBottomNav />
             <CaptureWidget />
+            <DemoReset />
           </PhoneFrame>
         </CaptureProvider>
       </ActionItemsProvider>

@@ -26,6 +26,7 @@
   --md-sys-color-surface-dim: #171B29;  /* nav, persistent UI  */
 
   /* ── Dark Scale ─────────────────────────────────────────────────────────── */
+  --md-sys-color-dark-void:      #04050B;  /* Near-black — app chrome background */
   --md-sys-color-dark-base:      #0D0F1A;  /* Off-black — deepest dark  */
   --md-sys-color-dark-primary:   #1A1D29;  /* Primary dark background   */
   --md-sys-color-dark-secondary: #252A36;  /* Secondary dark background */

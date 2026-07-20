@@ -4,12 +4,12 @@
  * CaptureContext — manages the global capture session state.
  * Lives in MobileLayout so the widget persists across navigation.
  *
- * States: idle → recording → finalizing → ready → idle
+ * States: idle → recording → finalizing → reviewing → ready → idle
  */
 
-import { createContext, useContext, useState, useCallback, useRef } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
 
-export type CaptureStatus = "idle" | "recording" | "finalizing" | "ready";
+export type CaptureStatus = "idle" | "recording" | "finalizing" | "reviewing" | "ready";
 
 interface CaptureContextValue {
   status: CaptureStatus;
@@ -19,6 +19,7 @@ interface CaptureContextValue {
   startCapture: (accountId: string, accountName: string, allowSwitch?: boolean) => void;
   switchAccount: (accountId: string, accountName: string) => void;
   finishCapture: () => void;
+  reviewCapture: () => void;
   readyCapture: () => void;
   dismissCapture: () => void;
 }
@@ -26,10 +27,10 @@ interface CaptureContextValue {
 const CaptureContext = createContext<CaptureContextValue | null>(null);
 
 export function CaptureProvider({ children }: { children: React.ReactNode }) {
-  const [status, setStatus]                   = useState<CaptureStatus>("idle");
-  const [accountId, setAccountId]             = useState<string | null>(null);
-  const [accountName, setAccountName]         = useState<string | null>(null);
-  const [canSwitchAccount, setCanSwitch]      = useState(false);
+  const [status, setStatus]              = useState<CaptureStatus>("idle");
+  const [accountId, setAccountId]        = useState<string | null>(null);
+  const [accountName, setAccountName]    = useState<string | null>(null);
+  const [canSwitchAccount, setCanSwitch] = useState(false);
 
   const startCapture = useCallback((id: string, name: string, allowSwitch = false) => {
     setAccountId(id);
@@ -44,6 +45,7 @@ export function CaptureProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const finishCapture  = useCallback(() => setStatus("finalizing"), []);
+  const reviewCapture  = useCallback(() => setStatus("reviewing"),  []);
   const readyCapture   = useCallback(() => setStatus("ready"),      []);
   const dismissCapture = useCallback(() => {
     setStatus("idle");
@@ -53,7 +55,10 @@ export function CaptureProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <CaptureContext.Provider value={{ status, accountId, accountName, canSwitchAccount, startCapture, switchAccount, finishCapture, readyCapture, dismissCapture }}>
+    <CaptureContext.Provider value={{
+      status, accountId, accountName, canSwitchAccount,
+      startCapture, switchAccount, finishCapture, reviewCapture, readyCapture, dismissCapture,
+    }}>
       {children}
     </CaptureContext.Provider>
   );

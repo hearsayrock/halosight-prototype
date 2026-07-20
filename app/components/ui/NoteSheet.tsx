@@ -84,7 +84,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
               <span
-                className="text-sm font-bold"
+                className="text-sm-bold"
                 style={{ color: "var(--md-sys-color-text-muted)" }}
               >
                 Add a note
@@ -119,7 +119,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
             {/* Done / Save note button */}
             <button
               onClick={() => onDone(note)}
-              className="w-full h-11 font-semibold text-sm active:opacity-80 transition-opacity"
+              className="w-full h-11 text-sm-bold active:opacity-80 transition-opacity"
               style={{
                 background: "var(--md-sys-color-brand-teal)",
                 borderRadius: "var(--radius-full)",

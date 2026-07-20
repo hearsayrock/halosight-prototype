@@ -26,6 +26,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
+import KebabMenu from "@/components/ui/KebabMenu";
+import ConvertToAccountSheet from "@/components/accounts/ConvertToAccountSheet";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
@@ -56,9 +58,9 @@ function formatDuration(minutes: number): string {
   return m > 0 ? `${h}hr ${m} mins` : `${h}hr`;
 }
 
-function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; accountId: string; isExternal?: boolean }) {
+function ActivityCard({ item, accountId, isExternal, href }: { item: ActivityItem; accountId: string; isExternal?: boolean; href?: string }) {
   return (
-    <Link href={`/relationships/${accountId}/activity/${item.id}`}>
+    <Link href={href ?? `/relationships/${accountId}/activity/${item.id}`}>
     <div
       className="flex items-start gap-3 p-4 active:opacity-70 transition-opacity"
       style={{
@@ -68,7 +70,7 @@ function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; acc
       }}
     >
       <div className="flex-1 min-w-0">
-        <p className="text-[16px] font-semibold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
+        <p className="text-base-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
           {item.title}
         </p>
         <p
@@ -99,7 +101,7 @@ function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; acc
             <>
               <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
               <div
-                className="flex items-center justify-center rounded-full text-[10px] font-bold flex-shrink-0"
+                className="flex items-center justify-center rounded-full text-2xs-bold flex-shrink-0"
                 style={{
                   width: 18,
                   height: 18,
@@ -114,7 +116,7 @@ function ActivityCard({ item, accountId, isExternal }: { item: ActivityItem; acc
           )}
           {isExternal && (
             <span
-              className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+              className="text-2xs-bold px-1.5 py-0.5 rounded-full"
               style={{
                 background: "rgba(139,146,255,0.10)",
                 color: "var(--md-sys-color-neonindigo)",
@@ -194,9 +196,26 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   }
 
   const { status: captureStatus, accountId: capturingId, startCapture } = useCapture();
-  const { disqualify, restore } = useAccountState();
+  const { disqualify, restore, needsAttention, clearNeedsAttention, updateContact, getContactOverride } = useAccountState();
 
-  // Disqualify flow — pending toast, then commit + navigate back
+  // Contact info for leads — form state for the Needs Attention banner
+  const [contactForm, setContactForm] = useState({ name: "", title: "", phone: "" });
+  const [contactSaved, setContactSaved] = useState(false);
+
+  function handleSaveContact() {
+    if (!contactForm.name.trim()) return;
+    updateContact(id, {
+      contactName: contactForm.name.trim(),
+      contactTitle: contactForm.title.trim() || undefined,
+      phone: contactForm.phone.trim() || undefined,
+    });
+    setContactSaved(true);
+  }
+
+  const [showConvertSheet, setShowConvertSheet] = useState(false);
+
+  // Disqualify flow — confirmation dialog, then pending toast, then commit + navigate back
+  const [showDisqualifyConfirm, setShowDisqualifyConfirm] = useState(false);
   const [disqualifyPending, setDisqualifyPending] = useState(false);
   const disqualifyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -225,6 +244,16 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   const justCreated = searchParams.get("just_created") === "true";
   const justCreatedName = searchParams.get("name") ?? "";
+  const capturedParam = searchParams.get("captured") === "true";
+
+  const DEMO_CAPTURE_OVERVIEW = {
+    lastVisitSummary: "Sandra confirmed they're moving forward with the partnership and asked for a formal proposal by end of next week. A competitor came in 15% lower, but our support model stood out as the differentiator.",
+    ideasForThisTime: [
+      "Send Marcus (IT lead) an intro email and loop him into the proposal process",
+      "Deliver the formal proposal by Friday — price, timeline, and onboarding plan",
+      "Follow up on the competitor quote gap with a support-tier comparison",
+    ],
+  };
 
   const detail = mockAccountDetails[id];
   const mockAccount = mockAccounts.find((a) => a.id === id);
@@ -235,6 +264,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   const account = detail ?? mockAccount ?? (justCreated && justCreatedName
     ? { id, name: justCreatedName, type: "standalone" as const, halosightType: "prospect" as const, distanceMiles: 0, lastVisited: new Date(), taskCount: 0 }
     : undefined);
+
+  // When capture is ready (or was just completed) for a new lead, transition out of "just created" empty state
+  const captureJustCompleted =
+    (captureStatus === "ready" && capturingId === id && !detail) ||
+    (capturedParam && !detail);
+  const effectiveJustCreated = justCreated && !captureJustCompleted;
 
   // ── Preview states ────────────────────────────────────────────────────────
   if (preview === "loading") return <AccountDetailSkeleton />;
@@ -279,18 +314,38 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       <div className="pt-10 px-4 pb-4">
 
         {/* Back button row */}
-        <div className="flex items-center mb-3">
+        <div className="relative flex items-center justify-between mb-3">
           <button onClick={() => router.push("/relationships")} className="p-1 active:opacity-60 transition-opacity">
             <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
           </button>
+          {account.halosightType === "prospect" && !effectiveJustCreated && (
+            <span
+              className="absolute left-1/2 -translate-x-1/2 text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+              style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--md-sys-color-brand-teal)" }}
+            >
+              Lead
+            </span>
+          )}
+          {account.halosightType === "prospect" && !effectiveJustCreated && (
+            <KebabMenu
+              items={[
+                { label: "Disqualify", onClick: () => setShowDisqualifyConfirm(true), destructive: true },
+              ]}
+            />
+          )}
         </div>
 
-        {/* Account name */}
+        {/* Account name — font size scales down so long names stay 2–3 lines max */}
         <h1
-          className="w-full text-center text-[26px] font-bold leading-tight px-10 mb-2"
+          className="w-full text-center font-bold leading-snug px-6 mb-2 line-clamp-2"
           style={{
             color: "var(--md-sys-color-text-primary)",
             fontFamily: "Roboto Slab, Georgia, serif",
+            fontSize:
+              account.name.length > 55 ? 17 :
+              account.name.length > 38 ? 20 :
+              account.name.length > 25 ? 23 :
+              26,
           }}
         >
           {account.name}
@@ -303,25 +358,6 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             <span className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {account.address}
             </span>
-          </div>
-        )}
-
-        {/* Lead badge + disqualify — prospects only */}
-        {account.halosightType === "prospect" && !justCreated && (
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <span
-              className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
-              style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--md-sys-color-brand-teal)" }}
-            >
-              Lead
-            </span>
-            <button
-              onClick={handleDisqualify}
-              className="text-sm active:opacity-60 transition-opacity"
-              style={{ color: "var(--md-sys-color-brand-coral)" }}
-            >
-              Disqualify
-            </button>
           </div>
         )}
 
@@ -341,15 +377,101 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               }}
             >
               <Icon name="info" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, marginTop: 1 }} />
-              <span className="text-[12px] leading-snug" style={{ color: "var(--md-sys-color-text-secondary)" }}>
+              <span className="body-xs leading-snug" style={{ color: "var(--md-sys-color-text-secondary)" }}>
                 {message}
               </span>
             </div>
           );
         })()}
 
+        {/* Needs Attention banner — contact info for existing leads missing contact info */}
+        {account.halosightType === "prospect" && needsAttention(id) && !contactSaved && !effectiveJustCreated && !captureJustCompleted && (
+          <div
+            className="mx-1 mb-3 px-3.5 py-3"
+            style={{
+              background: "rgba(245,166,35,0.06)",
+              border: "1px solid rgba(245,166,35,0.25)",
+              borderRadius: "var(--radius-md)",
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2.5">
+              <Icon name="error" fill size={14} style={{ color: "var(--md-sys-color-warning)", flexShrink: 0 }} />
+              <span className="text-[11px] font-semibold" style={{ color: "var(--md-sys-color-warning)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                {justCreated ? "Who are you meeting with?" : "Missing contact info"}
+              </span>
+            </div>
+            <p className="text-[11px] mb-3" style={{ color: "var(--md-sys-color-text-muted)" }}>
+              {justCreated
+                ? "This lead is synced to CRM. Add contact details when you know them — none of this is required right now."
+                : "Fill in contact details whenever you have them. This lead will sync without them."}
+            </p>
+            <div className="flex flex-col gap-2">
+              {[
+                { key: "name", placeholder: "Full name", label: "Name *" },
+                { key: "title", placeholder: "Job title", label: "Title" },
+                { key: "phone", placeholder: "Phone number", label: "Phone" },
+              ].map(({ key, placeholder, label }) => (
+                <div key={key}>
+                  <p className="text-[10px] font-semibold mb-1" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>{label}</p>
+                  <input
+                    type={key === "phone" ? "tel" : "text"}
+                    placeholder={placeholder}
+                    value={contactForm[key as keyof typeof contactForm]}
+                    onChange={(e) => setContactForm((f) => ({ ...f, [key]: e.target.value }))}
+                    className="w-full text-[14px] outline-none px-3 py-2"
+                    style={{
+                      background: "var(--md-sys-color-dark-secondary)",
+                      borderRadius: "var(--radius-sm)",
+                      color: "var(--md-sys-color-text-primary)",
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between mt-3">
+              <button
+                onClick={() => { clearNeedsAttention(id); setContactSaved(true); }}
+                className="text-[12px] active:opacity-60 transition-opacity"
+                style={{ color: "var(--md-sys-color-text-muted)" }}
+              >
+                Skip for now
+              </button>
+              <button
+                onClick={handleSaveContact}
+                disabled={!contactForm.name.trim()}
+                className="h-8 px-4 text-[12px] font-semibold rounded-full transition-opacity active:opacity-70"
+                style={{
+                  background: contactForm.name.trim() ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-dark-tertiary)",
+                  color: contactForm.name.trim() ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-disabled)",
+                }}
+              >
+                Save contact
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* AI review ready banner — shown for accounts with a pending meeting review */}
+        {account.halosightType === "prospect" && id === "innovative-tech-tucson" && !effectiveJustCreated && (
+          <button
+            onClick={() => router.push(`/relationships/${id}/review`)}
+            className="w-full flex items-center gap-2.5 px-3.5 py-3 mb-4 mx-0 active:opacity-70 transition-opacity text-left"
+            style={{
+              background: "rgba(139,146,255,0.08)",
+              border: "1px solid rgba(139,146,255,0.2)",
+              borderRadius: "var(--radius-md)",
+            }}
+          >
+            <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+            <span className="flex-1 text-[13px] font-medium" style={{ color: "var(--md-sys-color-text-secondary)" }}>
+              AI found <span style={{ color: "var(--md-sys-color-neonindigo)", fontWeight: 700 }}>3 CRM updates</span> from your last visit
+            </span>
+            <Icon name="arrow_forward" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+          </button>
+        )}
+
         {/* Tabs — hidden on just-created blank slate */}
-        {!justCreated && <div
+        {!effectiveJustCreated && <div
           className="flex p-1 gap-1 mx-auto"
           style={{ width: 255, background: "var(--md-sys-color-dark-primary)", borderRadius: "var(--radius-full)" }}
         >
@@ -357,7 +479,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className="flex-1 py-2 text-sm font-semibold transition-all capitalize"
+              className="flex-1 py-2 text-sm-bold transition-all capitalize"
               style={{
                 borderRadius: "var(--radius-full)",
                 background: activeTab === tab ? "var(--md-sys-color-dark-secondary)" : "transparent",
@@ -371,7 +493,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       </div>
 
       {/* Just-created empty state — replaces tabs entirely */}
-      {justCreated && (
+      {effectiveJustCreated && (
         <div className="flex-1 flex flex-col items-center justify-center px-8 pb-24 text-center">
           <Icon name="auto_awesome" size={32} style={{ color: "var(--md-sys-color-neonindigo)", marginBottom: 20 }} />
           <h2
@@ -384,27 +506,48 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           >
             And just like that,<br />{account.name} exists.
           </h2>
-          <p style={{ fontSize: 15, lineHeight: 1.6, color: "var(--md-sys-color-text-muted)", maxWidth: 280 }}>
+          <p className="text-15" style={{ lineHeight: 1.6, color: "var(--md-sys-color-text-muted)", maxWidth: 280, marginBottom: 32 }}>
             No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and nowhere to go but up.
           </p>
+
+          <button
+            onClick={() => startCapture(id, account.name)}
+            className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
+            style={{
+              border: "1.5px dashed rgba(139,146,255,0.45)",
+              borderRadius: "var(--radius-xl)",
+              background: "rgba(139,146,255,0.04)",
+            }}
+          >
+            <Icon name="auto_awesome" size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-[15px] font-bold leading-snug mb-1" style={{ color: "var(--md-sys-color-neonindigo)" }}>
+                Log your first visit
+              </p>
+              <p className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                We'll fill Salesforce automatically.
+              </p>
+            </div>
+            <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+          </button>
         </div>
       )}
 
       {/* Tab content — pb accounts for capture button + BottomNav */}
-      {!justCreated && <div className="flex-1 overflow-y-auto pb-24">
+      {!effectiveJustCreated && <div className="flex-1 overflow-y-auto pb-24">
 
         {/* Overview */}
         {activeTab === "overview" && (
           <div className="px-4 pb-4">
             {/* Detail-only sections */}
-            {detail ? (
+            {(detail || captureJustCompleted) ? (
               <>
                 <section className="mb-6">
                   <h2 className="heading-6 mb-2" style={{ color: "var(--md-sys-color-text-primary)" }}>
                     Last Time
                   </h2>
                   <p className="text-base leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                    {detail.lastVisitSummary}
+                    {detail?.lastVisitSummary ?? DEMO_CAPTURE_OVERVIEW.lastVisitSummary}
                   </p>
                 </section>
 
@@ -413,7 +556,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                     Ideas for this Time
                   </h2>
                   <ul className="flex flex-col gap-2.5">
-                    {detail.ideasForThisTime.map((idea, i) => (
+                    {(detail?.ideasForThisTime ?? DEMO_CAPTURE_OVERVIEW.ideasForThisTime).map((idea, i) => (
                       <li key={i} className="flex items-start gap-2.5">
                         <span
                           className="flex-shrink-0 mt-[10px] w-1.5 h-1.5 rounded-full"
@@ -476,7 +619,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                     <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+                    <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                       Add your first action item
                     </p>
                     <p className="text-xs mt-0.5" style={{ color: "var(--md-sys-color-text-secondary)" }}>
@@ -492,9 +635,17 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         {/* Activity */}
         {activeTab === "activity" && (
           <div className="flex flex-col gap-3 px-4 pb-4">
-            {detail?.recentActivity?.length ? (
-              detail.recentActivity.map((item) => (
-                <ActivityCard key={item.id} item={item} accountId={id} isExternal={isExternalAccount} />
+            {(detail?.recentActivity?.length || captureJustCompleted) ? (
+              (detail?.recentActivity ?? [{ id: "new-capture", accountId: "new-capture", title: "Sandra confirmed we're the frontrunner for the contract", summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.", date: new Date(), durationMinutes: 28, hasTranscript: true, repName: "Jordan Mills", type: "visit" as const }]).map((item) => (
+                <ActivityCard
+                  key={item.id}
+                  item={item}
+                  accountId={id}
+                  isExternal={item.id === "new-capture" ? false : isExternalAccount}
+                  href={item.id === "new-capture"
+                    ? `/relationships/${id}/activity/new-capture?name=${encodeURIComponent(account.name)}`
+                    : undefined}
+                />
               ))
             ) : (
               <div className="py-8 text-center">
@@ -516,7 +667,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         >
           <button
             onClick={() => startCapture(id, account.name)}
-            className="h-11 px-6 font-semibold text-[14px] flex items-center gap-2 transition-opacity active:opacity-80"
+            className="h-11 px-6 text-sm-bold flex items-center gap-2 transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-brand-coral)",
               color: "var(--md-sys-color-text-primary)",
@@ -532,6 +683,20 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       {/* Add Action Item Sheet */}
       {showAddSheet && (
         <AddActionItemSheet accountId={id} onClose={() => setShowAddSheet(false)} />
+      )}
+
+      {/* Convert to Account Sheet */}
+      {showConvertSheet && (
+        <ConvertToAccountSheet
+          accountName={account.name}
+          initialContact={{
+            name:  getContactOverride(id)?.contactName  ?? mockAccount?.contactName  ?? "",
+            title: getContactOverride(id)?.contactTitle ?? mockAccount?.contactTitle ?? "",
+            phone: getContactOverride(id)?.phone        ?? "",
+          }}
+          onClose={() => setShowConvertSheet(false)}
+          onConverted={() => router.push("/relationships")}
+        />
       )}
 
       {/* Completion toast */}
@@ -551,6 +716,64 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       <NoteSheet visible={noteSheetOpen} onDone={handleNoteDone} />
 
       {/* Disqualify toast */}
+      {typeof document !== "undefined" && document.getElementById("phone-overlay-root") && createPortal(
+        <AnimatePresence>
+          {showDisqualifyConfirm && (
+            <>
+              {/* Scrim */}
+              <motion.div
+                key="disqualify-scrim"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setShowDisqualifyConfirm(false)}
+                style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 70, pointerEvents: "auto" }}
+              />
+              {/* Sheet */}
+              <motion.div
+                key="disqualify-confirm"
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", stiffness: 340, damping: 30 }}
+                style={{
+                  position: "absolute",
+                  bottom: 0, left: 0, right: 0,
+                  zIndex: 71,
+                  pointerEvents: "auto",
+                  background: "var(--md-sys-color-dark-secondary)",
+                  borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+                  padding: "28px 24px 44px",
+                }}
+              >
+                <p style={{ fontSize: 18, fontWeight: 700, color: "var(--md-sys-color-text-primary)", marginBottom: 8 }}>
+                  Disqualify this lead?
+                </p>
+                <p style={{ fontSize: 14, lineHeight: 1.5, color: "var(--md-sys-color-text-secondary)", marginBottom: 28 }}>
+                  This lead will disappear from your list. You'll need to go into your CRM to undo this.
+                </p>
+                <button
+                  onClick={() => { setShowDisqualifyConfirm(false); handleDisqualify(); }}
+                  className="w-full py-3.5 rounded-full text-base font-semibold active:opacity-80 transition-opacity mb-3"
+                  style={{ background: "var(--md-sys-color-brand-coral)", color: "#fff" }}
+                >
+                  Yes, disqualify
+                </button>
+                <button
+                  onClick={() => setShowDisqualifyConfirm(false)}
+                  className="w-full py-3.5 rounded-full text-base font-semibold active:opacity-80 transition-opacity"
+                  style={{ background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)" }}
+                >
+                  Cancel
+                </button>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.getElementById("phone-overlay-root")!
+      )}
+
       {typeof document !== "undefined" && document.getElementById("phone-overlay-root") && createPortal(
         <AnimatePresence>
           {disqualifyPending && (
@@ -585,12 +808,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   >
                     <div className="w-2 h-2 rounded-full" style={{ background: "var(--md-sys-color-brand-teal)" }} />
                   </div>
-                  <span className="flex-1 text-sm font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+                  <span className="flex-1 text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
                     Lead disqualified
                   </span>
                   <button
                     onClick={handleUndoDisqualify}
-                    className="text-sm font-semibold active:opacity-60 transition-opacity"
+                    className="text-sm-bold active:opacity-60 transition-opacity"
                     style={{ color: "var(--md-sys-color-neonindigo)" }}
                   >
                     undo

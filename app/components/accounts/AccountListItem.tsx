@@ -14,14 +14,15 @@
 import Link from "next/link";
 import type { Account, CrmAccountType } from "@/lib/types";
 import { formatLastVisited, formatDistance } from "@/lib/utils";
-import Icon from "@/components/ui/Icon";
+import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
+import { useAccountState } from "@/lib/context/AccountStateContext";
 
 // ── Prospect badge (Halosight-created) ───────────────────────────────────────
 
 function ProspectBadge() {
   return (
     <span
-      className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+      className="text-11-bold px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{
         background: "rgba(107, 157, 176, 0.18)",
         color: "var(--md-sys-color-brand-teal)",
@@ -44,7 +45,7 @@ const CRM_LABEL: Record<CrmAccountType, string> = {
 function CrmTypeBadge({ type }: { type: CrmAccountType }) {
   return (
     <span
-      className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
+      className="text-11-bold px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{
         background: "var(--md-sys-color-dark-tertiary)",
         color: "var(--md-sys-color-text-muted)",
@@ -78,14 +79,14 @@ function TaskIndicator({ count }: { count: number }) {
     <span
       className="flex items-center gap-1 px-1.5 rounded-full"
       style={{
-        background: "rgba(255, 143, 130, 0.20)",
+        background: "rgba(139, 146, 255, 0.18)",
         height: 20,
       }}
     >
-      <TaskIcon color="var(--md-sys-color-brand-coral-light)" />
+      <TaskIcon color="var(--md-sys-color-neonindigo)" />
       <span
-        className="text-[11px] font-semibold"
-        style={{ color: "var(--md-sys-color-brand-coral-light)", lineHeight: 1 }}
+        className="text-11-bold"
+        style={{ color: "var(--md-sys-color-neonindigo)", lineHeight: 1 }}
       >
         {count}
       </span>
@@ -98,7 +99,7 @@ function TaskIndicator({ count }: { count: number }) {
 function AssigneeCircle({ initial }: { initial: string }) {
   return (
     <span
-      className="flex items-center justify-center rounded-full text-[11px] font-semibold flex-shrink-0"
+      className="flex items-center justify-center rounded-full text-11-bold flex-shrink-0"
       style={{
         width: 22,
         height: 22,
@@ -120,6 +121,9 @@ interface Props {
 
 export default function AccountListItem({ account, isLast = false }: Props) {
   const { label, isToday } = formatLastVisited(account.lastVisited);
+  const location = account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null);
+  const { needsAttention } = useAccountState();
+  const showAttention = account.halosightType === "prospect" && needsAttention(account.id);
 
   return (
     <Link href={`/relationships/${account.id}`}>
@@ -127,22 +131,23 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         className="flex items-start gap-3 px-4 py-3.5 active:opacity-70 transition-opacity relative"
       >
         {/* Separator — inset 12px each side, hidden on last item */}
-        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />}
+        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />}
 
-        {/* Type icon */}
+        {/* Type icon — hidden for now, may restore later
         <div className="flex-shrink-0 mt-[4px]">
           {account.halosightType === "prospect" ? (
-            <Icon name="star" fill size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+            <LeadStarIcon size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
           ) : (
-            <Icon name="home" size={18} weight={300} style={{ color: "var(--md-sys-color-text-disabled)" }} />
+            <CompanyIcon size={18} style={{ color: "var(--md-sys-color-text-disabled)" }} />
           )}
         </div>
+        */}
 
         {/* Left — 3-line text stack */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <span
-              className="text-[16px] font-semibold truncate"
+              className="text-base-bold truncate"
               style={{ color: "var(--md-sys-color-text-primary)" }}
             >
               {account.name}
@@ -154,11 +159,11 @@ export default function AccountListItem({ account, isLast = false }: Props) {
             <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {formatDistance(account.distanceMiles)}
             </span>
-            {account.city && account.state && (
+            {location && (
               <>
                 <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
-                <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                  {account.city}, {account.state}
+                <span className="text-sm truncate" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                  {location}
                 </span>
               </>
             )}
@@ -176,6 +181,14 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         {/* Right — badge top (leads only), task + assignee bottom */}
         <div className={`flex flex-col items-end gap-2 flex-shrink-0 ${account.halosightType === "prospect" ? "justify-between" : "justify-end"}`} style={{ minHeight: 60 }}>
           {account.halosightType === "prospect" && <ProspectBadge />}
+          {showAttention && (
+            <span
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
+              style={{ background: "rgba(245,166,35,0.15)", color: "var(--md-sys-color-warning)", border: "1px solid rgba(245,166,35,0.3)" }}
+            >
+              Needs Info
+            </span>
+          )}
 
           {/* Task indicator + assignee */}
           <div className="flex items-center gap-1.5">
