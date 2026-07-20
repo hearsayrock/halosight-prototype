@@ -362,6 +362,132 @@ function TaskStrip({
   );
 }
 
+// ── First-run empty state ─────────────────────────────────────────────────────
+
+function EmptyHomeState({ onAddCompany }: { onAddCompany: () => void }) {
+  return (
+    <div className="px-4 pt-2 pb-8">
+
+      {/* Hero card */}
+      <div
+        className="relative overflow-hidden"
+        style={{
+          borderRadius: "var(--radius-xl)",
+          background: "var(--md-sys-color-dark-primary)",
+          border: "1px solid rgba(139,146,255,0.2)",
+          padding: "36px 24px 28px",
+        }}
+      >
+        {/* Ambient glow — mirrors DashboardGrid */}
+        <motion.div
+          animate={{
+            x: [0, -40, -10, 30, 5, 0],
+            y: [0, 30, 60, 25, -20, 0],
+            scale: [1, 1.1, 0.96, 1.06, 0.99, 1],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+          style={{
+            position: "absolute", top: -60, right: -60,
+            width: 200, height: 200, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(139,146,255,0.14) 0%, transparent 65%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Icon ring */}
+        <div className="flex justify-center mb-6">
+          <div
+            className="w-14 h-14 rounded-full flex items-center justify-center"
+            style={{
+              background: "rgba(139,146,255,0.1)",
+              border: "1px solid rgba(139,146,255,0.22)",
+            }}
+          >
+            <Icon name="business" size={26} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+          </div>
+        </div>
+
+        {/* Heading */}
+        <h2
+          className="text-center mb-3"
+          style={{
+            fontFamily: "Roboto Slab, Georgia, serif",
+            fontSize: 22, fontWeight: 700, lineHeight: 1.25,
+            color: "var(--md-sys-color-text-primary)",
+          }}
+        >
+          Who are you meeting<br />with this week?
+        </h2>
+
+        {/* Body */}
+        <p
+          className="text-center mx-auto mb-7"
+          style={{
+            fontSize: 14, lineHeight: 1.65,
+            color: "var(--md-sys-color-text-muted)",
+            maxWidth: 272,
+          }}
+        >
+          Add one company you're currently working with.
+          Halosight will help you prepare for visits,
+          capture what happened, and track follow-ups.
+        </p>
+
+        {/* CTA */}
+        <button
+          onClick={onAddCompany}
+          className="w-full flex items-center justify-center gap-2 active:opacity-85 transition-opacity"
+          style={{
+            height: 48,
+            background: "var(--md-sys-color-neonindigo)",
+            borderRadius: "var(--radius-full)",
+            color: "var(--md-sys-color-text-primary)",
+          }}
+        >
+          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-text-primary)" }} />
+          <span style={{ fontSize: 15, fontWeight: 700 }}>Add a company</span>
+        </button>
+      </div>
+
+      {/* Trial note */}
+      <p
+        className="text-center mt-4"
+        style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)", lineHeight: 1.5 }}
+      >
+        No CRM connection required.
+      </p>
+
+      {/* Feature hints */}
+      <div className="flex flex-col gap-2 mt-6">
+        {([
+          { icon: "border_color", text: "Log visits with voice — AI writes the summary" },
+          { icon: "checklist",    text: "Action items generated from every meeting" },
+          { icon: "auto_awesome", text: "Smart prep before your next visit" },
+        ] as const).map(({ icon, text }) => (
+          <div
+            key={text}
+            className="flex items-center gap-3 px-4 py-3"
+            style={{
+              background: "var(--md-sys-color-dark-primary)",
+              borderRadius: "var(--radius-lg)",
+              border: "1px solid rgba(255,255,255,0.05)",
+            }}
+          >
+            <div
+              className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center"
+              style={{ background: "rgba(139,146,255,0.08)" }}
+            >
+              <Icon name={icon} size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+            </div>
+            <span style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)" }}>{text}</span>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  );
+}
+
 // ── Dashboard card ────────────────────────────────────────────────────────────
 
 function DashboardGrid({
@@ -1053,6 +1179,9 @@ function CombinedPageContent() {
               {preview === "loading" && <AccountListSkeleton rows={6} />}
               {preview === "error" && (
                 <ErrorState title="Couldn't load accounts" message="We had trouble reaching the server." onRetry={() => {}} />
+              )}
+              {preview === "empty" && (
+                <EmptyHomeState onAddCompany={() => setShowCreateLeadSheet(true)} />
               )}
               {!preview && (
                 <>

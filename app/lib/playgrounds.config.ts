@@ -60,7 +60,10 @@ export const PLAYGROUNDS: Playground[] = [
     author: "Nate",
     status: "exploring",
     startedAt: "2026-07-20",
-    routes: [],
+    routes: [
+      { label: "Home (empty)", path: "/relationships?preview=empty" },
+      { label: "Home (seeded)", path: "/relationships" },
+    ],
   },
   {
     id: "playground/july-13-prospecting-goals",
