@@ -402,8 +402,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             </div>
             <p className="text-[11px] mb-3" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {justCreated
-                ? "This lead is synced to CRM. Add contact details when you know them — none of this is required right now."
-                : "Fill in contact details whenever you have them. This lead will sync without them."}
+                ? "Add contact details when you know them — none of this is required right now."
+                : "Fill in contact details whenever you have them."}
             </p>
             <div className="flex flex-col gap-2">
               {[
@@ -464,7 +464,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           >
             <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
             <span className="flex-1 text-[13px] font-medium" style={{ color: "var(--md-sys-color-text-secondary)" }}>
-              AI found <span style={{ color: "var(--md-sys-color-neonindigo)", fontWeight: 700 }}>3 CRM updates</span> from your last visit
+              AI found <span style={{ color: "var(--md-sys-color-neonindigo)", fontWeight: 700 }}>3 updates</span> from your last visit
             </span>
             <Icon name="arrow_forward" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
           </button>
@@ -507,7 +507,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             And just like that,<br />{account.name} exists.
           </h2>
           <p className="text-15" style={{ lineHeight: 1.6, color: "var(--md-sys-color-text-muted)", maxWidth: 280, marginBottom: 32 }}>
-            No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and nowhere to go but up.
+            No visits yet. No notes. Just potential, a blank slate, and nowhere to go but up.
           </p>
 
           <button
@@ -525,7 +525,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 Log your first visit
               </p>
               <p className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                We'll fill Salesforce automatically.
+                AI captures the details while you focus on the conversation.
               </p>
             </div>
             <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
@@ -751,7 +751,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   Disqualify this lead?
                 </p>
                 <p style={{ fontSize: 14, lineHeight: 1.5, color: "var(--md-sys-color-text-secondary)", marginBottom: 28 }}>
-                  This lead will disappear from your list. You'll need to go into your CRM to undo this.
+                  This lead will disappear from your list. This action can't be undone from the app.
                 </p>
                 <button
                   onClick={() => { setShowDisqualifyConfirm(false); handleDisqualify(); }}

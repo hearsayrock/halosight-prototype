@@ -97,7 +97,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
             <Icon name="cloud_done" fill size={34} style={{ color: "var(--md-sys-color-brand-teal)" }} />
           </div>
           <p className="text-[15px] font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-            Synced to Salesforce
+            Updates applied
           </p>
           <p className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
             {selectedCount} field{selectedCount !== 1 ? "s" : ""} updated
@@ -166,7 +166,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
                       ))}
                     </div>
                     <p className="text-[13px] mt-4" style={{ color: "var(--md-sys-color-text-muted)", lineHeight: 1.6 }}>
-                      Anything you'd like to change or add before I sync?
+                      Anything you'd like to change or add before we apply these?
                     </p>
                   </div>
                 </div>

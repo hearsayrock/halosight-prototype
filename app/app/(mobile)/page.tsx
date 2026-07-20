@@ -61,9 +61,9 @@ export default function LoginPage() {
           Smarter meetings.
           <br />
           Anywhere.
-          <br />
-          Synced with your{" "}
-          <span style={{ color: "var(--md-sys-color-neonindigo)" }}>CRM</span>.
+        </p>
+        <p className="text-sm mt-3" style={{ color: "var(--md-sys-color-text-muted)" }}>
+          Explore Halosight without connecting your CRM.
         </p>
       </div>
 

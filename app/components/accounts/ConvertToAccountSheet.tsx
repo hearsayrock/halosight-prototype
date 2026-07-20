@@ -110,7 +110,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 Convert to Account
               </h2>
               <p className="text-sm mb-7" style={{ color: "var(--md-sys-color-text-muted)", lineHeight: 1.5 }}>
-                {accountName} will be created as an account in Salesforce.
+                {accountName} will be saved as a new account.
               </p>
 
               {/* Account type */}
@@ -158,7 +158,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 }}
               >
                 <span className="text-sm" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                  Create a deal in Salesforce
+                  Create a deal
                 </span>
                 <Toggle on={createDeal} />
               </button>
@@ -216,8 +216,8 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
               </h2>
 
               <p className="text-sm mb-2" style={{ color: "var(--md-sys-color-text-muted)", maxWidth: 280, lineHeight: 1.65 }}>
-                <span style={{ color: "var(--md-sys-color-text-primary)", fontWeight: 600 }}>{accountName}</span> is synced
-                to Salesforce as a {selectedType.label}.
+                <span style={{ color: "var(--md-sys-color-text-primary)", fontWeight: 600 }}>{accountName}</span> is saved
+                as a {selectedType.label}.
                 {name.trim() && (
                   <> {name.trim()} is listed as the primary contact.</>
                 )}

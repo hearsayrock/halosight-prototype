@@ -231,7 +231,7 @@ export default function CaptureWidget() {
                       Analyzing your meeting…
                     </p>
                     <p className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                      I'll surface any CRM updates in just a moment.
+                      I'll surface any updates in just a moment.
                     </p>
                   </motion.div>
                 )}
