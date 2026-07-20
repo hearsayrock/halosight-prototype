@@ -56,7 +56,7 @@ export const PLAYGROUNDS: Playground[] = [
     id: "playground/halosight-lite-v1",
     name: "Halosight Lite V1",
     description: "Explore a trial version of the app with no CRM connect.",
-    url: "",
+    url: "https://halosight-prototype-git-playg-60644e-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
     startedAt: "2026-07-20",
