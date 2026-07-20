@@ -32,13 +32,8 @@ interface Props {
 
 type DupeState = "idle" | "checking" | "found" | "none";
 
-function findDuplicates(query: string): Account[] {
-  const q = query.toLowerCase().trim();
-  if (q.length < 2) return [];
-  return mockAccounts.filter((a) => {
-    const name = a.name.toLowerCase();
-    return name.includes(q) || q.includes(name);
-  });
+function findDuplicates(_query: string): Account[] {
+  return [];
 }
 
 function DuplicateCallout({
