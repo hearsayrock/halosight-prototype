@@ -428,9 +428,8 @@ function EmptyHomeState({ onAddCompany }: { onAddCompany: () => void }) {
             maxWidth: 272,
           }}
         >
-          Add one company you're currently working with.
-          Halosight will help you prepare for visits,
-          capture what happened, and track follow-ups.
+          Add a company you're working with to prepare
+          for meetings, capture notes, and track follow-ups.
         </p>
 
         {/* CTA */}
@@ -458,28 +457,15 @@ function EmptyHomeState({ onAddCompany }: { onAddCompany: () => void }) {
       </p>
 
       {/* Feature hints */}
-      <div className="flex flex-col gap-2 mt-6">
+      <div className="flex flex-col gap-4 mt-6 px-2">
         {([
           { icon: "border_color", text: "Log visits with voice — AI writes the summary" },
           { icon: "checklist",    text: "Action items generated from every meeting" },
           { icon: "auto_awesome", text: "Smart prep before your next visit" },
         ] as const).map(({ icon, text }) => (
-          <div
-            key={text}
-            className="flex items-center gap-3 px-4 py-3"
-            style={{
-              background: "var(--md-sys-color-dark-primary)",
-              borderRadius: "var(--radius-lg)",
-              border: "1px solid rgba(255,255,255,0.05)",
-            }}
-          >
-            <div
-              className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center"
-              style={{ background: "rgba(139,146,255,0.08)" }}
-            >
-              <Icon name={icon} size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-            </div>
-            <span style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)" }}>{text}</span>
+          <div key={text} className="flex items-center gap-3">
+            <Icon name={icon} size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, opacity: 0.7 }} />
+            <span style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>{text}</span>
           </div>
         ))}
       </div>
