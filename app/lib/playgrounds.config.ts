@@ -60,6 +60,7 @@ export const PLAYGROUNDS: Playground[] = [
     author: "Nate",
     status: "exploring",
     startedAt: "2026-07-20",
+    routes: [],
   },
   {
     id: "playground/july-13-prospecting-goals",

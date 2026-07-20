@@ -83,13 +83,16 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
   const isMain = currentBranch === "main" || currentBranch === "local";
   const activePlayground = PLAYGROUNDS.find(p => p.id === currentBranch);
 
-  // Build nav: playground routes (if any) first, then default nav groups
+  // Build nav:
+  //   routes undefined  → show DEFAULT_NAV
+  //   routes []         → no nav (playground is a blank slate)
+  //   routes [...]      → playground routes + DEFAULT_NAV
+  const hasExplicitRoutes = activePlayground?.routes !== undefined;
   const playgroundRoutes: PlaygroundRoute[] = activePlayground?.routes ?? [];
-  const nav = playgroundRoutes.length > 0
-    ? [
-        { group: activePlayground!.name, routes: playgroundRoutes },
-        ...DEFAULT_NAV,
-      ]
+  const nav = hasExplicitRoutes
+    ? (playgroundRoutes.length > 0
+        ? [{ group: activePlayground!.name, routes: playgroundRoutes }, ...DEFAULT_NAV]
+        : [])
     : DEFAULT_NAV;
 
   function handleReset() {
