@@ -181,7 +181,6 @@ export const mockAccounts: Account[] = [
     crmAccountType: "distributor",
     assignedInitial: "N",
     taskCount: 2,
-    openOpportunities: 1,
     address: "4801 N Central Ave",
     city: "Phoenix",
     state: "AZ",
