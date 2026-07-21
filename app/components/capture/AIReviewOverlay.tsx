@@ -403,6 +403,14 @@ export default function AIReviewOverlay() {
                   >
                     Here's the read on {accountName ?? "this lead"}
                   </h2>
+                  <div style={{ marginTop: 10 }}>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: "var(--md-sys-color-text-muted)", lineHeight: 1.5 }}>
+                      This data is for reference only
+                    </p>
+                    <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.5 }}>
+                      It won't sync anywhere until you connect a CRM.
+                    </p>
+                  </div>
                 </motion.div>
               ) : (
                 <motion.div

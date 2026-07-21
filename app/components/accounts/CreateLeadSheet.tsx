@@ -124,12 +124,13 @@ function DuplicateCallout({
 
 export default function CreateLeadSheet({ onClose, onCreated }: Props) {
   const router = useRouter();
-  const [name,       setName]       = useState("");
-  const [focused,    setFocused]    = useState(false);
-  const [isVisible,  setIsVisible]  = useState(true);
-  const [dupeState,  setDupeState]  = useState<DupeState>("idle");
-  const [duplicates, setDuplicates] = useState<Account[]>([]);
-  const [dismissed,  setDismissed]  = useState(false);
+  const [name,        setName]       = useState("");
+  const [focused,     setFocused]    = useState(false);
+  const [isVisible,   setIsVisible]  = useState(true);
+  const [dupeState,   setDupeState]  = useState<DupeState>("idle");
+  const [duplicates,  setDuplicates] = useState<Account[]>([]);
+  const [dismissed,   setDismissed]  = useState(false);
+  const [entityType,  setEntityType] = useState<"lead" | "account">("account");
 
   const inputRef = useRef<HTMLInputElement>(null);
   const dupeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -139,21 +140,8 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
     return () => clearTimeout(t);
   }, []);
 
-  const runDupeCheck = useCallback((value: string) => {
-    if (dupeTimerRef.current) clearTimeout(dupeTimerRef.current);
-    const trimmed = value.trim();
-    if (!trimmed || trimmed.length < 2) {
-      setDupeState("idle");
-      setDuplicates([]);
-      setDismissed(false);
-      return;
-    }
-    setDupeState("checking");
-    dupeTimerRef.current = setTimeout(() => {
-      const results = findDuplicates(trimmed);
-      setDuplicates(results);
-      setDupeState(results.length > 0 ? "found" : "none");
-    }, 400);
+  const runDupeCheck = useCallback((_value: string) => {
+    setDupeState("none");
   }, []);
 
   function handleNameChange(value: string) {
@@ -169,7 +157,7 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
       id: `hs-${Date.now()}`,
       name: trimmed,
       type: "standalone",
-      halosightType: "prospect",
+      halosightType: entityType === "lead" ? "prospect" : "customer",
       distanceMiles: 0,
       lastVisited: new Date(),
       taskCount: 0,
@@ -232,11 +220,38 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
 
               {/* Title */}
               <h2
-                className="text-[28px] font-bold mb-6"
+                className="text-[28px] font-bold mb-4"
                 style={{ color: "var(--md-sys-color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
-                New Lead
+                New Company
               </h2>
+
+              {/* Lead / Company toggle */}
+              <div
+                className="flex mb-6 p-1"
+                style={{
+                  background: "var(--md-sys-color-dark-secondary)",
+                  borderRadius: "var(--radius-xl)",
+                }}
+              >
+                {(["account", "lead"] as const).map((opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => setEntityType(opt)}
+                    className="flex-1 py-2 text-[14px] font-semibold transition-colors"
+                    style={{
+                      borderRadius: "calc(var(--radius-xl) - 4px)",
+                      background: entityType === opt ? "var(--md-sys-color-neonindigo)" : "transparent",
+                      color: entityType === opt
+                        ? "var(--md-sys-color-text-primary)"
+                        : "var(--md-sys-color-text-muted)",
+                      transition: "background 0.15s, color 0.15s",
+                    }}
+                  >
+                    {opt === "account" ? "Account" : "Lead"}
+                  </button>
+                ))}
+              </div>
 
               {/* Company field */}
               <div className="mb-3">
@@ -312,7 +327,7 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
                 >
                   <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
                   <span className="text-[13px] font-medium" style={{ color: "var(--md-sys-color-neonindigo)" }}>
-                    Name it — AI fills the rest.
+                    Name it — AI will fill the rest later.
                   </span>
                 </div>
               )}
@@ -332,7 +347,7 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
                   opacity: name.trim() ? 1 : 0.4,
                 }}
               >
-                Create a lead
+                Create
               </button>
 
             </div>

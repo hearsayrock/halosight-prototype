@@ -134,6 +134,74 @@ function ActivityCard({ item, accountId, isExternal, href }: { item: ActivityIte
   );
 }
 
+// ── AI company snapshot (lite mode) ──────────────────────────────────────────
+
+interface CompanyInfo {
+  tags: string[];
+  employees: string;
+  revenue: string;
+  location: string;
+  founded: string;
+  description: string;
+}
+
+const COMPANY_LOOKUP: Record<string, CompanyInfo> = {
+  "profleet": {
+    tags: ["Fleet Management", "SaaS"],
+    employees: "250–500",
+    revenue: "$18M–$30M est.",
+    location: "Phoenix, AZ",
+    founded: "2011",
+    description: "ProFleet helps commercial fleet operators cut vehicle downtime with real-time GPS tracking and predictive maintenance scheduling across mixed-use fleets.",
+  },
+  "saddleback fleet services": {
+    tags: ["Fleet Services", "B2B"],
+    employees: "50–150",
+    revenue: "$4M–$8M est.",
+    location: "Scottsdale, AZ",
+    founded: "2004",
+    description: "Full-service commercial fleet maintenance with same-day turnaround for trucks and last-mile delivery vehicles across the Southwest.",
+  },
+  "eagle transport": {
+    tags: ["Transportation", "Logistics"],
+    employees: "100–250",
+    revenue: "$9M–$15M est.",
+    location: "Tucson, AZ",
+    founded: "1998",
+    description: "Regional trucking and freight logistics company serving the Southwest corridor, operating a fleet of over 200 commercial vehicles.",
+  },
+  "riverside distribution": {
+    tags: ["Distribution", "Wholesale"],
+    employees: "75–200",
+    revenue: "$6M–$12M est.",
+    location: "Mesa, AZ",
+    founded: "2001",
+    description: "Regional wholesale distributor specializing in industrial supplies and equipment for construction and facility management customers.",
+  },
+};
+
+function lookupCompany(name: string): CompanyInfo {
+  return (
+    COMPANY_LOOKUP[name.toLowerCase().trim()] ?? {
+      tags: ["B2B"],
+      employees: "25–75",
+      revenue: "$3M–$10M est.",
+      location: "United States",
+      founded: "2010",
+      description: "Details are still coming together for this one. Your first visit will help Halosight build a complete profile.",
+    }
+  );
+}
+
+function CompanyStatRow({ icon, label }: { icon: string; label: string }) {
+  return (
+    <div className="flex items-center gap-2.5">
+      <Icon name={icon} size={14} style={{ color: "var(--md-sys-color-text-muted)", flexShrink: 0 }} />
+      <span style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>{label}</span>
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> }) {
@@ -265,10 +333,14 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     ? { id, name: justCreatedName, type: "standalone" as const, halosightType: "prospect" as const, distanceMiles: 0, lastVisited: new Date(), taskCount: 0 }
     : undefined);
 
-  // When capture is ready (or was just completed) for a new lead, transition out of "just created" empty state
-  const captureJustCompleted =
+  // When capture is ready (or was just completed) for a new lead, transition out of "just created" empty state.
+  // Latch with a ref so dismissing the "ready" bar doesn't revert the page back to the empty state.
+  const captureJustCompletedNow =
     (captureStatus === "ready" && capturingId === id && !detail) ||
     (capturedParam && !detail);
+  const captureJustCompletedRef = useRef(false);
+  if (captureJustCompletedNow) captureJustCompletedRef.current = true;
+  const captureJustCompleted = captureJustCompletedRef.current;
   const effectiveJustCreated = justCreated && !captureJustCompleted;
 
   // ── Preview states ────────────────────────────────────────────────────────
@@ -306,6 +378,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       </div>
     );
   }
+
+  const companyInfo = lookupCompany(account.name);
 
   return (
     <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
@@ -492,44 +566,132 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         </div>}
       </div>
 
-      {/* Just-created empty state — replaces tabs entirely */}
+      {/* Just-created state — AI snapshot */}
       {effectiveJustCreated && (
-        <div className="flex-1 flex flex-col items-center justify-center px-8 pb-24 text-center">
-          <Icon name="auto_awesome" size={32} style={{ color: "var(--md-sys-color-neonindigo)", marginBottom: 20 }} />
-          <h2
-            style={{
-              fontFamily: "Roboto Slab, Georgia, serif",
-              fontSize: 22, fontWeight: 700,
-              color: "var(--md-sys-color-text-primary)",
-              lineHeight: 1.25, marginBottom: 12,
-            }}
-          >
-            And just like that,<br />{account.name} exists.
-          </h2>
-          <p className="text-15" style={{ lineHeight: 1.6, color: "var(--md-sys-color-text-muted)", maxWidth: 280, marginBottom: 32 }}>
-            No visits yet. No notes. Just potential, a blank slate, and nowhere to go but up.
-          </p>
+        <div className="flex-1 overflow-y-auto pb-32 px-4 pt-1">
 
-          <button
-            onClick={() => startCapture(id, account.name)}
-            className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
+          {/* Headline */}
+          <div className="text-center" style={{ marginBottom: 24 }}>
+            <Icon name="auto_awesome" size={28} style={{ color: "var(--md-sys-color-neonindigo)", marginBottom: 14 }} />
+            <p style={{ fontSize: 17, fontWeight: 700, color: "var(--md-sys-color-text-primary)", marginBottom: 6 }}>
+              And just like that,
+            </p>
+            <h2
+              style={{
+                fontFamily: "Roboto Slab, Georgia, serif",
+                fontSize: 26, fontWeight: 700,
+                color: "var(--md-sys-color-text-primary)",
+                lineHeight: 1.2,
+              }}
+            >
+              {account.name} exists.
+            </h2>
+          </div>
+
+          {/* AI Snapshot card */}
+          <div
             style={{
-              border: "1.5px dashed rgba(139,146,255,0.45)",
+              background: "var(--md-sys-color-dark-primary)",
+              border: "1px solid rgba(139,146,255,0.18)",
               borderRadius: "var(--radius-xl)",
-              background: "rgba(139,146,255,0.04)",
+              overflow: "hidden",
             }}
           >
-            <Icon name="auto_awesome" size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-            <div className="flex-1 min-w-0 text-left">
-              <p className="text-[15px] font-bold leading-snug mb-1" style={{ color: "var(--md-sys-color-neonindigo)" }}>
-                Log your first visit
-              </p>
-              <p className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                AI captures the details while you focus on the conversation.
-              </p>
+            {/* Card header */}
+            <div
+              className="flex items-center gap-2 px-4 py-3"
+              style={{ borderBottom: "1px solid rgba(139,146,255,0.1)", background: "rgba(139,146,255,0.04)" }}
+            >
+              <Icon name="auto_awesome" size={13} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-neonindigo)" }}>
+                AI Snapshot
+              </span>
+              <motion.span
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 0 }}
+                transition={{ delay: 1.8, duration: 0.25 }}
+                style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", marginLeft: "auto" }}
+              >
+                Searching…
+              </motion.span>
             </div>
-            <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-          </button>
+
+            {/* Card body — loaded content always rendered; skeleton overlay fades out */}
+            <div style={{ position: "relative" }}>
+              {/* Loaded content (determines card height) */}
+              <div className="px-4 py-5">
+                <p style={{ fontSize: 14, lineHeight: 1.65, color: "var(--md-sys-color-text-secondary)", marginBottom: 18 }}>
+                  {companyInfo.description}
+                </p>
+                <div className="flex flex-wrap gap-1.5" style={{ marginBottom: 20 }}>
+                  {companyInfo.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      style={{
+                        fontSize: 11, fontWeight: 600,
+                        padding: "3px 9px",
+                        borderRadius: "var(--radius-full)",
+                        background: "rgba(139,146,255,0.1)",
+                        border: "1px solid rgba(139,146,255,0.2)",
+                        color: "var(--md-sys-color-neonindigo)",
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex flex-col gap-3">
+                  <CompanyStatRow icon="group" label={`${companyInfo.employees} employees`} />
+                  <CompanyStatRow icon="trending_up" label={`${companyInfo.revenue} annual revenue`} />
+                  <CompanyStatRow icon="location_on" label={companyInfo.location} />
+                  <CompanyStatRow icon="calendar_today" label={`Est. ${companyInfo.founded}`} />
+                </div>
+
+                <p style={{ fontSize: 12, lineHeight: 1.55, color: "var(--md-sys-color-text-muted)", marginTop: 18, paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+                  This snapshot is for reference — it won't sync or save anywhere until you connect a CRM.
+                </p>
+              </div>
+
+            {/* Skeleton overlay — fades out after 1.8s revealing loaded content */}
+              <motion.div
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 0 }}
+                transition={{ delay: 1.8, duration: 0.35 }}
+                style={{
+                  position: "absolute", inset: 0,
+                  background: "var(--md-sys-color-dark-primary)",
+                  padding: "20px 16px",
+                  pointerEvents: "none",
+                }}
+              >
+                {[88, 72, 55].map((w, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ opacity: [0.35, 0.7, 0.35] }}
+                    transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.18, ease: "easeInOut" }}
+                    style={{
+                      height: 12, marginBottom: 12, width: `${w}%`,
+                      borderRadius: "var(--radius-full)",
+                      background: "var(--md-sys-color-dark-secondary)",
+                    }}
+                  />
+                ))}
+                <div style={{ height: 16 }} />
+                {[58, 52, 50].map((w, i) => (
+                  <motion.div
+                    key={i + 3}
+                    animate={{ opacity: [0.35, 0.7, 0.35] }}
+                    transition={{ duration: 1.4, repeat: Infinity, delay: (i + 3) * 0.18, ease: "easeInOut" }}
+                    style={{
+                      height: 12, marginBottom: 12, width: `${w}%`,
+                      borderRadius: "var(--radius-full)",
+                      background: "var(--md-sys-color-dark-secondary)",
+                    }}
+                  />
+                ))}
+              </motion.div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -662,9 +824,17 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       {/* Log a Visit CTA — hidden while a capture is active for this account */}
       {!isCapturing && (
         <div
-          className="absolute left-0 right-0 flex justify-center px-4"
+          className="absolute left-0 right-0 flex flex-col items-center gap-2.5 px-4"
           style={{ bottom: 32 }}
         >
+          {effectiveJustCreated && (
+            <div className="flex items-center gap-1.5">
+              <Icon name="auto_awesome" size={12} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+              <span style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)" }}>
+                Your first visit will round out the picture.
+              </span>
+            </div>
+          )}
           <button
             onClick={() => startCapture(id, account.name)}
             className="h-11 px-6 text-sm-bold flex items-center gap-2 transition-opacity active:opacity-80"

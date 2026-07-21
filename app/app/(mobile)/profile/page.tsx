@@ -5,7 +5,8 @@
  * Route: /profile
  * Reached via the profile button on Home or Accounts.
  * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-text-primary,
- *         --md-sys-color-text-muted, --md-sys-color-text-disabled, --md-sys-color-brand-coral, --radius-md
+ *         --md-sys-color-text-muted, --md-sys-color-text-disabled, --md-sys-color-brand-coral,
+ *         --md-sys-color-neonindigo, --md-sys-color-alpha-neonindigo-10, --radius-md, --radius-xl, --radius-full
  * Flutter equivalent: profile_page.dart
  */
 
@@ -67,6 +68,48 @@ export default function ProfilePage() {
         <p className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
           Halosight - Area51
         </p>
+      </div>
+
+      {/* Trial-mode card */}
+      <div
+        className="mx-4 mb-5 px-4 py-4 flex items-start gap-3"
+        style={{
+          background: "var(--md-sys-color-alpha-neonindigo-10)",
+          border: "1px solid rgba(139,146,255,0.18)",
+          borderRadius: "var(--radius-xl)",
+        }}
+      >
+        <Icon
+          name="science"
+          size={18}
+          style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, marginTop: 1 }}
+        />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)" }}>
+              Halosight Lite
+            </span>
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: "0.07em",
+                textTransform: "uppercase",
+                color: "var(--md-sys-color-neonindigo)",
+                background: "rgba(139,146,255,0.12)",
+                border: "1px solid rgba(139,146,255,0.25)",
+                borderRadius: "var(--radius-full)",
+                padding: "2px 7px",
+                lineHeight: 1.6,
+              }}
+            >
+              Trial
+            </span>
+          </div>
+          <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.55 }}>
+            You're exploring without a CRM connection. All data is local to this session.
+          </p>
+        </div>
       </div>
 
       {/* Menu items */}
