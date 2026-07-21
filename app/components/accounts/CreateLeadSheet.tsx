@@ -28,6 +28,7 @@ import { mockAccounts } from "@/lib/mock-data/accounts";
 interface Props {
   onClose: () => void;
   onCreated: (account: Account) => void;
+  initialName?: string;
 }
 
 type DupeState = "idle" | "checking" | "found" | "none";
@@ -122,9 +123,9 @@ function DuplicateCallout({
   );
 }
 
-export default function CreateLeadSheet({ onClose, onCreated }: Props) {
+export default function CreateLeadSheet({ onClose, onCreated, initialName = "" }: Props) {
   const router = useRouter();
-  const [name,        setName]       = useState("");
+  const [name,        setName]       = useState(initialName);
   const [focused,     setFocused]    = useState(false);
   const [isVisible,   setIsVisible]  = useState(true);
   const [dupeState,   setDupeState]  = useState<DupeState>("idle");

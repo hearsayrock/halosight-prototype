@@ -64,6 +64,7 @@ export const PLAYGROUNDS: Playground[] = [
       { label: "Login", path: "/" },
       { label: "Home (empty)", path: "/relationships?preview=empty" },
       { label: "Home (seeded)", path: "/relationships" },
+      { label: "Home (full)", path: "/relationships?preview=full" },
     ],
   },
   {

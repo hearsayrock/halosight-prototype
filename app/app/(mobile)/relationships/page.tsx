@@ -745,10 +745,11 @@ function CombinedPageContent() {
   const mode: PageMode = (modeParam === "accounts" || modeParam === "priorities") ? modeParam : "home";
 
   function goToMode(m: "accounts" | "priorities") {
-    router.push(`/relationships?mode=${m}`, { scroll: false });
+    const base = preview === "full" ? `/relationships?preview=full&mode=` : `/relationships?mode=`;
+    router.push(base + m, { scroll: false });
   }
   function goHome() {
-    router.push("/relationships");
+    router.push(preview === "full" ? "/relationships?preview=full" : "/relationships");
   }
 
   // Home company — reads from localStorage so it reflects whoever the tester added
@@ -763,8 +764,12 @@ function CombinedPageContent() {
 
   const { isDisqualified, markNeedsAttention } = useAccountState();
 
-  // Dynamic account list — empty on this branch; grows if user adds accounts in search
+  // Dynamic account list — seeded with mockAccounts for preview=full, empty otherwise
   const [allAccounts, setAllAccounts] = useState<Account[]>([]);
+  useEffect(() => {
+    if (preview === "full") setAllAccounts(mockAccounts);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Filter out disqualified leads from all account computations
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -864,8 +869,9 @@ function CombinedPageContent() {
   }
 
   // In global mode, auto-search both locally and globally on every keystroke
+  // preview=full skips system search — only local accounts, no "Search all" results
   useEffect(() => {
-    if (!query.trim()) {
+    if (!query.trim() || preview === "full") {
       setSystemState("idle");
       setSystemResults([]);
       return;
@@ -1186,6 +1192,41 @@ function CombinedPageContent() {
               {preview === "empty" && (
                 <EmptyHomeState onAddCompany={() => setShowCreateLeadSheet(true)} />
               )}
+              {preview === "full" && visibleAccounts.length > 0 && (() => {
+                const sorted = [...visibleAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a));
+                const suggested = sorted[0];
+                const shown = sorted.slice(0, 4);
+                return (
+                  <>
+                    <DashboardGrid
+                      suggestedAccount={suggested}
+                      onStartVisit={() => startCapture(suggested.id, suggested.name)}
+                    />
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between px-4 py-2">
+                        <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+                          Companies
+                        </span>
+                        <MiniSearchPill onClick={() => goToMode("accounts")} />
+                      </div>
+                      <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
+                        {shown.map((account, i) => (
+                          <CompactAccountRow key={account.id} account={account} isLast={i === shown.length - 1} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between px-4 py-2">
+                        <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+                          Action Items
+                        </span>
+                      </div>
+                      <TaskStrip tasks={mockTasks.filter(t => !completedTaskIds.includes(t.id))} pendingId={pendingTaskId} onCheck={handleCheck} />
+                    </div>
+                    <FeedbackWidget />
+                  </>
+                );
+              })()}
               {!preview && (
                 <>
                   {/* Suggested visit card */}
@@ -1453,7 +1494,7 @@ function CombinedPageContent() {
         </AnimatePresence>
 
         {/* Sticky "Add new lead" — pinned to page bottom, rises with keyboard */}
-        {mode === "accounts" && hasQuery && systemState === "done" && (
+        {mode === "accounts" && hasQuery && (systemState === "done" || preview === "full") && (
           <div style={{
             position: "absolute",
             bottom: "var(--keyboard-inset, 0px)",
@@ -1465,7 +1506,7 @@ function CombinedPageContent() {
             transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
           }}>
             <div style={{ pointerEvents: "auto" }}>
-              <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
+              <CreateAccountCTA query={query} onOpen={() => setShowCreateLeadSheet(true)} />
             </div>
           </div>
         )}
@@ -1483,10 +1524,11 @@ function CombinedPageContent() {
         />
       )}
 
-      {/* Create lead sheet with duplicate detection (+ button) */}
+      {/* Create lead sheet with duplicate detection (+ button and search CTA) */}
       {showCreateLeadSheet && (
         <CreateLeadSheet
-          onClose={() => setShowCreateLeadSheet(false)}
+          initialName={query}
+          onClose={() => { setShowCreateLeadSheet(false); }}
           onCreated={handleAccountCreated}
         />
       )}
