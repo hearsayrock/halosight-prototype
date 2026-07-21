@@ -157,7 +157,7 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
       id: `hs-${Date.now()}`,
       name: trimmed,
       type: "standalone",
-      halosightType: entityType === "lead" ? "prospect" : "customer",
+      halosightType: entityType === "lead" ? "prospect" : "account",
       distanceMiles: 0,
       lastVisited: new Date(),
       taskCount: 0,
