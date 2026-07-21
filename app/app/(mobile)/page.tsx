@@ -69,7 +69,7 @@ export default function LoginPage() {
 
       {/* Auth buttons */}
       <div className="w-full flex flex-col gap-3 relative z-10">
-        <Link href="/relationships" className="block">
+        <Link href="/relationships?preview=empty" className="block">
           <button
             className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
@@ -83,7 +83,7 @@ export default function LoginPage() {
           </button>
         </Link>
 
-        <Link href="/relationships" className="block">
+        <Link href="/relationships?preview=empty" className="block">
           <button
             className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
@@ -97,7 +97,7 @@ export default function LoginPage() {
           </button>
         </Link>
 
-        <Link href="/relationships" className="block">
+        <Link href="/relationships?preview=empty" className="block">
           <button
             className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
@@ -115,7 +115,7 @@ export default function LoginPage() {
       {/* Email login */}
       <div className="mt-8 relative z-10">
         <Link
-          href="/relationships"
+          href="/relationships?preview=empty"
           className="text-sm font-medium"
           style={{ color: "var(--md-sys-color-neonindigo)" }}
         >

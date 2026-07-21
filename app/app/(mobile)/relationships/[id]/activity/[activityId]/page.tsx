@@ -102,24 +102,9 @@ function AISummaryCard({ summary, durationMinutes }: { summary: ActivityAISummar
 // ── Demo data for newly-captured leads ────────────────────────────────────────
 
 const DEMO_ACTION_ITEMS: ActionItem[] = [
-  {
-    id: "demo-ai-1",
-    title: "Send Sandra the formal proposal",
-    dueDate: null,
-    status: "open",
-    description: "Price, timeline, and onboarding plan — she asked for it by end of next week.",
-    originActivity: "Sandra confirmed we're the frontrunner for the contract",
-    originActivityId: "new-capture",
-  },
-  {
-    id: "demo-ai-2",
-    title: "Intro email to Marcus (IT lead)",
-    dueDate: null,
-    status: "open",
-    description: "Loop him in before final sign-off.",
-    originActivity: "Sandra confirmed we're the frontrunner for the contract",
-    originActivityId: "new-capture",
-  },
+  { id: "ht-1", title: "Send the proposal and pricing over", dueDate: null, status: "open", originActivityId: "new-capture" },
+  { id: "ht-2", title: "Confirm fleet size before next meeting", dueDate: null, status: "open", originActivityId: "new-capture" },
+  { id: "ht-3", title: "Loop in IT lead on the integration", dueDate: null, status: "open", originActivityId: "new-capture" },
 ];
 
 const DEMO_CAPTURE_ACTIVITY: ActivityItem = {
@@ -331,25 +316,24 @@ function ActivityDetailPageContent({
             <h2 className="heading-6" style={{ color: "var(--md-sys-color-text-primary)" }}>
               Action Items
             </h2>
-            {(isNewCapture ? DEMO_ACTION_ITEMS : actionItems).length > 0 && (
+            {(isNewCapture ? (actionItems.length > 0 ? actionItems : DEMO_ACTION_ITEMS) : actionItems).length > 0 && (
               <button onClick={() => setShowAddSheet(true)} className="active:opacity-60 transition-opacity">
                 <Icon name="add" size={20} style={{ color: "var(--md-sys-color-text-primary)" }} />
               </button>
             )}
           </div>
 
-          {(isNewCapture ? DEMO_ACTION_ITEMS : actionItems).length > 0 ? (
+          {(isNewCapture ? (actionItems.length > 0 ? actionItems : DEMO_ACTION_ITEMS) : actionItems).length > 0 ? (
             <div className="flex flex-col gap-2">
-              {isNewCapture
-                ? DEMO_ACTION_ITEMS.map((item) => (
-                    <ActionItemCard key={item.id} item={item} onComplete={() => {}} pending={false} />
-                  ))
-                : actionItems.map((item) => (
+              {(isNewCapture ? (actionItems.length > 0 ? actionItems : DEMO_ACTION_ITEMS) : actionItems).map((item) => (
+                isNewCapture && actionItems.length === 0
+                  ? <ActionItemCard key={item.id} item={item} onComplete={() => {}} pending={false} />
+                  : (
                     <Link key={item.id} href={`/relationships/${id}/action-items/${item.id}?from=activity&activityId=${activityId}`}>
                       <ActionItemCard item={item} onComplete={() => handleComplete(item.id)} pending={pendingItemId === item.id} />
                     </Link>
-                  ))
-              }
+                  )
+              ))}
             </div>
           ) : (
             <button

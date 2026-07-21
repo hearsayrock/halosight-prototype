@@ -738,28 +738,24 @@ function CombinedPageContent() {
   const router = useRouter();
   const preview = searchParams.get("preview");
 
-  const { startCapture, status: captureStatus, accountId: capturingId } = useCapture();
+  const { startCapture } = useCapture();
 
   // Page mode — derived from URL so browser back restores the expanded view
   const modeParam = searchParams.get("mode");
   const mode: PageMode = (modeParam === "accounts" || modeParam === "priorities") ? modeParam : "home";
 
   function goToMode(m: "accounts" | "priorities") {
-    const prefix = preview === "testing" ? "/relationships?preview=testing&mode=" : "/relationships?mode=";
-    router.push(`${prefix}${m}`, { scroll: false });
+    router.push(`/relationships?mode=${m}`, { scroll: false });
   }
   function goHome() {
-    router.push(preview === "testing" ? "/relationships?preview=testing" : "/relationships");
+    router.push("/relationships");
   }
 
-  // Testing mode — ?preview=testing is the user-test entry point
-  const [testingCompany, setTestingCompany] = useState<{ id: string; name: string } | null>(() => {
-    if (typeof window === "undefined") return null;
-    try { return JSON.parse(localStorage.getItem("hs_testing_company") ?? "null"); } catch { return null; }
-  });
-  const [testingVisited, setTestingVisited] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("hs_testing_visited") === "true";
+  // Home company — reads from localStorage so it reflects whoever the tester added
+  const SEED_COMPANY = { id: "hs-seed-1", name: "Lakeside Freight" };
+  const [homeCompany] = useState<{ id: string; name: string }>(() => {
+    if (typeof window === "undefined") return SEED_COMPANY;
+    try { return JSON.parse(localStorage.getItem("hs_testing_company") ?? "null") ?? SEED_COMPANY; } catch { return SEED_COMPANY; }
   });
 
   // Drawer
@@ -767,8 +763,8 @@ function CombinedPageContent() {
 
   const { isDisqualified, markNeedsAttention } = useAccountState();
 
-  // Dynamic account list — starts with mock data, grows as user creates accounts
-  const [allAccounts, setAllAccounts] = useState<Account[]>(mockAccounts);
+  // Dynamic account list — empty on this branch; grows if user adds accounts in search
+  const [allAccounts, setAllAccounts] = useState<Account[]>([]);
 
   // Filter out disqualified leads from all account computations
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -780,13 +776,9 @@ function CombinedPageContent() {
 
   function handleAccountCreated(newAccount: Account) {
     setAllAccounts((prev) => [newAccount, ...prev]);
-    markNeedsAttention(newAccount.id);
     setQuery("");
     setTypeFilter("all");
-    if (preview === "testing") {
-      localStorage.setItem("hs_testing_company", JSON.stringify({ id: newAccount.id, name: newAccount.name }));
-      setTestingCompany({ id: newAccount.id, name: newAccount.name });
-    }
+    localStorage.setItem("hs_testing_company", JSON.stringify({ id: newAccount.id, name: newAccount.name }));
     router.push(`/relationships/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
   }
 
@@ -982,24 +974,25 @@ function CombinedPageContent() {
     return groups;
   }, [getAllItems, taskStatusFilter, taskSortMode, prioritiesQuery]);
 
-  // Latch when a visit is completed for the testing company
-  useEffect(() => {
-    if (preview !== "testing" || captureStatus !== "ready" || !testingCompany || testingVisited) return;
-    if (capturingId === testingCompany.id) {
-      localStorage.setItem("hs_testing_visited", "true");
-      setTestingVisited(true);
-    }
-  }, [captureStatus, capturingId, preview, testingCompany, testingVisited]);
-
-  const topAccounts = useMemo(() =>
-    [...visibleAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
-  [visibleAccounts]);
-  const nearestAccount = useMemo(() =>
-    [...visibleAccounts].sort((a, b) => a.distanceMiles - b.distanceMiles)[0],
-  [visibleAccounts]);
   const hasQuery = query.trim().length > 0;
 
   const showSystemSection = systemState === "loading" || systemState === "done";
+
+  // Home page company + tasks — single company derived from localStorage (or seed)
+  const homeAcct: Account = {
+    id: homeCompany.id,
+    name: homeCompany.name,
+    type: "standalone",
+    halosightType: "prospect",
+    distanceMiles: 2.4,
+    lastVisited: new Date(Date.now() - 7 * 86400000),
+    taskCount: 3,
+  };
+  const homeTasks: HomeTask[] = [
+    { id: "ht-1", itemId: "ht-1", title: "Send the proposal and pricing over", dueDate: null, accountName: homeCompany.name, accountId: homeCompany.id, completed: false },
+    { id: "ht-2", itemId: "ht-2", title: "Confirm fleet size before next meeting", dueDate: null, accountName: homeCompany.name, accountId: homeCompany.id, completed: false },
+    { id: "ht-3", itemId: "ht-3", title: "Loop in IT lead on the integration", dueDate: null, accountName: homeCompany.name, accountId: homeCompany.id, completed: false },
+  ];
 
   // ── View all button (lives in section headers in home mode) ──────────────────
   function MiniSearchPill({ onClick }: { onClick: () => void }) {
@@ -1028,22 +1021,6 @@ function CombinedPageContent() {
       </button>
     </Link>
   );
-
-  const testAcct: Account | null = testingCompany ? {
-    id: testingCompany.id,
-    name: testingCompany.name,
-    type: "standalone" as const,
-    halosightType: "prospect" as const,
-    distanceMiles: 0,
-    lastVisited: new Date(),
-    taskCount: testingVisited ? 3 : 0,
-  } : null;
-
-  const testingTasks: HomeTask[] = testAcct && testingVisited ? [
-    { id: "tt-1", itemId: "tt-1", title: "Send the proposal and pricing over", dueDate: null, accountName: testAcct.name, accountId: testAcct.id, completed: false },
-    { id: "tt-2", itemId: "tt-2", title: "Confirm fleet size before next meeting", dueDate: null, accountName: testAcct.name, accountId: testAcct.id, completed: false },
-    { id: "tt-3", itemId: "tt-3", title: "Loop in IT lead on the integration", dueDate: null, accountName: testAcct.name, accountId: testAcct.id, completed: false },
-  ] : [];
 
   return (
     <div className="relative flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
@@ -1209,74 +1186,36 @@ function CombinedPageContent() {
               {preview === "empty" && (
                 <EmptyHomeState onAddCompany={() => setShowCreateLeadSheet(true)} />
               )}
-              {preview === "testing" && (
-                !testAcct ? (
-                  <EmptyHomeState onAddCompany={() => setShowCreateLeadSheet(true)} />
-                ) : (
-                  <>
-                    {!testingVisited ? (
-                      <DashboardGrid
-                        suggestedAccount={testAcct}
-                        onStartVisit={() => startCapture(testAcct.id, testAcct.name)}
-                      />
-                    ) : (
-                      <div className="mb-3">
-                        <div className="flex items-center justify-between px-4 py-2">
-                          <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
-                            Action Items
-                          </span>
-                        </div>
-                        <TaskStrip tasks={testingTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
-                      </div>
-                    )}
-                    <div className="mb-3">
-                      <div className="flex items-center justify-between px-4 py-2">
-                        <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
-                          Companies
-                        </span>
-                      </div>
-                      <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
-                        <CompactAccountRow account={testAcct} isLast={true} />
-                      </div>
-                    </div>
-                  </>
-                )
-              )}
               {!preview && (
                 <>
-                  {/* Dashboard */}
+                  {/* Suggested visit card */}
                   <DashboardGrid
-                    suggestedAccount={topAccounts[0]}
-                    onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
+                    suggestedAccount={homeAcct}
+                    onStartVisit={() => startCapture(homeAcct.id, homeAcct.name)}
                   />
 
-                  {/* Companies section */}
+                  {/* Companies */}
                   <div className="mb-3">
                     <div className="flex items-center justify-between px-4 py-2">
                       <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Companies
                       </span>
-                      <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
                     <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
-                      {topAccounts.map((account, i) => (
-                        <CompactAccountRow key={account.id} account={account} isLast={i === topAccounts.length - 1} />
-                      ))}
+                      <CompactAccountRow account={homeAcct} isLast={true} />
                     </div>
                   </div>
 
-                  {/* Priorities section */}
-                  <div>
+                  {/* Action Items */}
+                  <div className="mb-3">
                     <div className="flex items-center justify-between px-4 py-2">
                       <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Action Items
                       </span>
-                      <MiniSearchPill onClick={() => goToMode("priorities")} />
                     </div>
-                    <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
+                    <TaskStrip tasks={homeTasks.filter(t => !completedTaskIds.includes(t.id))} pendingId={pendingTaskId} onCheck={handleCheck} />
                   </div>
 
-                  {/* Feedback widget */}
                   <FeedbackWidget />
                 </>
               )}

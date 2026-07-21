@@ -214,7 +214,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   );
   const [showAddSheet, setShowAddSheet] = useState(false);
 
-  const { getItems, updateItem } = useActionItems();
+  const { getItems, addItem, updateItem } = useActionItems();
   const [completedItemIds, setCompletedItemIds] = useState<string[]>([]);
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
   const [noteSheetOpen, setNoteSheetOpen] = useState(false);
@@ -325,23 +325,47 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   const detail = mockAccountDetails[id];
   const mockAccount = mockAccounts.find((a) => a.id === id);
-  // True for system/CRM accounts not in the rep's Halosight portfolio
-  const isExternalAccount = !mockAccount;
 
-  // For just-created companies that aren't in mock data yet, build a shell account from URL params
+  // Check if this is the testing company stored in localStorage
+  const storedTestingCompany = (() => {
+    if (typeof window === "undefined") return null;
+    try { return JSON.parse(localStorage.getItem("hs_testing_company") ?? "null"); } catch { return null; }
+  })();
+  const isTestingCompany = !detail && !mockAccount && storedTestingCompany?.id === id;
+
+  // True for system/CRM accounts not in the rep's Halosight portfolio
+  const isExternalAccount = !mockAccount && !isTestingCompany;
+
+  // For just-created companies that aren't in mock data yet, build a shell account from URL params or localStorage
   const account = detail ?? mockAccount ?? (justCreated && justCreatedName
     ? { id, name: justCreatedName, type: "standalone" as const, halosightType: "prospect" as const, distanceMiles: 0, lastVisited: new Date(), taskCount: 0 }
+    : isTestingCompany
+    ? { id, name: storedTestingCompany.name, type: "standalone" as const, halosightType: "prospect" as const, distanceMiles: 0, lastVisited: new Date(), taskCount: 0 }
     : undefined);
 
   // When capture is ready (or was just completed) for a new lead, transition out of "just created" empty state.
   // Latch with a ref so dismissing the "ready" bar doesn't revert the page back to the empty state.
+  // Also treat the testing company as always "completed" so the populated view shows on direct nav.
   const captureJustCompletedNow =
     (captureStatus === "ready" && capturingId === id && !detail) ||
-    (capturedParam && !detail);
+    (capturedParam && !detail) ||
+    isTestingCompany;
   const captureJustCompletedRef = useRef(false);
   if (captureJustCompletedNow) captureJustCompletedRef.current = true;
   const captureJustCompleted = captureJustCompletedRef.current;
   const effectiveJustCreated = justCreated && !captureJustCompleted;
+
+  // Seed the 3 static action items when a capture completes for a new (non-mock) account
+  const captureSeededRef = useRef(false);
+  useEffect(() => {
+    if (!captureJustCompleted || captureSeededRef.current || allActionItems.length > 0) return;
+    captureSeededRef.current = true;
+    [
+      { id: "ht-1", title: "Send the proposal and pricing over" },
+      { id: "ht-2", title: "Confirm fleet size before next meeting" },
+      { id: "ht-3", title: "Loop in IT lead on the integration" },
+    ].forEach((t) => addItem(id, { id: t.id, title: t.title, dueDate: null, status: "open" }));
+  }, [captureJustCompleted]); // eslint-disable-line
 
   // ── Preview states ────────────────────────────────────────────────────────
   if (preview === "loading") return <AccountDetailSkeleton />;
