@@ -717,7 +717,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
     >
       <Icon name="add" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
       <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-        Add a new lead
+        Add a new company
         {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
       </span>
     </button>
@@ -1246,39 +1246,6 @@ function CombinedPageContent() {
                 </div>
               ) : null}
 
-              {showSystemSection && (
-                <div style={{ marginTop: 16 }}>
-                  {systemState === "loading" && (
-                    <>
-                      <SectionHeader label="Company-Wide Results" count={0} divider />
-                      <SystemSearchSkeleton />
-                    </>
-                  )}
-                  {systemState === "done" && (
-                    <>
-                      <SectionHeader label="Company-Wide Results" count={systemResults.length} divider />
-                      {systemResults.length > 0 ? (
-                        <div className="flex flex-col mx-4 rounded-2xl overflow-hidden"
-                          style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                          {systemResults.map((account, i) => (
-                            <SystemAccountListItem
-                              key={account.id}
-                              account={account}
-                              assignedRep={systemAccountReps[account.id] ?? "Unknown"}
-                              isLast={i === systemResults.length - 1}
-                              onSelect={(a) => router.push(`/relationships/${a.id}`)}
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="px-4 py-6 text-center">
-                          <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>Not found anywhere in Tomorrowland Innovations.</p>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              )}
             </motion.div>
           )}
 
