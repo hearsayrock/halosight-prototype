@@ -738,18 +738,29 @@ function CombinedPageContent() {
   const router = useRouter();
   const preview = searchParams.get("preview");
 
-  const { startCapture } = useCapture();
+  const { startCapture, status: captureStatus, accountId: capturingId } = useCapture();
 
   // Page mode — derived from URL so browser back restores the expanded view
   const modeParam = searchParams.get("mode");
   const mode: PageMode = (modeParam === "accounts" || modeParam === "priorities") ? modeParam : "home";
 
   function goToMode(m: "accounts" | "priorities") {
-    router.push(`/relationships?mode=${m}`, { scroll: false });
+    const prefix = preview === "testing" ? "/relationships?preview=testing&mode=" : "/relationships?mode=";
+    router.push(`${prefix}${m}`, { scroll: false });
   }
   function goHome() {
-    router.push("/relationships");
+    router.push(preview === "testing" ? "/relationships?preview=testing" : "/relationships");
   }
+
+  // Testing mode — ?preview=testing is the user-test entry point
+  const [testingCompany, setTestingCompany] = useState<{ id: string; name: string } | null>(() => {
+    if (typeof window === "undefined") return null;
+    try { return JSON.parse(localStorage.getItem("hs_testing_company") ?? "null"); } catch { return null; }
+  });
+  const [testingVisited, setTestingVisited] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("hs_testing_visited") === "true";
+  });
 
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -772,6 +783,10 @@ function CombinedPageContent() {
     markNeedsAttention(newAccount.id);
     setQuery("");
     setTypeFilter("all");
+    if (preview === "testing") {
+      localStorage.setItem("hs_testing_company", JSON.stringify({ id: newAccount.id, name: newAccount.name }));
+      setTestingCompany({ id: newAccount.id, name: newAccount.name });
+    }
     router.push(`/relationships/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
   }
 
@@ -967,6 +982,15 @@ function CombinedPageContent() {
     return groups;
   }, [getAllItems, taskStatusFilter, taskSortMode, prioritiesQuery]);
 
+  // Latch when a visit is completed for the testing company
+  useEffect(() => {
+    if (preview !== "testing" || captureStatus !== "ready" || !testingCompany || testingVisited) return;
+    if (capturingId === testingCompany.id) {
+      localStorage.setItem("hs_testing_visited", "true");
+      setTestingVisited(true);
+    }
+  }, [captureStatus, capturingId, preview, testingCompany, testingVisited]);
+
   const topAccounts = useMemo(() =>
     [...visibleAccounts].sort((a, b) => scoreAccount(b) - scoreAccount(a)).slice(0, 4),
   [visibleAccounts]);
@@ -1004,6 +1028,22 @@ function CombinedPageContent() {
       </button>
     </Link>
   );
+
+  const testAcct: Account | null = testingCompany ? {
+    id: testingCompany.id,
+    name: testingCompany.name,
+    type: "standalone" as const,
+    halosightType: "prospect" as const,
+    distanceMiles: 0,
+    lastVisited: new Date(),
+    taskCount: testingVisited ? 3 : 0,
+  } : null;
+
+  const testingTasks: HomeTask[] = testAcct && testingVisited ? [
+    { id: "tt-1", itemId: "tt-1", title: "Send the proposal and pricing over", dueDate: null, accountName: testAcct.name, accountId: testAcct.id, completed: false },
+    { id: "tt-2", itemId: "tt-2", title: "Confirm fleet size before next meeting", dueDate: null, accountName: testAcct.name, accountId: testAcct.id, completed: false },
+    { id: "tt-3", itemId: "tt-3", title: "Loop in IT lead on the integration", dueDate: null, accountName: testAcct.name, accountId: testAcct.id, completed: false },
+  ] : [];
 
   return (
     <div className="relative flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
@@ -1168,6 +1208,39 @@ function CombinedPageContent() {
               )}
               {preview === "empty" && (
                 <EmptyHomeState onAddCompany={() => setShowCreateLeadSheet(true)} />
+              )}
+              {preview === "testing" && (
+                !testAcct ? (
+                  <EmptyHomeState onAddCompany={() => setShowCreateLeadSheet(true)} />
+                ) : (
+                  <>
+                    {!testingVisited ? (
+                      <DashboardGrid
+                        suggestedAccount={testAcct}
+                        onStartVisit={() => startCapture(testAcct.id, testAcct.name)}
+                      />
+                    ) : (
+                      <div className="mb-3">
+                        <div className="flex items-center justify-between px-4 py-2">
+                          <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+                            Action Items
+                          </span>
+                        </div>
+                        <TaskStrip tasks={testingTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
+                      </div>
+                    )}
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between px-4 py-2">
+                        <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
+                          Companies
+                        </span>
+                      </div>
+                      <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
+                        <CompactAccountRow account={testAcct} isLast={true} />
+                      </div>
+                    </div>
+                  </>
+                )
               )}
               {!preview && (
                 <>
