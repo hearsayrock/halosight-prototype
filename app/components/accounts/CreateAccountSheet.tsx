@@ -162,7 +162,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               >
                 <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
                 <span className="text-13" style={{ color: "var(--md-sys-color-neonindigo)" }}>
-                  Name it — AI fills the rest.
+                  Name it — AI will fill the rest later.
                 </span>
               </div>
 
