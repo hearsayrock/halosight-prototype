@@ -61,6 +61,7 @@ export const PLAYGROUNDS: Playground[] = [
     status: "exploring",
     startedAt: "2026-07-20",
     routes: [
+      { label: "Login", path: "/" },
       { label: "Home (empty)", path: "/relationships?preview=empty" },
       { label: "Home (seeded)", path: "/relationships" },
     ],
