@@ -326,12 +326,13 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   const detail = mockAccountDetails[id];
   const mockAccount = mockAccounts.find((a) => a.id === id);
 
-  // Check if this is the testing company stored in localStorage
+  // Check if this is the testing company stored in localStorage, and whether a visit has been logged
   const storedTestingCompany = (() => {
     if (typeof window === "undefined") return null;
     try { return JSON.parse(localStorage.getItem("hs_testing_company") ?? "null"); } catch { return null; }
   })();
   const isTestingCompany = !detail && !mockAccount && storedTestingCompany?.id === id;
+  const testingVisited = typeof window !== "undefined" && localStorage.getItem("hs_testing_visited") === "true";
 
   // True for system/CRM accounts not in the rep's Halosight portfolio
   const isExternalAccount = !mockAccount && !isTestingCompany;
@@ -345,11 +346,11 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   // When capture is ready (or was just completed) for a new lead, transition out of "just created" empty state.
   // Latch with a ref so dismissing the "ready" bar doesn't revert the page back to the empty state.
-  // Also treat the testing company as always "completed" so the populated view shows on direct nav.
+  // For the testing company, only show the populated state after a visit has been logged.
   const captureJustCompletedNow =
     (captureStatus === "ready" && capturingId === id && !detail) ||
     (capturedParam && !detail) ||
-    isTestingCompany;
+    (isTestingCompany && testingVisited);
   const captureJustCompletedRef = useRef(false);
   if (captureJustCompletedNow) captureJustCompletedRef.current = true;
   const captureJustCompleted = captureJustCompletedRef.current;
