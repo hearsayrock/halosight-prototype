@@ -56,10 +56,15 @@ export const PLAYGROUNDS: Playground[] = [
     id: "playground/halosight-lite-v1",
     name: "Halosight Lite V1",
     description: "Explore a trial version of the app with no CRM connect.",
-    url: "",
+    url: "https://halosight-prototype-git-playg-60644e-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
     startedAt: "2026-07-20",
+    routes: [
+      { label: "Login", path: "/" },
+      { label: "Home (empty)", path: "/relationships?preview=empty" },
+      { label: "Home (seeded)", path: "/relationships" },
+    ],
   },
   {
     id: "playground/july-13-prospecting-goals",
