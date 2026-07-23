@@ -28,6 +28,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import KebabMenu from "@/components/ui/KebabMenu";
 import ConvertToAccountSheet from "@/components/accounts/ConvertToAccountSheet";
+import AIPrepChat from "@/components/accounts/AIPrepChat";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
@@ -356,6 +357,27 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   const captureJustCompleted = captureJustCompletedRef.current;
   const effectiveJustCreated = justCreated && !captureJustCompleted;
 
+  // Shrink the AIPrepChat wrapper when the soft keyboard opens so the bottom bar stays visible
+  const chatWrapperRef = useRef<HTMLDivElement>(null);
+  const [chatAreaHeight, setChatAreaHeight] = useState<number | null>(null);
+  useEffect(() => {
+    if (!effectiveJustCreated) return;
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      if (!chatWrapperRef.current) return;
+      const top = chatWrapperRef.current.getBoundingClientRect().top;
+      const keyboardOpen = vv.height < window.innerHeight - 50;
+      setChatAreaHeight(keyboardOpen ? Math.max(0, vv.height - top) : null);
+    };
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, [effectiveJustCreated]);
+
   // Seed the 3 static action items when a capture completes for a new (non-mock) account
   const captureSeededRef = useRef(false);
   useEffect(() => {
@@ -410,7 +432,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
       {/* Header */}
-      <div className="pt-10 px-4 pb-4">
+      <div className={`pt-10 px-4 ${effectiveJustCreated ? "pb-0" : "pb-4"}`}>
 
         {/* Back button row */}
         <div className="relative flex items-center justify-between mb-3">
@@ -435,23 +457,25 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         </div>
 
         {/* Account name — font size scales down so long names stay 2–3 lines max */}
-        <h1
-          className="w-full text-center font-bold leading-snug px-6 mb-2 line-clamp-2"
-          style={{
-            color: "var(--md-sys-color-text-primary)",
-            fontFamily: "Roboto Slab, Georgia, serif",
-            fontSize:
-              account.name.length > 55 ? 17 :
-              account.name.length > 38 ? 20 :
-              account.name.length > 25 ? 23 :
-              26,
-          }}
-        >
-          {account.name}
-        </h1>
+        {!effectiveJustCreated && (
+          <h1
+            className="w-full text-center font-bold leading-snug px-6 mb-2 line-clamp-2"
+            style={{
+              color: "var(--md-sys-color-text-primary)",
+              fontFamily: "Roboto Slab, Georgia, serif",
+              fontSize:
+                account.name.length > 55 ? 17 :
+                account.name.length > 38 ? 20 :
+                account.name.length > 25 ? 23 :
+                26,
+            }}
+          >
+            {account.name}
+          </h1>
+        )}
 
         {/* Account metadata — address */}
-        {account.address && (
+        {!effectiveJustCreated && account.address && (
           <div className="flex items-center justify-center gap-1 mb-3">
             <Icon name="location_on" size={13} style={{ color: "var(--md-sys-color-text-muted)", flexShrink: 0 }} />
             <span className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>
@@ -591,132 +615,20 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         </div>}
       </div>
 
-      {/* Just-created state — AI snapshot */}
+      {/* Just-created state — AI prep chat */}
       {effectiveJustCreated && (
-        <div className="flex-1 overflow-y-auto pb-32 px-4 pt-1">
-
-          {/* Headline */}
-          <div className="text-center" style={{ marginBottom: 24 }}>
-            <Icon name="auto_awesome" size={28} style={{ color: "var(--md-sys-color-neonindigo)", marginBottom: 14 }} />
-            <p style={{ fontSize: 17, fontWeight: 700, color: "var(--md-sys-color-text-primary)", marginBottom: 6 }}>
-              And just like that,
-            </p>
-            <h2
-              style={{
-                fontFamily: "Roboto Slab, Georgia, serif",
-                fontSize: 26, fontWeight: 700,
-                color: "var(--md-sys-color-text-primary)",
-                lineHeight: 1.2,
-              }}
-            >
-              {account.name} exists.
-            </h2>
-          </div>
-
-          {/* AI Snapshot card */}
-          <div
-            style={{
-              background: "var(--md-sys-color-dark-primary)",
-              border: "1px solid rgba(139,146,255,0.18)",
-              borderRadius: "var(--radius-xl)",
-              overflow: "hidden",
-            }}
-          >
-            {/* Card header */}
-            <div
-              className="flex items-center gap-2 px-4 py-3"
-              style={{ borderBottom: "1px solid rgba(139,146,255,0.1)", background: "rgba(139,146,255,0.04)" }}
-            >
-              <Icon name="auto_awesome" size={13} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-neonindigo)" }}>
-                AI Snapshot
-              </span>
-              <motion.span
-                initial={{ opacity: 1 }}
-                animate={{ opacity: 0 }}
-                transition={{ delay: 1.8, duration: 0.25 }}
-                style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", marginLeft: "auto" }}
-              >
-                Searching…
-              </motion.span>
-            </div>
-
-            {/* Card body — loaded content always rendered; skeleton overlay fades out */}
-            <div style={{ position: "relative" }}>
-              {/* Loaded content (determines card height) */}
-              <div className="px-4 py-5">
-                <p style={{ fontSize: 14, lineHeight: 1.65, color: "var(--md-sys-color-text-secondary)", marginBottom: 18 }}>
-                  {companyInfo.description}
-                </p>
-                <div className="flex flex-wrap gap-1.5" style={{ marginBottom: 20 }}>
-                  {companyInfo.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      style={{
-                        fontSize: 11, fontWeight: 600,
-                        padding: "3px 9px",
-                        borderRadius: "var(--radius-full)",
-                        background: "rgba(139,146,255,0.1)",
-                        border: "1px solid rgba(139,146,255,0.2)",
-                        color: "var(--md-sys-color-neonindigo)",
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex flex-col gap-3">
-                  <CompanyStatRow icon="group" label={`${companyInfo.employees} employees`} />
-                  <CompanyStatRow icon="trending_up" label={`${companyInfo.revenue} annual revenue`} />
-                  <CompanyStatRow icon="location_on" label={companyInfo.location} />
-                  <CompanyStatRow icon="calendar_today" label={`Est. ${companyInfo.founded}`} />
-                </div>
-
-                <p style={{ fontSize: 12, lineHeight: 1.55, color: "var(--md-sys-color-text-muted)", marginTop: 18, paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-                  This snapshot is for reference — it won't sync or save anywhere until you connect a CRM.
-                </p>
-              </div>
-
-            {/* Skeleton overlay — fades out after 1.8s revealing loaded content */}
-              <motion.div
-                initial={{ opacity: 1 }}
-                animate={{ opacity: 0 }}
-                transition={{ delay: 1.8, duration: 0.35 }}
-                style={{
-                  position: "absolute", inset: 0,
-                  background: "var(--md-sys-color-dark-primary)",
-                  padding: "20px 16px",
-                  pointerEvents: "none",
-                }}
-              >
-                {[88, 72, 55].map((w, i) => (
-                  <motion.div
-                    key={i}
-                    animate={{ opacity: [0.35, 0.7, 0.35] }}
-                    transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.18, ease: "easeInOut" }}
-                    style={{
-                      height: 12, marginBottom: 12, width: `${w}%`,
-                      borderRadius: "var(--radius-full)",
-                      background: "var(--md-sys-color-dark-secondary)",
-                    }}
-                  />
-                ))}
-                <div style={{ height: 16 }} />
-                {[58, 52, 50].map((w, i) => (
-                  <motion.div
-                    key={i + 3}
-                    animate={{ opacity: [0.35, 0.7, 0.35] }}
-                    transition={{ duration: 1.4, repeat: Infinity, delay: (i + 3) * 0.18, ease: "easeInOut" }}
-                    style={{
-                      height: 12, marginBottom: 12, width: `${w}%`,
-                      borderRadius: "var(--radius-full)",
-                      background: "var(--md-sys-color-dark-secondary)",
-                    }}
-                  />
-                ))}
-              </motion.div>
-            </div>
-          </div>
+        <div
+          ref={chatWrapperRef}
+          style={{
+            ...(chatAreaHeight != null
+              ? { flex: "none", height: chatAreaHeight, transition: "height 0.2s ease" }
+              : { flex: "1" }),
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <AIPrepChat accountName={account.name} onLogVisit={() => startCapture(id, account.name)} />
         </div>
       )}
 
@@ -846,20 +758,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
       </div>}
 
-      {/* Log a Visit CTA — hidden while a capture is active for this account */}
-      {!isCapturing && (
+      {/* Log a Visit CTA — hidden while capturing or in just-created state (button lives in AIPrepChat) */}
+      {!isCapturing && !effectiveJustCreated && (
         <div
           className="absolute left-0 right-0 flex flex-col items-center gap-2.5 px-4"
           style={{ bottom: 32 }}
         >
-          {effectiveJustCreated && (
-            <div className="flex items-center gap-1.5">
-              <Icon name="auto_awesome" size={12} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-              <span style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)" }}>
-                Your first visit will round out the picture.
-              </span>
-            </div>
-          )}
           <button
             onClick={() => startCapture(id, account.name)}
             className="h-11 px-6 text-sm-bold flex items-center gap-2 transition-opacity active:opacity-80"
