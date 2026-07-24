@@ -307,17 +307,10 @@ function NavItem({
         display: "block",
         padding: "10px 12px",
         borderRadius: 10,
-        background: isActive
-          ? `color-mix(in srgb, ${color} 12%, var(--md-sys-color-dark-secondary))`
-          : "transparent",
+        background: isActive ? "var(--md-sys-color-dark-secondary)" : "transparent",
         textDecoration: "none",
         transition: "background 0.12s",
-        border: isActive
-          ? `1px solid color-mix(in srgb, ${color} 35%, transparent)`
-          : "1px solid transparent",
-        boxShadow: isActive
-          ? `inset 3px 0 0 ${color}`
-          : "none",
+        borderLeft: `3px solid ${isActive ? color : "transparent"}`,
       }}
     >
       {/* Top row */}
@@ -327,7 +320,7 @@ function NavItem({
         </span>
         <span style={{
           fontSize: 14,
-          fontWeight: isActive ? 700 : 500,
+          fontWeight: isActive ? 600 : 500,
           color: isActive ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-secondary)",
           flex: 1,
           overflow: "hidden",
@@ -336,22 +329,7 @@ function NavItem({
         }}>
           {label}
         </span>
-        {isActive && (
-          <span style={{
-            fontSize: 9,
-            fontWeight: 700,
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-            color,
-            background: `color-mix(in srgb, ${color} 18%, transparent)`,
-            borderRadius: 4,
-            padding: "2px 5px",
-            flexShrink: 0,
-          }}>
-            Here
-          </span>
-        )}
-        {!isActive && author && (
+        {author && (
           <span style={{
             width: 20,
             height: 20,
@@ -521,16 +499,6 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               title={p.name}
             />
           ))}
-          {otherBranches.map(b => (
-            <RailDot
-              key={b}
-              color="var(--md-sys-color-neonindigo)"
-              icon="●"
-              isActive={currentBranch === b}
-              href="#"
-              title={branchDisplayName(b)}
-            />
-          ))}
         </div>
         {showInstructions && <InstructionsModal onClose={() => setShowInstructions(false)} />}
       </>
@@ -589,7 +557,7 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           description="The baseline prototype with all shipped features."
           isCurrent
           isActive={isMain}
-          href={isMain ? "/home" : CURRENT_APP_URL}
+          href={CURRENT_APP_URL}
         />
 
         {/* Divider */}
@@ -622,14 +590,6 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           ))
         )}
 
-        {otherBranches.map(b => (
-          <NavItem
-            key={b}
-            label={branchDisplayName(b)}
-            isActive={currentBranch === b}
-            href="#"
-          />
-        ))}
 
         {/* Footer: new playground button */}
         <div style={{ marginTop: 12, paddingLeft: 4, paddingRight: 4 }}>
