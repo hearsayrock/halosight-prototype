@@ -499,16 +499,6 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
               title={p.name}
             />
           ))}
-          {otherBranches.map(b => (
-            <RailDot
-              key={b}
-              color="var(--md-sys-color-neonindigo)"
-              icon="●"
-              isActive={currentBranch === b}
-              href="#"
-              title={branchDisplayName(b)}
-            />
-          ))}
         </div>
         {showInstructions && <InstructionsModal onClose={() => setShowInstructions(false)} />}
       </>
@@ -600,14 +590,6 @@ export default function PlaygroundNav({ collapsed, onToggle, currentBranch }: Pr
           ))
         )}
 
-        {otherBranches.map(b => (
-          <NavItem
-            key={b}
-            label={branchDisplayName(b)}
-            isActive={currentBranch === b}
-            href="#"
-          />
-        ))}
 
         {/* Footer: new playground button */}
         <div style={{ marginTop: 12, paddingLeft: 4, paddingRight: 4 }}>
