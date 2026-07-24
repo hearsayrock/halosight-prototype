@@ -43,9 +43,9 @@ const FALLBACK_RESPONSE =
   "I don't have specific intel on them yet — but I can help you think through the approach. What would be most useful to prep right now?";
 
 const PROMPTS: Array<{ label: string; icon: string }> = [
+  { label: "Who am I likely talking to?",          icon: "group" },
   { label: "How should I open the conversation?", icon: "bolt" },
   { label: "What should I ask to qualify them?",  icon: "help"  },
-  { label: "Who am I likely talking to?",          icon: "group" },
 ];
 
 interface Props {
@@ -147,32 +147,27 @@ export default function AIPrepChat({ accountName, onLogVisit }: Props) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.32, duration: 0.3 }}
                 onClick={onLogVisit}
-                className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
+                className="w-full flex items-center gap-3 px-4 py-5 text-left active:opacity-70 transition-opacity"
                 style={{
                   border: "1.5px dashed rgba(139,146,255,0.45)",
                   borderRadius: "var(--radius-xl)",
                   background: "rgba(139,146,255,0.04)",
-                  marginTop: 8,
+                  marginTop: 24,
                 }}
               >
-                <Icon name="auto_awesome" size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-                <div className="flex-1 min-w-0 text-left">
-                  <p className="text-[15px] font-bold leading-snug mb-1" style={{ color: "var(--md-sys-color-neonindigo)" }}>
-                    Log your first visit
-                  </p>
-                  <p className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                    Your first visit will round out the picture.
-                  </p>
-                </div>
+                <Icon name="auto_awesome" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+                <span className="flex-1 text-[15px] font-bold leading-none" style={{ color: "var(--md-sys-color-neonindigo)" }}>
+                  Log your first visit
+                </span>
                 <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
               </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Thread */}
+        {/* Thread — skip the initial seed message; it lives in the bottom bar */}
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {messages.map((msg) => (
+          {messages.filter(m => m.id !== "init").map((msg) => (
             <motion.div
               key={msg.id}
               initial={{ opacity: 0, y: 10 }}
@@ -258,6 +253,24 @@ export default function AIPrepChat({ accountName, onLogVisit }: Props) {
           padding: "8px 16px 28px",
         }}
       >
+        {/* Initial AI bubble */}
+        {!chatStarted && (
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 9, marginBottom: 26 }}>
+            <AgentAvatar />
+            <div style={{
+              maxWidth: "84%",
+              padding: "10px 14px",
+              borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-lg) 5px",
+              background: "var(--md-sys-color-dark-secondary)",
+              color: "var(--md-sys-color-text-primary)",
+              fontSize: 14,
+              lineHeight: 1.65,
+            }}>
+              {INITIAL_MESSAGE}
+            </div>
+          </div>
+        )}
+
         {/* Suggested prompts */}
         <AnimatePresence>
           {promptsVisible && (

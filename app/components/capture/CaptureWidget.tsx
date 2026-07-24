@@ -109,12 +109,12 @@ export default function CaptureWidget() {
     return () => clearInterval(id);
   }, [status]);
 
-  // After 3 seconds of finalizing, open the AI review overlay
+  // After 3 seconds of finalizing, mark the capture ready (skip review overlay)
   useEffect(() => {
     if (status !== "finalizing") return;
-    const t = setTimeout(reviewCapture, 3000);
+    const t = setTimeout(readyCapture, 3000);
     return () => clearTimeout(t);
-  }, [status, reviewCapture]);
+  }, [status, readyCapture]);
 
   useEffect(() => {
     if (status === "idle") setShowPicker(false);
