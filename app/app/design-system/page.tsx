@@ -28,7 +28,6 @@ const SECTIONS = [
   { id: "light-theme-colors",  label: "Light Theme Colors" },
   { id: "dark-theme-colors",   label: "Dark Theme Colors" },
   { id: "text-colors",         label: "Text Colors" },
-  { id: "neutrals",            label: "Neutrals" },
   { id: "semantic-colors",     label: "Semantic Colors" },
   { id: "color",               label: "Color System" },
   { id: "typography",        label: "Typography" },
@@ -682,20 +681,6 @@ export default function DesignSystemPage() {
           </div>
 
           <div className="mb-16" />
-
-          {/* ── Neutrals ──────────────────────────────────────────────── */}
-          <BrandSectionHeader id="neutrals" title="Neutrals" />
-
-          <div className="mb-6">
-            <div className="flex flex-wrap gap-4">
-              <ColorSwatch token="--md-ref-palette-neutral-950" label="950" />
-              <ColorSwatch token="--md-ref-palette-neutral-800" label="800" />
-              <ColorSwatch token="--md-ref-palette-neutral-600" label="600" />
-              <ColorSwatch token="--md-ref-palette-neutral-400" label="400" textColor="#111420" />
-              <ColorSwatch token="--md-ref-palette-neutral-200" label="200" textColor="#111420" />
-              <ColorSwatch token="--md-ref-palette-neutral-50"  label="50"  textColor="#111420" />
-            </div>
-          </div>
 
           <div className="mb-16" />
 
