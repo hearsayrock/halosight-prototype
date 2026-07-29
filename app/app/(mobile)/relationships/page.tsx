@@ -581,7 +581,7 @@ function SectionHeader({ label, count, onAdd, divider }: { label: string; count:
 function SystemSearchSkeleton() {
   return (
     <div className="flex flex-col gap-0">
-      {[...Array(4)].map((_, i) => (
+      {[...Array(3)].map((_, i) => (
         <div key={i} className="flex items-start gap-3 px-4 py-3.5">
           <div className="flex-1 flex flex-col gap-2">
             <div className="skeleton-bone" style={{ width: "60%", height: 14 }} />
@@ -1105,11 +1105,23 @@ function CombinedPageContent() {
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
               style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
             >
-              {/* My accounts */}
-              {showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
-              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+              {/* ── Skeleton preview: both sections loading ───────────────── */}
+              {preview === "search-loading" && (
+                <>
+                  <SectionHeader label="Your Companies" count={0} onAdd={() => {}} />
+                  <AccountListSkeleton rows={3} />
+                  <div style={{ marginTop: 16 }}>
+                    <SectionHeader label="Company-Wide Results" count={0} divider />
+                    <SystemSearchSkeleton />
+                  </div>
+                </>
+              )}
 
-              {myFiltered.length > 0 ? (
+              {/* My accounts */}
+              {preview !== "search-loading" && showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+              {preview !== "search-loading" && !showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+
+              {preview !== "search-loading" && (myFiltered.length > 0 ? (
                 <div className="flex flex-col">
                   {myFiltered.map((account, i) => (
                     <AccountListItem key={account.id} account={account} isLast={i === myFiltered.length - 1} />
@@ -1129,9 +1141,9 @@ function CombinedPageContent() {
                     <p className="text-sm leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
                   </div>
                 </div>
-              ) : null}
+              ) : null)}
 
-              {showSystemSection && (
+              {preview !== "search-loading" && showSystemSection && (
                 <div style={{ marginTop: 16 }}>
                   {systemState === "loading" && (
                     <>
