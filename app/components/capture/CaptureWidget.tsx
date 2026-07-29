@@ -18,6 +18,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useCapture } from "@/lib/context/CaptureContext";
+import { useFakeCall } from "@/lib/context/FakeCallContext";
 import { mockAccountDetails } from "@/lib/mock-data/accounts";
 import Icon from "@/components/ui/Icon";
 import AccountPickerSheet from "@/components/accounts/AccountPickerSheet";
@@ -32,40 +33,42 @@ function formatTime(s: number) {
 
 // ── Animated blob background ──────────────────────────────────────────────────
 
-function BlobBackground({ active }: { active: boolean }) {
+function BlobBackground({ active, paused }: { active: boolean; paused: boolean }) {
   const speed = active ? 1 : 2.8;
 
   return (
     <div
       style={{
         position: "absolute",
-        top: -10,
+        top: paused ? 0 : -10,
         left: 0,
         right: 0,
         bottom: 0,
         filter: "blur(28px)",
         opacity: active ? 1 : 0.55,
-        transition: "opacity 0.8s ease",
-        WebkitMaskImage:
-          "linear-gradient(to bottom, transparent 0px, black 10px, black 100%)",
-        maskImage:
-          "linear-gradient(to bottom, transparent 0px, black 10px, black 100%)",
+        transition: "opacity 0.8s ease, top 0.5s ease",
+        WebkitMaskImage: paused
+          ? "none"
+          : "linear-gradient(to bottom, transparent 0px, black 10px, black 100%)",
+        maskImage: paused
+          ? "none"
+          : "linear-gradient(to bottom, transparent 0px, black 10px, black 100%)",
       }}
     >
       <motion.div
         style={{ position: "absolute", width: 200, height: 200, borderRadius: "50%", background: "#FF6B5B", left: "0%", top: "0%" }}
-        animate={{ x: [0, 50, 10, 70, 0], y: [0, 15, -10, 5, 0] }}
-        transition={{ duration: 7 * speed, repeat: Infinity, ease: "easeInOut" }}
+        animate={paused ? { x: 0, y: 0 } : { x: [0, 50, 10, 70, 0], y: [0, 15, -10, 5, 0] }}
+        transition={paused ? { duration: 0.6, ease: "easeOut" } : { duration: 7 * speed, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
         style={{ position: "absolute", width: 180, height: 180, borderRadius: "50%", background: "#5C63D6", right: "0%", top: "0%" }}
-        animate={{ x: [0, -40, -5, -60, 0], y: [0, 10, -15, 5, 0] }}
-        transition={{ duration: 9 * speed, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        animate={paused ? { x: 0, y: 0 } : { x: [0, -40, -5, -60, 0], y: [0, 10, -15, 5, 0] }}
+        transition={paused ? { duration: 0.6, ease: "easeOut" } : { duration: 9 * speed, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
       <motion.div
         style={{ position: "absolute", width: 160, height: 160, borderRadius: "50%", background: "#8C92FF", left: "30%", top: "5%" }}
-        animate={{ x: [0, 25, -30, 15, 0], y: [0, -10, 20, -5, 0] }}
-        transition={{ duration: 6 * speed, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        animate={paused ? { x: 0, y: 0 } : { x: [0, 25, -30, 15, 0], y: [0, -10, 20, -5, 0] }}
+        transition={paused ? { duration: 0.6, ease: "easeOut" } : { duration: 6 * speed, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
     </div>
   );
@@ -98,16 +101,21 @@ export default function CaptureWidget() {
     status, accountId, accountName, canSwitchAccount, isProspect,
     switchAccount, finishCapture, reviewCapture, readyCapture, dismissCapture,
   } = useCapture();
+  const { callStatus } = useFakeCall();
+  const callInterrupted = callStatus !== "idle";
   const router = useRouter();
   const [elapsed, setElapsed] = useState(0);
   const [showPicker, setShowPicker] = useState(false);
 
   useEffect(() => {
-    if (status !== "recording") return;
-    setElapsed(0);
+    if (status === "recording") setElapsed(0);
+  }, [status]);
+
+  useEffect(() => {
+    if (status !== "recording" || callInterrupted) return;
     const id = setInterval(() => setElapsed((s) => s + 1), 1000);
     return () => clearInterval(id);
-  }, [status]);
+  }, [status, callInterrupted]);
 
   // After 3 seconds of finalizing: prospects get the AI review overlay, accounts go straight to ready
   useEffect(() => {
@@ -161,7 +169,7 @@ export default function CaptureWidget() {
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 380, damping: 38 }}
           >
-            <BlobBackground active={status === "recording"} />
+            <BlobBackground active={status === "recording"} paused={callInterrupted} />
 
             <div
               style={{
@@ -196,7 +204,7 @@ export default function CaptureWidget() {
 
                     <div className="flex-1 min-w-0">
                       <p style={{ fontSize: 17, fontWeight: 700, color: "var(--md-sys-color-text-primary)", lineHeight: 1.2, marginBottom: 3 }}>
-                        Taking notes
+                        {callInterrupted ? "Incoming call" : "Taking notes"}
                       </p>
                       {canSwitchAccount ? (
                         <AccountButton name={accountName ?? ""} onPress={() => setShowPicker(true)} />
@@ -208,11 +216,15 @@ export default function CaptureWidget() {
                     </div>
 
                     <button
-                      onClick={finishCapture}
-                      className="flex-shrink-0 h-9 px-4 text-sm-bold rounded-full active:opacity-70 transition-opacity"
-                      style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-primary)" }}
+                      onClick={callInterrupted ? undefined : finishCapture}
+                      className="flex-shrink-0 h-9 px-4 text-sm-bold rounded-full transition-opacity"
+                      style={{
+                        background: callInterrupted ? "rgba(255,255,255,0.12)" : "var(--md-sys-color-brand-coral)",
+                        color: callInterrupted ? "rgba(255,255,255,0.4)" : "var(--md-sys-color-text-primary)",
+                        cursor: callInterrupted ? "default" : undefined,
+                      }}
                     >
-                      Finish
+                      {callInterrupted ? "Resume" : "Finish"}
                     </button>
                   </motion.div>
                 )}
