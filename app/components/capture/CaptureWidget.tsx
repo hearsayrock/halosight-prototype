@@ -95,7 +95,7 @@ function AccountButton({ name, onPress }: { name: string; onPress: () => void })
 
 export default function CaptureWidget() {
   const {
-    status, accountId, accountName, canSwitchAccount,
+    status, accountId, accountName, canSwitchAccount, isProspect,
     switchAccount, finishCapture, reviewCapture, readyCapture, dismissCapture,
   } = useCapture();
   const router = useRouter();
@@ -109,12 +109,12 @@ export default function CaptureWidget() {
     return () => clearInterval(id);
   }, [status]);
 
-  // After 3 seconds of finalizing, open the AI review overlay
+  // After 3 seconds of finalizing: prospects get the AI review overlay, accounts go straight to ready
   useEffect(() => {
     if (status !== "finalizing") return;
-    const t = setTimeout(reviewCapture, 3000);
+    const t = setTimeout(isProspect ? reviewCapture : readyCapture, 3000);
     return () => clearTimeout(t);
-  }, [status, reviewCapture]);
+  }, [status, isProspect, reviewCapture, readyCapture]);
 
   useEffect(() => {
     if (status === "idle") setShowPicker(false);
@@ -228,10 +228,12 @@ export default function CaptureWidget() {
                     className="px-4 pt-4 pb-7"
                   >
                     <p className="text-sm font-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                      Analyzing your meeting…
+                      {isProspect ? "Analyzing your meeting…" : "Syncing to CRM…"}
                     </p>
                     <p className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                      I'll surface any CRM updates in just a moment.
+                      {isProspect
+                        ? "I'll surface any CRM updates in just a moment."
+                        : "Sit back — notes and action items are on their way to Salesforce."}
                     </p>
                   </motion.div>
                 )}

@@ -511,7 +511,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           </p>
 
           <button
-            onClick={() => startCapture(id, account.name)}
+            onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
             className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
             style={{
               border: "1.5px dashed rgba(139,146,255,0.45)",
@@ -666,7 +666,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           style={{ bottom: 32 }}
         >
           <button
-            onClick={() => startCapture(id, account.name)}
+            onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
             className="h-11 px-6 text-sm-bold flex items-center gap-2 transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-brand-coral)",

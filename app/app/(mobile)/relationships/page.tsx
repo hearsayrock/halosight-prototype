@@ -1059,7 +1059,7 @@ function CombinedPageContent() {
                   {/* Dashboard */}
                   <DashboardGrid
                     suggestedAccount={topAccounts[0]}
-                    onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
+                    onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true, topAccounts[0].halosightType === "prospect")}
                   />
 
                   {/* Companies section */}
