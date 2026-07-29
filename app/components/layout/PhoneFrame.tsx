@@ -16,7 +16,7 @@
  *   viewport exactly as it would on a native device.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import DevPanel, { type DeviceSize } from "./DevPanel";
 import PlaygroundNav from "./PlaygroundNav";
 import MobileKeyboard from "./MobileKeyboard";
@@ -35,6 +35,7 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
   // Sidebars hidden on this branch for user testing — flip to false to restore
   const [focusMode, setFocusMode]           = useState(true);
   const [isMobile, setIsMobile]             = useState(false);
+  const [cursor, setCursor]                 = useState<{ x: number; y: number } | null>(null);
 
   const { width, height } = SIZES[deviceSize];
   const currentBranch = process.env.NEXT_PUBLIC_GIT_BRANCH ?? "local";
@@ -113,10 +114,36 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
         className="phone-frame"
         style={{ width, height, flexShrink: 0 }}
       >
-        <div className="phone-screen" style={{ position: "relative", overflow: "hidden" }}>
+        <div
+          className="phone-screen"
+          style={{ position: "relative", overflow: "hidden", cursor: cursor ? "none" : "default" }}
+          onMouseMove={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            setCursor({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+          }}
+          onMouseLeave={() => setCursor(null)}
+        >
           {children}
           {overlayRoot}
           <MobileKeyboard />
+          {cursor && (
+            <div
+              style={{
+                position: "absolute",
+                left: cursor.x,
+                top: cursor.y,
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                background: "rgba(255, 255, 255, 0.18)",
+                border: "1.5px solid rgba(255, 255, 255, 0.35)",
+                transform: "translate(-50%, -50%)",
+                pointerEvents: "none",
+                zIndex: 9999,
+                backdropFilter: "blur(1px)",
+              }}
+            />
+          )}
         </div>
       </div>
 
