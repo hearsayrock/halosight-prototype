@@ -116,7 +116,7 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
       >
         <div
           className="phone-screen"
-          style={{ position: "relative", overflow: "hidden", cursor: cursor ? "none" : "default" }}
+          style={{ position: "relative", overflow: "hidden" }}
           onMouseMove={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             setCursor({ x: e.clientX - rect.left, y: e.clientY - rect.top });

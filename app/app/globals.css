@@ -68,3 +68,7 @@ html, body {
 }
 
 .phone-screen::-webkit-scrollbar { display: none; }
+
+.phone-frame,
+.phone-frame button,
+.phone-frame a { cursor: none !important; }
