@@ -224,7 +224,7 @@ export default function CaptureWidget() {
                         cursor: callInterrupted ? "default" : undefined,
                       }}
                     >
-                      {callInterrupted ? "Resume" : "Finish"}
+                      {callInterrupted ? "Paused" : "Finish"}
                     </button>
                   </motion.div>
                 )}
