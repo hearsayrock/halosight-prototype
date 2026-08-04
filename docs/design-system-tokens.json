@@ -1,0 +1,224 @@
+{
+  "_meta": {
+    "project": "Halosight",
+    "version": "1.0.0",
+    "updated": "2026-08-04",
+    "description": "Machine-readable design token manifest. Source of truth: app/tokens/colors.css, app/tokens/spacing.css, app/tokens/typography.css. For Flutter ThemeData mapping see docs/flutter-handoff.md.",
+    "tokenPrefix": "--md-sys-color-",
+    "flutterPackage": "material_symbols_icons"
+  },
+
+  "colors": {
+    "_description": "Semantic color tokens. Use var(--token) in CSS. Never use raw hex values in components.",
+
+    "surface": [
+      { "token": "--md-sys-color-background",  "value": "#111420", "role": "Page and app chrome background",     "flutter": "scaffoldBackgroundColor" },
+      { "token": "--md-sys-color-surface-dim",  "value": "#171B29", "role": "Nav, persistent UI (bottom bar)",   "flutter": "colorScheme.surfaceContainerLowest" },
+      { "token": "--md-sys-color-surface-white","value": "#FFFFFF", "role": "Pure white — light surfaces",        "flutter": "colorScheme.surface (light theme)" },
+      { "token": "--md-sys-color-surface-light","value": "#F8FAFC", "role": "Light background, skeleton highlight","flutter": "colorScheme.surfaceContainerLow (light)" },
+      { "token": "--md-sys-color-surface-gray", "value": "#F1F5F9", "role": "Subtle gray background, skeleton base","flutter": "colorScheme.surfaceContainer (light)" }
+    ],
+
+    "darkScale": [
+      { "token": "--md-sys-color-dark-void",      "value": "#04050B", "role": "Near-black — deepest chrome",           "flutter": "colorScheme.surfaceContainerLowest" },
+      { "token": "--md-sys-color-dark-base",      "value": "#0D0F1A", "role": "Off-black — deep backgrounds",          "flutter": "colorScheme.surfaceContainerLow" },
+      { "token": "--md-sys-color-dark-primary",   "value": "#1A1D29", "role": "Primary dark background",               "flutter": "colorScheme.surfaceContainerLow" },
+      { "token": "--md-sys-color-dark-secondary", "value": "#252A36", "role": "Cards, list items, secondary surfaces", "flutter": "colorScheme.surface" },
+      { "token": "--md-sys-color-dark-tertiary",  "value": "#3D4451", "role": "Dividers, borders, dropdown backgrounds","flutter": "colorScheme.surfaceContainerHigh" }
+    ],
+
+    "text": [
+      { "token": "--md-sys-color-text-primary",   "value": "#F7F8FF", "role": "Primary text",                                            "wcag": "AAA", "flutter": "colorScheme.onSurface" },
+      { "token": "--md-sys-color-text-secondary", "value": "#C3CAD8", "role": "Supporting text, subtitles",                               "wcag": "AA",  "flutter": "colorScheme.onSurfaceVariant" },
+      { "token": "--md-sys-color-text-muted",     "value": "#8B94A8", "role": "Muted text, metadata — minimum for readable body copy",    "wcag": "AA",  "flutter": "colorScheme.onSurfaceVariant" },
+      { "token": "--md-sys-color-text-disabled",  "value": "#5D667A", "role": "Placeholders and disabled states ONLY — not body copy",   "wcag": "FAIL","flutter": "colorScheme.outline" },
+      { "token": "--md-sys-color-text-inverse",   "value": "#111420", "role": "Text on light/white surfaces",                             "wcag": "AAA", "flutter": "colorScheme.onPrimary" }
+    ],
+
+    "brandNeonIndigo": [
+      { "token": "--md-sys-color-neonindigo-light", "value": "#B3B8FF", "role": "Neon indigo — light variant",  "flutter": "colorScheme.secondaryContainer" },
+      { "token": "--md-sys-color-neonindigo",       "value": "#8B92FF", "role": "Neon indigo — primary brand",  "flutter": "colorScheme.secondary" },
+      { "token": "--md-sys-color-neonindigo-dark",  "value": "#6B72E8", "role": "Neon indigo — dark variant",   "flutter": "colorScheme.secondaryContainer" }
+    ],
+
+    "brandCoral": [
+      { "token": "--md-sys-color-brand-coral-light", "value": "#FF8F82", "role": "Coral ember — light variant", "flutter": "colorScheme.primaryContainer" },
+      { "token": "--md-sys-color-brand-coral",       "value": "#FF6B5A", "role": "Coral ember — primary CTA",   "flutter": "colorScheme.primary" },
+      { "token": "--md-sys-color-brand-coral-dark",  "value": "#E64A37", "role": "Coral ember — dark variant",  "flutter": "colorScheme.primary (pressed)" }
+    ],
+
+    "brandIndigo": [
+      { "token": "--md-sys-color-indigo-light", "value": "#7E85E6", "role": "Indigo — light variant", "flutter": "colorScheme.tertiary (light)" },
+      { "token": "--md-sys-color-indigo",       "value": "#5B63D6", "role": "Indigo — primary",       "flutter": "colorScheme.tertiary" },
+      { "token": "--md-sys-color-indigo-dark",  "value": "#4850B8", "role": "Indigo — dark variant",  "flutter": "colorScheme.tertiary (pressed)" }
+    ],
+
+    "brandCustom": [
+      { "token": "--md-sys-color-brand-teal",       "value": "#6B9DB0", "role": "Halosight teal — account data viz" },
+      { "token": "--md-sys-color-brand-teal-hover",  "value": "#8CB5C5", "role": "Halosight teal — hover state" },
+      { "token": "--md-sys-color-brand-pink",        "value": "#E85D9C", "role": "Halosight pink — accent" },
+      { "token": "--md-sys-color-recording",         "value": "#FF5A4F", "role": "Live recording indicator dot" }
+    ],
+
+    "semantic": [
+      { "token": "--md-sys-color-success-light", "value": "#86EFAC", "role": "Success — light",   "flutter": "colorScheme.tertiaryContainer" },
+      { "token": "--md-sys-color-success",       "value": "#2ECC71", "role": "Success — default", "flutter": "colorScheme.tertiary (success)" },
+      { "token": "--md-sys-color-success-dark",  "value": "#16A34A", "role": "Success — dark" },
+
+      { "token": "--md-sys-color-warning-light", "value": "#FCD384", "role": "Warning — light" },
+      { "token": "--md-sys-color-warning",       "value": "#F5A623", "role": "Warning — default" },
+      { "token": "--md-sys-color-warning-dark",  "value": "#C47D10", "role": "Warning — dark" },
+
+      { "token": "--md-sys-color-error-light",   "value": "#FF8586", "role": "Error — light",   "flutter": "colorScheme.errorContainer" },
+      { "token": "--md-sys-color-error",         "value": "#FF4D4F", "role": "Error — default", "flutter": "colorScheme.error" },
+      { "token": "--md-sys-color-error-dark",    "value": "#CC1F21", "role": "Error — dark" },
+
+      { "token": "--md-sys-color-info-light",    "value": "#93C5FD", "role": "Info — light" },
+      { "token": "--md-sys-color-info",          "value": "#4DA3FF", "role": "Info — default" },
+      { "token": "--md-sys-color-info-dark",     "value": "#1D6FBF", "role": "Info — dark" }
+    ],
+
+    "dataViz": [
+      { "token": "--md-sys-color-data-account",  "value": "#6B9DB0", "role": "Accounts chart series" },
+      { "token": "--md-sys-color-data-recency",  "value": "#8B92FF", "role": "Recency / last-visited chart series" },
+      { "token": "--md-sys-color-data-crm-sync", "value": "#2ECC71", "role": "CRM sync status indicator" },
+      { "token": "--md-sys-color-data-review",   "value": "#F5A623", "role": "Needs review / pending indicator" }
+    ],
+
+    "alpha": [
+      { "token": "--md-sys-color-alpha-white-10",           "value": "rgba(255,255,255,0.10)", "role": "Default border / divider on dark surfaces" },
+      { "token": "--md-sys-color-alpha-white-18",           "value": "rgba(255,255,255,0.18)", "role": "Active tab pill, hover states" },
+      { "token": "--md-sys-color-alpha-neonindigo-10",      "value": "rgba(179,184,255,0.10)", "role": "Subtle indigo tint" },
+      { "token": "--md-sys-color-alpha-neonindigo-glass",   "value": "rgba(179,184,255,0.10)", "role": "Bottom nav glass background — pair with backdropFilter: blur(20px)" },
+      { "token": "--md-sys-color-alpha-dark-glass",         "value": "rgba(255,255,255,0.18)", "role": "Active nav item glass pill" }
+    ],
+
+    "palette": {
+      "_description": "Primitive reference palette — never use directly in components. Use semantic tokens instead.",
+      "green":  "#2ECC71",
+      "amber":  "#F5A623",
+      "red":    "#FF4D4F",
+      "sky":    "#4DA3FF",
+      "extCyan":   "#5BBFCC",
+      "extLime":   "#89B347",
+      "extOrange": "#C97A42",
+      "extGold":   "#C4962B",
+      "extViolet": "#8875C4",
+      "extRose":   "#C97888"
+    }
+  },
+
+  "gradients": {
+    "_description": "Named gradient definitions. Reference via var(--gradient-*) in CSS.",
+    "login":    "radial-gradient(ellipse 70% 60% at 50% 40%, #1A1E44 0%, #131728 40%, #111420 100%)",
+    "aiDark":   "radial-gradient(ellipse at 25% 30%, rgba(139,146,255,0.85) 0%, transparent 55%), radial-gradient(ellipse at 75% 70%, rgba(255,107,90,0.9) 0%, transparent 55%), #7874D8",
+    "aiLight":  "radial-gradient(ellipse at 25% 30%, rgba(179,184,255,0.85) 0%, transparent 55%), radial-gradient(ellipse at 75% 70%, rgba(255,143,130,0.9) 0%, transparent 55%), #A8AAEE",
+    "hero":     "linear-gradient(to bottom right, #1A1D29, #252A36, #1A1D29)",
+    "card":     "linear-gradient(to bottom right, #475569, #334155)",
+    "textBrand":"linear-gradient(to right, #8B92FF, #5B63D6)"
+  },
+
+  "radius": {
+    "_description": "M3 shape scale. Always use var(--radius-*) — never raw px values in components.",
+    "none": { "token": "--radius-none", "value": "0px",   "m3Scale": "None" },
+    "xs":   { "token": "--radius-xs",   "value": "4px",   "m3Scale": "Extra Small" },
+    "sm":   { "token": "--radius-sm",   "value": "8px",   "m3Scale": "Small",        "flutter": "BorderRadius.circular(8)" },
+    "md":   { "token": "--radius-md",   "value": "12px",  "m3Scale": "Medium",       "flutter": "BorderRadius.circular(12)" },
+    "lg":   { "token": "--radius-lg",   "value": "16px",  "m3Scale": "Large",        "flutter": "BorderRadius.circular(16)" },
+    "xl":   { "token": "--radius-xl",   "value": "28px",  "m3Scale": "Extra Large",  "flutter": "BorderRadius.circular(28)" },
+    "full": { "token": "--radius-full", "value": "100px", "m3Scale": "Full",         "flutter": "BorderRadius.circular(100)" }
+  },
+
+  "spacing": {
+    "_description": "4px base grid. Values available as Tailwind utilities.",
+    "1":  { "token": "--spacing-1",  "value": "4px" },
+    "2":  { "token": "--spacing-2",  "value": "8px" },
+    "3":  { "token": "--spacing-3",  "value": "12px" },
+    "4":  { "token": "--spacing-4",  "value": "16px" },
+    "5":  { "token": "--spacing-5",  "value": "20px" },
+    "6":  { "token": "--spacing-6",  "value": "24px" },
+    "8":  { "token": "--spacing-8",  "value": "32px" },
+    "10": { "token": "--spacing-10", "value": "40px" },
+    "12": { "token": "--spacing-12", "value": "48px" },
+    "16": { "token": "--spacing-16", "value": "64px" }
+  },
+
+  "elevation": {
+    "_description": "M3 shadow ramp — use var(--elevation-N) in box-shadow. Flutter: Material elevation levels.",
+    "0": { "token": "--elevation-0", "value": "none",                                                                                        "flutter": "elevation: 0" },
+    "1": { "token": "--elevation-1", "value": "0 1px 2px rgba(0,0,0,0.35), 0 1px 3px 1px rgba(0,0,0,0.2)",   "m3Level": 1,                  "flutter": "elevation: 1" },
+    "2": { "token": "--elevation-2", "value": "0 1px 2px rgba(0,0,0,0.35), 0 2px 6px 2px rgba(0,0,0,0.2)",   "m3Level": 2,                  "flutter": "elevation: 2" },
+    "3": { "token": "--elevation-3", "value": "0 4px 8px 3px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.35)",   "m3Level": 3, "use": "Dropdowns, menus", "flutter": "elevation: 3" },
+    "4": { "token": "--elevation-4", "value": "0 6px 10px 4px rgba(0,0,0,0.2), 0 2px 3px rgba(0,0,0,0.35)",  "m3Level": 4, "use": "Modals, sheets",   "flutter": "elevation: 4" }
+  },
+
+  "typography": {
+    "_description": "All type styles. Use named CSS classes in components. Flutter mapping: see docs/flutter-handoff.md.",
+    "fonts": {
+      "heading": { "family": "Roboto Slab", "fallback": "Georgia, serif",      "flutter": "'RobotoSlab'" },
+      "body":    { "family": "Barlow",      "fallback": "system-ui, sans-serif","flutter": "'Barlow'" }
+    },
+    "scale": [
+      { "class": "heading-1",    "family": "Roboto Slab", "weight": 700, "sizePx": 60, "lineHeightPx": 66,  "flutter": "TextStyle(fontFamily:'RobotoSlab', fontWeight:FontWeight.w700, fontSize:60, height:1.10)" },
+      { "class": "heading-2",    "family": "Roboto Slab", "weight": 700, "sizePx": 48, "lineHeightPx": 58,  "flutter": "TextStyle(fontFamily:'RobotoSlab', fontWeight:FontWeight.w700, fontSize:48, height:1.21)" },
+      { "class": "heading-3",    "family": "Roboto Slab", "weight": 700, "sizePx": 36, "lineHeightPx": 43,  "flutter": "TextStyle(fontFamily:'RobotoSlab', fontWeight:FontWeight.w700, fontSize:36, height:1.19)" },
+      { "class": "heading-4",    "family": "Roboto Slab", "weight": 700, "sizePx": 24, "lineHeightPx": 31,  "flutter": "TextStyle(fontFamily:'RobotoSlab', fontWeight:FontWeight.w700, fontSize:24, height:1.29)" },
+      { "class": "heading-5",    "family": "Roboto Slab", "weight": 700, "sizePx": 20, "lineHeightPx": 26,  "flutter": "TextStyle(fontFamily:'RobotoSlab', fontWeight:FontWeight.w700, fontSize:20, height:1.30)" },
+      { "class": "heading-6",    "family": "Roboto Slab", "weight": 700, "sizePx": 18, "lineHeightPx": 24,  "flutter": "TextStyle(fontFamily:'RobotoSlab', fontWeight:FontWeight.w700, fontSize:18, height:1.33)" },
+
+      { "class": "text-xl-bold",   "family": "Barlow", "weight": 600, "sizePx": 20, "lineHeightPx": 30, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w600, fontSize:20, height:1.50)" },
+      { "class": "text-lg-bold",   "family": "Barlow", "weight": 600, "sizePx": 18, "lineHeightPx": 27, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w600, fontSize:18, height:1.50)" },
+      { "class": "text-base-bold", "family": "Barlow", "weight": 600, "sizePx": 16, "lineHeightPx": 24, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w600, fontSize:16, height:1.50)" },
+      { "class": "text-sm-bold",   "family": "Barlow", "weight": 600, "sizePx": 14, "lineHeightPx": 21, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w600, fontSize:14, height:1.50)" },
+      { "class": "text-xs-bold",   "family": "Barlow", "weight": 600, "sizePx": 12, "lineHeightPx": 18, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w600, fontSize:12, height:1.50)" },
+
+      { "class": "body-xl",   "family": "Barlow", "weight": 400, "sizePx": 20, "lineHeightPx": 30, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w400, fontSize:20, height:1.50)" },
+      { "class": "body-lg",   "family": "Barlow", "weight": 400, "sizePx": 18, "lineHeightPx": 27, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w400, fontSize:18, height:1.50)" },
+      { "class": "body-base", "family": "Barlow", "weight": 400, "sizePx": 16, "lineHeightPx": 24, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w400, fontSize:16, height:1.50)" },
+      { "class": "body-sm",   "family": "Barlow", "weight": 400, "sizePx": 14, "lineHeightPx": 21, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w400, fontSize:14, height:1.50)" },
+      { "class": "body-xs",   "family": "Barlow", "weight": 400, "sizePx": 12, "lineHeightPx": 18, "flutter": "TextStyle(fontFamily:'Barlow', fontWeight:FontWeight.w400, fontSize:12, height:1.50)" },
+
+      { "class": "text-17",      "family": "Barlow", "weight": 400, "sizePx": 17, "lineHeightPx": 24, "note": "Form inputs" },
+      { "class": "text-15",      "family": "Barlow", "weight": 400, "sizePx": 15, "lineHeightPx": 22 },
+      { "class": "text-15-bold", "family": "Barlow", "weight": 600, "sizePx": 15, "lineHeightPx": 22 },
+      { "class": "text-13",      "family": "Barlow", "weight": 400, "sizePx": 13, "lineHeightPx": 19 },
+      { "class": "text-13-bold", "family": "Barlow", "weight": 600, "sizePx": 13, "lineHeightPx": 19 },
+      { "class": "text-11",      "family": "Barlow", "weight": 400, "sizePx": 11, "lineHeightPx": 16 },
+      { "class": "text-11-bold", "family": "Barlow", "weight": 600, "sizePx": 11, "lineHeightPx": 16 },
+
+      { "class": "subheadline-lg", "family": "Barlow", "weight": 400, "sizePx": 24, "lineHeightPx": 36 },
+      { "class": "subheadline-md", "family": "Barlow", "weight": 400, "sizePx": 20, "lineHeightPx": 30 },
+
+      { "class": "eyebrow-text", "family": "Barlow", "weight": 600, "sizePx": 14, "lineHeightPx": 20, "textTransform": "uppercase", "letterSpacing": "1px" },
+
+      { "class": "label-serif",   "family": "Roboto Slab", "weight": 400, "sizePx": 10, "lineHeightPx": 14, "flutter": "TextStyle(fontFamily:'RobotoSlab', fontWeight:FontWeight.w400, fontSize:10, height:1.40)" },
+      { "class": "text-2xs",      "family": "Barlow",      "weight": 400, "sizePx": 10, "lineHeightPx": 14, "flutter": "TextStyle(fontFamily:'Barlow',     fontWeight:FontWeight.w400, fontSize:10, height:1.40)" },
+      { "class": "text-2xs-bold", "family": "Barlow",      "weight": 600, "sizePx": 10, "lineHeightPx": 14 }
+    ]
+  },
+
+  "icons": {
+    "_description": "Material Symbols Rounded variable font. Flutter: use material_symbols_icons package.",
+    "fontFamily": "Material Symbols Rounded",
+    "flutterPackage": "material_symbols_icons: ^4.0.0",
+    "flutterImport": "package:material_symbols_icons/symbols.dart",
+    "defaultFill": false,
+    "defaultWeight": 400,
+    "defaultGrade": 0,
+    "defaultSize": 24,
+    "mapping": "Icon names are identical between prototype (\"home\") and Flutter (Symbols.home)"
+  },
+
+  "animations": {
+    "_description": "Shared spring/transition presets used across the prototype.",
+    "springDefault":     { "type": "spring", "stiffness": 380, "damping": 38, "use": "CaptureWidget slide-up" },
+    "springSnappy":      { "type": "spring", "stiffness": 420, "damping": 36, "use": "Island banners, call overlays" },
+    "springMenu":        { "type": "spring", "stiffness": 380, "damping": 22, "mass": 0.9, "use": "Dropdown menus" },
+    "pageTransitionMs":  200,
+    "toastDurationMs":   2500
+  },
+
+  "breakpoints": {
+    "aside": { "token": "--breakpoint-aside", "value": "860px", "note": "Sidebar visible below this → drawer" }
+  }
+}
