@@ -53,6 +53,15 @@ export const CURRENT_APP_URL = "https://halosight-prototype.vercel.app";
 
 export const PLAYGROUNDS: Playground[] = [
   {
+    id: "playground/clunky-attack",
+    name: "Clunky Attack",
+    description: "Attack the clunky parts of the app",
+    url: "",
+    author: "Ash",
+    status: "exploring",
+    startedAt: "2026-08-10",
+  },
+  {
     id: "playground/halosight-lite-v1",
     name: "Halosight Lite V1",
     description: "Explore a trial version of the app with no CRM connect.",
