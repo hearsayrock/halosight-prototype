@@ -54,8 +54,9 @@
     ],
 
     "brandCustom": [
+      { "token": "--md-sys-color-brand-teal-light", "value": "#8CB5C5", "role": "Halosight teal — light variant" },
       { "token": "--md-sys-color-brand-teal",       "value": "#6B9DB0", "role": "Halosight teal — account data viz" },
-      { "token": "--md-sys-color-brand-teal-hover",  "value": "#8CB5C5", "role": "Halosight teal — hover state" },
+      { "token": "--md-sys-color-brand-teal-dark",  "value": "#4D8495", "role": "Halosight teal — dark variant" },
       { "token": "--md-sys-color-brand-pink",        "value": "#E85D9C", "role": "Halosight pink — accent" },
       { "token": "--md-sys-color-recording",         "value": "#FF5A4F", "role": "Live recording indicator dot" }
     ],

@@ -531,7 +531,9 @@ const COLOR_GROUPS: { label: string; tokens: { name: string; value: string; usag
   {
     label: "Brand — Teal (completion)",
     tokens: [
-      { name: "--md-sys-color-brand-teal", value: "#00BFA5", usage: "'Mark as Complete' CTA on Action Item Detail" },
+      { name: "--md-sys-color-brand-teal-light", value: "#8CB5C5", usage: "Teal light variant" },
+      { name: "--md-sys-color-brand-teal",       value: "#6B9DB0", usage: "'Mark as Complete' CTA on Action Item Detail" },
+      { name: "--md-sys-color-brand-teal-dark",  value: "#4D8495", usage: "Teal dark variant" },
     ],
   },
   {
