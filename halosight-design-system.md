@@ -80,8 +80,9 @@ Use for account/relationship data visualization, badges, featured highlights.
 
 | Token | Value |
 |---|---|
+| `--md-sys-color-brand-teal-light` | `#8CB5C5` |
 | `--md-sys-color-brand-teal` | `#6B9DB0` |
-| `--md-sys-color-brand-teal-hover` | `#8CB5C5` |
+| `--md-sys-color-brand-teal-dark` | `#4D8495` |
 
 ### Brand — Pink (Special Accents)
 
