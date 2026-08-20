@@ -28,7 +28,6 @@ const SECTIONS = [
   { id: "light-theme-colors",  label: "Light Theme Colors" },
   { id: "dark-theme-colors",   label: "Dark Theme Colors" },
   { id: "text-colors",         label: "Text Colors" },
-  { id: "neutrals",            label: "Neutrals" },
   { id: "semantic-colors",     label: "Semantic Colors" },
   { id: "color",               label: "Color System" },
   { id: "typography",        label: "Typography" },
@@ -49,7 +48,7 @@ const SECTIONS = [
 function SectionHeader({ id, title, subtitle }: { id: string; title: string; subtitle?: string }) {
   return (
     <div id={id} className="mb-8 pt-2">
-      <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: "#FFFFFF" }}>{title}</h2>
+      <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--md-sys-color-text-primary)" }}>{title}</h2>
       {subtitle && <p className="mt-1 text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>{subtitle}</p>}
       <div className="mt-3 h-px" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
     </div>
@@ -99,7 +98,7 @@ function CopyTokenButton({ token }: { token: string }) {
     <button
       onClick={handleCopy}
       className="flex-shrink-0 flex items-center transition-colors active:opacity-60"
-      style={{ color: copied ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-disabled)" }}
+      style={{ color: copied ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-disabled)" }}
       title={`Copy var(${token})`}
     >
       <Icon name={copied ? "check" : "content_copy"} size={11} style={{ lineHeight: 1 }} />
@@ -119,9 +118,11 @@ function ColorSwatch({
   const [liveValue, setLiveValue] = useState("…");
 
   useEffect(() => {
-    setLiveValue(
-      getComputedStyle(document.documentElement).getPropertyValue(token).trim()
-    );
+    const read = () =>
+      setLiveValue(getComputedStyle(document.documentElement).getPropertyValue(token).trim());
+    read();
+    window.addEventListener("themechange", read);
+    return () => window.removeEventListener("themechange", read);
   }, [token]);
 
   const needsBorder = token === "--md-sys-color-background" || token === "--md-sys-color-surface-dim";
@@ -146,7 +147,7 @@ function ColorSwatch({
       <div style={{ background: "var(--md-sys-color-dark-secondary)", padding: "8px 10px", flex: 1 }}>
         <p className="font-mono leading-tight truncate" style={{ fontSize: 11, color: "var(--md-sys-color-text-primary)", letterSpacing: "0.01em" }}>{label}</p>
         <div className="flex items-center gap-1 mt-[3px]">
-          <p className="font-mono leading-tight truncate" style={{ fontSize: 11, color: "var(--md-sys-color-neonindigo-light)", opacity: 0.7 }}>{token}</p>
+          <p className="font-mono leading-tight truncate" style={{ fontSize: 11, color: "var(--md-sys-color-neonindigo)", opacity: 0.75 }}>{token}</p>
           <CopyTokenButton token={token} />
         </div>
         <p className="font-mono leading-tight truncate mt-[3px]" style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)" }}>{liveValue}</p>
@@ -184,7 +185,7 @@ function GradientSwatch({ token, label, textGradient = false }: { token: string;
         )}
         <p className="font-mono leading-tight truncate" style={{ fontSize: 11, color: "var(--md-sys-color-text-primary)", letterSpacing: "0.01em" }}>{label}</p>
         <div className="flex items-center gap-1 mt-[3px]">
-          <p className="font-mono leading-tight truncate" style={{ fontSize: 11, color: "var(--md-sys-color-neonindigo-light)", opacity: 0.7 }}>{token}</p>
+          <p className="font-mono leading-tight truncate" style={{ fontSize: 11, color: "var(--md-sys-color-neonindigo)", opacity: 0.75 }}>{token}</p>
           <CopyTokenButton token={token} />
         </div>
       </div>
@@ -199,7 +200,11 @@ function AlphaSwatch({ token, label, description, glass = false }: {
 }) {
   const [liveValue, setLiveValue] = useState("…");
   useEffect(() => {
-    setLiveValue(getComputedStyle(document.documentElement).getPropertyValue(token).trim());
+    const read = () =>
+      setLiveValue(getComputedStyle(document.documentElement).getPropertyValue(token).trim());
+    read();
+    window.addEventListener("themechange", read);
+    return () => window.removeEventListener("themechange", read);
   }, [token]);
 
   return (
@@ -216,14 +221,14 @@ function AlphaSwatch({ token, label, description, glass = false }: {
         style={{
           height: 80,
           backgroundImage: [
-            "linear-gradient(45deg, #3D4451 25%, transparent 25%)",
-            "linear-gradient(-45deg, #3D4451 25%, transparent 25%)",
-            "linear-gradient(45deg, transparent 75%, #3D4451 75%)",
-            "linear-gradient(-45deg, transparent 75%, #3D4451 75%)",
+            "linear-gradient(45deg, var(--md-sys-color-dark-tertiary) 25%, transparent 25%)",
+            "linear-gradient(-45deg, var(--md-sys-color-dark-tertiary) 25%, transparent 25%)",
+            "linear-gradient(45deg, transparent 75%, var(--md-sys-color-dark-tertiary) 75%)",
+            "linear-gradient(-45deg, transparent 75%, var(--md-sys-color-dark-tertiary) 75%)",
           ].join(", "),
           backgroundSize: "10px 10px",
           backgroundPosition: "0 0, 0 5px, 5px -5px, -5px 0px",
-          backgroundColor: "#252A36",
+          backgroundColor: "var(--md-sys-color-dark-secondary)",
           borderBottom: "1px solid rgba(0,0,0,0.15)",
         }}
       >
@@ -245,7 +250,7 @@ function AlphaSwatch({ token, label, description, glass = false }: {
       <div style={{ background: "var(--md-sys-color-dark-secondary)", padding: "8px 10px", flex: 1 }}>
         <p className="font-mono leading-tight truncate" style={{ fontSize: 11, color: "var(--md-sys-color-text-primary)", letterSpacing: "0.01em" }}>{label}</p>
         <div className="flex items-center gap-1 mt-[3px]">
-          <p className="font-mono leading-tight truncate" style={{ fontSize: 11, color: "var(--md-sys-color-neonindigo-light)", opacity: 0.7 }}>{token}</p>
+          <p className="font-mono leading-tight truncate" style={{ fontSize: 11, color: "var(--md-sys-color-neonindigo)", opacity: 0.75 }}>{token}</p>
           <CopyTokenButton token={token} />
         </div>
         <p className="font-mono leading-tight truncate mt-[3px]" style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)" }}>{liveValue}</p>
@@ -399,6 +404,16 @@ function TabBarDemo() {
 export default function DesignSystemPage() {
   const [inputValue, setInputValue] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    if (theme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+    window.dispatchEvent(new CustomEvent("themechange"));
+  }, [theme]);
 
   // Close on Escape + lock body scroll when drawer is open
   useEffect(() => {
@@ -494,9 +509,29 @@ export default function DesignSystemPage() {
             M3
           </span>
         </div>
-        <Link href="/relationships" className="text-[13px]" style={{ color: "var(--md-sys-color-neonindigo)" }}>
-          ← Back to app
-        </Link>
+        <div className="flex items-center gap-3">
+          {/* Theme toggle */}
+          <button
+            onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}
+            className="flex items-center gap-1.5 h-8 px-3 rounded-full text-[12px] font-semibold transition-all"
+            style={{
+              background: "var(--md-sys-color-dark-secondary)",
+              border: "1px solid var(--md-sys-color-alpha-white-10)",
+              color: "var(--md-sys-color-text-muted)",
+            }}
+          >
+            <Icon
+              name={theme === "dark" ? "dark_mode" : "light_mode"}
+              size={14}
+              fill
+              style={{ color: "var(--md-sys-color-text-muted)" }}
+            />
+            {theme === "dark" ? "Dark" : "Light"}
+          </button>
+          <Link href="/relationships" className="text-[13px]" style={{ color: "var(--md-sys-color-neonindigo)" }}>
+            ← Back to app
+          </Link>
+        </div>
       </div>
 
       <div className="flex">
@@ -623,8 +658,9 @@ export default function DesignSystemPage() {
               Use for alternative secondary actions, featured badges, blog card highlights, and supportive elements that need visual distinction.
             </p>
             <div className="flex flex-wrap gap-4">
+              <ColorSwatch token="--md-sys-color-brand-teal-light" label="light" textColor="#111420" />
               <ColorSwatch token="--md-sys-color-brand-teal"       label="base" />
-              <ColorSwatch token="--md-sys-color-brand-teal-hover" label="hover" textColor="#111420" />
+              <ColorSwatch token="--md-sys-color-brand-teal-dark"  label="dark" />
             </div>
           </div>
 
@@ -642,7 +678,7 @@ export default function DesignSystemPage() {
           <div className="mb-16" />
 
           {/* ── Light Theme Colors ────────────────────────────────────── */}
-          <BrandSectionHeader id="light-theme-colors" title="Light Theme Colors" />
+          <BrandSectionHeader id="light-theme-colors" title={theme === "light" ? "Dark Theme Colors" : "Light Theme Colors"} />
 
           <div className="mb-6">
             <div className="flex flex-wrap gap-4">
@@ -655,7 +691,7 @@ export default function DesignSystemPage() {
           <div className="mb-16" />
 
           {/* ── Dark Theme Colors ─────────────────────────────────────── */}
-          <BrandSectionHeader id="dark-theme-colors" title="Dark Theme Colors" />
+          <BrandSectionHeader id="dark-theme-colors" title={theme === "light" ? "Light Theme Colors" : "Dark Theme Colors"} />
 
           <div className="mb-6">
             <div className="flex flex-wrap gap-4">
@@ -682,20 +718,6 @@ export default function DesignSystemPage() {
           </div>
 
           <div className="mb-16" />
-
-          {/* ── Neutrals ──────────────────────────────────────────────── */}
-          <BrandSectionHeader id="neutrals" title="Neutrals" />
-
-          <div className="mb-6">
-            <div className="flex flex-wrap gap-4">
-              <ColorSwatch token="--md-ref-palette-neutral-950" label="950" />
-              <ColorSwatch token="--md-ref-palette-neutral-800" label="800" />
-              <ColorSwatch token="--md-ref-palette-neutral-600" label="600" />
-              <ColorSwatch token="--md-ref-palette-neutral-400" label="400" textColor="#111420" />
-              <ColorSwatch token="--md-ref-palette-neutral-200" label="200" textColor="#111420" />
-              <ColorSwatch token="--md-ref-palette-neutral-50"  label="50"  textColor="#111420" />
-            </div>
-          </div>
 
           <div className="mb-16" />
 
