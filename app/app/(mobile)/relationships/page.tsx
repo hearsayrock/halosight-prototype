@@ -362,6 +362,99 @@ function TaskStrip({
   );
 }
 
+// ── Recent Interaction Banner ─────────────────────────────────────────────────
+
+function formatActivityTime(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffHours = diffMs / (1000 * 60 * 60);
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    const h = date.getHours();
+    const m = date.getMinutes();
+    const ampm = h >= 12 ? "PM" : "AM";
+    const h12 = h % 12 || 12;
+    return `Today · ${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+  }
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function RecentInteractionBanner({ activity }: { activity: HomeActivity }) {
+  const [dismissed, setDismissed] = useState(false);
+
+  return (
+    <AnimatePresence>
+      {!dismissed && (
+        <motion.div
+          initial={{ opacity: 1, y: 0, height: "auto" }}
+          exit={{ opacity: 0, y: -8, height: 0, marginBottom: 0 }}
+          transition={{ duration: 0.22, ease: "easeInOut" }}
+          className="px-4"
+          style={{ marginBottom: 10, overflow: "hidden" }}
+        >
+          <Link href={`/relationships/${activity.accountId}/activity/${activity.activityId}`}>
+            <div
+              className="flex items-center gap-3 active:opacity-75 transition-opacity"
+              style={{
+                background: "var(--md-sys-color-dark-secondary)",
+                borderRadius: "var(--radius-xl)",
+                border: "1px solid rgba(139,146,255,0.18)",
+                padding: "12px 10px 12px 14px",
+              }}
+            >
+              {/* Icon */}
+              <div
+                className="flex items-center justify-center flex-shrink-0"
+                style={{
+                  width: 34, height: 34,
+                  borderRadius: "var(--radius-md)",
+                  background: "rgba(139,146,255,0.12)",
+                }}
+              >
+                <Icon name="forum" size={17} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <p
+                  className="text-sm-bold"
+                  style={{
+                    color: "var(--md-sys-color-text-primary)",
+                    lineHeight: 1.3,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {activity.title}
+                </p>
+                <p className="body-xs" style={{ color: "var(--md-sys-color-text-muted)", marginTop: 3 }}>
+                  {activity.accountName}
+                  <span style={{ color: "var(--md-sys-color-text-disabled)" }}> · </span>
+                  {formatActivityTime(activity.date)}
+                </p>
+              </div>
+
+              {/* Dismiss */}
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDismissed(true); }}
+                className="flex items-center justify-center flex-shrink-0 active:opacity-60 transition-opacity"
+                style={{ width: 32, height: 32 }}
+              >
+                <Icon name="close" size={16} style={{ color: "var(--md-sys-color-text-disabled)" }} />
+              </button>
+            </div>
+          </Link>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 // ── Dashboard card ────────────────────────────────────────────────────────────
 
 function DashboardGrid({
@@ -1061,6 +1154,9 @@ function CombinedPageContent() {
                     suggestedAccount={topAccounts[0]}
                     onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true, topAccounts[0].halosightType === "prospect")}
                   />
+
+                  {/* Recent interaction */}
+                  <RecentInteractionBanner activity={mockActivities[0]} />
 
                   {/* Companies section */}
                   <div className="mb-3">
