@@ -23,6 +23,13 @@ import SegmentedControl from "@/components/ui/SegmentedControl";
 import { useSalesforce, type ActivityDestination } from "@/lib/context/SalesforceContext";
 import { mockAnalysis } from "@/lib/mock-data/salesforce";
 
+const TYPE_SAMPLES: Record<string, { subject: string; account: string; date: string }> = {
+  Task: { subject: "Send Q3 pricing and updated deck", account: "Jack's Tire & Oil", date: "Aug 12" },
+  Call: { subject: "Checked in on fleet renewal timeline", account: "Midtown Chevrolet", date: "Aug 8" },
+  "Site Audit": { subject: "Annual safety audit — east lot", account: "Summit Auto Group", date: "Jul 28" },
+  "Route Check": { subject: "Route 9 corridor visit", account: "Route 9 Motors", date: "Aug 5" },
+};
+
 const DEST_OPTS: { value: ActivityDestination; label: string }[] = [
   { value: "note", label: "Note" },
   { value: "task", label: "Action item" },
@@ -375,9 +382,19 @@ export default function ImportReviewPage() {
                                     {type.count}
                                   </span>
                                 </div>
-                                <div style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", marginBottom: 10 }}>
-                                  "Called Marcus re: Q3 pricing" · Jack's Tire &amp; Oil · Aug 12
-                                </div>
+                                {(() => {
+                                  const s = TYPE_SAMPLES[type.name];
+                                  return s ? (
+                                    <div style={{ marginBottom: 12 }}>
+                                      <div style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", marginBottom: 3 }}>
+                                        "{s.subject}"
+                                      </div>
+                                      <div style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)" }}>
+                                        {s.account} · {s.date}
+                                      </div>
+                                    </div>
+                                  ) : null;
+                                })()}
                                 <SegmentedControl
                                   options={DEST_OPTS}
                                   value={(answers[type.name] ?? type.recommended ?? "note") as ActivityDestination}
