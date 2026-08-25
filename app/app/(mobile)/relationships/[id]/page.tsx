@@ -617,8 +617,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         {/* Salesforce provenance */}
         {!effectiveJustCreated && (
           <div className="flex items-center gap-1.5 mt-3 justify-center">
-            <Icon name="cloud_download" size={13} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-            <span style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)" }}>
+            <Icon name="cloud_download" size={12} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, marginTop: 1 }} />
+            <span style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)", lineHeight: 1 }}>
               Imported from Salesforce Aug 24
             </span>
           </div>
