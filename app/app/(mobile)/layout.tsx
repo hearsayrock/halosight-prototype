@@ -20,16 +20,16 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
   return (
     <AccountStateProvider>
       <SalesforceProvider>
-      <ActionItemsProvider>
-        <CaptureProvider>
-          <PhoneFrame>
-            <PageTransition>{children}</PageTransition>
-            <StaticBottomNav />
-            <CaptureWidget />
-            <DemoReset />
-          </PhoneFrame>
-        </CaptureProvider>
-      </ActionItemsProvider>
+        <ActionItemsProvider>
+          <CaptureProvider>
+            <PhoneFrame>
+              <PageTransition>{children}</PageTransition>
+              <StaticBottomNav />
+              <CaptureWidget />
+              <DemoReset />
+            </PhoneFrame>
+          </CaptureProvider>
+        </ActionItemsProvider>
       </SalesforceProvider>
     </AccountStateProvider>
   );
