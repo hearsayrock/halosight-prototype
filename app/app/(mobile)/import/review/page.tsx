@@ -114,6 +114,40 @@ function DestinationMovedToast({
   );
 }
 
+function DismissExceptionsToast({ onUndo }: { onUndo: () => void }) {
+  const overlayRoot = typeof document !== "undefined" ? document.getElementById("phone-overlay-root") : null;
+  if (!overlayRoot) return null;
+  return createPortal(
+    <motion.div
+      key="dismiss-toast"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 8 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      style={{ position: "absolute", bottom: 200, left: 16, right: 16, zIndex: 60 }}
+    >
+      <div style={{
+        background: "var(--md-sys-color-dark-tertiary)",
+        border: "1px solid var(--md-sys-color-alpha-white-18)",
+        borderRadius: "var(--radius-md)",
+        padding: "12px 14px",
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+      }}>
+        <Icon name="auto_awesome" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+        <span style={{ flex: 1, fontSize: 13.5, color: "var(--md-sys-color-text-primary)" }}>
+          Treating these as account notes
+        </span>
+        <button onClick={onUndo} className="active:opacity-60 transition-opacity">
+          <span style={{ fontSize: 13.5, fontWeight: 600, color: "var(--md-sys-color-neonindigo)" }}>Undo</span>
+        </button>
+      </div>
+    </motion.div>,
+    overlayRoot
+  );
+}
+
 export default function ImportReviewPage() {
   const router = useRouter();
   const {
@@ -129,24 +163,42 @@ export default function ImportReviewPage() {
 
   const [toastVisible, setToastVisible] = useState(false);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [dismissedTypeNames, setDismissedTypeNames] = useState<string[]>([]);
+  const [dismissToastVisible, setDismissToastVisible] = useState(false);
+  const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const data = analysis ?? mockAnalysis;
 
   // Derived counts
   const answers = review.answers;
   const activityTypes = data.activityTypes;
 
-  const noteCount = activityTypes
-    .filter((t) => (answers[t.name] ?? t.recommended ?? "note") === "note")
-    .reduce((s, t) => s + t.count, 0);
-  const taskCount = activityTypes
-    .filter((t) => (answers[t.name] ?? t.recommended ?? "note") === "task")
-    .reduce((s, t) => s + t.count, 0);
-  const skipCount = activityTypes
-    .filter((t) => (answers[t.name] ?? t.recommended ?? "note") === "skip")
-    .reduce((s, t) => s + t.count, 0) + data.unlinkedCount;
+  function resolvedDest(t: typeof activityTypes[number]): ActivityDestination {
+    if (answers[t.name]) return answers[t.name] as ActivityDestination;
+    if (dismissedTypeNames.includes(t.name)) return "note";
+    return (t.recommended ?? "note") as ActivityDestination;
+  }
 
-  const unresolvedTypes = activityTypes.filter((t) => !t.confident && !answers[t.name]);
+  const noteCount = activityTypes.filter((t) => resolvedDest(t) === "note").reduce((s, t) => s + t.count, 0);
+  const taskCount = activityTypes.filter((t) => resolvedDest(t) === "task").reduce((s, t) => s + t.count, 0);
+  const skipCount = activityTypes.filter((t) => resolvedDest(t) === "skip").reduce((s, t) => s + t.count, 0) + data.unlinkedCount;
+
+  const unresolvedTypes = activityTypes.filter((t) => !t.confident && !answers[t.name] && !dismissedTypeNames.includes(t.name));
   const hasUnresolved = unresolvedTypes.length > 0;
+
+  function handleDismissExceptions() {
+    setDismissedTypeNames(unresolvedTypes.map((t) => t.name));
+    setDismissToastVisible(true);
+    if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+    dismissTimerRef.current = setTimeout(() => setDismissToastVisible(false), 5000);
+  }
+
+  function handleUndoDismiss() {
+    setDismissedTypeNames([]);
+    setDismissToastVisible(false);
+    if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+  }
   const totalActivity = noteCount + taskCount + skipCount;
   const netImport = noteCount + taskCount;
 
@@ -179,7 +231,10 @@ export default function ImportReviewPage() {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
   }
 
-  useEffect(() => () => { if (toastTimerRef.current) clearTimeout(toastTimerRef.current); }, []);
+  useEffect(() => () => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+  }, []);
 
   const SHOWN_ACCOUNTS = 6;
   const accounts = data.accounts;
@@ -237,26 +292,41 @@ export default function ImportReviewPage() {
 
           {/* Exception row */}
           {hasUnresolved && (
-            <button
-              onClick={() => router.push("/import/question")}
-              className="w-full flex items-start gap-3 px-4 py-4 mb-4 active:opacity-80 transition-opacity"
+            <div
+              className="flex items-start gap-3 mb-4"
               style={{
                 background: "rgba(245,166,35,0.08)",
                 border: "1px solid rgba(245,166,35,0.35)",
                 borderRadius: "var(--radius-md)",
+                overflow: "hidden",
               }}
             >
-              <Icon name="help" size={20} style={{ color: "var(--md-sys-color-warning)", flexShrink: 0, marginTop: 1 }} />
-              <div className="flex-1 text-left min-w-0">
-                <div style={{ fontSize: 14.5, fontWeight: 600, color: "var(--md-sys-color-text-primary)", marginBottom: 3 }}>
-                  {unresolvedTypes.length} activity {unresolvedTypes.length === 1 ? "type needs" : "types need"} your call
+              {/* Main tap area → questions */}
+              <button
+                onClick={() => router.push("/import/question")}
+                className="flex items-start gap-3 flex-1 px-4 py-4 text-left active:opacity-70 transition-opacity min-w-0"
+              >
+                <Icon name="help" size={20} style={{ color: "var(--md-sys-color-warning)", flexShrink: 0, marginTop: 1 }} />
+                <div className="flex-1 min-w-0">
+                  <div style={{ fontSize: 14.5, fontWeight: 600, color: "var(--md-sys-color-text-primary)", marginBottom: 3 }}>
+                    {unresolvedTypes.length} activity {unresolvedTypes.length === 1 ? "type needs" : "types need"} your call
+                  </div>
+                  <div style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>
+                    {unresolvedTypes.map((t) => t.name).join(" and ")} — {unresolvedTypes.reduce((s, t) => s + t.count, 0)} activities, not standard Salesforce types
+                  </div>
                 </div>
-                <div style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>
-                  {unresolvedTypes.map((t) => t.name).join(" and ")} — {unresolvedTypes.reduce((s, t) => s + t.count, 0)} activities, not standard Salesforce types
-                </div>
-              </div>
-              <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
-            </button>
+                <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
+              </button>
+              {/* Dismiss tap area */}
+              <button
+                onClick={handleDismissExceptions}
+                className="flex items-center justify-center self-stretch px-4 active:opacity-60 transition-opacity"
+                style={{ borderLeft: "1px solid rgba(245,166,35,0.2)" }}
+                aria-label="Dismiss"
+              >
+                <Icon name="close" size={18} style={{ color: "var(--md-sys-color-text-disabled)" }} />
+              </button>
+            </div>
           )}
 
           {/* How it comes in */}
@@ -558,6 +628,13 @@ export default function ImportReviewPage() {
             onUndo={handleUndo}
             onDismiss={() => { setToastVisible(false); clearMoved(); }}
           />
+        )}
+      </AnimatePresence>
+
+      {/* Dismiss-exceptions toast */}
+      <AnimatePresence>
+        {dismissToastVisible && (
+          <DismissExceptionsToast onUndo={handleUndoDismiss} />
         )}
       </AnimatePresence>
     </div>
