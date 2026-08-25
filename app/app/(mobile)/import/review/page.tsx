@@ -597,7 +597,7 @@ export default function ImportReviewPage() {
           }}
         >
           {hasUnresolved
-            ? `Answer ${unresolvedTypes.length} ${unresolvedTypes.length === 1 ? "question" : "questions"} to continue`
+            ? `${unresolvedTypes.length} ${unresolvedTypes.length === 1 ? "type needs" : "types need"} a quick decision`
             : `Import ${netImport} activities`}
         </button>
       </div>
