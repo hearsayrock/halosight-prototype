@@ -362,114 +362,165 @@ function TaskStrip({
   );
 }
 
-// ── First-run empty state ─────────────────────────────────────────────────────
+// ── First-run empty state (Salesforce import card) ───────────────────────────
 
 function EmptyHomeState({ onAddCompany }: { onAddCompany: () => void }) {
   return (
     <div className="px-4 pt-2 pb-8">
 
-      {/* Hero card */}
+      {/* Import card */}
       <div
-        className="relative overflow-hidden"
         style={{
-          borderRadius: "var(--radius-xl)",
-          background: "var(--md-sys-color-dark-primary)",
-          border: "1px solid rgba(139,146,255,0.2)",
-          padding: "36px 24px 28px",
+          background: "var(--gradient-hero)",
+          border: "1px solid var(--md-sys-color-alpha-white-10)",
+          borderRadius: "var(--radius-lg)",
+          padding: "24px 22px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 13,
         }}
       >
-        {/* Ambient glow — mirrors DashboardGrid */}
-        <motion.div
-          animate={{
-            x: [0, -40, -10, 30, 5, 0],
-            y: [0, 30, 60, 25, -20, 0],
-            scale: [1, 1.1, 0.96, 1.06, 0.99, 1],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
-          style={{
-            position: "absolute", top: -60, right: -60,
-            width: 200, height: 200, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(139,146,255,0.14) 0%, transparent 65%)",
-            pointerEvents: "none",
-          }}
-        />
-
-        {/* Icon ring */}
-        <div className="flex justify-center mb-6">
-          <div
-            className="w-14 h-14 rounded-full flex items-center justify-center"
-            style={{
-              background: "rgba(139,146,255,0.1)",
-              border: "1px solid rgba(139,146,255,0.22)",
-            }}
-          >
-            <Icon name="business" size={26} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-          </div>
+        {/* Eyebrow */}
+        <div style={{
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase" as const,
+          color: "var(--md-sys-color-neonindigo)",
+        }}>
+          Get started
         </div>
 
-        {/* Heading */}
+        {/* Title */}
         <h2
-          className="text-center mb-3"
           style={{
             fontFamily: "Roboto Slab, Georgia, serif",
-            fontSize: 22, fontWeight: 700, lineHeight: 1.25,
+            fontSize: 25,
+            fontWeight: 700,
+            lineHeight: 1.2,
             color: "var(--md-sys-color-text-primary)",
+            margin: 0,
           }}
         >
-          Who are you meeting<br />with this week?
+          Bring in the accounts you already work
         </h2>
 
         {/* Body */}
-        <p
-          className="text-center mx-auto mb-7"
-          style={{
-            fontSize: 14, lineHeight: 1.65,
-            color: "var(--md-sys-color-text-muted)",
-            maxWidth: 272,
-          }}
-        >
-          Add a company you're working with to prepare
-          for meetings, capture notes, and track follow-ups.
+        <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.55, margin: 0 }}>
+          Pull in the accounts you've worked recently in Salesforce, with their calls, meetings and action items.
         </p>
 
-        {/* CTA */}
+        {/* Primary CTA */}
+        <Link href="/import/disclosure">
+          <button
+            className="w-full flex items-center justify-center gap-2 active:scale-[.97] transition-transform"
+            style={{
+              height: 48,
+              borderRadius: "var(--radius-full)",
+              background: "var(--md-sys-color-neonindigo)",
+              color: "#fff",
+              fontSize: 16,
+              fontWeight: 600,
+            }}
+          >
+            <Icon name="cloud_download" size={18} style={{ color: "#fff" }} />
+            Import from Salesforce
+          </button>
+        </Link>
+
+        {/* Secondary CTA */}
         <button
           onClick={onAddCompany}
-          className="w-full flex items-center justify-center gap-2 active:opacity-85 transition-opacity"
+          className="w-full flex items-center justify-center gap-2 active:opacity-70 transition-opacity"
           style={{
-            height: 48,
-            background: "var(--md-sys-color-neonindigo)",
+            height: 44,
             borderRadius: "var(--radius-full)",
+            border: "1px solid var(--md-sys-color-dark-tertiary)",
             color: "var(--md-sys-color-text-primary)",
+            fontSize: 15,
+            fontWeight: 600,
           }}
         >
           <Icon name="add" size={18} style={{ color: "var(--md-sys-color-text-primary)" }} />
-          <span style={{ fontSize: 15, fontWeight: 700 }}>Add a company</span>
+          Add a company manually
         </button>
-      </div>
 
-      {/* Trial note */}
-      <p
-        className="text-center mt-4"
-        style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)", lineHeight: 1.5 }}
-      >
-        No CRM connection required.
-      </p>
+        {/* Footnote */}
+        <p style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)", textAlign: "center", margin: 0 }}>
+          Takes about a minute. Nothing in Salesforce changes.
+        </p>
+      </div>
 
       {/* Feature hints */}
       <div className="flex flex-col gap-4 mt-6 px-2">
         {([
-          { icon: "border_color", text: "Log visits with voice — AI writes the summary" },
+          { icon: "edit_note",    text: "Log visits with voice — AI writes the summary" },
           { icon: "checklist",    text: "Action items generated from every meeting" },
           { icon: "auto_awesome", text: "Smart prep before your next visit" },
         ] as const).map(({ icon, text }) => (
           <div key={text} className="flex items-center gap-3">
-            <Icon name={icon} size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, opacity: 0.7 }} />
-            <span style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>{text}</span>
+            <Icon name={icon} size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+            <span style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)" }}>{text}</span>
           </div>
         ))}
       </div>
 
+    </div>
+  );
+}
+
+// ── Stale-import prompt ───────────────────────────────────────────────────────
+
+const STALE_DISMISS_KEY = "hs_sf_stale_dismissed_at";
+const STALE_THRESHOLD_DAYS = 14;
+
+function StaleImportPrompt() {
+  const router = useRouter();
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const ts = localStorage.getItem(STALE_DISMISS_KEY);
+      if (!ts) return false;
+      const daysSince = (Date.now() - Number(ts)) / 86_400_000;
+      return daysSince < STALE_THRESHOLD_DAYS;
+    } catch { return false; }
+  });
+
+  function dismiss() {
+    try { localStorage.setItem(STALE_DISMISS_KEY, String(Date.now())); } catch {}
+    setDismissed(true);
+  }
+
+  if (dismissed) return null;
+
+  return (
+    <div className="px-4 mb-3">
+      <div
+        className="flex items-start gap-3 px-4 py-4"
+        style={{
+          background: "var(--md-sys-color-dark-secondary)",
+          border: "1px solid var(--md-sys-color-alpha-white-10)",
+          borderRadius: "var(--radius-md)",
+        }}
+      >
+        <Icon name="update" size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, marginTop: 1 }} />
+        <div className="flex-1 min-w-0">
+          <p style={{ fontSize: 13.5, color: "var(--md-sys-color-text-primary)", lineHeight: 1.5, marginBottom: 6 }}>
+            Your Salesforce activity was last imported 18 days ago.
+          </p>
+          <button
+            onClick={() => router.push("/import/disclosure")}
+            className="active:opacity-70 transition-opacity"
+          >
+            <span style={{ fontSize: 13.5, fontWeight: 600, color: "var(--md-sys-color-neonindigo)" }}>
+              Import new activity
+            </span>
+          </button>
+        </div>
+        <button onClick={dismiss} className="active:opacity-60 transition-opacity flex-shrink-0">
+          <Icon name="close" size={18} style={{ color: "var(--md-sys-color-text-disabled)" }} />
+        </button>
+      </div>
     </div>
   );
 }
@@ -1229,6 +1280,9 @@ function CombinedPageContent() {
               })()}
               {!preview && (
                 <>
+                  {/* Stale-import prompt */}
+                  <StaleImportPrompt />
+
                   {/* Suggested visit card */}
                   <DashboardGrid
                     suggestedAccount={homeAcct}

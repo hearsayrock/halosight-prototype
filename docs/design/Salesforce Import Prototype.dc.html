@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/colors.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/typography.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/icons.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/styles.css">
+<script src="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: #0A0C14; }
+  a { color: #8B92FF; text-decoration: none; }
+  a:hover { color: #B3B8FF; }
+  .om-scroll::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; padding: 40px 24px 64px; font-family: Barlow, sans-serif; color: var(--color-text-primary); display: flex; flex-direction: column; align-items: center; gap: 28px;">
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; max-width: 640px;">
+    <span style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">Halosight Lite · clickable prototype</span>
+    <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 30px; line-height: 1.15;">Salesforce import, happy path</div>
+    <div style="font-size: 15px; line-height: 1.55; color: var(--color-text-secondary);">Tap through it. Switch scenarios to compare a clean org with one that needs review.</div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 10px; background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 999px; padding: 6px;">
+    <div onClick="{{ setClean }}" style="{{ cleanTabStyle }}">Clean org</div>
+    <div onClick="{{ setMessy }}" style="{{ messyTabStyle }}">2 need review</div>
+    <div onClick="{{ restart }}" style="padding: 8px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600; color: var(--color-text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;"><span class="ms ms-18">restart_alt</span>Restart</div>
+  </div>
+
+  <div style="width: 390px; height: 844px; border-radius: 40px; border: 1px solid var(--color-alpha-white-10); background: var(--color-background); overflow: hidden; position: relative; box-shadow: 0 30px 80px rgba(0,0,0,0.6);">
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div data-screen-label="01 Home first run" style="height: 844px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px 20px 14px;">
+          <span class="ms ms-24" style="color: var(--color-text-secondary);">menu</span>
+          <span style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 17px;">Good afternoon, Nate</span>
+          <span style="width: 32px; height: 32px; border-radius: 999px; background: var(--color-dark-secondary); display: flex; align-items: center; justify-content: center;"><span class="ms ms-20" style="color: var(--color-text-muted);">person</span></span>
+        </div>
+        <div style="padding: 10px 16px 0; display: flex; flex-direction: column; gap: 18px;">
+          <div style="background: var(--gradient-hero); border: 1px solid var(--color-alpha-white-10); border-radius: 14px; padding: 24px 22px; display: flex; flex-direction: column; gap: 13px;">
+            <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">Get started</span>
+            <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 25px; line-height: 1.2;">Bring in the accounts you already work</div>
+            <div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary); text-wrap: pretty;">Pull in the accounts you've worked recently in Salesforce, with their calls, meetings and action items.</div>
+            <div onClick="{{ toDisclosure }}" style="height: 48px; margin-top: 4px; border-radius: 28px; background: var(--color-brand-purple); color: var(--color-text-inverse); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 600; cursor: pointer;"><span class="ms ms-20">cloud_download</span>Import from Salesforce</div>
+            <div style="height: 44px; border-radius: 28px; border: 1px solid var(--color-dark-tertiary); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600; cursor: pointer;"><span class="ms ms-20" style="color: var(--color-text-muted);">add</span>Add a company manually</div>
+            <div style="font-size: 12px; color: var(--color-text-disabled); text-align: center;">Takes about a minute. Nothing in Salesforce changes.</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 13px; padding: 0 8px;">
+            <div style="display: flex; gap: 10px; align-items: flex-start;"><span class="ms ms-20" style="color: var(--color-brand-purple);">edit_note</span><span style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.4;">Log visits with voice — AI writes the summary</span></div>
+            <div style="display: flex; gap: 10px; align-items: flex-start;"><span class="ms ms-20" style="color: var(--color-brand-purple);">checklist</span><span style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.4;">Action items generated from every meeting</span></div>
+            <div style="display: flex; gap: 10px; align-items: flex-start;"><span class="ms ms-20" style="color: var(--color-brand-purple);">auto_awesome</span><span style="font-size: 14px; color: var(--color-text-secondary); line-height: 1.4;">Smart prep before your next visit</span></div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDisclosure }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="02 Disclosure" style="height: 844px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 24px 20px 6px;">
+          <span onClick="{{ toHome }}" class="ms ms-24" style="color: var(--color-text-secondary); cursor: pointer;">close</span>
+          <span style="font-size: 15px; font-weight: 600; color: var(--color-text-secondary);">Import from Salesforce</span>
+        </div>
+        <div style="flex: 1; overflow-y: auto; padding: 16px 22px 8px;" class="om-scroll">
+          <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 28px; line-height: 1.15;">Before we connect</div>
+          <div style="font-size: 15px; line-height: 1.55; color: var(--color-text-secondary); margin-top: 8px;">You'll sign in to Salesforce next.</div>
+          <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">We look at</div>
+            <div style="display: flex; gap: 12px;"><span style="color: var(--color-brand-purple);">•</span><span style="font-size: 14.5px; line-height: 1.45;">Your tasks and activity from the last 60 days</span></div>
+            <div style="display: flex; gap: 12px;"><span style="color: var(--color-brand-purple);">•</span><span style="font-size: 14.5px; line-height: 1.45;">The accounts they're attached to</span></div>
+            <div style="display: flex; gap: 12px;"><span style="color: var(--color-brand-purple);">•</span><span style="font-size: 14.5px; line-height: 1.45;">Your Salesforce name and email</span></div>
+          </div>
+          <div style="height: 1px; background: var(--border-subtle); margin: 22px 0;"></div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-teal); font-weight: 600;">We copy, once</div>
+            <div style="display: flex; gap: 12px;"><span style="color: var(--color-brand-teal);">•</span><span style="font-size: 14.5px; line-height: 1.45;">Those accounts, as companies</span></div>
+            <div style="display: flex; gap: 12px;"><span style="color: var(--color-brand-teal);">•</span><span style="font-size: 14.5px; line-height: 1.45;">The activity, as notes or action items</span></div>
+          </div>
+          <div style="margin-top: 22px; background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px 18px;">
+            <div style="font-size: 14.5px; font-weight: 600; line-height: 1.4;">A one-time copy, not a sync.</div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: var(--color-text-secondary); margin-top: 6px;">Halosight won't change anything in Salesforce or check back on its own.</div>
+          </div>
+          <div onClick="{{ toggleDetail }}" style="margin-top: 16px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--color-brand-purple); cursor: pointer;">What gets imported?<span class="ms ms-18">{{ detailChevron }}</span></div>
+          <sc-if value="{{ detailOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top: 12px; font-size: 13.5px; line-height: 1.6; color: var(--color-text-secondary);">Halosight reads your recent tasks, groups them by the account each one is attached to, and turns them into account notes or action items. Activity with no account attached is left behind. If fewer than 100 records turn up, we widen the window to 120 days.</div>
+          </sc-if>
+        </div>
+        <div style="padding: 12px 22px 26px; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 12.5px; color: var(--color-text-disabled); text-align: center; line-height: 1.4;">You'll approve what we found before anything is copied.</div>
+          <div onClick="{{ toOauth }}" style="height: 50px; border-radius: 28px; background: var(--color-brand-purple); color: var(--color-text-inverse); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; cursor: pointer;">Continue to Salesforce</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isOauth }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="03 Salesforce OAuth handoff" style="height: 844px; background: #F1F5F9; display: flex; flex-direction: column; color: var(--color-text-inverse);">
+        <div style="padding: 22px 18px 12px; background: #E2E8F0; display: flex; align-items: center; gap: 10px;">
+          <span onClick="{{ cancelOauth }}" class="ms ms-20" style="color: #475569; cursor: pointer;">close</span>
+          <div style="flex: 1; height: 32px; border-radius: 999px; background: #FFFFFF; display: flex; align-items: center; gap: 6px; padding: 0 12px; font-size: 12.5px; color: #64748B;"><span class="ms ms-16">lock</span>login.salesforce.com</div>
+        </div>
+        <div style="flex: 1; padding: 40px 28px; display: flex; flex-direction: column; gap: 22px;">
+          <div style="font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #64748B; font-weight: 700;">Salesforce</div>
+          <div style="font-family: 'Roboto Slab', serif; font-size: 24px; font-weight: 700; line-height: 1.25; color: #0F172A;">Allow Halosight to access your Salesforce data?</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: #475569;">Signed in as nsmith@fleetsupply.com. Halosight is requesting read access to your tasks, activities and accounts.</div>
+          <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px;">
+            <div onClick="{{ allowOauth }}" style="height: 48px; border-radius: 6px; background: #0176D3; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15.5px; font-weight: 600; cursor: pointer;">Allow</div>
+            <div onClick="{{ cancelOauth }}" style="height: 48px; border-radius: 6px; border: 1px solid #94A3B8; color: #0F172A; display: flex; align-items: center; justify-content: center; font-size: 15.5px; font-weight: 600; cursor: pointer;">Deny</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isAnalyzing }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="04 Analysis" style="height: 844px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 24px 20px 6px;">
+          <span class="ms ms-24" style="color: var(--color-text-disabled);">close</span>
+          <span style="font-size: 15px; font-weight: 600; color: var(--color-text-secondary);">Import from Salesforce</span>
+        </div>
+        <div style="flex: 1; padding: 100px 30px 0; display: flex; flex-direction: column; gap: 34px;">
+          <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 27px; line-height: 1.2;">Looking through your Salesforce activity</div>
+          <div style="display: flex; flex-direction: column; gap: 22px;">
+            <sc-for list="{{ beats }}" as="b" hint-placeholder-count="3">
+              <div style="display: flex; gap: 14px; align-items: flex-start;">
+                <span class="ms ms-22" style="color: {{ b.color }}; margin-top: 1px;">{{ b.icon }}</span>
+                <div style="display: flex; flex-direction: column; gap: 3px;">
+                  <span style="font-size: 15.5px; font-weight: 600; color: {{ b.textColor }};">{{ b.label }}</span>
+                  <span style="font-size: 13.5px; color: var(--color-text-muted);">{{ b.result }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding: 0 30px 34px; font-size: 12.5px; color: var(--color-text-disabled); line-height: 1.5;">Reading only. Nothing is copied into Halosight yet.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isQuestion }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="05 Unrecognized type question" style="height: 844px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px 20px 6px;">
+          <span onClick="{{ toReview }}" class="ms ms-24" style="color: var(--color-text-secondary); cursor: pointer;">arrow_back</span>
+          <span style="font-size: 13px; font-weight: 600; color: var(--color-text-muted);">{{ q.position }}</span>
+        </div>
+        <div style="flex: 1; padding: 18px 22px 0; display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-warning); font-weight: 600;">Not sure about this one</span>
+            <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 27px; line-height: 1.2;">Where should “{{ q.name }}” go?</div>
+            <div style="font-size: 14.5px; line-height: 1.55; color: var(--color-text-secondary);">{{ q.blurb }}</div>
+          </div>
+          <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">From your Salesforce</div>
+            <sc-for list="{{ q.samples }}" as="s" hint-placeholder-count="2">
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 14.5px; line-height: 1.4;">{{ s.subject }}</span>
+                <span style="font-size: 12.5px; color: var(--color-text-muted);">{{ s.meta }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <sc-for list="{{ q.options }}" as="o" hint-placeholder-count="3">
+              <div onClick="{{ o.pick }}" style="{{ o.style }}">
+                <span class="ms ms-24" style="color: {{ o.iconColor }};">{{ o.icon }}</span>
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                  <span style="font-size: 15.5px; font-weight: 600;">{{ o.label }}</span>
+                  <span style="font-size: 13px; color: var(--color-text-muted); line-height: 1.4;">{{ o.hint }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding: 0 22px 30px; font-size: 12.5px; color: var(--color-text-disabled); line-height: 1.5;">We'll remember this for next time. You can change it in Data &amp; Connections.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="06 Review and approve" style="height: 844px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 24px 20px 6px;">
+          <span onClick="{{ toHome }}" class="ms ms-24" style="color: var(--color-text-secondary); cursor: pointer;">close</span>
+          <span style="font-size: 15px; font-weight: 600; color: var(--color-text-secondary);">Import from Salesforce</span>
+        </div>
+        <div style="flex: 1; overflow-y: auto; padding: 14px 20px 16px;" class="om-scroll">
+          <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 27px; line-height: 1.18;">Here's what we found</div>
+          <div style="font-size: 14px; color: var(--color-text-muted); margin-top: 6px;">{{ windowLine }}</div>
+
+          <div style="display: flex; gap: 10px; margin-top: 18px;">
+            <div style="flex: 1; background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px 16px;">
+              <div style="font-family: 'Roboto Slab', serif; font-size: 26px; font-weight: 700;">{{ accountCount }}</div>
+              <div style="font-size: 12.5px; color: var(--color-text-muted); margin-top: 2px;">accounts</div>
+            </div>
+            <div style="flex: 1; background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px 16px;">
+              <div style="font-family: 'Roboto Slab', serif; font-size: 26px; font-weight: 700;">{{ activityCount }}</div>
+              <div style="font-size: 12.5px; color: var(--color-text-muted); margin-top: 2px;">activities</div>
+            </div>
+          </div>
+
+          <sc-if value="{{ needsReview }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ startQuestions }}" style="margin-top: 14px; background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.35); border-radius: 12px; padding: 15px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
+              <span class="ms ms-22" style="color: var(--color-warning);">help</span>
+              <div style="flex: 1;">
+                <div style="font-size: 14.5px; font-weight: 600;">{{ uncertainHeadline }}</div>
+                <div style="font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; line-height: 1.4;">{{ uncertainSub }}</div>
+              </div>
+              <span class="ms ms-20" style="color: var(--color-warning);">chevron_right</span>
+            </div>
+          </sc-if>
+
+          <div style="margin-top: 22px; display: flex; align-items: baseline; justify-content: space-between;">
+            <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">How it comes in</span>
+            <span style="font-size: 12px; color: var(--color-text-disabled);">tap a row to change</span>
+          </div>
+
+          <div style="margin-top: 10px; border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+            <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+              <div style="{{ g.wrapStyle }}">
+                <div onClick="{{ g.toggle }}" style="display: flex; align-items: center; gap: 12px; padding: 15px 16px; cursor: pointer;">
+                  <span class="ms ms-22" style="color: {{ g.color }};">{{ g.icon }}</span>
+                  <div style="flex: 1;">
+                    <div style="font-size: 15px; font-weight: 600;">{{ g.title }}</div>
+                    <div style="font-size: 13px; color: var(--color-text-muted); margin-top: 1px; line-height: 1.4;">{{ g.sub }}</div>
+                  </div>
+                  <span style="font-family: 'Roboto Slab', serif; font-size: 17px; font-weight: 700; color: {{ g.color }};">{{ g.count }}</span>
+                  <span class="ms ms-20" style="color: var(--color-text-disabled);">{{ g.chevron }}</span>
+                </div>
+                <sc-if value="{{ g.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding: 0 16px 16px; display: flex; flex-direction: column; gap: 14px;">
+                    <sc-for list="{{ g.ghosts }}" as="gh" hint-placeholder-count="0">
+                      <div style="border: 1px dashed var(--color-dark-tertiary); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 10px;">
+                        <span class="ms ms-18" style="color: var(--color-brand-purple);">arrow_forward</span>
+                        <span style="flex: 1; font-size: 13.5px; line-height: 1.4; color: var(--color-text-secondary);">{{ gh.text }}</span>
+                        <span onClick="{{ gh.undo }}" style="font-size: 13.5px; font-weight: 600; color: var(--color-brand-purple); cursor: pointer;">Undo</span>
+                      </div>
+                    </sc-for>
+                    <sc-for list="{{ g.notices }}" as="nt" hint-placeholder-count="0">
+                      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 14px; display: flex; flex-direction: column; gap: 6px;">
+                        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                          <span style="font-size: 14.5px; font-weight: 600;">{{ nt.name }}</span>
+                          <span style="font-size: 12.5px; color: var(--color-text-muted);">{{ nt.countLabel }}</span>
+                        </div>
+                        <div style="font-size: 13px; color: var(--color-text-secondary); line-height: 1.45;">{{ nt.body }}</div>
+                      </div>
+                    </sc-for>
+                    <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+                      <div style="{{ it.wrapStyle }}">
+                        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                          <span style="font-size: 14.5px; font-weight: 600;">{{ it.name }}</span>
+                          <span style="font-size: 12.5px; color: var(--color-text-muted);">{{ it.countLabel }}</span>
+                        </div>
+                        <div style="font-size: 13px; color: var(--color-text-secondary); line-height: 1.45;">{{ it.sample }}</div>
+                        <div style="display: flex; gap: 4px; background: var(--color-dark-base); border-radius: 999px; padding: 4px;">
+                          <sc-for list="{{ it.choices }}" as="c" hint-placeholder-count="3">
+                            <div onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</div>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="margin-top: 14px; border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+            <div onClick="{{ toggleAccounts }}" style="display: flex; align-items: center; gap: 12px; padding: 15px 16px; cursor: pointer;">
+              <span class="ms ms-22" style="color: var(--color-brand-teal);">domain</span>
+              <div style="flex: 1;">
+                <div style="font-size: 15px; font-weight: 600;">Accounts coming in</div>
+                <div style="font-size: 13px; color: var(--color-text-muted); margin-top: 1px;">{{ accountsSub }}</div>
+              </div>
+              <span class="ms ms-20" style="color: var(--color-text-disabled);">{{ accountsChevron }}</span>
+            </div>
+            <sc-if value="{{ accountsOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 16px 14px; display: flex; flex-direction: column;">
+                <sc-for list="{{ accounts }}" as="a" hint-placeholder-count="4">
+                  <div onClick="{{ a.toggle }}" style="display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--border-subtle); cursor: pointer;">
+                    <span class="ms ms-20" style="color: {{ a.checkColor }};">{{ a.checkIcon }}</span>
+                    <div style="flex: 1;">
+                      <div style="font-size: 14.5px; font-weight: 600; color: {{ a.nameColor }};">{{ a.name }}</div>
+                      <div style="font-size: 12.5px; color: var(--color-text-muted);">{{ a.meta }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+                <div onClick="{{ toggleMoreAccounts }}" style="padding: 12px 0 2px; border-top: 1px solid var(--border-subtle); font-size: 13.5px; font-weight: 600; color: var(--color-brand-purple); cursor: pointer;">{{ moreAccountsLine }}</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="margin-top: 18px; font-size: 12.5px; color: var(--color-text-disabled); line-height: 1.5; text-wrap: balance;">{{ skipLine }}</div>
+        </div>
+        <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+          <div style="margin: 0 16px -6px; background: var(--color-dark-tertiary); border: 1px solid var(--color-alpha-white-18); border-radius: 12px; padding: 13px 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+            <span class="ms ms-20" style="color: var(--color-brand-purple);">swap_horiz</span>
+            <span style="flex: 1; font-size: 13.5px; line-height: 1.35;">{{ toastText }}</span>
+            <span onClick="{{ toastUndo }}" style="font-size: 13.5px; font-weight: 600; color: var(--color-brand-purple); cursor: pointer;">Undo</span>
+          </div>
+        </sc-if>
+        <div style="padding: 12px 20px 26px; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 8px;">
+          <div onClick="{{ startImport }}" style="{{ importBtnStyle }}">{{ importLabel }}</div>
+          <div style="font-size: 12px; color: var(--color-text-disabled); text-align: center;">Nothing is copied until you tap this.</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPreview }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="07 Sample records" style="height: 844px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 24px 20px 6px;">
+          <span onClick="{{ toReview }}" class="ms ms-24" style="color: var(--color-text-secondary); cursor: pointer;">arrow_back</span>
+          <span style="font-size: 15px; font-weight: 600; color: var(--color-text-secondary);">Sample records</span>
+        </div>
+        <div style="flex: 1; overflow-y: auto; padding: 14px 20px 16px;" class="om-scroll">
+          <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 25px; line-height: 1.2;">Six of the {{ activityCount }}</div>
+          <div style="font-size: 14px; color: var(--color-text-secondary); margin-top: 6px; line-height: 1.5;">A spread across the activity types we found, so you can see how they'll land.</div>
+          <div style="margin-top: 18px; display: flex; flex-direction: column; gap: 10px;">
+            <sc-for list="{{ previewRows }}" as="r" hint-placeholder-count="6">
+              <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px 15px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="font-size: 14.5px; font-weight: 600; line-height: 1.35;">{{ r.subject }}</div>
+                <div style="font-size: 12.5px; color: var(--color-text-muted);">{{ r.meta }}</div>
+                <div style="display: flex; align-items: center; gap: 7px;">
+                  <span class="ms ms-18" style="color: {{ r.color }};">{{ r.icon }}</span>
+                  <span style="font-size: 13px; font-weight: 600; color: {{ r.color }};">{{ r.dest }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding: 12px 20px 26px; border-top: 1px solid var(--border-subtle);">
+          <div onClick="{{ toReview }}" style="height: 50px; border-radius: 28px; background: var(--color-brand-purple); color: var(--color-text-inverse); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; cursor: pointer;">Looks right</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isImporting }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="08 Import progress" style="height: 844px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 24px 20px 6px;">
+          <span style="font-size: 15px; font-weight: 600; color: var(--color-text-secondary);">Importing</span>
+        </div>
+        <div style="flex: 1; padding: 240px 30px 0; display: flex; flex-direction: column; gap: 26px; align-items: center; text-align: center;">
+          <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 27px; line-height: 1.2;">Importing</div>
+          <div style="font-size: 15px; line-height: 1.55; color: var(--color-text-secondary);">This can take a few minutes.</div>
+          <div style="width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+            <div style="height: 6px; border-radius: 999px; background: var(--color-dark-secondary); overflow: hidden;">
+              <div style="{{ progressBarStyle }}"></div>
+            </div>
+            <div style="font-size: 13px; color: var(--color-text-muted);">{{ progressPct }}</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSuccess }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="09 Success" style="height: 844px; display: flex; flex-direction: column;">
+        <div style="flex: 1; padding: 90px 24px 0; display: flex; flex-direction: column; gap: 26px;">
+          <span class="ms ms-40 ms-filled" style="color: var(--color-success); font-size: 40px;">check_circle</span>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 30px; line-height: 1.15;">You're ready to go</div>
+            <div style="font-size: 15px; line-height: 1.55; color: var(--color-text-secondary);">Imported from Salesforce just now. Import again whenever you want more.</div>
+          </div>
+          <div style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+            <sc-for list="{{ successRows }}" as="r" hint-placeholder-count="3">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 15px 16px; border-bottom: 1px solid var(--border-subtle);">
+                <span class="ms ms-22" style="color: {{ r.color }};">{{ r.icon }}</span>
+                <span style="flex: 1; font-size: 15px;">{{ r.label }}</span>
+                <span style="font-family: 'Roboto Slab', serif; font-size: 17px; font-weight: 700;">{{ r.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background: var(--gradient-hero); border: 1px solid var(--color-alpha-white-10); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">Start here</span>
+            <div style="font-family: 'Roboto Slab', serif; font-size: 19px; font-weight: 700;">Jack's Tire &amp; Oil</div>
+            <div style="font-size: 13.5px; color: var(--color-text-secondary); line-height: 1.45;">9 notes and 3 action items came across. You visited 2 weeks ago.</div>
+            <div onClick="{{ toHomeFull }}" style="height: 44px; margin-top: 4px; border-radius: 28px; background: var(--color-brand-purple); color: var(--color-text-inverse); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; cursor: pointer;">Open the account</div>
+          </div>
+        </div>
+        <div style="padding: 12px 24px 30px; display: flex; flex-direction: column; gap: 4px;">
+          <div onClick="{{ toHomeFull }}" style="height: 46px; border-radius: 28px; border: 1px solid var(--color-dark-tertiary); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; cursor: pointer;">Done</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isHomeFull }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="10 Home after import" style="height: 844px; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px 20px 12px;">
+          <span class="ms ms-24" style="color: var(--color-text-secondary);">menu</span>
+          <span style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 17px;">Good afternoon, Nate</span>
+          <span style="width: 32px; height: 32px; border-radius: 999px; background: var(--color-dark-secondary); display: flex; align-items: center; justify-content: center;"><span class="ms ms-20" style="color: var(--color-text-muted);">person</span></span>
+        </div>
+        <div style="flex: 1; overflow-y: auto; padding: 4px 16px 20px;" class="om-scroll">
+          <div style="background: var(--gradient-hero); border: 1px solid var(--color-alpha-white-10); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
+            <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">Suggested visit</span>
+            <div style="font-family: 'Roboto Slab', serif; font-size: 20px; font-weight: 700;">Jack's Tire &amp; Oil</div>
+            <div style="font-size: 13px; color: var(--color-text-muted); display: flex; gap: 14px;"><span>14 mi · 742 Idaho St</span><span>2 weeks ago</span></div>
+            <div style="height: 44px; margin-top: 6px; border-radius: 28px; background: var(--color-brand-coral); color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600;"><span class="ms ms-20">edit</span>Log a Visit</div>
+          </div>
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 22px;">
+            <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">Companies</span>
+            <span style="font-size: 13.5px; font-weight: 600; color: var(--color-brand-purple);">View all</span>
+          </div>
+          <div style="margin-top: 10px; display: flex; flex-direction: column;">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);"><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Jack's Tire &amp; Oil</div><div style="font-size: 12.5px; color: var(--color-text-muted);">14 mi · 742 Idaho St</div></div><span style="font-size: 11.5px; color: var(--color-brand-purple); background: rgba(139,146,255,0.14); border-radius: 999px; padding: 3px 8px;">9 notes</span><span class="ms ms-18" style="color: var(--color-text-disabled);">chevron_right</span></div>
+            <div style="display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);"><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">ProFleet Maintenance</div><div style="font-size: 12.5px; color: var(--color-text-muted);">146 mi · Phoenix, AZ</div></div><span style="font-size: 11.5px; color: var(--color-brand-purple); background: rgba(139,146,255,0.14); border-radius: 999px; padding: 3px 8px;">8 notes</span><span class="ms ms-18" style="color: var(--color-text-disabled);">chevron_right</span></div>
+            <div style="display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);"><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Innovative Tech</div><div style="font-size: 12.5px; color: var(--color-text-muted);">1.4 mi · 4820 E Grant Rd</div></div><span style="font-size: 11.5px; color: var(--color-brand-purple); background: rgba(139,146,255,0.14); border-radius: 999px; padding: 3px 8px;">7 notes</span><span class="ms ms-18" style="color: var(--color-text-disabled);">chevron_right</span></div>
+            <div style="display: flex; align-items: center; gap: 10px; padding: 12px 0;"><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Branch of Acme Co</div><div style="font-size: 12.5px; color: var(--color-text-muted);">56.7 mi · 1300 S Main St</div></div><span style="font-size: 11.5px; color: var(--color-brand-purple); background: rgba(139,146,255,0.14); border-radius: 999px; padding: 3px 8px;">6 notes</span><span class="ms ms-18" style="color: var(--color-text-disabled);">chevron_right</span></div>
+          </div>
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 22px;">
+            <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">Action items</span>
+            <span style="font-size: 13.5px; font-weight: 600; color: var(--color-brand-purple);">View all</span>
+          </div>
+          <div style="margin-top: 10px; display: flex; flex-direction: column;">
+            <div style="display: flex; align-items: center; gap: 11px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);"><span class="ms ms-20" style="color: var(--color-text-disabled);">radio_button_unchecked</span><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Send Q2 pricing update</div><div style="font-size: 12.5px; color: var(--color-text-muted);">Aug 2 · Jack's Tire &amp; Oil</div></div><span class="ms ms-18" style="color: var(--color-text-disabled);">link</span></div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);"><span class="ms ms-20" style="color: var(--color-text-disabled);">radio_button_unchecked</span><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Send phased rollout options doc</div><div style="font-size: 12.5px; color: var(--color-text-muted);">Aug 7 · Innovative Tech</div></div><span class="ms ms-18" style="color: var(--color-text-disabled);">link</span></div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);"><span class="ms ms-20" style="color: var(--color-text-disabled);">radio_button_unchecked</span><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Resolve pending invoice</div><div style="font-size: 12.5px; color: var(--color-text-muted);">Aug 4 · ProFleet Maintenance Store</div></div><span class="ms ms-18" style="color: var(--color-text-disabled);">link</span></div>
+            <div style="display: flex; align-items: center; gap: 11px; padding: 12px 0;"><span class="ms ms-20" style="color: var(--color-text-disabled);">radio_button_unchecked</span><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Follow up with procurement</div><div style="font-size: 12.5px; color: var(--color-text-muted);">Aug 6 · Branch of Acme Co</div></div><span class="ms ms-18" style="color: var(--color-text-disabled);">link</span></div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-text-disabled);">
+    <span class="ms ms-16">touch_app</span>{{ hintLine }}
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:900,&quot;height&quot;:1100}}">
+const SAMPLES = {
+  Call: { subject: 'Called Marcus re: Q3 pricing', meta: "Jack's Tire & Oil · Aug 12" },
+  Meeting: { subject: 'On-site walkthrough with ops team', meta: 'ProFleet Maintenance · Aug 8' },
+  Email: { subject: 'Sent phased rollout options doc', meta: 'Innovative Tech · Aug 5' },
+  'Follow-up / To-do': { subject: 'Send Q2 pricing update', meta: "Jack's Tire & Oil · due Aug 2" },
+  'Site Audit': { subject: 'Bay 3 lift inspection — Riverbend', meta: 'Riverbend Collision · Aug 14' },
+  'Route Check': { subject: 'Route 40 coverage check', meta: 'Saddleback Fleet Services · Aug 9' }
+};
+
+const ACCOUNTS = [
+  { name: "Jack's Tire & Oil", meta: '12 activities · visited 2 weeks ago', n: 9, t: 3 },
+  { name: 'ProFleet Maintenance', meta: '11 activities · visited 6 days ago', n: 8, t: 3 },
+  { name: 'Innovative Tech', meta: '9 activities · visited 1 month ago', n: 7, t: 2 },
+  { name: 'Branch of Acme Co', meta: '8 activities · visited 3 days ago', n: 6, t: 2 },
+  { name: 'Riverbend Collision', meta: '4 activities · visited 1 year ago', n: 3, t: 1 },
+  { name: 'Saddleback Fleet Services', meta: '3 activities · visited 2 days ago', n: 2, t: 1 }
+];
+
+const ACCOUNTS_MORE = [
+  { name: 'Acme Co', meta: '8 activities · visited 3 days ago', n: 6, t: 2 },
+  { name: 'ProFleet Maintenance Store', meta: '7 activities · visited 3 weeks ago', n: 5, t: 2 },
+  { name: 'Mesa Auto Parts', meta: '7 activities · visited 5 days ago', n: 5, t: 2 },
+  { name: 'Mesa Fleet Services', meta: '6 activities · visited 2 weeks ago', n: 5, t: 1 },
+  { name: 'Mesa Tire & Lube', meta: '6 activities · visited 1 month ago', n: 5, t: 1 },
+  { name: 'Mesa Truck Center', meta: '6 activities · visited 3 weeks ago', n: 5, t: 1 },
+  { name: 'Southwestern Consolidated Fleet', meta: '6 activities · visited 2 weeks ago', n: 5, t: 1 },
+  { name: 'Desert Ridge Collision', meta: '6 activities · visited 1 month ago', n: 5, t: 1 },
+  { name: 'Copper State Hauling', meta: '6 activities · visited 6 weeks ago', n: 5, t: 1 },
+  { name: 'Grand Canyon Freight', meta: '7 activities · visited 2 months ago', n: 5, t: 2 },
+  { name: 'Tucson Diesel Works', meta: '6 activities · visited 3 months ago', n: 4, t: 2 },
+  { name: 'Valley Wide Towing', meta: '5 activities · visited 4 months ago', n: 4, t: 1 }
+];
+
+class Component extends DCLogic {
+  state = {
+    screen: 'home', scenario: 'clean', beat: 0, progress: 0,
+    open: {}, accountsOpen: false, detailOpen: false, moved: null, moreAccounts: false,
+    excluded: {}, answers: {}, qIdx: 0
+  };
+
+  componentWillUnmount() { this.clearAll(); }
+  clearAll() { (this.timers || []).forEach(clearTimeout); if (this.interval) clearInterval(this.interval); this.timers = []; }
+
+  types() {
+    const base = [
+      { name: 'Call', count: 41, rec: 'note', sure: true },
+      { name: 'Meeting', count: 33, rec: 'note', sure: true },
+      { name: 'Email', count: 20, rec: 'note', sure: true },
+      { name: 'Follow-up / To-do', count: 29, rec: 'task', sure: true }
+    ];
+    if (this.state.scenario === 'messy') {
+      base.push({ name: 'Site Audit', count: 3, rec: null, sure: false });
+      base.push({ name: 'Route Check', count: 1, rec: null, sure: false });
+    }
+    return base.map(t => ({ ...t, dest: this.state.answers[t.name] || t.rec }));
+  }
+
+  excludedTotals() {
+    let n = 0, t = 0, c = 0;
+    ACCOUNTS.concat(ACCOUNTS_MORE).forEach(a => { if (this.state.excluded[a.name]) { n += a.n; t += a.t; c += 1; } });
+    return { n, t, c };
+  }
+
+  counts() {
+    const ts = this.types();
+    const ex = this.excludedTotals();
+    const note = Math.max(0, ts.filter(t => t.dest === 'note').reduce((s, t) => s + t.count, 0) - ex.n);
+    const task = Math.max(0, ts.filter(t => t.dest === 'task').reduce((s, t) => s + t.count, 0) - ex.t);
+    const skip = ts.filter(t => t.dest === 'skip').reduce((s, t) => s + t.count, 0);
+    const pending = ts.filter(t => !t.dest).reduce((s, t) => s + t.count, 0);
+    const noAccount = 4;
+    const leftOut = skip + noAccount + ex.n + ex.t;
+    return { note, task, skip, leftOut, noAccount, pending, total: note + task, accounts: 18 - ex.c, found: note + task + leftOut + pending };
+  }
+
+  set(patch) { this.setState(patch); }
+  go(screen) { this.setState({ screen }); }
+
+  startAnalysis = () => {
+    this.clearAll();
+    this.setState({ screen: 'analyzing', beat: 0 });
+    this.timers = [
+      setTimeout(() => this.setState({ beat: 1 }), 1100),
+      setTimeout(() => this.setState({ beat: 2 }), 2300),
+      setTimeout(() => this.setState({ beat: 3 }), 3400),
+      setTimeout(() => this.setState({ screen: 'review' }), 4200)
+    ];
+  };
+
+  beginImport = () => {
+    this.clearAll();
+    this.setState({ screen: 'importing', progress: 4 });
+    this.interval = setInterval(() => {
+      const p = this.state.progress + 3;
+      if (p >= 100) { clearInterval(this.interval); this.setState({ progress: 100, screen: 'success' }); }
+      else this.setState({ progress: p });
+    }, 70);
+  };
+
+  renderVals() {
+    const s = this.state;
+    const c = this.counts();
+    const ts = this.types();
+    const uncertain = ts.filter(t => !t.dest);
+    const pill = active => 'flex: 1; height: 32px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; '
+      + (active
+        ? 'background: var(--color-dark-tertiary); color: var(--color-text-primary); font-weight: 600;'
+        : 'background: transparent; color: var(--color-text-disabled); font-weight: 600;');
+
+    const DEST = { note: 'Account notes', task: 'Action items', skip: 'Left out' };
+    const moved = s.moved;
+    const move = (name, from, to) => {
+      clearTimeout(this.moveTimer);
+      this.setState({ answers: { ...s.answers, [name]: to }, moved: from ? { name, from, to } : null, open: { ...s.open, [to]: true } });
+      this.moveTimer = setTimeout(() => this.setState({ moved: null }), 5000);
+    };
+
+    const itemFor = t => ({
+      name: t.name,
+      countLabel: t.count + (t.count === 1 ? ' activity' : ' activities'),
+      sample: '“' + (SAMPLES[t.name] || {}).subject + '” · ' + (SAMPLES[t.name] || {}).meta,
+      wrapStyle: 'background: var(--color-dark-primary); border-radius: 10px; padding: 13px 14px; display: flex; flex-direction: column; gap: 10px; border: 1px solid '
+        + (moved && moved.name === t.name ? 'var(--color-brand-purple)' : 'var(--border-subtle)'),
+      choices: [
+        { key: 'note', label: 'Note' }, { key: 'task', label: 'Action item' }, { key: 'skip', label: 'Leave out' }
+      ].map(ch => ({
+        label: ch.label,
+        style: pill(t.dest === ch.key),
+        pick: () => { if (t.dest !== ch.key) move(t.name, t.dest, ch.key); }
+      }))
+    });
+
+    const exl = this.excludedTotals();
+    const skipNotices = [{ name: 'No account attached', countLabel: '4 activities', body: 'These tasks aren’t linked to an account in Salesforce, so there’s nothing to file them under. Link them there and import again.' }]
+      .concat(exl.c > 0 ? [{ name: 'Accounts you unchecked', countLabel: (exl.n + exl.t) + ' activities', body: 'From the ' + exl.c + (exl.c === 1 ? ' account' : ' accounts') + ' you turned off below.' }] : []);
+
+    const groupDefs = [
+      { key: 'note', title: 'Account notes', sub: 'History you can read before a visit', icon: 'sticky_note_2', color: 'var(--color-brand-purple)', count: c.note },
+      { key: 'task', title: 'Action items', sub: 'Open items assigned to you', icon: 'checklist', color: 'var(--color-brand-teal)', count: c.task },
+      { key: 'skip', title: 'Left out', sub: c.leftOut > c.noAccount ? 'Your choices, plus 4 with no account attached' : 'No account attached in Salesforce', icon: 'block', color: 'var(--color-text-muted)', count: c.leftOut }
+    ];
+
+    const groups = groupDefs.map((g, i) => ({
+      title: g.title, sub: g.sub, icon: g.icon, color: g.color, count: g.count,
+      open: !!s.open[g.key],
+      chevron: s.open[g.key] ? 'expand_less' : 'expand_more',
+      wrapStyle: 'background: var(--color-dark-secondary);' + (i < 2 ? ' border-bottom: 1px solid var(--border-subtle);' : ''),
+      toggle: () => this.setState({ open: { ...s.open, [g.key]: !s.open[g.key] } }),
+      ghosts: moved && moved.from === g.key
+        ? [{ text: moved.name + ' moved to ' + DEST[moved.to], undo: () => move(moved.name, null, moved.from) }]
+        : [],
+      notices: g.key === 'skip' ? skipNotices : [],
+      items: ts.filter(t => t.dest === g.key).map(itemFor)
+    }));
+
+    const beatDefs = [
+      { label: 'Finding your recent activity', result: c.found + ' tasks and activities since Jun 25' },
+      { label: 'Matching activity to accounts', result: '18 accounts · 4 records had none' },
+      { label: 'Sorting notes from action items', result: s.scenario === 'messy' ? '123 sorted · 2 types unclear' : 'All 123 sorted automatically' }
+    ];
+    const beats = beatDefs.map((b, i) => {
+      const done = s.beat > i;
+      const active = s.beat === i;
+      return {
+        label: b.label,
+        result: done ? b.result : (active ? 'Working…' : ''),
+        icon: done ? 'check_circle' : (active ? 'radio_button_unchecked' : 'circle'),
+        color: done ? 'var(--color-success)' : (active ? 'var(--color-brand-purple)' : 'var(--color-dark-tertiary)'),
+        textColor: done || active ? 'var(--color-text-primary)' : 'var(--color-text-disabled)'
+      };
+    });
+
+    const q = uncertain[Math.min(s.qIdx, Math.max(0, uncertain.length - 1))];
+    const qVal = q ? {
+      name: q.name,
+      position: (ts.filter(t => !t.sure).length - uncertain.length + 1) + ' of ' + ts.filter(t => !t.sure).length,
+      blurb: q.count + (q.count === 1 ? ' activity uses this type. ' : ' activities use this type. ') + "It isn't a standard Salesforce type, so we'd rather ask than guess.",
+      samples: [SAMPLES[q.name], q.name === 'Route Check'
+        ? { subject: 'Confirm Tuesday stops with dispatch', meta: 'ProFleet Maintenance · Jul 30' }
+        : { subject: 'Quarterly bay condition review', meta: 'ProFleet Maintenance · Jul 30' }].filter(Boolean),
+      options: [
+        { key: 'note', label: 'Account note', hint: 'Reads as history on the account', icon: 'sticky_note_2', iconColor: 'var(--color-brand-purple)' },
+        { key: 'task', label: 'Action item', hint: 'Shows up in your action items', icon: 'checklist', iconColor: 'var(--color-brand-teal)' },
+        { key: 'skip', label: "Don't import", hint: 'Leave these in Salesforce', icon: 'block', iconColor: 'var(--color-text-muted)' }
+      ].map(o => ({
+        label: o.label, hint: o.hint, icon: o.icon, iconColor: o.iconColor,
+        style: 'background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 13px; cursor: pointer;',
+        pick: () => {
+          const answers = { ...s.answers, [q.name]: o.key };
+          const left = this.types().filter(t => !t.sure && !answers[t.name]).length;
+          this.setState({ answers, qIdx: 0, screen: left > 0 ? 'question' : 'review' });
+        }
+      }))
+    } : { name: '', position: '', blurb: '', samples: [], options: [] };
+
+    const previewRows = ts.filter(t => t.dest && t.dest !== 'skip').slice(0, 6).map(t => ({
+      subject: (SAMPLES[t.name] || {}).subject,
+      meta: (SAMPLES[t.name] || {}).meta + ' · ' + t.name,
+      dest: t.dest === 'note' ? 'Becomes an account note' : 'Becomes an action item',
+      icon: t.dest === 'note' ? 'sticky_note_2' : 'checklist',
+      color: t.dest === 'note' ? 'var(--color-brand-purple)' : 'var(--color-brand-teal)'
+    })).concat([
+      { subject: 'Left a voicemail for procurement', meta: 'Acme Co · Aug 11 · Call', dest: 'Becomes an account note', icon: 'sticky_note_2', color: 'var(--color-brand-purple)' },
+      { subject: 'Confirm meeting with Marcus', meta: "Jack's Tire & Oil · due Jul 29 · Follow-up / To-do", dest: 'Becomes an action item', icon: 'checklist', color: 'var(--color-brand-teal)' }
+    ]).slice(0, 6);
+
+    const ex = this.excludedTotals();
+    const tabOn = 'padding: 8px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600; cursor: pointer; background: var(--color-brand-purple); color: var(--color-text-inverse);';
+    const tabOff = 'padding: 8px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600; cursor: pointer; color: var(--color-text-secondary);';
+
+    const hints = {
+      home: 'Tap Import from Salesforce.',
+      disclosure: 'Two facts, then Continue.',
+      oauth: 'Allow, or Deny to see the cancel path.',
+      analyzing: 'Three named beats, about four seconds.',
+      question: 'One question per unrecognized type.',
+      review: 'Expand a row to change a destination, or uncheck an account.',
+      preview: 'Optional. Reached by choice, never forced.',
+      importing: 'Plain progress. No decisions here.',
+      success: 'Ends on an account, not a receipt.',
+      homeFull: 'Home, populated by the import. Restart to run it again.'
+    };
+
+    return {
+      isHome: s.screen === 'home', isDisclosure: s.screen === 'disclosure', isOauth: s.screen === 'oauth',
+      isAnalyzing: s.screen === 'analyzing', isQuestion: s.screen === 'question', isReview: s.screen === 'review',
+      isPreview: s.screen === 'preview', isImporting: s.screen === 'importing', isSuccess: s.screen === 'success',
+      isHomeFull: s.screen === 'homeFull', toHomeFull: () => this.go('homeFull'),
+      hintLine: hints[s.screen] || '',
+      cleanTabStyle: s.scenario === 'clean' ? tabOn : tabOff,
+      messyTabStyle: s.scenario === 'messy' ? tabOn : tabOff,
+      setClean: () => { this.clearAll(); this.setState({ scenario: 'clean', screen: 'home', answers: {}, excluded: {}, open: {}, qIdx: 0 }); },
+      setMessy: () => { this.clearAll(); this.setState({ scenario: 'messy', screen: 'home', answers: {}, excluded: {}, open: {}, qIdx: 0 }); },
+      restart: () => { this.clearAll(); this.setState({ screen: 'home', answers: {}, excluded: {}, open: {}, accountsOpen: false, detailOpen: false, qIdx: 0 }); },
+      toHome: () => this.go('home'), toDisclosure: () => this.go('disclosure'), toOauth: () => this.go('oauth'),
+      cancelOauth: () => this.go('home'), allowOauth: this.startAnalysis,
+      toReview: () => this.go('review'), toPreview: () => this.go('preview'),
+      startQuestions: () => this.setState({ screen: 'question', qIdx: 0 }),
+      startImport: () => { if (c.pending === 0 && c.total > 0) this.beginImport(); },
+      finishImport: () => { this.clearAll(); this.setState({ screen: 'success', progress: 100 }); },
+      toggleDetail: () => this.setState({ detailOpen: !s.detailOpen }),
+      detailOpen: s.detailOpen, detailChevron: s.detailOpen ? 'expand_less' : 'expand_more',
+      toastOn: !!moved,
+      toastText: moved ? moved.name + ' now comes in as ' + (moved.to === 'note' ? 'an account note' : (moved.to === 'task' ? 'an action item' : 'nothing — left out')) : '',
+      toastUndo: () => { if (moved) move(moved.name, null, moved.from); },
+      beats, q: qVal, groups, previewRows,
+      accountCount: c.accounts, activityCount: c.found,
+      windowLine: 'From your Salesforce activity since Jun 25.',
+      needsReview: c.pending > 0,
+      uncertainHeadline: uncertain.length + (uncertain.length === 1 ? ' activity type needs your call' : ' activity types need your call'),
+      uncertainSub: uncertain.map(t => t.name).join(' and ') + ' — ' + c.pending + (c.pending === 1 ? ' activity' : ' activities') + ', not standard Salesforce types',
+      accountsOpen: s.accountsOpen,
+      accountsChevron: s.accountsOpen ? 'expand_less' : 'expand_more',
+      accountsSub: ex.c > 0 ? c.accounts + ' of 18 · ' + (ex.n + ex.t) + ' activities excluded' : 'All 18, taken from the activity we found',
+      toggleAccounts: () => this.setState({ accountsOpen: !s.accountsOpen }),
+      accounts: ACCOUNTS.concat(s.moreAccounts ? ACCOUNTS_MORE : []).map(a => {
+        const on = !s.excluded[a.name];
+        return {
+          name: a.name, meta: a.meta,
+          checkIcon: on ? 'check_box' : 'check_box_outline_blank',
+          checkColor: on ? 'var(--color-brand-purple)' : 'var(--color-text-disabled)',
+          nameColor: on ? 'var(--color-text-primary)' : 'var(--color-text-disabled)',
+          toggle: () => this.setState({ excluded: { ...s.excluded, [a.name]: on } })
+        };
+      }),
+      moreAccountsLine: s.moreAccounts ? 'Show fewer' : 'Show the other 12 accounts',
+      toggleMoreAccounts: () => this.setState({ moreAccounts: !s.moreAccounts }),
+      skipLine: c.leftOut > c.noAccount
+        ? c.leftOut + ' activities stay in Salesforce: the ones you left out, plus 4 with no account attached.'
+        : '4 activities have no account attached in Salesforce, so they stay there.',
+      importLabel: c.pending > 0 ? 'Answer ' + uncertain.length + ' questions to continue' : 'Import ' + c.total + ' activities',
+      importBtnStyle: 'height: 50px; border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; cursor: pointer; '
+        + (c.pending > 0
+          ? 'background: var(--color-dark-secondary); color: var(--color-text-disabled);'
+          : 'background: var(--color-brand-purple); color: var(--color-text-inverse);'),
+      progressBarStyle: 'height: 6px; width: ' + s.progress + '%; background: var(--color-brand-purple); transition: width 120ms linear;',
+      progressPct: s.progress + '%',
+      progressPhase: s.progress < 22 ? 'Adding 18 accounts' : (s.progress < 78 ? 'Writing ' + c.note + ' account notes' : 'Creating ' + c.task + ' action items'),
+      successRows: [
+        { label: 'Companies added', value: c.accounts, icon: 'domain', color: 'var(--color-brand-teal)' },
+        { label: 'Account notes imported', value: c.note, icon: 'sticky_note_2', color: 'var(--color-brand-purple)' },
+        { label: 'Action items created', value: c.task, icon: 'checklist', color: 'var(--color-brand-purple)' }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

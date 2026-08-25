@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/colors.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/typography.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/tokens/icons.css">
+<link rel="stylesheet" href="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/styles.css">
+<script src="_ds/halosight-design-system-019e2c56-2144-7829-bdd7-673e8c67bed1/_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: #0A0C14; }
+  a { color: var(--color-brand-purple); text-decoration: none; }
+  a:hover { color: var(--color-brand-purple-light); }
+</style>
+</helmet>
+
+<section style="display: block; padding: 56px 56px 120px; font-family: Barlow, sans-serif; color: var(--color-text-primary);">
+<div id="1a" style="max-width: 1680px; margin: 0 auto; display: flex; flex-direction: column; gap: 72px;">
+
+  <div style="display: flex; flex-direction: column; gap: 20px; max-width: 900px;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; background: var(--color-alpha-purple-10); border: 1px solid var(--color-brand-purple-dark); color: var(--color-brand-purple); font-size: 12px; font-weight: 600; letter-spacing: 0.08em;">1a</span>
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600;">Halosight Lite · Salesforce import · First-pass proposal</span>
+    </div>
+    <h1 style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 52px; line-height: 1.08; margin: 0; letter-spacing: -0.02em;">Connect. We figure it out. You approve.</h1>
+    <p style="margin: 0; font-size: 19px; line-height: 1.6; color: var(--color-text-secondary); text-wrap: pretty;">A user-initiated import of recent Salesforce activity that asks for, at most, one decision. Mapping stops being a configuration screen and becomes exception handling — surfaced only when the data is genuinely ambiguous, and phrased as an outcome rather than a field rule.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+    <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px 22px;">
+      <div style="font-family: 'Roboto Slab', serif; font-size: 34px; font-weight: 700; color: var(--color-brand-purple);">0–1</div>
+      <div style="margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary);">Meaningful decisions before import on the happy path. Zero when everything is recognized.</div>
+    </div>
+    <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px 22px;">
+      <div style="font-family: 'Roboto Slab', serif; font-size: 34px; font-weight: 700; color: var(--color-brand-purple);">4</div>
+      <div style="margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary);">Screens from tap to imported data: disclosure, OAuth, analysis, approve.</div>
+    </div>
+    <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px 22px;">
+      <div style="font-family: 'Roboto Slab', serif; font-size: 34px; font-weight: 700; color: var(--color-brand-purple);">1 tap</div>
+      <div style="margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary);">Returning import. Saved rules, known cursor, no re-approval of what's already been agreed.</div>
+    </div>
+    <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px 22px;">
+      <div style="font-family: 'Roboto Slab', serif; font-size: 34px; font-weight: 700; color: var(--color-brand-purple);">Never</div>
+      <div style="margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary);">The word "field", "object", or "filter" appears in the default path.</div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">A · Recommended UX model</span>
+      <h2 style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 32px; margin: 0; letter-spacing: -0.01em;">Nine decisions that define the experience</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 16px;">
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px; display: flex; gap: 16px;">
+        <span style="font-family: 'Roboto Slab', serif; font-size: 15px; font-weight: 700; color: var(--color-brand-purple); flex: 0 0 22px;">01</span>
+        <div><div style="font-size: 17px; font-weight: 600; margin-bottom: 6px;">Activity is the unit of import, not accounts</div><div style="font-size: 15px; line-height: 1.6; color: var(--color-text-secondary);">Accounts come along because activity points at them. The user never picks accounts — picking 18 accounts is 18 decisions to arrive at the same result the data already implies.</div></div>
+      </div>
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px; display: flex; gap: 16px;">
+        <span style="font-family: 'Roboto Slab', serif; font-size: 15px; font-weight: 700; color: var(--color-brand-purple); flex: 0 0 22px;">02</span>
+        <div><div style="font-size: 17px; font-weight: 600; margin-bottom: 6px;">One screen carries the whole decision</div><div style="font-size: 15px; line-height: 1.6; color: var(--color-text-secondary);">Counts, destinations, sample records, and exceptions live on a single Review screen. It is a receipt you approve, not a form you complete.</div></div>
+      </div>
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px; display: flex; gap: 16px;">
+        <span style="font-family: 'Roboto Slab', serif; font-size: 15px; font-weight: 700; color: var(--color-brand-purple); flex: 0 0 22px;">03</span>
+        <div><div style="font-size: 17px; font-weight: 600; margin-bottom: 6px;">Mapping is stated, not configured</div><div style="font-size: 15px; line-height: 1.6; color: var(--color-text-secondary);">The recommendation is written as sentences about outcomes — "94 calls, meetings and emails become account notes" — with the detail one tap behind it.</div></div>
+      </div>
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px; display: flex; gap: 16px;">
+        <span style="font-family: 'Roboto Slab', serif; font-size: 15px; font-weight: 700; color: var(--color-brand-purple); flex: 0 0 22px;">04</span>
+        <div><div style="font-size: 17px; font-weight: 600; margin-bottom: 6px;">Ambiguity is a queue, not a table</div><div style="font-size: 15px; line-height: 1.6; color: var(--color-text-secondary);">Unrecognized types are asked one at a time, with two real records shown, and three answers: note, action item, or leave out. Two unknowns is two taps.</div></div>
+      </div>
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px; display: flex; gap: 16px;">
+        <span style="font-family: 'Roboto Slab', serif; font-size: 15px; font-weight: 700; color: var(--color-brand-purple); flex: 0 0 22px;">05</span>
+        <div><div style="font-size: 17px; font-weight: 600; margin-bottom: 6px;">Nothing is written until the user says so</div><div style="font-size: 15px; line-height: 1.6; color: var(--color-text-secondary);">Analysis is read-only and reversible by walking away. That fact is stated on the disclosure and again on Review — it is what makes a light disclosure honest.</div></div>
+      </div>
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px; display: flex; gap: 16px;">
+        <span style="font-family: 'Roboto Slab', serif; font-size: 15px; font-weight: 700; color: var(--color-brand-purple); flex: 0 0 22px;">06</span>
+        <div><div style="font-size: 17px; font-weight: 600; margin-bottom: 6px;">"Import" is a verb with a date on it
+</div><div style="font-size: 15px; line-height: 1.6; color: var(--color-text-secondary);">Every surface says when the last import happened. "Sync" never appears anywhere in Lite. The absence of a sync toggle is the clearest way to say there is no sync.</div></div>
+      </div>
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px; display: flex; gap: 16px;">
+        <span style="font-family: 'Roboto Slab', serif; font-size: 15px; font-weight: 700; color: var(--color-brand-purple); flex: 0 0 22px;">07</span>
+        <div><div style="font-size: 17px; font-weight: 600; margin-bottom: 6px;">Returning imports are a different product</div><div style="font-size: 15px; line-height: 1.6; color: var(--color-text-secondary);">Second import skips disclosure, skips OAuth, reuses saved rules, and shows only what is new since the last run. One tap from Home or Integrations.</div></div>
+      </div>
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px; display: flex; gap: 16px;">
+        <span style="font-family: 'Roboto Slab', serif; font-size: 15px; font-weight: 700; color: var(--color-brand-purple); flex: 0 0 22px;">08</span>
+        <div><div style="font-size: 17px; font-weight: 600; margin-bottom: 6px;">Success hands off to work, not to a receipt</div><div style="font-size: 15px; line-height: 1.6; color: var(--color-text-secondary);">The success screen shows what was created and drops the user into the account they are most likely to be meeting next, not a generic list.</div></div>
+      </div>
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px; display: flex; gap: 16px;">
+        <span style="font-family: 'Roboto Slab', serif; font-size: 15px; font-weight: 700; color: var(--color-brand-purple); flex: 0 0 22px;">09</span>
+        <div><div style="font-size: 17px; font-weight: 600; margin-bottom: 6px;">Full integration is mentioned twice, not everywhere</div><div style="font-size: 15px; line-height: 1.6; color: var(--color-text-secondary);">Once in Integrations as a quiet line, once on a stale-import prompt. Never in the flow itself — an upsell mid-import reads as a paywall.</div></div>
+      </div>
+    </div>
+
+    <div style="background: rgba(255,77,79,0.06); border: 1px solid rgba(255,133,134,0.28); border-radius: 12px; padding: 24px 26px; display: flex; flex-direction: column; gap: 14px;">
+      <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-error-light); font-weight: 600;">What I would discard from the current screens</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px;">
+        <div><div style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">"Which field are we filtering on?"</div><div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary);">Cut entirely. Halosight already knows which field discriminates best; asking the user to choose between Type, TaskSubtype, CallType, Priority and Status is asking them to debug our query.</div></div>
+        <div><div style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">Three-way Skip / Note / Task segmented control per value</div><div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary);">Cut as the default. Defaulting every value to Skip means the recommendation is "import nothing", and the Import button starts disabled. The system should arrive with an answer.</div></div>
+        <div><div style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">"STEP 1 OF 2" wizard chrome</div><div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary);">Cut. A step counter promises configuration. The default path has no steps to count.</div></div>
+        <div><div style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">Bare spinner, "Reading your Salesforce records…"</div><div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary);">Replaced with a three-beat analysis that names what it found as it finds it. The wait is where the intelligence becomes visible.</div></div>
+        <div><div style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">"Agree and continue" + consent-panel layout</div><div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary);">Softened. Two facts and a plain CTA — "Continue to Salesforce" — reads as trust; a checked/crossed agreement panel reads as a contract.</div></div>
+        <div><div style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">"Import complete. Imported 2 notes and 1 tasks."</div><div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary);">Replaced with created value and a next action. Also fixes the plural bug, which is a small tell that nobody was watching this screen.</div></div>
+        <div><div style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">"Import from Salesforce" as a flat Profile row</div><div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary);">Moved into <strong style="color: var(--color-text-primary); font-weight: 600;">Data &amp; Connections</strong>, where last-import state, rules and the full-integration story can live together. Profile keeps identity and support.</div></div>
+        <div><div style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">The 60→120 day widening explainer</div><div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary);">Kept as a fact, demoted from a paragraph. It becomes a single line under the counts: "Covers activity since Jun 25."</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">Challenging the brief</span>
+      <h2 style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 32px; margin: 0; letter-spacing: -0.01em;">Nine questions, answered</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1px; background: var(--border-subtle); border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+      <div style="background: var(--color-dark-primary); padding: 20px 22px;"><div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 8px;">Does the user need to understand "mapping" at all?</div><div style="font-size: 15px; line-height: 1.6;">No. They need to understand <strong style="font-weight: 600;">consequences</strong>. "94 become notes, 29 become action items, 4 left out" is the entire concept. The word mapping never appears in the UI; the entry point is labelled "How activity comes in".</div></div>
+      <div style="background: var(--color-dark-primary); padding: 20px 22px;"><div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 8px;">Can Halosight infer and only ask about exceptions?</div><div style="font-size: 15px; line-height: 1.6;">Yes, for standard Salesforce Type values, which cover the large majority of orgs. Ask only when a value is unseen, or when a value's records split across obviously different shapes.</div></div>
+      <div style="background: var(--color-dark-primary); padding: 20px 22px;"><div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 8px;">Should users select accounts?</div><div style="font-size: 15px; line-height: 1.6;">No. Infer from activity. Provide deselection only inside Review, as a list you can uncheck — used by roughly nobody, but its presence is what makes "18 accounts" feel like a claim rather than a decree.</div></div>
+      <div style="background: var(--color-dark-primary); padding: 20px 22px;"><div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 8px;">Does a separate preview screen help?</div><div style="font-size: 15px; line-height: 1.6;">No — as its own step it is friction. Fold it in: each destination row on Review carries one real example beneath it, and expands to a short list. Confidence without a screen.</div></div>
+      <div style="background: var(--color-dark-primary); padding: 20px 22px;"><div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 8px;">Disclosure before OAuth, after, or both?</div><div style="font-size: 15px; line-height: 1.6;">Before, briefly. Salesforce's own consent screen handles scope; ours handles intent. Repeating it after OAuth implies the first one did not count. Review is the second checkpoint, and it is the one with real numbers.</div></div>
+      <div style="background: var(--color-dark-primary); padding: 20px 22px;"><div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 8px;">Where does CRM import belong in the IA?</div><div style="font-size: 15px; line-height: 1.6;">Home for discovery, <strong style="font-weight: 600;">Profile → Data &amp; Connections</strong> for the durable home. Not in a settings list next to Switch Tenant, and not a top-level tab — it is not a place users visit weekly.</div></div>
+      <div style="background: var(--color-dark-primary); padding: 20px 22px;"><div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 8px;">How do we keep import from reading as sync?</div><div style="font-size: 15px; line-height: 1.6;">Three mechanics: every state is stamped with a date, the CTA is always a verb the user performs, and the connection card shows "Last imported" rather than a status light. Never a green "Connected" pill.</div></div>
+      <div style="background: var(--color-dark-primary); padding: 20px 22px;"><div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 8px;">How does success lead to value?</div><div style="font-size: 15px; line-height: 1.6;">By naming a next meeting. "Jack's Tire &amp; Oil now has 9 notes — you visited 2 weeks ago" beats "View my accounts", because it points at the thing the rep was going to do anyway.</div></div>
+      <div style="background: var(--color-dark-primary); padding: 20px 22px;"><div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 8px;">Minimum decisions before import?</div><div style="font-size: 15px; line-height: 1.6;">One: approve. Plus one per unrecognized activity type. A clean org goes Home → Continue → Salesforce → Import, with a single deliberate tap on each of four screens.</div></div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">B · End-to-end flow</span>
+      <h2 style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 32px; margin: 0; letter-spacing: -0.01em;">The default path is a straight line</h2>
+      <p style="margin: 0; font-size: 16px; line-height: 1.6; color: var(--color-text-secondary); max-width: 760px;">Solid nodes are the path a normal user takes. Dashed nodes are conditional — they appear only when the data or the network forces them, and every one of them returns to the main line rather than ending the flow.</p>
+    </div>
+
+    <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 32px 28px; display: flex; flex-direction: column; gap: 28px; overflow-x: auto;">
+      <div style="display: flex; align-items: stretch; gap: 0; min-width: 1400px;">
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">Entry</div>
+          <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px 16px; flex: 1;">
+            <div style="font-size: 15px; font-weight: 600;">Home · Integrations · empty state</div>
+            <div style="font-size: 13px; line-height: 1.5; color: var(--color-text-muted); margin-top: 4px;">Import from Salesforce</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 44px; display: flex; align-items: center; justify-content: center; color: var(--color-text-disabled); font-size: 20px; padding-top: 18px;">→</div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">Disclosure</div>
+          <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px 16px; flex: 1;">
+            <div style="font-size: 15px; font-weight: 600;">What we'll look at</div>
+            <div style="font-size: 13px; line-height: 1.5; color: var(--color-text-muted); margin-top: 4px;">Continue to Salesforce</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 44px; display: flex; align-items: center; justify-content: center; color: var(--color-text-disabled); font-size: 20px; padding-top: 18px;">→</div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">OAuth</div>
+          <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px 16px; flex: 1;">
+            <div style="font-size: 15px; font-weight: 600;">Salesforce login</div>
+            <div style="font-size: 13px; line-height: 1.5; color: var(--color-text-muted); margin-top: 4px;">Leaves the app, returns by deep link</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 44px; display: flex; align-items: center; justify-content: center; color: var(--color-text-disabled); font-size: 20px; padding-top: 18px;">→</div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">Analysis</div>
+          <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px 16px; flex: 1;">
+            <div style="font-size: 15px; font-weight: 600;">Three named beats</div>
+            <div style="font-size: 13px; line-height: 1.5; color: var(--color-text-muted); margin-top: 4px;">Finding activity → matching accounts → sorting</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 44px; display: flex; align-items: center; justify-content: center; color: var(--color-text-disabled); font-size: 20px; padding-top: 18px;">→</div>
+        <div style="flex: 1.15 1 0; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">Review · the one decision</div>
+          <div style="background: rgba(139,146,255,0.10); border: 1px solid var(--color-brand-purple-dark); border-radius: 10px; padding: 14px 16px; flex: 1;">
+            <div style="font-size: 15px; font-weight: 600;">Here's what we'll bring in</div>
+            <div style="font-size: 13px; line-height: 1.5; color: var(--color-text-secondary); margin-top: 4px;">Import 123 activities</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 44px; display: flex; align-items: center; justify-content: center; color: var(--color-text-disabled); font-size: 20px; padding-top: 18px;">→</div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">Import</div>
+          <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px 16px; flex: 1;">
+            <div style="font-size: 15px; font-weight: 600;">Backgroundable progress</div>
+            <div style="font-size: 13px; line-height: 1.5; color: var(--color-text-muted); margin-top: 4px;">Accounts land first, then activity</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 44px; display: flex; align-items: center; justify-content: center; color: var(--color-text-disabled); font-size: 20px; padding-top: 18px;">→</div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">Success</div>
+          <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px 16px; flex: 1;">
+            <div style="font-size: 15px; font-weight: 600;">Value + next account</div>
+            <div style="font-size: 13px; line-height: 1.5; color: var(--color-text-muted); margin-top: 4px;">Open Jack's Tire &amp; Oil</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height: 1px; background: var(--border-subtle); min-width: 1400px;"></div>
+
+      <div style="display: flex; align-items: stretch; gap: 0; min-width: 1400px;">
+        <div style="flex: 1 1 0;"></div>
+        <div style="flex: 0 0 44px;"></div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-warning); font-weight: 600;">↑ returns to Entry</div>
+          <div style="background: transparent; border: 1px dashed var(--color-dark-tertiary); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--color-text-secondary);">User cancels OAuth → silent return to entry point, no error, no modal</div>
+        </div>
+        <div style="flex: 0 0 44px;"></div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-warning); font-weight: 600;">↑ inline retry</div>
+          <div style="background: transparent; border: 1px dashed var(--color-dark-tertiary); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--color-text-secondary);">Auth failed · session expired · insufficient permissions → one screen, cause-specific line, Try again</div>
+        </div>
+        <div style="flex: 0 0 44px;"></div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-warning); font-weight: 600;">↑ dead end, handled</div>
+          <div style="background: transparent; border: 1px dashed var(--color-dark-tertiary); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--color-text-secondary);">Nothing found · no activity has an account → "Nothing to import yet", offers manual add</div>
+        </div>
+        <div style="flex: 0 0 44px;"></div>
+        <div style="flex: 1.15 1 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">↑ optional detour</div>
+          <div style="background: rgba(245,166,35,0.07); border: 1px dashed var(--color-warning-dark); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--color-text-secondary);">Unrecognized types → one question per type, then straight back to Review</div>
+          <div style="background: transparent; border: 1px dashed var(--color-dark-tertiary); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--color-text-secondary);">"How activity comes in" → full destination board, opened by choice</div>
+        </div>
+        <div style="flex: 0 0 44px;"></div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-warning); font-weight: 600;">↑ partial</div>
+          <div style="background: transparent; border: 1px dashed var(--color-dark-tertiary); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--color-text-secondary);">Leaves app mid-import → continues server-side, push on completion. Partial failure → success screen with a "3 didn't come through · Retry" row</div>
+        </div>
+        <div style="flex: 0 0 44px;"></div>
+        <div style="flex: 1 1 0; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">↓ later</div>
+          <div style="background: transparent; border: 1px dashed var(--color-dark-tertiary); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--color-text-secondary);">Returning import: Entry → Review (new only) → Import. No disclosure, no OAuth, saved rules</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">E · Authentication disclosure</span>
+      <h2 style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 32px; margin: 0; letter-spacing: -0.01em;">The screen before OAuth, word for word</h2>
+      <p style="margin: 0; font-size: 16px; line-height: 1.6; color: var(--color-text-secondary); max-width: 800px;">Salesforce's own consent screen covers scope. This screen covers intent, which is the part the user actually can't infer. It earns trust by being short and by naming the limits without a checkbox.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px;">
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px 26px; display: flex; flex-direction: column; gap: 18px;">
+        <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600;">Final copy</div>
+        <div><div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 3px;">Title</div><div style="font-family: 'Roboto Slab', serif; font-size: 22px; font-weight: 700;">Before we connect</div></div>
+        <div><div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 3px;">Subhead</div><div style="font-size: 15.5px; line-height: 1.5;">You'll sign in to Salesforce next. Here's exactly what Halosight does with what it finds.</div></div>
+        <div><div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 6px;">We look at</div><div style="font-size: 15px; line-height: 1.7;">Your Salesforce tasks and activity from the last 60 days<br>The accounts that activity is attached to<br>Your Salesforce name and email, to file it under you</div></div>
+        <div><div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 6px;">We copy, once</div><div style="font-size: 15px; line-height: 1.7;">Those accounts, as companies in Halosight<br>The activity, as account notes or action items</div></div>
+        <div><div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 3px;">Boundary card</div><div style="font-size: 15.5px; font-weight: 600; line-height: 1.45;">A one-time copy, not a sync.</div><div style="font-size: 15px; line-height: 1.55; color: var(--color-text-secondary); margin-top: 4px;">Halosight won't change anything in Salesforce, won't read a colleague's records, and won't check back on its own. You import again whenever you want to.</div></div>
+        <div><div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 3px;">Expandable · "What gets imported?"</div><div style="font-size: 15px; line-height: 1.55; color: var(--color-text-secondary);">Halosight reads your recent tasks, groups them by the account each one is attached to, and turns them into account notes or action items. Activity with no account attached is left behind. If fewer than 100 records turn up, we widen the window to 120 days.</div></div>
+        <div><div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 3px;">Footnote above CTA</div><div style="font-size: 15px; line-height: 1.5;">You'll see what we found, and approve it, before anything is copied.</div></div>
+        <div><div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 3px;">Primary CTA</div><div style="font-size: 16px; font-weight: 600; color: var(--color-brand-purple);">Continue to Salesforce</div></div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px;">
+          <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Why two lists instead of three</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary);">The current concept splits into "what we read" and a four-item "what we never do" list. Four negations read as defensiveness. Compressing them into one sentence inside a boundary card keeps every fact and removes the courtroom tone.</div>
+        </div>
+        <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px;">
+          <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Why not "Agree and continue"</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary);">Nothing is being agreed to. The user is being told what happens next, and the real consent moment is the Import button, which has counts attached. "Agree" borrows weight from legal flows and spends the user's caution in the wrong place.</div>
+        </div>
+        <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px;">
+          <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Why no Cancel button</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary);">The close affordance in the header is the cancel. A full-width Cancel next to the primary CTA implies the choice is risky enough to need a matched pair.</div>
+        </div>
+        <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 22px 24px;">
+          <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Second and later imports</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary);">This screen does not reappear. It returns only if the user connects a different Salesforce account, or if scopes change — the two cases where the facts genuinely differ.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">G · States and edge cases</span>
+      <h2 style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 32px; margin: 0; letter-spacing: -0.01em;">Eighteen cases, five behaviors</h2>
+      <p style="margin: 0; font-size: 16px; line-height: 1.6; color: var(--color-text-secondary); max-width: 800px;">Grouped by how the UI responds, not by cause. Only two groups get a screen of their own; the rest resolve inline.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-left: 3px solid var(--color-warning); border-radius: 12px; padding: 22px 26px; display: grid; grid-template-columns: 220px 1fr; gap: 24px;">
+        <div>
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-warning); font-weight: 600; margin-bottom: 6px;">Group 1 · One screen, cause-specific line</div>
+          <div style="font-size: 17px; font-weight: 600; line-height: 1.3;">Connection didn't complete</div>
+          <div style="font-size: 13.5px; color: var(--color-text-muted); margin-top: 8px; line-height: 1.5;">Auth failure · expired session · insufficient permissions · different Salesforce account · scopes revoked</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary);">A single screen with a fixed shape: title, one sentence naming the cause in the user's terms, one primary action. The shape never changes, so the user learns it once.</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px;"><div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Auth failed</div><div style="font-size: 13.5px; line-height: 1.5; color: var(--color-text-secondary);">"Salesforce didn't finish signing you in. Nothing was imported." → <span style="color: var(--color-brand-purple); font-weight: 600;">Try again</span></div></div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px;"><div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Session expired</div><div style="font-size: 13.5px; line-height: 1.5; color: var(--color-text-secondary);">"Your Salesforce session has expired. Sign in again to pick up where you left off." → <span style="color: var(--color-brand-purple); font-weight: 600;">Sign in to Salesforce</span></div></div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px;"><div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Missing permissions</div><div style="font-size: 13.5px; line-height: 1.5; color: var(--color-text-secondary);">"Your Salesforce account can't read tasks and activities. Your Salesforce admin can turn that on." → <span style="color: var(--color-brand-purple); font-weight: 600;">Copy details for your admin</span></div></div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px;"><div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Different account</div><div style="font-size: 13.5px; line-height: 1.5; color: var(--color-text-secondary);">"This is a different Salesforce account than last time. Anything already imported stays put." → <span style="color: var(--color-brand-purple); font-weight: 600;">Continue</span> / Use the other account</div></div>
+          </div>
+          <div style="font-size: 13.5px; color: var(--color-text-muted); line-height: 1.5;">Cancelled OAuth is deliberately <em>not</em> in this group — a user who taps Deny gets returned silently to where they started, with no error and no modal. Cancelling is not a failure.</div>
+        </div>
+      </div>
+
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-left: 3px solid var(--color-brand-teal); border-radius: 12px; padding: 22px 26px; display: grid; grid-template-columns: 220px 1fr; gap: 24px;">
+        <div>
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-brand-teal); font-weight: 600; margin-bottom: 6px;">Group 2 · One screen, honest dead end</div>
+          <div style="font-size: 17px; font-weight: 600; line-height: 1.3;">Nothing worth importing</div>
+          <div style="font-size: 13.5px; color: var(--color-text-muted); margin-top: 8px; line-height: 1.5;">No activity found · every task has no AccountId · zero accounts qualify · all accounts inaccessible</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary);">All four have the same consequence, so they share a screen and differ only in the explanatory line. Crucially it offers the manual path rather than leaving the user at a wall.</div>
+          <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 15px 17px;">
+            <div style="font-family: 'Roboto Slab', serif; font-size: 18px; font-weight: 700;">Nothing to import yet</div>
+            <div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary); margin-top: 6px;">We looked at your Salesforce activity from the last 120 days and didn't find anything attached to an account. Halosight can only bring across activity that's linked to a company.</div>
+            <div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary); margin-top: 8px;">Variant, tasks exist but are unlinked: "We found 22 tasks, but none of them are attached to an account in Salesforce, so there's nothing to file them under."</div>
+            <div style="display: flex; gap: 10px; margin-top: 14px;"><span style="font-size: 14px; font-weight: 600; color: var(--color-brand-purple);">Add a company manually</span><span style="font-size: 14px; color: var(--color-text-muted);">Try again later</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-left: 3px solid var(--color-brand-purple); border-radius: 12px; padding: 22px 26px; display: grid; grid-template-columns: 220px 1fr; gap: 24px;">
+        <div>
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600; margin-bottom: 6px;">Group 3 · Resolved inline on Review</div>
+          <div style="font-size: 17px; font-weight: 600; line-height: 1.3;">The data is odd, not broken</div>
+          <div style="font-size: 13.5px; color: var(--color-text-muted); margin-top: 8px; line-height: 1.5;">Unknown types · low confidence · some tasks unlinked · inaccessible accounts · duplicates · already-imported records · everything set to Leave out · saved rule no longer valid</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary);">None of these deserve a screen. Each becomes a line on the Review screen that the user can act on or ignore.</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Unknown / low confidence.</strong> Amber row: "2 activity types need your call." Tapping opens one question per type. Import stays disabled until answered — the only time it ever is.</div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Unlinked or inaccessible.</strong> Folded into the "Left out" row: "4 · No account attached in Salesforce", with "2 in accounts you don't have access to" beneath when relevant.</div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Duplicates / already imported.</strong> Deduped by Salesforce record id before Review, so the counts are already net-new. One line states it: "31 you've already imported are skipped."</div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Everything left out.</strong> Import button reads "Nothing selected to import" and is inert; the Left-out row is expanded automatically so the cause is visible rather than deduced.</div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Existing account matched.</strong> "3 of these are companies you already have — we'll add the activity to them." Merge, never duplicate, matched on Salesforce account id first and name second.</div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Saved rule went stale.</strong> Rules for values that no longer exist are dropped silently. New values arrive as the amber row — the same mechanic as first run, which is why it needs no extra design.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-left: 3px solid var(--color-info); border-radius: 12px; padding: 22px 26px; display: grid; grid-template-columns: 220px 1fr; gap: 24px;">
+        <div>
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-info); font-weight: 600; margin-bottom: 6px;">Group 4 · Progress, not blocking</div>
+          <div style="font-size: 17px; font-weight: 600; line-height: 1.3;">It's taking a while</div>
+          <div style="font-size: 13.5px; color: var(--color-text-muted); margin-top: 8px; line-height: 1.5;">Slow Salesforce API · hundreds of records · user leaves mid-import · partial failure</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary);">The import runs server-side, so the UI is a window onto it rather than a lock. Accounts are written first, which means the app is usable within seconds even on a large import.</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Any size.</strong> Phase labels, not percentages of a mystery: "Adding 18 accounts" → "Writing 94 account notes" → "Creating 29 action items". Over 300 records, add "This one's large — around two minutes."</div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Leaves the app.</strong> Import continues. A local notification on completion: "Salesforce import finished — 18 companies are ready." Returning mid-run reopens the progress state from the server.</div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Slow API.</strong> After 20 seconds: "Salesforce is being slow. This keeps running even if you close the app." Never a timeout that discards work.</div>
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 13px 15px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Partial failure.</strong> Still the success screen — most of it worked. One amber row: "6 activities didn't come through" with <span style="color: var(--color-brand-purple); font-weight: 600;">Retry those 6</span>. Retrying is idempotent.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-left: 3px solid var(--color-error); border-radius: 12px; padding: 22px 26px; display: grid; grid-template-columns: 220px 1fr; gap: 24px;">
+        <div>
+          <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-error-light); font-weight: 600; margin-bottom: 6px;">Group 5 · Reversal</div>
+          <div style="font-size: 17px; font-weight: 600; line-height: 1.3;">Undo an import</div>
+          <div style="font-size: 13.5px; color: var(--color-text-muted); margin-top: 8px; line-height: 1.5;">User wants imported data gone · wrong Salesforce account · regret after seeing the result</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary);">Every import gets a record in <strong style="color: var(--color-text-primary); font-weight: 600;">Data &amp; Connections → Import history</strong>, and each entry can be removed. Scope is stated precisely, because the honest version of undo has an exception.</div>
+          <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 15px 17px;">
+            <div style="font-size: 14.5px; font-weight: 600;">Remove this import?</div>
+            <div style="font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary); margin-top: 6px;">This deletes the 94 notes and 29 action items from the Aug 24 import. Companies stay, and so does anything you've written or changed yourself since. Nothing in Salesforce is affected.</div>
+            <div style="display: flex; gap: 12px; margin-top: 12px;"><span style="font-size: 14px; font-weight: 600; color: var(--color-error-light);">Remove import</span><span style="font-size: 14px; color: var(--color-text-muted);">Keep it</span></div>
+          </div>
+          <div style="font-size: 13.5px; color: var(--color-text-muted); line-height: 1.5;">Edited items are preserved and reported: "3 notes you've edited were kept." Deleting a rep's own writing to satisfy a tidy undo is the worse failure.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 28px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">F · Lite vs full integration</span>
+      <h2 style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 32px; margin: 0; letter-spacing: -0.01em;">Four surfaces carry the distinction</h2>
+      <p style="margin: 0; font-size: 16px; line-height: 1.6; color: var(--color-text-secondary); max-width: 820px;">Home is the fifth and it says nothing about tiers — it just offers the import. The distinction is made by dates and verbs everywhere, and named explicitly in exactly two places.</p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 36px;">
+
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+        <div data-screen-label="Data and Connections" style="width: 390px; height: 780px; border-radius: 38px; border: 1px solid var(--color-alpha-white-10); background: var(--color-background); overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.55);">
+          <div style="display: flex; align-items: center; gap: 14px; padding: 26px 20px 14px;">
+            <span class="ms ms-24" style="color: var(--color-text-secondary);">arrow_back</span>
+            <span style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 17px;">Data &amp; Connections</span>
+          </div>
+          <div style="padding: 6px 18px 0; display: flex; flex-direction: column; gap: 14px;">
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <span class="ms ms-24" style="color: var(--color-brand-purple);">cloud_download</span>
+                <div style="flex: 1;">
+                  <div style="font-size: 16px; font-weight: 600;">Salesforce quick import</div>
+                  <div style="font-size: 13.5px; color: var(--color-text-muted); margin-top: 2px;">Last imported Aug 24 · 18 companies</div>
+                </div>
+              </div>
+              <div style="font-size: 13.5px; line-height: 1.5; color: var(--color-text-secondary);">A manual copy of your recent account activity. It doesn't run on its own.</div>
+              <div style="height: 44px; border-radius: 28px; background: var(--color-brand-purple); color: var(--color-text-inverse); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600;">Import new activity</div>
+            </div>
+            <div style="border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 15px 16px; border-bottom: 1px solid var(--border-subtle);"><span class="ms ms-20" style="color: var(--color-text-muted);">tune</span><span style="flex: 1; font-size: 15px;">How activity comes in</span><span style="font-size: 13px; color: var(--color-text-muted);">6 rules</span><span class="ms ms-20" style="color: var(--color-text-disabled);">chevron_right</span></div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 15px 16px; border-bottom: 1px solid var(--border-subtle);"><span class="ms ms-20" style="color: var(--color-text-muted);">history</span><span style="flex: 1; font-size: 15px;">Import history</span><span style="font-size: 13px; color: var(--color-text-muted);">3</span><span class="ms ms-20" style="color: var(--color-text-disabled);">chevron_right</span></div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 15px 16px;"><span class="ms ms-20" style="color: var(--color-text-muted);">link_off</span><span style="flex: 1; font-size: 15px;">Disconnect Salesforce</span><span class="ms ms-20" style="color: var(--color-text-disabled);">chevron_right</span></div>
+            </div>
+            <div style="border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-size: 14.5px; font-weight: 600; line-height: 1.4;">Want Salesforce to stay up to date on its own?</div>
+              <div style="font-size: 13.5px; line-height: 1.5; color: var(--color-text-secondary);">Full Halosight keeps your accounts and activity connected continuously, across your whole team.</div>
+              <div style="font-size: 14px; font-weight: 600; color: var(--color-brand-purple); margin-top: 2px;">Compare quick import and full integration →</div>
+            </div>
+          </div>
+        </div>
+        <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px 20px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Why not Profile.</strong> Import needs to sit next to its own state — last run, rules, history, disconnect. A single Profile row can't hold that, and a row labelled "Import from Salesforce" next to "Switch Tenant" reads as a dev tool. Profile links here in one line: "Data &amp; Connections · Salesforce, last imported Aug 24".</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+        <div data-screen-label="Account with provenance" style="width: 390px; height: 780px; border-radius: 38px; border: 1px solid var(--color-alpha-white-10); background: var(--color-background); overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.55);">
+          <div style="padding: 26px 20px 0; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <div style="align-self: flex-start;"><span class="ms ms-24" style="color: var(--color-text-secondary);">arrow_back</span></div>
+            <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 22px;">Jack's Tire &amp; Oil</div>
+            <div style="font-size: 13px; color: var(--color-text-muted); display: flex; align-items: center; gap: 4px;"><span class="ms ms-16">location_on</span>742 Idaho St</div>
+            <div style="display: flex; background: var(--color-dark-secondary); border-radius: 999px; padding: 4px; margin-top: 12px; gap: 4px;">
+              <span style="padding: 7px 22px; border-radius: 999px; background: var(--color-dark-tertiary); font-size: 14px; font-weight: 600;">Overview</span>
+              <span style="padding: 7px 22px; border-radius: 999px; font-size: 14px; color: var(--color-text-muted);">Activity</span>
+            </div>
+          </div>
+          <div style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--color-text-muted);"><span class="ms ms-16" style="color: var(--color-brand-purple);">cloud_download</span>Imported from Salesforce Aug 24</div>
+            <div>
+              <div style="font-family: 'Roboto Slab', serif; font-size: 18px; font-weight: 700; margin-bottom: 8px;">Last Time</div>
+              <div style="font-size: 14px; line-height: 1.6; color: var(--color-text-secondary);">Visited 2 weeks ago. Marcus walked me through a few recurring issues — lead times and inconsistent part quality. They're open to switching if we can demonstrate reliability.</div>
+            </div>
+            <div>
+              <div style="font-family: 'Roboto Slab', serif; font-size: 18px; font-weight: 700; margin-bottom: 10px;">Ideas for this Time</div>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: var(--color-text-secondary);">
+                <div style="display: flex; gap: 8px;"><span style="color: var(--color-text-disabled);">•</span>Ask about upcoming seasonal demand</div>
+                <div style="display: flex; gap: 8px;"><span style="color: var(--color-text-disabled);">•</span>Confirm any pain points before they grow</div>
+              </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px;">
+              <div style="font-family: 'Roboto Slab', serif; font-size: 18px; font-weight: 700; margin-bottom: 10px;">Action Items</div>
+              <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 13px 14px; display: flex; align-items: center; gap: 11px;">
+                <span class="ms ms-20" style="color: var(--color-text-disabled);">radio_button_unchecked</span>
+                <div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Send Q2 pricing update</div><div style="font-size: 12.5px; color: var(--color-text-muted); margin-top: 2px; display: flex; align-items: center; gap: 5px;"><span class="ms ms-14">calendar_today</span>August 2 · from Salesforce</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px 20px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Provenance, once per screen.</strong> One quiet line under the account header, and a "from Salesforce" suffix on individual items only where the source matters for trust. No badges on note cards — a rep scanning history does not need the origin of every line.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+        <div data-screen-label="Stale import prompt" style="width: 390px; height: 780px; border-radius: 38px; border: 1px solid var(--color-alpha-white-10); background: var(--color-background); overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.55);">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 26px 20px 14px;">
+            <span class="ms ms-24" style="color: var(--color-text-secondary);">menu</span>
+            <span style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 17px;">Good afternoon, Nate</span>
+            <span style="width: 32px; height: 32px; border-radius: 999px; background: var(--color-dark-secondary); display: flex; align-items: center; justify-content: center;"><span class="ms ms-20" style="color: var(--color-text-muted);">person</span></span>
+          </div>
+          <div style="padding: 4px 18px 0; display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: var(--color-dark-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px;">
+              <span class="ms ms-22" style="color: var(--color-brand-purple); margin-top: 1px;">update</span>
+              <div style="flex: 1;">
+                <div style="font-size: 14.5px; line-height: 1.45;">Your Salesforce activity was last imported 18 days ago.</div>
+                <div style="font-size: 14px; font-weight: 600; color: var(--color-brand-purple); margin-top: 8px;">Import new activity</div>
+              </div>
+              <span class="ms ms-20" style="color: var(--color-text-disabled);">close</span>
+            </div>
+            <div style="background: var(--gradient-hero); border: 1px solid var(--color-alpha-white-10); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+              <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">Suggested visit</span>
+              <div style="font-family: 'Roboto Slab', serif; font-size: 19px; font-weight: 700;">Innovative Tech</div>
+              <div style="font-size: 13px; color: var(--color-text-muted); display: flex; gap: 12px;"><span>1.4 mi · Tucson</span><span>1 month ago</span></div>
+              <div style="height: 44px; margin-top: 4px; border-radius: 28px; background: var(--color-brand-coral); color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600;"><span class="ms ms-20">edit</span>Log a Visit</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-disabled); font-weight: 600; margin-bottom: 10px;">Companies</div>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;"><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Innovative Tech</div><div style="font-size: 12.5px; color: var(--color-text-muted);">1.4 mi · 4820 E Grant Rd</div></div><span class="ms ms-18" style="color: var(--color-text-disabled);">chevron_right</span></div>
+                <div style="display: flex; align-items: center; gap: 10px;"><div style="flex: 1;"><div style="font-size: 14.5px; font-weight: 600;">Branch of Acme Co</div><div style="font-size: 12.5px; color: var(--color-text-muted);">56.7 mi · 1300 S Main St</div></div><span class="ms ms-18" style="color: var(--color-text-disabled);">chevron_right</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px 20px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Nag rules.</strong> Appears once after 14 days without an import, dismissible, and does not return for another 14 days. No mention of full integration here — the user is being asked to do something, and stacking an upgrade line on top turns a helpful nudge into an ad.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 390px;">
+        <div data-screen-label="Quick import vs full integration" style="width: 390px; height: 780px; border-radius: 38px; border: 1px solid var(--color-alpha-white-10); background: var(--color-background); overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.55);">
+          <div style="display: flex; align-items: center; gap: 14px; padding: 26px 20px 10px;">
+            <span class="ms ms-24" style="color: var(--color-text-secondary);">close</span>
+            <span style="font-size: 15px; font-weight: 600; color: var(--color-text-secondary);">Salesforce</span>
+          </div>
+          <div style="padding: 10px 20px 0;">
+            <div style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 26px; line-height: 1.2;">Two ways to work with Salesforce</div>
+            <div style="font-size: 14px; line-height: 1.55; color: var(--color-text-secondary); margin-top: 8px;">You're using quick import today. Nothing changes unless your organization moves to full integration.</div>
+            <div style="margin-top: 20px; border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; background: var(--color-dark-secondary);">
+                <div style="padding: 12px 14px; border-right: 1px solid var(--border-subtle);"><div style="font-size: 13.5px; font-weight: 600;">Quick import</div><div style="font-size: 11px; color: var(--color-brand-purple); margin-top: 2px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">You're here</div></div>
+                <div style="padding: 12px 14px;"><div style="font-size: 13.5px; font-weight: 600;">Full integration</div><div style="font-size: 11px; color: var(--color-text-muted); margin-top: 2px;">Organization-wide</div></div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border-subtle);"><div style="padding: 13px 14px; border-right: 1px solid var(--border-subtle); font-size: 13.5px; line-height: 1.4;">You import when you want</div><div style="padding: 13px 14px; font-size: 13.5px; line-height: 1.4;">Stays up to date on its own</div></div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border-subtle);"><div style="padding: 13px 14px; border-right: 1px solid var(--border-subtle); font-size: 13.5px; line-height: 1.4;">Recent activity</div><div style="padding: 13px 14px; font-size: 13.5px; line-height: 1.4;">Full account history</div></div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border-subtle);"><div style="padding: 13px 14px; border-right: 1px solid var(--border-subtle); font-size: 13.5px; line-height: 1.4;">Standard tasks and activities</div><div style="padding: 13px 14px; font-size: 13.5px; line-height: 1.4;">Your custom objects and fields</div></div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border-subtle);"><div style="padding: 13px 14px; border-right: 1px solid var(--border-subtle); font-size: 13.5px; line-height: 1.4;">Just your records</div><div style="padding: 13px 14px; font-size: 13.5px; line-height: 1.4;">Your whole team's</div></div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border-subtle);"><div style="padding: 13px 14px; border-right: 1px solid var(--border-subtle); font-size: 13.5px; line-height: 1.4;">You set it up in a minute</div><div style="padding: 13px 14px; font-size: 13.5px; line-height: 1.4;">Set up with your admin</div></div>
+            </div>
+            <div style="margin-top: 18px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);">Quick import is the right choice for most people getting started. Full integration is worth it when a whole team needs Halosight and Salesforce to agree without anyone pressing a button.</div>
+            <div style="margin-top: 18px; height: 46px; border-radius: 28px; border: 1px solid var(--color-brand-purple); color: var(--color-brand-purple); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600;">Talk to us about full integration</div>
+          </div>
+        </div>
+        <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px 20px; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary);"><strong style="color: var(--color-text-primary); font-weight: 600;">Five seconds, five rows.</strong> Rows are written from the user's side of the table, not the feature list's — "you import when you want" rather than "manual import". The closing paragraph legitimises staying on Lite, which is what keeps this from reading as a paywall.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-brand-purple); font-weight: 600;">I · What I would ship</span>
+      <h2 style="font-family: 'Roboto Slab', serif; font-weight: 700; font-size: 32px; margin: 0; letter-spacing: -0.01em;">V1, and what waits</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px;">
+      <div style="background: rgba(46,204,113,0.06); border: 1px solid rgba(46,204,113,0.28); border-radius: 12px; padding: 24px 26px;">
+        <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-success-light); font-weight: 600; margin-bottom: 14px;">Must have</div>
+        <div style="font-size: 15px; line-height: 1.85;">Home entry point, two ways in<br>Disclosure screen, one screen<br>OAuth with cancel and failure handling<br>Analysis with three named beats<br>Review with counts, destinations, inline change<br>One question per unrecognized type<br>Backgroundable import with phase labels<br>Success with created counts and one account handoff<br>Data &amp; Connections with last-import state and re-import<br>Dedupe on Salesforce record id<br>Saved rules per user</div>
+      </div>
+      <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px 26px;">
+        <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600; margin-bottom: 14px;">Later</div>
+        <div style="font-size: 15px; line-height: 1.85; color: var(--color-text-secondary);">Sample-records screen — instrument the link first; if under 10% tap it, delete it<br>Account deselection — ship the list read-only, add checkboxes if anyone asks<br>Import history with per-import removal<br>Stale-import nudge<br>Comparison surface (a support article covers V1)<br>Push notification on background completion<br>Field-level confidence explanations<br>Second-run "only what's new" delta view — V1 can rely on dedupe and say so</div>
+      </div>
+      <div style="background: rgba(255,77,79,0.06); border: 1px solid rgba(255,133,134,0.28); border-radius: 12px; padding: 24px 26px;">
+        <div style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-error-light); font-weight: 600; margin-bottom: 14px;">Not building</div>
+        <div style="font-size: 15px; line-height: 1.85; color: var(--color-text-secondary);">Field picker of any kind<br>Step-numbered wizard<br>A mapping screen reachable before Review<br>Account selection as a required step<br>Any upsell inside the import flow<br>A "Connected" status indicator<br>Configurable date window in V1 — 60 days, widening to 120, stated as a fact</div>
+      </div>
+    </div>
+    <div style="background: var(--color-dark-primary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px 26px; display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-size: 17px; font-weight: 600;">Open questions for you</div>
+      <div style="font-size: 15px; line-height: 1.75; color: var(--color-text-secondary);">Can mapping rules actually persist per user in Lite today, or does every import start from the recommendation? The returning-import design depends on it.<br>Is the 60-day window a product decision or an API constraint? If it's a decision, "since Jun 25" should be adjustable later.<br>Can the import run server-side after the app is closed? Group 4 assumes yes; if not, the progress screen has to hold the user and the copy changes.<br>Is per-import removal feasible on the current data model? Without it, the honest answer to "undo" is "delete the companies", which is worse.</div>
+    </div>
+  </div>
+
+</div>
+</section>
+</x-dc>
+</body>
+</html>
