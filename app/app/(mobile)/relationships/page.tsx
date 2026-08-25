@@ -1036,6 +1036,20 @@ function CombinedPageContent() {
   const showSystemSection = systemState === "loading" || systemState === "done";
 
   // Home page company + tasks — single company derived from localStorage (or seed)
+  const importedAccounts: Account[] = useMemo(() => [
+    {
+      id: homeCompany.id,
+      name: homeCompany.name,
+      type: "standalone" as const,
+      halosightType: "prospect" as const,
+      distanceMiles: 2.4,
+      lastVisited: new Date(Date.now() - 7 * 86400000),
+      taskCount: 3,
+    },
+    ...mockAccounts.filter((a) => a.id !== homeCompany.id).slice(0, 3),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], [homeCompany.id, homeCompany.name]);
+
   const homeAcct: Account = {
     id: homeCompany.id,
     name: homeCompany.name,
@@ -1295,9 +1309,12 @@ function CombinedPageContent() {
                       <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Companies
                       </span>
+                      <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
                     <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
-                      <CompactAccountRow account={homeAcct} isLast={true} />
+                      {importedAccounts.map((acct, i) => (
+                        <CompactAccountRow key={acct.id} account={acct} isLast={i === importedAccounts.length - 1} />
+                      ))}
                     </div>
                   </div>
 
@@ -1307,6 +1324,7 @@ function CombinedPageContent() {
                       <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Action Items
                       </span>
+                      <MiniSearchPill onClick={() => goToMode("priorities")} />
                     </div>
                     <TaskStrip tasks={homeTasks.filter(t => !completedTaskIds.includes(t.id))} pendingId={pendingTaskId} onCheck={handleCheck} />
                   </div>
