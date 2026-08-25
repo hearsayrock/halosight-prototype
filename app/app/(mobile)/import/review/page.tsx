@@ -583,12 +583,6 @@ export default function ImportReviewPage() {
           background: "var(--md-sys-color-background)",
         }}
       >
-        <p
-          className="text-center mb-3"
-          style={{ fontSize: 12.5, color: "var(--md-sys-color-text-disabled)" }}
-        >
-          Nothing is copied until you tap this.
-        </p>
         <button
           onClick={() => !hasUnresolved && router.push("/import/importing")}
           className="w-full flex items-center justify-center active:scale-[.97] transition-transform"
