@@ -568,18 +568,6 @@ export default function ImportReviewPage() {
             </AnimatePresence>
           </div>
 
-          {/* Footnote */}
-          <p
-            style={{
-              fontSize: 12.5,
-              color: "var(--md-sys-color-text-disabled)",
-              lineHeight: 1.55,
-              textWrap: "balance" as React.CSSProperties["textWrap"],
-            }}
-          >
-            {data.unlinkedCount} activities have no account attached in Salesforce, so they stay there.
-            {data.alreadyImportedCount > 0 && ` ${data.alreadyImportedCount} you've already imported are skipped.`}
-          </p>
         </div>
       </div>
 
