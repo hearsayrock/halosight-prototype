@@ -4,17 +4,14 @@
  * FLUTTER HANDOFF: ImportDisclosureScreen
  * Route: /import/disclosure
  * Reached via home import card CTA or Data & Connections → Import new activity.
- * Widget: StatefulWidget
- * State: whatGetsExpanded (progressive disclosure)
+ * Widget: StatelessWidget
  * Tokens: --md-sys-color-background, --md-sys-color-dark-primary, --md-sys-color-alpha-white-10,
  *         --md-sys-color-text-primary, --md-sys-color-text-secondary, --md-sys-color-text-disabled,
  *         --md-sys-color-neonindigo, --md-sys-color-brand-teal, --radius-md, --radius-full
  * Flutter equivalent: import_disclosure_page.dart
  */
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 
 function Eyebrow({ children, color }: { children: React.ReactNode; color: string }) {
@@ -36,7 +33,6 @@ function BulletRow({ children, color }: { children: React.ReactNode; color: stri
 
 export default function ImportDisclosurePage() {
   const router = useRouter();
-  const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
@@ -107,36 +103,6 @@ export default function ImportDisclosurePage() {
           </div>
         </div>
 
-        {/* Progressive disclosure */}
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          className="flex items-center gap-1 mb-2 active:opacity-70 transition-opacity"
-        >
-          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-neonindigo)" }}>
-            What gets imported?
-          </span>
-          <Icon
-            name={expanded ? "expand_less" : "expand_more"}
-            size={18}
-            style={{ color: "var(--md-sys-color-neonindigo)" }}
-          />
-        </button>
-        <AnimatePresence>
-          {expanded && (
-            <motion.div
-              key="what-gets-imported"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              style={{ overflow: "hidden" }}
-            >
-              <p style={{ fontSize: 13.5, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, paddingBottom: 12 }}>
-                Halosight reads your recent tasks, groups them by the account each one is attached to, and turns them into account notes or action items. Activity with no account attached is left behind. If fewer than 100 records turn up, we widen the window to 120 days.
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* Sticky footer */}
