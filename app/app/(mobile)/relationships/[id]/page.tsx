@@ -613,6 +613,16 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             </button>
           ))}
         </div>}
+
+        {/* Salesforce provenance */}
+        {!effectiveJustCreated && (
+          <div className="flex items-center gap-1.5 mt-3 justify-center">
+            <Icon name="cloud_download" size={13} style={{ color: "var(--md-sys-color-text-disabled)" }} />
+            <span style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)" }}>
+              Imported from Salesforce Aug 24
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Just-created state — AI prep chat */}
