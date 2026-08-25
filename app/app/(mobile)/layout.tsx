@@ -4,6 +4,7 @@ import StaticBottomNav from "@/components/layout/StaticBottomNav";
 import { ActionItemsProvider } from "@/lib/context/ActionItemsContext";
 import { CaptureProvider } from "@/lib/context/CaptureContext";
 import { AccountStateProvider } from "@/lib/context/AccountStateContext";
+import { SalesforceProvider } from "@/lib/context/SalesforceContext";
 import CaptureWidget from "@/components/capture/CaptureWidget";
 import DemoReset from "@/components/layout/DemoReset";
 
@@ -18,6 +19,7 @@ import DemoReset from "@/components/layout/DemoReset";
 export default function MobileLayout({ children }: { children: React.ReactNode }) {
   return (
     <AccountStateProvider>
+      <SalesforceProvider>
       <ActionItemsProvider>
         <CaptureProvider>
           <PhoneFrame>
@@ -28,6 +30,7 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
           </PhoneFrame>
         </CaptureProvider>
       </ActionItemsProvider>
+      </SalesforceProvider>
     </AccountStateProvider>
   );
 }

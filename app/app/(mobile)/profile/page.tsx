@@ -112,6 +112,28 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* Data & Connections row */}
+      <div className="px-4 mb-3">
+        <button
+          onClick={() => router.push("/import/connections")}
+          className="w-full flex items-center justify-between px-4 py-4 active:opacity-70 transition-opacity"
+          style={{
+            background: "var(--md-sys-color-dark-secondary)",
+            borderRadius: "var(--radius-md)",
+          }}
+        >
+          <div className="flex flex-col items-start gap-0.5">
+            <span className="text-base-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
+              Data &amp; Connections
+            </span>
+            <span style={{ fontSize: 12.5, color: "var(--md-sys-color-text-muted)" }}>
+              Salesforce, last imported Aug 24
+            </span>
+          </div>
+          <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)" }} />
+        </button>
+      </div>
+
       {/* Menu items */}
       <div className="flex flex-col gap-2 px-4 mb-6">
         {MENU_ITEMS.map((item) => (
