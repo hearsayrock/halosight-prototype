@@ -81,10 +81,11 @@ function DestinationMovedToast({
       transition={{ duration: 0.22, ease: "easeOut" }}
       style={{
         position: "absolute",
-        bottom: 106,
+        bottom: 200,
         left: 16,
         right: 16,
         zIndex: 60,
+        pointerEvents: "auto",
       }}
     >
       <div
@@ -124,7 +125,7 @@ function DismissExceptionsToast({ onUndo }: { onUndo: () => void }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.22, ease: "easeOut" }}
-      style={{ position: "absolute", bottom: 200, left: 16, right: 16, zIndex: 60 }}
+      style={{ position: "absolute", bottom: 200, left: 16, right: 16, zIndex: 60, pointerEvents: "auto" }}
     >
       <div style={{
         background: "var(--md-sys-color-dark-tertiary)",
