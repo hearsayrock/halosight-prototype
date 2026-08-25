@@ -815,10 +815,10 @@ function CombinedPageContent() {
 
   const { isDisqualified, markNeedsAttention } = useAccountState();
 
-  // Dynamic account list — seeded with mockAccounts for preview=full, empty otherwise
-  const [allAccounts, setAllAccounts] = useState<Account[]>([]);
+  // Dynamic account list — empty only for special dev preview states, populated otherwise
+  const [allAccounts, setAllAccounts] = useState<Account[]>(mockAccounts);
   useEffect(() => {
-    if (preview === "full") setAllAccounts(mockAccounts);
+    if (preview === "loading" || preview === "error" || preview === "empty") setAllAccounts([]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
