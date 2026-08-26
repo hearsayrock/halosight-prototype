@@ -34,26 +34,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [isVisible, setIsVisible]   = useState(true);
-  const [keyboardOffset, setKeyboardOffset] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  function measureKeyboard() {
-    // With interactive-widget=resizes-visual in the viewport meta:
-    // window.innerHeight = layout viewport (fixed); vv.height = visual viewport (shrinks with keyboard)
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const kb = Math.max(0, window.innerHeight - vv.height);
-    setKeyboardOffset(kb);
-  }
-
-  function handleInputFocus() {
-    // Delay so keyboard has time to finish animating before we measure
-    setTimeout(measureKeyboard, 350);
-  }
-
-  function handleInputBlur() {
-    setKeyboardOffset(0);
-  }
 
   function handleClose() {
     setIsVisible(false);
@@ -111,15 +92,17 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
 
       {/* Sheet */}
       <motion.div
-        className="absolute left-0 right-0 bottom-0"
+        className="absolute left-0 right-0"
         style={{
+          bottom: "var(--keyboard-inset, 0px)",
+          transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
           background: "var(--md-sys-color-background)",
           borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
           maxHeight: "88%",
           overflowY: "auto",
         }}
         initial={{ y: "100%" }}
-        animate={{ y: -keyboardOffset }}
+        animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", stiffness: 380, damping: 38 }}
       >
@@ -144,8 +127,6 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
             placeholder="What needs to be done?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
             className="w-full text-15 outline-none px-4 py-3.5"
             style={{
               background: "var(--md-sys-color-dark-secondary)",
@@ -251,7 +232,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
             className="w-full h-12 text-15-bold flex items-center justify-center transition-opacity"
             style={{
               background: "var(--md-sys-color-brand-lime)",
-              color: "var(--md-sys-color-text-primary)",
+              color: "var(--md-sys-color-text-inverse)",
               borderRadius: "var(--radius-full)",
               opacity: title.trim() ? 1 : 0.4,
             }}

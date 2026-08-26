@@ -12,8 +12,8 @@
   --palette-sky:          #4DA3FF;
 
   --gradient-login:      radial-gradient(ellipse 70% 60% at 50% 40%, #1A1E44 0%, #131728 40%, #111420 100%);
-  --gradient-ai-dark:    radial-gradient(ellipse at 25% 30%, rgba(139,146,255,0.85) 0%, transparent 55%), radial-gradient(ellipse at 75% 70%, rgba(255,107,90,0.9) 0%, transparent 55%), #7874D8;
-  --gradient-ai-light:   radial-gradient(ellipse at 25% 30%, rgba(179,184,255,0.85) 0%, transparent 55%), radial-gradient(ellipse at 75% 70%, rgba(255,143,130,0.9) 0%, transparent 55%), #A8AAEE;
+  --gradient-ai-dark:    radial-gradient(ellipse at 25% 30%, rgba(139,146,255,0.85) 0%, transparent 55%), radial-gradient(ellipse at 75% 70%, rgba(90,2,246,0.9) 0%, transparent 55%), #7874D8;
+  --gradient-ai-light:   radial-gradient(ellipse at 25% 30%, rgba(179,184,255,0.85) 0%, transparent 55%), radial-gradient(ellipse at 75% 70%, rgba(156,106,255,0.9) 0%, transparent 55%), #A8AAEE;
   --gradient-hero:       linear-gradient(to bottom right, #1A1D29, #252A36, #1A1D29);
   --gradient-card:       linear-gradient(to bottom right, #475569, #334155);
   --gradient-text-brand: linear-gradient(to right, #8B92FF, #5B63D6);
@@ -33,9 +33,9 @@
   --md-sys-color-dark-tertiary:  #3D4451;  /* Tertiary dark elements    */
 
   /* ── Text ───────────────────────────────────────────────────────────────── */
-  --md-sys-color-text-primary:   #F7F8FF;  /* Primary text           */
-  --md-sys-color-text-secondary: #C3CAD8;  /* Supporting text        */
-  --md-sys-color-text-muted:     #8B94A8;  /* Muted text, metadata   */
+  --md-sys-color-text-primary:   #F7F8FF;  /* Primary text (headings) */
+  --md-sys-color-text-secondary: #B8C2EC;  /* Supporting body text — dimmer, indigo-tinted */
+  --md-sys-color-text-muted:     #8890C0;  /* Muted text, metadata   */
   --md-sys-color-text-disabled:  #5D667A;  /* Placeholders, inactive */
   --md-sys-color-text-inverse:   #111420;  /* Text on light surfaces */
 
@@ -49,10 +49,15 @@
   --md-sys-color-neonindigo:       #8B92FF;
   --md-sys-color-neonindigo-dark:  #6B72E8;
 
-  /* ── Brand — Coral Ember ─────────────────────────────────────────────────── */
-  --md-sys-color-brand-coral-light: #FF8F82;
-  --md-sys-color-brand-coral:       #FF6B5A;
-  --md-sys-color-brand-coral-dark:  #E64A37;
+  /* ── Brand — Plum / Ultraviolet ─────────────────────────────────────────── */
+  --md-sys-color-brand-plum-light: #744CFB;
+  --md-sys-color-brand-plum:       #5A02F6;
+  --md-sys-color-brand-plum-dark:  #4400C8;
+
+  /* ── Brand — Lime Green Chalk ────────────────────────────────────────────── */
+  --md-sys-color-brand-lime-light: #C0E89A;
+  --md-sys-color-brand-lime:       #92C569;
+  --md-sys-color-brand-lime-dark:  #6A9E42;
 
   /* ── Brand — Indigo ─────────────────────────────────────────────────────── */
   --md-sys-color-indigo-light: #7E85E6;
@@ -87,7 +92,7 @@
   /* ── Data Visualization ──────────────────────────────────────────────────── */
   --md-sys-color-data-account:  #6B9DB0;
   --md-sys-color-data-recency:  #8B92FF;
-  --md-sys-color-data-crm-sync: #2ECC71;
+  --md-sys-color-data-crm-sync: #92C569;
   --md-sys-color-data-review:   #F5A623;
 
   /* ── Alpha ───────────────────────────────────────────────────────────────── */
@@ -95,7 +100,10 @@
   --md-sys-color-alpha-white-18:     rgba(255, 255, 255, 0.18);
   --md-sys-color-alpha-neonindigo-10:    rgba(179, 184, 255, 0.10);
   --md-sys-color-alpha-neonindigo-glass: rgba(179, 184, 255, 0.10);
+  --md-sys-color-alpha-neonindigo-18:    rgba(179, 184, 255, 0.18);
   --md-sys-color-alpha-dark-glass:   rgba(255, 255, 255, 0.18);
+  --md-sys-color-alpha-plum-12:      rgba(90, 2, 246, 0.12);
+  --md-sys-color-alpha-lime-12:      rgba(146, 197, 105, 0.12);
 
   /* ── Extended Palette ────────────────────────────────────────────────────── */
   --md-ref-palette-ext-cyan:   #5BBFCC;
@@ -141,10 +149,15 @@
   --md-sys-color-neonindigo:       #5058D4;
   --md-sys-color-neonindigo-dark:  #3B42B8;
 
-  /* ── Brand — Coral Ember (darkened for light bg contrast) ───────────────── */
-  --md-sys-color-brand-coral-light: #FFB0A8;
-  --md-sys-color-brand-coral:       #C83D2D;
-  --md-sys-color-brand-coral-dark:  #A82E20;
+  /* ── Brand — Plum / Ultraviolet (adjusted for light bg contrast) ────────── */
+  --md-sys-color-brand-plum-light: #8040FF;
+  --md-sys-color-brand-plum:       #4400C8;
+  --md-sys-color-brand-plum-dark:  #3200A0;
+
+  /* ── Brand — Lime Green Chalk (adjusted for light bg contrast) ───────────── */
+  --md-sys-color-brand-lime-light: #C0F070;
+  --md-sys-color-brand-lime:       #6AAC10;
+  --md-sys-color-brand-lime-dark:  #528A0A;
 
   /* ── Brand — Indigo (darkened for light bg contrast) ────────────────────── */
   --md-sys-color-indigo-light: #9BA3F5;

@@ -30,6 +30,7 @@ const SECTIONS = [
   { id: "text-colors",         label: "Text Colors" },
   { id: "semantic-colors",     label: "Semantic Colors" },
   { id: "color",               label: "Color System" },
+  { id: "widget-examples",     label: "Color in Practice" },
   { id: "typography",        label: "Typography" },
   { id: "labels-captions",  label: "Labels & Captions" },
   { id: "shape",             label: "Shape & Radius" },
@@ -336,7 +337,7 @@ function SpacingSwatch({ token, value }: { token: string; value: string }) {
       </div>
       <div
         className="flex-shrink-0"
-        style={{ width: px, height: 20, background: "var(--md-sys-color-brand-coral)", borderRadius: 3, minWidth: 3 }}
+        style={{ width: px, height: 20, background: "var(--md-sys-color-neonindigo)", borderRadius: 3, minWidth: 3 }}
       />
     </div>
   );
@@ -639,15 +640,28 @@ export default function DesignSystemPage() {
           </div>
 
           <div className="mb-6">
-            <p className="text-[13px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "var(--md-sys-color-text-muted)" }}>Coral Ember</p>
-            <p className="text-[15px] font-semibold mb-2" style={{ color: "var(--md-sys-color-text-primary)" }}>Primary CTA &amp; Action Color</p>
+            <p className="text-[13px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "var(--md-sys-color-text-muted)" }}>Ultraviolet (Plum)</p>
+            <p className="text-[15px] font-semibold mb-2" style={{ color: "var(--md-sys-color-text-primary)" }}>Primary CTA &amp; AI Feature Color</p>
             <p className="text-[13px] leading-relaxed mb-5" style={{ color: "var(--md-sys-color-text-muted)" }}>
-              Use for primary call-to-action buttons (Marriage CTAs), important alerts, and high-priority actions that demand immediate attention.
+              Use for primary call-to-action buttons, AI-powered features, and high-priority actions. Deep violet signals intelligence and intent without the urgency of red.
             </p>
             <div className="flex flex-wrap gap-4">
-              <ColorSwatch token="--md-sys-color-brand-coral-light" label="light" textColor="#111420" />
-              <ColorSwatch token="--md-sys-color-brand-coral"       label="base" />
-              <ColorSwatch token="--md-sys-color-brand-coral-dark"  label="dark" />
+              <ColorSwatch token="--md-sys-color-brand-plum-light" label="light" />
+              <ColorSwatch token="--md-sys-color-brand-plum"       label="base (#5A02F6)" />
+              <ColorSwatch token="--md-sys-color-brand-plum-dark"  label="dark" />
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <p className="text-[13px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "var(--md-sys-color-text-muted)" }}>Lime Green Chalk</p>
+            <p className="text-[15px] font-semibold mb-2" style={{ color: "var(--md-sys-color-text-primary)" }}>Urgency &amp; Suggested Actions</p>
+            <p className="text-[13px] leading-relaxed mb-5" style={{ color: "var(--md-sys-color-text-muted)" }}>
+              Use for due-date urgency, suggested visit callouts, and positive momentum signals. Warm green reads as active and timely without being alarming.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <ColorSwatch token="--md-sys-color-brand-lime-light" label="light" />
+              <ColorSwatch token="--md-sys-color-brand-lime"       label="base (#92C569)" />
+              <ColorSwatch token="--md-sys-color-brand-lime-dark"  label="dark" />
             </div>
           </div>
 
@@ -833,10 +847,114 @@ export default function DesignSystemPage() {
                 description="Backgrounds"
                 glass
               />
+              <AlphaSwatch
+                token="--md-sys-color-alpha-plum-12"
+                label="Plum 12%"
+                description="AI card backgrounds · plum feature bg"
+              />
+              <AlphaSwatch
+                token="--md-sys-color-alpha-lime-12"
+                label="Lime 12%"
+                description="Suggested visit bg · urgency tints"
+              />
             </div>
           </div>
 
           <div className="mb-16" />
+
+          {/* ── Color in Practice ────────────────────────────────────── */}
+          <SectionHeader
+            id="widget-examples"
+            title="Color in Practice"
+            subtitle="How plum, lime, and neon indigo work together in real UI contexts."
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-16">
+
+            {/* Widget 1: Suggested Visit card */}
+            <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 20, padding: "18px 20px 20px", border: "1px solid rgba(255,255,255,0.07)" }}>
+              {/* Eyebrow */}
+              <div className="flex items-center gap-1.5 mb-3">
+                <span style={{ fontSize: 13, color: "var(--md-sys-color-brand-lime)" }}>✦</span>
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--md-sys-color-brand-lime)" }}>Suggested Visit</span>
+              </div>
+              <p style={{ fontSize: 20, fontWeight: 700, color: "var(--md-sys-color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif", marginBottom: 4 }}>
+                Innovative Tech
+              </p>
+              <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", marginBottom: 16 }}>1.4 mi · Tucson · 1 month ago</p>
+              <button style={{ width: "100%", height: 44, borderRadius: 100, background: "var(--md-sys-color-brand-plum)", color: "#fff", fontSize: 15, fontWeight: 600, border: "none", cursor: "pointer" }}>
+                Log a Visit
+              </button>
+              <p style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", marginTop: 12, fontFamily: "monospace" }}>
+                eyebrow: brand-lime · CTA: brand-plum · bg: dark-primary
+              </p>
+            </div>
+
+            {/* Widget 2: Active Opportunity card */}
+            <div style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: 20, padding: "18px 20px 20px", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="flex items-center justify-between mb-3">
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>Active Opportunity</span>
+                <span style={{ fontSize: 12, fontWeight: 700, padding: "2px 10px", borderRadius: 100, background: "var(--md-sys-color-alpha-plum-12)", color: "var(--md-sys-color-brand-plum-light)", border: "1px solid rgba(156,106,255,0.3)" }}>80%</span>
+              </div>
+              <p style={{ fontSize: 17, fontWeight: 700, color: "var(--md-sys-color-text-primary)", marginBottom: 2 }}>FleetPride – AI Agent</p>
+              <p style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-brand-lime)", marginBottom: 4 }}>$458,000 · Finalizing Closure</p>
+              <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", marginBottom: 0 }}>Close 9/18 · Chat with Sean to set up phase 1</p>
+              <div style={{ marginTop: 16, height: 4, borderRadius: 4, background: "var(--md-sys-color-dark-tertiary)" }}>
+                <div style={{ width: "80%", height: "100%", borderRadius: 4, background: "var(--md-sys-color-brand-plum)" }} />
+              </div>
+              <p style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", marginTop: 12, fontFamily: "monospace" }}>
+                value: brand-lime · progress + badge: brand-plum · bg: dark-secondary
+              </p>
+            </div>
+
+            {/* Widget 3: Action Items strip */}
+            <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 20, padding: "18px 20px 20px", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="flex items-center justify-between mb-4">
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.09em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>Action Items</span>
+                <span style={{ fontSize: 13, color: "var(--md-sys-color-neonindigo)", fontWeight: 600 }}>View all</span>
+              </div>
+              {[
+                { title: "Send Q3 pricing deck", account: "Jack's Tire & Oil", due: "Today", urgent: true },
+                { title: "Follow up on contract renewal", account: "Midtown Chevrolet", due: "Aug 30", urgent: false },
+                { title: "Schedule annual audit", account: "Summit Auto Group", due: "Sep 5", urgent: false },
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, paddingTop: 12, paddingBottom: 12, borderTop: i > 0 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+                  <div style={{ width: 20, height: 20, borderRadius: "50%", border: "1.5px solid var(--md-sys-color-dark-tertiary)", flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-text-primary)", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</p>
+                    <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)" }}>{item.account}</p>
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: item.urgent ? "var(--md-sys-color-brand-lime)" : "var(--md-sys-color-text-disabled)", flexShrink: 0 }}>{item.due}</span>
+                </div>
+              ))}
+              <p style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", marginTop: 12, fontFamily: "monospace" }}>
+                due today: brand-lime · view all: neonindigo · future dates: text-disabled
+              </p>
+            </div>
+
+            {/* Widget 4: AI "Tell Me More" review card */}
+            <div style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: 20, padding: "18px 20px 20px", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="flex items-center gap-2 mb-4">
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--md-sys-color-alpha-plum-12)", border: "1px solid rgba(90,2,246,0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: 14, color: "var(--md-sys-color-brand-plum-light)" }}>✦</span>
+                </div>
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "var(--md-sys-color-text-primary)" }}>AI Review</p>
+                  <p style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)" }}>Branch of Acme Co</p>
+                </div>
+              </div>
+              <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, marginBottom: 16 }}>
+                Last visit was 6 weeks ago. Kevin mentioned Q4 renewal is on track — now is a good window to confirm timeline and introduce the new pricing tier.
+              </p>
+              <button style={{ display: "flex", alignItems: "center", gap: 8, height: 40, padding: "0 16px", borderRadius: 100, background: "var(--md-sys-color-alpha-plum-12)", border: "1px solid rgba(90,2,246,0.35)", color: "var(--md-sys-color-brand-plum-light)", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+                <span style={{ fontSize: 14 }}>✦</span> Tell Me More
+              </button>
+              <p style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", marginTop: 12, fontFamily: "monospace" }}>
+                AI icon + button: brand-plum · bg: alpha-plum-12 · body: text-secondary
+              </p>
+            </div>
+
+          </div>
 
           {/* ── Typography ────────────────────────────────────────────── */}
           <SectionHeader
@@ -943,30 +1061,30 @@ export default function DesignSystemPage() {
           />
           <div className="space-y-8 mb-16">
             <div>
-              <SubHeader title="Filled Button — Primary" />
+              <SubHeader title="Filled Button — Primary (Neon Indigo / Plum for AI)" />
               <div className="flex items-center gap-4 flex-wrap mb-3">
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-inverse)" }}>
                   Log a Visit
                 </button>
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70 flex items-center gap-2" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70 flex items-center gap-2" style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-inverse)" }}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--md-sys-color-text-inverse)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--md-sys-color-text-inverse)" strokeWidth="1.5" strokeLinecap="round"/></svg>
                   With Icon
                 </button>
-                <button disabled className="h-12 px-6 rounded-full font-semibold text-[15px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button disabled className="h-12 px-6 rounded-full font-semibold text-[15px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-inverse)" }}>
                   Disabled
                 </button>
               </div>
-              <TokenLabel name="background: --md-sys-color-brand-coral · color: --md-sys-color-text-inverse · radius: --radius-full" value="height: 48px · padding: 0 24px · font: 600 15px" />
+              <TokenLabel name="background: --md-sys-color-neonindigo (or brand-plum for AI/primary CTAs) · color: --md-sys-color-text-inverse · radius: --radius-full" value="height: 48px · padding: 0 24px · font: 600 15px" />
               {/* Small */}
               <div className="flex items-center gap-3 flex-wrap mt-4 mb-3">
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-inverse)" }}>
                   Log a Visit
                 </button>
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70 flex items-center gap-1.5" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70 flex items-center gap-1.5" style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-inverse)" }}>
                   <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--md-sys-color-text-inverse)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--md-sys-color-text-inverse)" strokeWidth="1.5" strokeLinecap="round"/></svg>
                   With Icon
                 </button>
-                <button disabled className="h-11 px-5 rounded-full font-semibold text-[14px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button disabled className="h-11 px-5 rounded-full font-semibold text-[14px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-inverse)" }}>
                   Disabled
                 </button>
               </div>
@@ -1002,7 +1120,7 @@ export default function DesignSystemPage() {
                 <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)", background: "transparent" }}>
                   Edit
                 </button>
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-brand-coral)", background: "transparent" }}>
+                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-error)", color: "var(--md-sys-color-error)", background: "transparent" }}>
                   Reject
                 </button>
                 <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-neonindigo)", background: "transparent" }}>
@@ -1015,7 +1133,7 @@ export default function DesignSystemPage() {
                 <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)", background: "transparent" }}>
                   Edit
                 </button>
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-brand-coral)", background: "transparent" }}>
+                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-error)", color: "var(--md-sys-color-error)", background: "transparent" }}>
                   Reject
                 </button>
                 <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-neonindigo)", background: "transparent" }}>
@@ -1051,7 +1169,7 @@ export default function DesignSystemPage() {
             <div>
               <SubHeader title="OAuth Buttons (Login Screen)" />
               <div className="flex items-center gap-4 flex-wrap">
-                <button className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center gap-3 transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center gap-3 transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-inverse)" }}>
                   <span style={{ fontFamily: "serif", fontWeight: 700, fontSize: 18 }}>G</span>
                   Continue with Google
                 </button>
@@ -1064,7 +1182,7 @@ export default function DesignSystemPage() {
                   Sign in with Apple
                 </button>
               </div>
-              <TokenLabel name="height: 56px · radius: --radius-lg · font: 600 16px" value="Google: --md-sys-color-brand-coral bg · Microsoft/Apple: white (brand requirement)" />
+              <TokenLabel name="height: 56px · radius: --radius-lg · font: 600 16px" value="Google: --md-sys-color-neonindigo bg · Microsoft/Apple: white (brand requirement)" />
             </div>
           </div>
 
@@ -1085,7 +1203,7 @@ export default function DesignSystemPage() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   className="flex-1 bg-transparent text-[15px] outline-none"
-                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
+                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-neonindigo-dark)" }}
                 />
                 {inputValue && (
                   <button onClick={() => setInputValue("")}>
@@ -1162,7 +1280,7 @@ export default function DesignSystemPage() {
                   <AccountListItem key={account.id} account={account} isLast={i === 3} />
                 ))}
               </div>
-              <TokenLabel name="AccountListItem — separator: --md-sys-color-dark-tertiary border-bottom · no card bg" value="name: 600 16px · meta: text-sm · badge: dark-tertiary pill · task pill: coral-light 20% opacity bg" />
+              <TokenLabel name="AccountListItem — separator: --md-sys-color-dark-tertiary border-bottom · no card bg" value="name: 600 16px · meta: text-sm · badge: dark-tertiary pill · task pill: neonindigo 10% opacity bg" />
             </div>
 
             <div>
@@ -1186,7 +1304,7 @@ export default function DesignSystemPage() {
                     <div className="flex items-center gap-3 mt-0.5">
                       <div className="flex items-center gap-1">
                         <Icon name="calendar_today" size={12} style={{ color: "var(--md-sys-color-neonindigo-dark)" }} />
-                        <span className="text-xs font-medium" style={{ color: "var(--md-sys-color-brand-coral)" }}>Due Today</span>
+                        <span className="text-xs font-medium" style={{ color: "var(--md-sys-color-brand-lime)" }}>Due Today</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14" stroke="var(--md-sys-color-brand-teal)" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -1216,7 +1334,7 @@ export default function DesignSystemPage() {
                   <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }} />
                 </div>
               </div>
-              <TokenLabel name="TaskRow — open style · separator: --md-sys-color-dark-tertiary inset 12px" value="checkbox: 20px stroke circle · calendar: --md-sys-color-neonindigo-dark · due today: --md-sys-color-brand-coral · account: --md-sys-color-brand-teal user-round icon" />
+              <TokenLabel name="TaskRow — open style · separator: --md-sys-color-dark-tertiary inset 12px" value="checkbox: 20px stroke circle · calendar: --md-sys-color-neonindigo-dark · due today: --md-sys-color-brand-lime · account: --md-sys-color-brand-teal user-round icon" />
             </div>
 
             <div>
@@ -1276,7 +1394,7 @@ export default function DesignSystemPage() {
                   Discussed Q3 fleet expansion. Budget confirmed at ~$240k. Manager expressed strong interest in expanded service contract. Follow-up scheduled for next week.
                 </p>
                 <div className="flex gap-2">
-                  <button className="h-9 px-4 rounded-full text-[13px] font-semibold" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>Accept</button>
+                  <button className="h-9 px-4 rounded-full text-[13px] font-semibold" style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-inverse)" }}>Accept</button>
                   <button className="h-9 px-4 rounded-full text-[13px] font-semibold" style={{ border: "1.5px solid var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)", background: "transparent" }}>Edit</button>
                   <button className="h-9 px-4 rounded-full text-[13px] font-semibold" style={{ border: "1.5px solid var(--md-sys-color-error)", color: "var(--md-sys-color-error)", background: "transparent" }}>Reject</button>
                 </div>
