@@ -331,7 +331,7 @@ function TaskStrip({
                   <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
                     <span style={{
                       fontSize: 11,
-                      color: isToday ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-disabled)",
+                      color: isToday ? "var(--md-sys-color-brand-lime)" : "var(--md-sys-color-text-disabled)",
                       fontWeight: 500,
                       flexShrink: 0,
                     }}>
@@ -408,10 +408,10 @@ function DashboardGrid({
         {/* Row 1: eyebrow label + tasks badge */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1.5">
-            <Icon name="auto_awesome" size={13} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+            <Icon name="auto_awesome" size={13} style={{ color: "var(--md-sys-color-brand-lime)" }} />
             <span className="text-2xs-bold" style={{
               letterSpacing: "0.09em",
-              textTransform: "uppercase", color: "var(--md-sys-color-neonindigo)",
+              textTransform: "uppercase", color: "var(--md-sys-color-brand-lime)",
             }}>
               Suggested visit
             </span>
@@ -457,12 +457,12 @@ function DashboardGrid({
           className="w-full flex items-center justify-center gap-2 active:opacity-85 transition-opacity"
           style={{
             height: 44,
-            background: "var(--md-sys-color-neonindigo)",
+            background: "var(--md-sys-color-brand-plum)",
             borderRadius: "var(--radius-full)",
-            color: "var(--md-sys-color-text-primary)",
+            color: "#fff",
           }}
         >
-          <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
+          <Icon name="border_color" size={16} style={{ color: "#fff" }} />
           <span className="text-sm-bold">Log a Visit</span>
         </button>
 
@@ -973,7 +973,7 @@ function CombinedPageContent() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="flex-1 bg-transparent text-[15px] outline-none"
-                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
+                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-neonindigo)" }}
                 />
                 {showSystemSection && (
                   <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
@@ -1062,11 +1062,11 @@ function CombinedPageContent() {
                     onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true, topAccounts[0].halosightType === "prospect")}
                   />
 
-                  {/* Companies section */}
+                  {/* Accounts section */}
                   <div className="mb-3">
                     <div className="flex items-center justify-between px-4 py-2">
                       <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
-                        Companies
+                        Accounts
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
@@ -1235,7 +1235,7 @@ function CombinedPageContent() {
                     value={prioritiesQuery}
                     onChange={(e) => setPrioritiesQuery(e.target.value)}
                     className="flex-1 bg-transparent text-15 outline-none"
-                    style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
+                    style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-neonindigo)" }}
                   />
                   {prioritiesQuery && (
                     <button onClick={() => setPrioritiesQuery("")} className="active:opacity-60 flex-shrink-0">
@@ -1331,7 +1331,7 @@ function CombinedPageContent() {
                                   <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1">
                                       <Icon name="calendar_today" size={12} style={{ color: "var(--md-sys-color-neonindigo-dark)" }} />
-                                      <span className="text-xs font-medium" style={{ color: dueToday ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-disabled)" }}>
+                                      <span className="text-xs font-medium" style={{ color: dueToday ? "var(--md-sys-color-brand-lime)" : "var(--md-sys-color-text-disabled)" }}>
                                         {item.dueDate ? item.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Due Today"}
                                       </span>
                                     </div>
