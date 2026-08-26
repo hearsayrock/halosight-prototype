@@ -96,10 +96,10 @@ export default function ImportDisclosurePage() {
           }}
         >
           <div style={{ fontSize: 14.5, fontWeight: 600, color: "var(--md-sys-color-text-primary)", marginBottom: 5 }}>
-            A one-time copy, not a sync.
+            One-time copy — live sync when you upgrade.
           </div>
           <div style={{ fontSize: 13.5, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.55 }}>
-            Halosight won't change anything in Salesforce or check back on its own.
+            Nothing in Salesforce changes.
           </div>
         </div>
 

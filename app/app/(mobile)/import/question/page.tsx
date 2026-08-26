@@ -89,7 +89,7 @@ function QuestionContent() {
 
         {/* Body */}
         <p style={{ fontSize: 14.5, color: "var(--md-sys-color-text-primary)", lineHeight: 1.55, marginBottom: 20 }}>
-          {type.count} {type.count === 1 ? "activity uses" : "activities use"} this type. It isn't a standard Salesforce type, so we'd rather ask than guess.
+          {type.count} {type.count === 1 ? "activity uses" : "activities use"} this. Not a standard Salesforce type, so we'd rather ask than guess.
         </p>
 
         {/* Sample card */}
