@@ -391,11 +391,11 @@ export default function ImportReviewPage() {
                                 padding: "12px 14px",
                               }}
                             >
-                              <div style={{ fontSize: 14.5, fontWeight: 600, color: "var(--md-sys-color-text-muted)", marginBottom: 4 }}>
-                                No account attached · {data.unlinkedCount} activities
+                              <div style={{ fontSize: 14.5, fontWeight: 600, color: "var(--md-sys-color-text-primary)", marginBottom: 4 }}>
+                                No account attached
                               </div>
-                              <div style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.5 }}>
-                                These tasks aren't linked to an account in Salesforce, so there's nothing to file them under. Link them there and import again.
+                              <div style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.5 }}>
+                                {data.unlinkedCount} activities aren't linked to an account in Salesforce. Link them there and import again.
                               </div>
                             </div>
                           )}
@@ -424,7 +424,7 @@ export default function ImportReviewPage() {
                                 {(() => {
                                   const s = TYPE_SAMPLES[type.name];
                                   return s ? (
-                                    <div style={{ marginBottom: 12 }}>
+                                    <div>
                                       <div style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", marginBottom: 3 }}>
                                         "{s.subject}"
                                       </div>
@@ -434,11 +434,6 @@ export default function ImportReviewPage() {
                                     </div>
                                   ) : null;
                                 })()}
-                                <SegmentedControl
-                                  options={DEST_OPTS}
-                                  value={(answers[type.name] ?? type.recommended ?? "note") as ActivityDestination}
-                                  onChange={(v) => handleDestChange(type.name, v)}
-                                />
                               </div>
                             );
                           })}

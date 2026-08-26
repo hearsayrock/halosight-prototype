@@ -96,10 +96,10 @@ export default function ImportDisclosurePage() {
           }}
         >
           <div style={{ fontSize: 14.5, fontWeight: 600, color: "var(--md-sys-color-text-primary)", marginBottom: 5 }}>
-            One-time copy — live sync when you upgrade.
+            Nothing in Salesforce changes.
           </div>
           <div style={{ fontSize: 13.5, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.55 }}>
-            Nothing in Salesforce changes.
+            Live sync when you upgrade.
           </div>
         </div>
 
