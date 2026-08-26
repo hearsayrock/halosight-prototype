@@ -251,10 +251,9 @@ export default function ImportReviewPage() {
         </div>
       </div>
 
-      {/* Sticky footer — always live */}
+      {/* Footer — always live */}
       <div style={{
-        position: "absolute",
-        bottom: 0, left: 0, right: 0,
+        flexShrink: 0,
         padding: "12px 16px 28px",
         borderTop: "1px solid var(--md-sys-color-alpha-white-10)",
         background: "var(--md-sys-color-background)",
