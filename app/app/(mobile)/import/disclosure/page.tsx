@@ -119,7 +119,7 @@ export default function ImportDisclosurePage() {
           You'll approve what we found before anything is copied.
         </p>
         <button
-          onClick={() => router.push("/import/analysis")}
+          onClick={() => router.push("/import/sf-auth")}
           className="w-full flex items-center justify-center active:scale-[.97] transition-transform"
           style={{
             height: 50,

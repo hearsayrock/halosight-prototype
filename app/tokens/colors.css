@@ -94,8 +94,15 @@
   --md-sys-color-alpha-white-10:     rgba(255, 255, 255, 0.10);
   --md-sys-color-alpha-white-18:     rgba(255, 255, 255, 0.18);
   --md-sys-color-alpha-neonindigo-10:    rgba(179, 184, 255, 0.10);
+  --md-sys-color-alpha-neonindigo-12:    rgba(179, 184, 255, 0.12);
+  --md-sys-color-alpha-neonindigo-18:    rgba(179, 184, 255, 0.18);
+  --md-sys-color-alpha-neonindigo-25:    rgba(179, 184, 255, 0.25);
   --md-sys-color-alpha-neonindigo-glass: rgba(179, 184, 255, 0.10);
+  --md-sys-color-alpha-coral-10:     rgba(255, 107, 90, 0.10);
+  --md-sys-color-alpha-coral-12:     rgba(255, 107, 90, 0.12);
+  --md-sys-color-alpha-coral-25:     rgba(255, 107, 90, 0.25);
   --md-sys-color-alpha-dark-glass:   rgba(255, 255, 255, 0.18);
+  --md-sys-color-scrim:              rgba(0, 0, 0, 0.55);
 
   /* ── Extended Palette ────────────────────────────────────────────────────── */
   --md-ref-palette-ext-cyan:   #5BBFCC;
@@ -185,7 +192,14 @@
   --md-sys-color-alpha-white-10:           rgba(0, 0, 0, 0.07);
   --md-sys-color-alpha-white-18:           rgba(0, 0, 0, 0.11);
   --md-sys-color-alpha-neonindigo-10:      rgba(80, 88, 212, 0.08);
+  --md-sys-color-alpha-neonindigo-12:      rgba(80, 88, 212, 0.10);
+  --md-sys-color-alpha-neonindigo-18:      rgba(80, 88, 212, 0.14);
+  --md-sys-color-alpha-neonindigo-25:      rgba(80, 88, 212, 0.20);
   --md-sys-color-alpha-neonindigo-glass:   rgba(80, 88, 212, 0.08);
+  --md-sys-color-alpha-coral-10:           rgba(200, 61, 45, 0.10);
+  --md-sys-color-alpha-coral-12:           rgba(200, 61, 45, 0.12);
+  --md-sys-color-alpha-coral-25:           rgba(200, 61, 45, 0.25);
   --md-sys-color-alpha-dark-glass:         rgba(0, 0, 0, 0.09);
+  --md-sys-color-scrim:                    rgba(0, 0, 0, 0.55);
 
 }

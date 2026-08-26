@@ -362,107 +362,110 @@ function TaskStrip({
   );
 }
 
-// ── First-run empty state (Salesforce import card) ───────────────────────────
+// ── First-run empty state ─────────────────────────────────────────────────────
+
+const FEATURES = [
+  { icon: "edit_note",    text: "Voice-logged visits — AI writes the summary" },
+  { icon: "checklist",    text: "Action items generated from every meeting" },
+  { icon: "auto_awesome", text: "Smart prep before your next account visit" },
+] as const;
 
 function EmptyHomeState({ onAddCompany }: { onAddCompany: () => void }) {
   return (
-    <div className="px-4 pt-2 pb-8">
+    <div style={{ position: "relative", padding: "56px 20px 40px" }}>
 
-      {/* Import card */}
-      <div
-        style={{
-          background: "var(--gradient-hero)",
-          border: "1px solid var(--md-sys-color-alpha-white-10)",
-          borderRadius: "var(--radius-lg)",
-          padding: "24px 22px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 13,
-        }}
-      >
-        {/* Eyebrow */}
-        <div style={{
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: "0.14em",
-          textTransform: "uppercase" as const,
-          color: "var(--md-sys-color-neonindigo)",
-        }}>
-          Get started
-        </div>
+      {/* Eyebrow */}
+      <p style={{
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: "0.13em",
+        textTransform: "uppercase",
+        color: "var(--md-sys-color-neonindigo)",
+        margin: "0 0 18px",
+        position: "relative",
+      }}>
+        Get started
+      </p>
 
-        {/* Title */}
-        <h2
-          style={{
-            fontFamily: "Roboto Slab, Georgia, serif",
-            fontSize: 25,
-            fontWeight: 700,
-            lineHeight: 1.2,
-            color: "var(--md-sys-color-text-primary)",
-            margin: 0,
-          }}
-        >
-          Bring in the accounts you already work
-        </h2>
+      {/* Headline */}
+      <h2 style={{
+        fontFamily: "Roboto Slab, Georgia, serif",
+        fontSize: 28,
+        fontWeight: 700,
+        lineHeight: 1.18,
+        color: "var(--md-sys-color-text-primary)",
+        margin: "0 0 10px",
+        position: "relative",
+      }}>
+        Bring in the accounts you already work
+      </h2>
 
-        {/* Body */}
-        <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.55, margin: 0 }}>
-          Pull in the accounts you've worked recently in Salesforce, with their calls, meetings and action items.
-        </p>
+      {/* Subline */}
+      <p style={{
+        fontSize: 15,
+        color: "var(--md-sys-color-text-secondary)",
+        lineHeight: 1.5,
+        margin: "0 0 28px",
+        position: "relative",
+      }}>
+        Your Salesforce activity — calls, meetings, and action items — all here.
+      </p>
 
-        {/* Primary CTA */}
+      {/* Feature list */}
+      <div style={{ position: "relative", marginBottom: 32, display: "flex", flexDirection: "column", gap: 14 }}>
+        {FEATURES.map(({ icon, text }) => (
+          <div key={text} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <Icon name={icon} size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+            <span style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.4 }}>
+              {text}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* CTAs */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, position: "relative" }}>
         <Link href="/import/disclosure">
           <button
             className="w-full flex items-center justify-center gap-2 active:scale-[.97] transition-transform"
             style={{
-              height: 48,
+              height: 52,
               borderRadius: "var(--radius-full)",
               background: "var(--md-sys-color-neonindigo)",
-              color: "#fff",
+              color: "var(--md-sys-color-text-primary)",
               fontSize: 16,
               fontWeight: 600,
             }}
           >
-            <Icon name="cloud_download" size={18} style={{ color: "#fff" }} />
+            <Icon name="cloud_download" size={18} style={{ color: "var(--md-sys-color-text-primary)" }} />
             Import from Salesforce
           </button>
         </Link>
 
-        {/* Secondary CTA */}
         <button
           onClick={onAddCompany}
           className="w-full flex items-center justify-center gap-2 active:opacity-70 transition-opacity"
           style={{
-            height: 44,
+            height: 48,
             borderRadius: "var(--radius-full)",
-            border: "1px solid var(--md-sys-color-dark-tertiary)",
-            color: "var(--md-sys-color-text-primary)",
+            border: "1px solid var(--md-sys-color-alpha-white-18)",
+            color: "var(--md-sys-color-text-secondary)",
             fontSize: 15,
-            fontWeight: 600,
+            fontWeight: 500,
           }}
         >
-          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-text-primary)" }} />
+          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-text-secondary)" }} />
           Add a company manually
         </button>
 
-        {/* Footnote */}
-        <p style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)", textAlign: "center", margin: 0 }}>
+        <p style={{
+          fontSize: 12,
+          color: "var(--md-sys-color-text-disabled)",
+          textAlign: "center",
+          margin: "4px 0 0",
+        }}>
           Takes about a minute. Nothing in Salesforce changes.
         </p>
-      </div>
-
-      {/* Feature hints */}
-      <div className="flex flex-col gap-4 mt-6 px-2">
-        {([
-          { icon: "edit_note",    text: "Log visits with voice — AI writes the summary" },
-          { icon: "checklist",    text: "Action items generated from every meeting" },
-          { icon: "auto_awesome", text: "Smart prep before your next visit" },
-        ] as const).map(({ icon, text }) => (
-          <div key={text} className="flex items-center gap-3">
-            <Icon name={icon} size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-            <span style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)" }}>{text}</span>
-          </div>
-        ))}
       </div>
 
     </div>
@@ -1096,10 +1099,34 @@ function CombinedPageContent() {
   return (
     <div className="relative flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
+      {/* Ambient glow — full screen, sits behind header + body */}
+      {preview === "empty" && (
+        <motion.div
+          animate={{
+            x: [0, -30, 20, 0],
+            y: [0, 30, -10, 0],
+            scale: [1, 1.08, 0.96, 1],
+          }}
+          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            top: -60,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 380,
+            height: 380,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, var(--md-sys-color-alpha-neonindigo-18) 0%, transparent 65%)",
+            pointerEvents: "none",
+            zIndex: 0,
+          }}
+        />
+      )}
+
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 pt-10 pb-3" style={{ flexShrink: 0 }}>
+      <div className="flex items-center justify-between px-4 pt-10 pb-3" style={{ flexShrink: 0, position: "relative", zIndex: 1 }}>
         <AnimatePresence mode="wait" initial={false}>
-          {mode === "home" ? (
+          {mode === "home" && preview !== "empty" ? (
             <motion.button
               key="hamburger"
               initial={{ opacity: 0 }}
@@ -1112,7 +1139,7 @@ function CombinedPageContent() {
             >
               <MenuIcon size={24} />
             </motion.button>
-          ) : (
+          ) : mode !== "home" ? (
             <motion.button
               key="back"
               initial={{ opacity: 0, x: -6 }}
@@ -1126,10 +1153,10 @@ function CombinedPageContent() {
             >
               <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-secondary)" }} />
             </motion.button>
-          )}
+          ) : null}
         </AnimatePresence>
 
-        <div style={{ flex: 1, overflow: mode === "accounts" ? "visible" : "hidden", padding: "0 10px" }}>
+        <div style={{ flex: 1, overflow: mode === "accounts" ? "visible" : "hidden", padding: preview === "empty" ? "0" : "0 10px" }}>
           <AnimatePresence mode="wait" initial={false}>
             {mode === "home" && (
               <motion.h1
@@ -1142,7 +1169,8 @@ function CombinedPageContent() {
                   fontFamily: "Roboto Slab, Georgia, serif",
                   fontSize: 20, fontWeight: 500,
                   color: "var(--md-sys-color-text-primary)",
-                  margin: 0, lineHeight: 1.15, textAlign: "center",
+                  margin: 0, lineHeight: 1.15,
+                  textAlign: preview === "empty" ? "left" : "center",
                 }}
               >
                 {greeting()}, Nate
@@ -1237,7 +1265,7 @@ function CombinedPageContent() {
       )}
 
       {/* ── BODY ───────────────────────────────────────────────────────── */}
-      <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
+      <div style={{ position: "relative", flex: 1, overflow: "hidden", zIndex: 1 }}>
         <AnimatePresence initial={false}>
 
           {/* HOME VIEW */}

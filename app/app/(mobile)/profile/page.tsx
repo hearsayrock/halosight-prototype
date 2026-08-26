@@ -5,13 +5,17 @@
  * Route: /profile
  * Reached via the profile button on Home or Accounts.
  * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-primary,
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
- *         --md-sys-color-brand-coral, --md-sys-color-neonindigo, --md-sys-color-alpha-neonindigo-10,
- *         --md-sys-color-alpha-white-10, --radius-md, --radius-xl, --radius-full
+ *         --md-sys-color-text-primary, --md-sys-color-text-secondary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
+ *         --md-sys-color-brand-coral, --md-sys-color-brand-coral-light, --md-sys-color-brand-teal,
+ *         --md-sys-color-neonindigo, --md-sys-color-alpha-neonindigo-10, --md-sys-color-alpha-neonindigo-12,
+ *         --md-sys-color-alpha-neonindigo-18, --md-sys-color-alpha-neonindigo-25,
+ *         --md-sys-color-alpha-coral-12, --md-sys-color-alpha-coral-25,
+ *         --md-sys-color-alpha-white-10, --md-sys-color-scrim,
+ *         --radius-md, --radius-xl, --radius-full
  * Flutter equivalent: profile_page.dart
  */
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -20,7 +24,18 @@ import Icon from "@/components/ui/Icon";
 function DeleteDataSheet({ onClose, onConfirm }: { onClose: () => void; onConfirm: () => void }) {
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
   const confirmed = inputValue.toLowerCase() === "delete";
+
+  // Push the sheet up when the software keyboard appears.
+  // On real mobile, visualViewport fires; on desktop we use focus/blur as fallback.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => setKeyboardOffset(Math.max(0, window.innerHeight - vv.height));
+    vv.addEventListener("resize", update);
+    return () => vv.removeEventListener("resize", update);
+  }, []);
 
   const overlayRoot = typeof document !== "undefined" ? document.getElementById("phone-overlay-root") : null;
   if (!overlayRoot) return null;
@@ -34,12 +49,14 @@ function DeleteDataSheet({ onClose, onConfirm }: { onClose: () => void; onConfir
       style={{
         position: "absolute",
         inset: 0,
-        background: "rgba(0,0,0,0.55)",
+        background: "var(--md-sys-color-scrim)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-end",
+        paddingBottom: keyboardOffset,
         zIndex: 80,
         pointerEvents: "auto",
+        transition: "padding-bottom 0.15s ease-out",
       }}
       onClick={onClose}
     >
@@ -71,8 +88,8 @@ function DeleteDataSheet({ onClose, onConfirm }: { onClose: () => void; onConfir
             justifyContent: "center",
             width: 56, height: 56,
             borderRadius: "var(--radius-full)",
-            background: "rgba(232,97,74,0.12)",
-            border: "1px solid rgba(232,97,74,0.25)",
+            background: "var(--md-sys-color-alpha-coral-12)",
+            border: "1px solid var(--md-sys-color-alpha-coral-25)",
           }}>
             <Icon name="delete_forever" size={28} style={{ color: "var(--md-sys-color-brand-coral)" }} />
           </div>
@@ -117,11 +134,14 @@ function DeleteDataSheet({ onClose, onConfirm }: { onClose: () => void; onConfir
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          onFocus={() => setKeyboardOffset((prev) => Math.max(prev, 260))}
+          onBlur={() => setKeyboardOffset(0)}
           placeholder="DELETE"
           autoCapitalize="none"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
+          className="placeholder:[color:var(--md-sys-color-text-disabled)]"
           style={{
             display: "block",
             width: "100%",
@@ -148,7 +168,7 @@ function DeleteDataSheet({ onClose, onConfirm }: { onClose: () => void; onConfir
             height: 50,
             borderRadius: "var(--radius-full)",
             background: confirmed ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-alpha-white-10)",
-            color: confirmed ? "#fff" : "var(--md-sys-color-text-disabled)",
+            color: confirmed ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-disabled)",
             fontSize: 16,
             fontWeight: 600,
             cursor: confirmed ? "pointer" : "not-allowed",
@@ -193,7 +213,8 @@ export default function ProfilePage() {
 
   function handleDeleteConfirm() {
     try { localStorage.clear(); } catch { /* ignore */ }
-    router.push("/");
+    window.dispatchEvent(new CustomEvent("halosight:data_deleted"));
+    router.push("/relationships?preview=empty");
   }
 
   return (
@@ -225,9 +246,9 @@ export default function ProfilePage() {
       <div className="flex flex-col items-center px-4 mb-4">
         <div
           className="w-16 h-16 rounded-full flex items-center justify-center mb-3"
-          style={{ background: "#607D8B" }}
+          style={{ background: "var(--md-sys-color-brand-teal)" }}
         >
-          <span className="text-[26px] font-bold" style={{ color: "#fff" }}>N</span>
+          <span className="text-[26px] font-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>N</span>
         </div>
         <h2
           className="text-[22px] font-bold mb-1"
@@ -248,7 +269,7 @@ export default function ProfilePage() {
         className="mx-4 mb-3 px-4 py-3 flex items-start gap-3"
         style={{
           background: "var(--md-sys-color-alpha-neonindigo-10)",
-          border: "1px solid rgba(139,146,255,0.18)",
+          border: "1px solid var(--md-sys-color-alpha-neonindigo-18)",
           borderRadius: "var(--radius-xl)",
         }}
       >
@@ -269,8 +290,8 @@ export default function ProfilePage() {
                 letterSpacing: "0.07em",
                 textTransform: "uppercase",
                 color: "var(--md-sys-color-neonindigo)",
-                background: "rgba(139,146,255,0.12)",
-                border: "1px solid rgba(139,146,255,0.25)",
+                background: "var(--md-sys-color-alpha-neonindigo-12)",
+                border: "1px solid var(--md-sys-color-alpha-neonindigo-25)",
                 borderRadius: "var(--radius-full)",
                 padding: "2px 7px",
                 lineHeight: 1.6,

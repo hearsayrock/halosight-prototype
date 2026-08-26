@@ -7,6 +7,7 @@ import { AccountStateProvider } from "@/lib/context/AccountStateContext";
 import { SalesforceProvider } from "@/lib/context/SalesforceContext";
 import CaptureWidget from "@/components/capture/CaptureWidget";
 import DemoReset from "@/components/layout/DemoReset";
+import DataDeletedToast from "@/components/layout/DataDeletedToast";
 
 /**
  * Shared mobile layout — single PhoneFrame instance so AnimatePresence
@@ -27,6 +28,7 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
               <StaticBottomNav />
               <CaptureWidget />
               <DemoReset />
+              <DataDeletedToast />
             </PhoneFrame>
           </CaptureProvider>
         </ActionItemsProvider>
