@@ -13,7 +13,7 @@ import { PLAYGROUNDS, CURRENT_APP_URL, type PlaygroundStatus } from "@/lib/playg
 
 const STATUS_COLOR: Record<PlaygroundStatus, string> = {
   exploring: "var(--md-sys-color-neonindigo)",
-  review:    "var(--md-sys-color-brand-coral)",
+  review:    "var(--md-sys-color-brand-plum)",
   shipped:   "#2ECC71",
 };
 

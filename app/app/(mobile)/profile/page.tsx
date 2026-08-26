@@ -41,7 +41,7 @@ export default function ProfilePage() {
         </h1>
         <button
           className="text-sm-bold active:opacity-60 transition-opacity"
-          style={{ color: "var(--md-sys-color-brand-coral)" }}
+          style={{ color: "var(--md-sys-color-brand-plum)" }}
         >
           Log Out
         </button>

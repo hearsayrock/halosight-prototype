@@ -169,7 +169,7 @@ function TaskRow({
                 className="text-xs font-medium"
                 style={{
                   color: dueToday
-                    ? "var(--md-sys-color-brand-coral)"
+                    ? "var(--md-sys-color-brand-lime)"
                     : "var(--md-sys-color-text-disabled)",
                 }}
               >
@@ -404,7 +404,7 @@ export default function TasksPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="flex-1 bg-transparent text-15 outline-none"
-            style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
+            style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-neonindigo)" }}
           />
           {query && (
             <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">

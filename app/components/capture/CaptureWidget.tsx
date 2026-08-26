@@ -219,7 +219,7 @@ export default function CaptureWidget() {
                       onClick={callInterrupted ? undefined : finishCapture}
                       className="flex-shrink-0 h-9 px-4 text-sm-bold rounded-full transition-opacity"
                       style={{
-                        background: callInterrupted ? "rgba(255,255,255,0.12)" : "var(--md-sys-color-brand-coral)",
+                        background: callInterrupted ? "rgba(255,255,255,0.12)" : "var(--md-sys-color-neonindigo)",
                         color: callInterrupted ? "rgba(255,255,255,0.4)" : "var(--md-sys-color-text-primary)",
                         cursor: callInterrupted ? "default" : undefined,
                       }}

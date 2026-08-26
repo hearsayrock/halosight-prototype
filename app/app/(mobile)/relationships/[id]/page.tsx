@@ -669,7 +669,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
             className="h-11 px-6 text-sm-bold flex items-center gap-2 transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-brand-coral)",
+              background: "var(--md-sys-color-neonindigo)",
               color: "var(--md-sys-color-text-primary)",
               borderRadius: "var(--radius-full)",
             }}
@@ -756,7 +756,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 <button
                   onClick={() => { setShowDisqualifyConfirm(false); handleDisqualify(); }}
                   className="w-full py-3.5 rounded-full text-base font-semibold active:opacity-80 transition-opacity mb-3"
-                  style={{ background: "var(--md-sys-color-brand-coral)", color: "#fff" }}
+                  style={{ background: "var(--md-sys-color-error)", color: "#fff" }}
                 >
                   Yes, disqualify
                 </button>

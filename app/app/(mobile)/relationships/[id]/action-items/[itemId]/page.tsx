@@ -21,7 +21,7 @@ import type { ActionItemStatus } from "@/lib/types";
 const STATUS_OPTIONS: { value: ActionItemStatus; label: string; color: string }[] = [
   { value: "open",     label: "Open",     color: "var(--md-sys-color-neonindigo)" },
   { value: "done",     label: "Done",     color: "var(--md-sys-color-success)" },
-  { value: "canceled", label: "Canceled", color: "var(--md-sys-color-brand-coral)" },
+  { value: "canceled", label: "Canceled", color: "var(--md-sys-color-text-muted)" },
 ];
 
 function formatDate(date: Date): string {
@@ -200,13 +200,13 @@ function ActionItemDetailPageContent({
             onClick={() => setShowDelete(true)}
             className="w-full h-12 text-sm-bold flex items-center justify-center gap-2 active:opacity-70 transition-opacity"
             style={{
-              border: "1px solid color-mix(in srgb, var(--md-sys-color-brand-coral) 60%, transparent)",
+              border: "1px solid color-mix(in srgb, var(--md-sys-color-error) 60%, transparent)",
               borderRadius: "var(--radius-full)",
-              color: "var(--md-sys-color-brand-coral)",
-              background: "color-mix(in srgb, var(--md-sys-color-brand-coral) 10%, transparent)",
+              color: "var(--md-sys-color-error)",
+              background: "color-mix(in srgb, var(--md-sys-color-error) 10%, transparent)",
             }}
           >
-            <Icon name="delete" size={16} style={{ color: "var(--md-sys-color-brand-coral)" }} />
+            <Icon name="delete" size={16} style={{ color: "var(--md-sys-color-error)" }} />
             Delete item
           </button>
         </div>
@@ -219,7 +219,7 @@ function ActionItemDetailPageContent({
               style={{
                 background: "var(--md-sys-color-dark-secondary)",
                 borderRadius: "var(--radius-xl)",
-                border: "1px solid color-mix(in srgb, var(--md-sys-color-brand-coral) 40%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--md-sys-color-error) 40%, transparent)",
               }}
             >
               <div className="text-center">

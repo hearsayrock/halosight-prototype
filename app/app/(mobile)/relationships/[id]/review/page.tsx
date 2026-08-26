@@ -207,13 +207,13 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
           <button
             className="w-full flex items-center justify-center gap-2 h-11 mb-3 font-semibold text-[14px] active:opacity-70 transition-opacity"
             style={{
-              background: "rgba(255,107,90,0.1)",
-              border: "1px solid rgba(255,107,90,0.2)",
+              background: "var(--md-sys-color-alpha-plum-12)",
+              border: "1px solid color-mix(in srgb, var(--md-sys-color-brand-plum) 30%, transparent)",
               borderRadius: "var(--radius-full)",
-              color: "var(--md-sys-color-brand-coral)",
+              color: "var(--md-sys-color-brand-plum)",
             }}
           >
-            <Icon name="mic" size={18} style={{ color: "var(--md-sys-color-brand-coral)" }} />
+            <Icon name="mic" size={18} style={{ color: "var(--md-sys-color-brand-plum)" }} />
             Tell Me More
           </button>
 

@@ -100,7 +100,7 @@ export default function KebabMenu({ items }: Props) {
                     paddingTop: 10,
                     paddingBottom: 10,
                     background: "transparent",
-                    color: item.destructive ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-primary)",
+                    color: item.destructive ? "var(--md-sys-color-error)" : "var(--md-sys-color-text-primary)",
                   }}
                 >
                   {item.label}
