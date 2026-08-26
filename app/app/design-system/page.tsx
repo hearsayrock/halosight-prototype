@@ -935,8 +935,8 @@ export default function DesignSystemPage() {
             {/* Widget 4: AI "Tell Me More" review card */}
             <div style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: 20, padding: "18px 20px 20px", border: "1px solid rgba(255,255,255,0.07)" }}>
               <div className="flex items-center gap-2 mb-4">
-                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--md-sys-color-alpha-plum-12)", border: "1px solid rgba(90,2,246,0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontSize: 14, color: "var(--md-sys-color-brand-plum-light)" }}>✦</span>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(90,2,246,0.28)", border: "1px solid rgba(90,2,246,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: 14, color: "rgba(255,255,255,0.55)" }}>✦</span>
                 </div>
                 <div>
                   <p style={{ fontSize: 13, fontWeight: 700, color: "var(--md-sys-color-text-primary)" }}>AI Review</p>
@@ -946,7 +946,7 @@ export default function DesignSystemPage() {
               <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, marginBottom: 16 }}>
                 Last visit was 6 weeks ago. Kevin mentioned Q4 renewal is on track — now is a good window to confirm timeline and introduce the new pricing tier.
               </p>
-              <button style={{ display: "flex", alignItems: "center", gap: 8, height: 40, padding: "0 16px", borderRadius: 100, background: "var(--md-sys-color-alpha-plum-12)", border: "1px solid rgba(90,2,246,0.35)", color: "var(--md-sys-color-brand-plum-light)", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+              <button style={{ display: "flex", alignItems: "center", gap: 8, height: 40, padding: "0 16px", borderRadius: 100, background: "var(--md-sys-color-brand-plum)", border: "none", color: "#FFFFFF", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
                 <span style={{ fontSize: 14 }}>✦</span> Tell Me More
               </button>
               <p style={{ fontSize: 11, color: "var(--md-sys-color-text-disabled)", marginTop: 12, fontFamily: "monospace" }}>
