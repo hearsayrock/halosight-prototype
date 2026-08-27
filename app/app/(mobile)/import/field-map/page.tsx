@@ -197,7 +197,7 @@ export default function FieldMapPage() {
                 }}>
                   <Icon name="filter_center_focus" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   <span style={{ fontSize: 13, fontWeight: 700, color: "var(--md-sys-color-text-secondary)", letterSpacing: "0.02em" }}>
-                    Type field
+                    <strong style={{ color: "var(--md-sys-color-text-primary)" }}>Type</strong> field
                   </span>
                 </div>
 
