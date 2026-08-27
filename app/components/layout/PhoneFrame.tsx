@@ -16,7 +16,7 @@
  *   viewport exactly as it would on a native device.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DevPanel, { type DeviceSize } from "./DevPanel";
 import PlaygroundNav from "./PlaygroundNav";
 import MobileKeyboard from "./MobileKeyboard";
@@ -35,6 +35,8 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
   // Sidebars hidden on this branch for user testing — flip to false to restore
   const [focusMode, setFocusMode]           = useState(true);
   const [isMobile, setIsMobile]             = useState(false);
+  const [cursor, setCursor]                 = useState<{ x: number; y: number } | null>(null);
+  const phoneScreenRef                      = useRef<HTMLDivElement>(null);
 
   const { width, height } = SIZES[deviceSize];
   const currentBranch = process.env.NEXT_PUBLIC_GIT_BRANCH ?? "local";
@@ -59,6 +61,26 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Track cursor inside the phone screen via document-level listener.
+  // Element-level onMouseLeave fires spuriously during Next.js DOM updates,
+  // causing the dot to flicker out on every navigation.
+  useEffect(() => {
+    function onMove(e: MouseEvent) {
+      const el = phoneScreenRef.current;
+      if (!el) { setCursor(null); return; }
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+        setCursor({ x, y });
+      } else {
+        setCursor(null);
+      }
+    }
+    document.addEventListener("mousemove", onMove, { passive: true });
+    return () => document.removeEventListener("mousemove", onMove);
   }, []);
 
   const overlayRoot = (
@@ -113,10 +135,28 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
         className="phone-frame"
         style={{ width, height, flexShrink: 0 }}
       >
-        <div className="phone-screen" style={{ position: "relative", overflow: "hidden" }}>
+        <div ref={phoneScreenRef} className="phone-screen" style={{ position: "relative", overflow: "hidden" }}>
           {children}
           {overlayRoot}
           <MobileKeyboard />
+          {cursor && (
+            <div
+              style={{
+                position: "absolute",
+                left: cursor.x,
+                top: cursor.y,
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                background: "rgba(255, 255, 255, 0.18)",
+                border: "1.5px solid rgba(255, 255, 255, 0.35)",
+                transform: "translate(-50%, -50%)",
+                pointerEvents: "none",
+                zIndex: 9999,
+                backdropFilter: "blur(1px)",
+              }}
+            />
+          )}
         </div>
       </div>
 

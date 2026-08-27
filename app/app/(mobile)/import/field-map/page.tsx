@@ -100,8 +100,13 @@ const DEST_COLOR: Record<Assignment, string> = {
   task: "var(--md-sys-color-brand-teal)",
 };
 
+const AI_FIELD = FIELDS[0]; // "Type" — the AI's confident pick
+const AI_DEFAULTS: Record<string, Assignment> = {};
+AI_FIELD.values.forEach((v) => { AI_DEFAULTS[v.label] = v.default; });
+
 export default function FieldMapPage() {
   const router = useRouter();
+  const [mode, setMode] = useState<"ai" | "manual">("ai");
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedField, setSelectedField] = useState<Field | null>(null);
   const [assignments, setAssignments] = useState<Record<string, Assignment>>({});
@@ -123,17 +128,28 @@ export default function FieldMapPage() {
   const noteCount = Object.values(assignments).filter((a) => a === "note").length;
   const taskCount = Object.values(assignments).filter((a) => a === "task").length;
 
+  function enterManual() {
+    setMode("manual");
+    setStep(1);
+    setSelectedField(null);
+    setAssignments({});
+  }
+
   return (
     <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-10 pb-4" style={{ flexShrink: 0 }}>
         <button
-          onClick={() => step === 2 ? setStep(1) : router.back()}
+          onClick={() => {
+            if (mode === "ai") router.back();
+            else if (step === 2) setStep(1);
+            else { setMode("ai"); }
+          }}
           className="p-1 active:opacity-60 transition-opacity"
         >
           <Icon
-            name={step === 2 ? "arrow_back" : "close"}
+            name={mode === "ai" || step === 1 ? "close" : "arrow_back"}
             size={22}
             style={{ color: "var(--md-sys-color-text-muted)" }}
           />
@@ -146,8 +162,109 @@ export default function FieldMapPage() {
 
       <AnimatePresence mode="wait" initial={false}>
 
+        {/* ── AI confident state ──────────────────────────────────────────────── */}
+        {mode === "ai" && (
+          <motion.div
+            key="ai"
+            className="flex-1 flex flex-col overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, x: -16 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex-1 overflow-y-auto px-5 pb-4" style={{ paddingTop: 4 }}>
+              <h1 style={{ fontSize: 26, fontWeight: 700, fontFamily: "Roboto Slab, Georgia, serif", color: "var(--md-sys-color-text-primary)", lineHeight: 1.25, marginBottom: 10 }}>
+                We think we've got this one.
+              </h1>
+              <p style={{ fontSize: 15, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.55, marginBottom: 28 }}>
+                Looks like your team uses the <strong style={{ color: "var(--md-sys-color-text-primary)", fontWeight: 600 }}>Type</strong> field to sort activities. We've mapped it out — calls, emails, and meetings come in as notes.
+              </p>
+
+              {/* Preview card */}
+              <div style={{
+                border: "1px solid var(--md-sys-color-alpha-white-10)",
+                borderRadius: "var(--radius-md)",
+                overflow: "hidden",
+                marginBottom: 8,
+              }}>
+                {/* Field label row */}
+                <div style={{
+                  padding: "12px 16px",
+                  background: "var(--md-sys-color-dark-primary)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}>
+                  <Icon name="filter_center_focus" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--md-sys-color-text-secondary)", letterSpacing: "0.02em" }}>
+                    Type field
+                  </span>
+                </div>
+
+                {/* Value rows */}
+                {AI_FIELD.values.map((val, i) => {
+                  const dest = AI_DEFAULTS[val.label];
+                  return (
+                    <div
+                      key={val.label}
+                      className="flex items-center justify-between"
+                      style={{
+                        padding: "13px 16px",
+                        borderBottom: i < AI_FIELD.values.length - 1 ? "1px solid var(--md-sys-color-alpha-white-10)" : undefined,
+                      }}
+                    >
+                      <span style={{ fontSize: 15, color: "var(--md-sys-color-text-primary)", fontWeight: 500 }}>
+                        {val.label}
+                      </span>
+                      <span style={{
+                        fontSize: 12,
+                        fontWeight: 700,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        color: DEST_COLOR[dest],
+                      }}>
+                        {dest === "skip" ? "Skip" : dest === "note" ? "→ Note" : "→ Task"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Continue CTA */}
+              <button
+                onClick={() => router.push("/import/importing")}
+                className="w-full flex items-center justify-center active:scale-[.97] transition-transform"
+                style={{
+                  height: 50,
+                  borderRadius: "var(--radius-full)",
+                  background: "var(--md-sys-color-neonindigo)",
+                  color: "var(--md-sys-color-text-primary)",
+                  fontSize: 16,
+                  fontWeight: 600,
+                  marginBottom: 12,
+                }}
+              >
+                Continue
+              </button>
+
+              {/* Escape hatch */}
+              <button
+                onClick={enterManual}
+                className="active:opacity-60 transition-opacity"
+                style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", display: "block", width: "100%", textAlign: "center", padding: "6px 0 24px" }}
+              >
+                Doesn't look right?{" "}
+                <span style={{ color: "var(--md-sys-color-neonindigo)", fontWeight: 600 }}>
+                  Adjust the mapping
+                </span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+
         {/* ── Step 1: Pick a field ─────────────────────────────────────────── */}
-        {step === 1 && (
+        {mode === "manual" && step === 1 && (
           <motion.div
             key="step1"
             className="flex-1 flex flex-col overflow-hidden"
@@ -226,7 +343,7 @@ export default function FieldMapPage() {
         )}
 
         {/* ── Step 2: Assign values ─────────────────────────────────────────── */}
-        {step === 2 && selectedField && (
+        {mode === "manual" && step === 2 && selectedField && (
           <motion.div
             key="step2"
             className="flex-1 flex flex-col overflow-hidden"
