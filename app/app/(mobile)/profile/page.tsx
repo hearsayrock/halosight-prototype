@@ -48,7 +48,8 @@ function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: 
           <motion.div
             className="absolute left-0 right-0 flex flex-col"
             style={{
-              bottom: "max(0px, calc(876px - 100vh))",
+              bottom: "calc(var(--keyboard-inset, 0px) + max(0px, calc(876px - 100vh)))",
+              transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
               background: "var(--md-sys-color-dark-primary)",
               borderRadius: "20px 20px 0 0",
               padding: "22px 20px 32px",
@@ -161,7 +162,8 @@ function RequestSentSheet({ onClose }: { onClose: () => void }) {
           <motion.div
             className="absolute left-0 right-0 flex flex-col items-center"
             style={{
-              bottom: "max(0px, calc(876px - 100vh))",
+              bottom: "calc(var(--keyboard-inset, 0px) + max(0px, calc(876px - 100vh)))",
+              transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
               background: "var(--md-sys-color-dark-primary)",
               borderRadius: "20px 20px 0 0",
               padding: "36px 20px 44px",
