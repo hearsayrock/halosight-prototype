@@ -356,33 +356,56 @@ export default function ImportReviewPage() {
                         transition={{ duration: 0.2 }}
                         style={{ overflow: "hidden" }}
                       >
-                        <div style={{ padding: "0 16px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
+                        <div style={{ padding: "0 16px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
 
-                          {/* Section label */}
-                          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", margin: "4px 0 -4px" }}>
-                            {dest === "note" ? "CRM fields mapped to account notes" : dest === "task" ? "CRM fields mapped to action items" : "CRM fields left out"}
-                          </p>
-
-                          {/* Dashed moved-away placeholder */}
-                          {movedAway && (
-                            <div
-                              className="flex items-center gap-2 px-3 py-3"
-                              style={{
-                                border: "1px dashed var(--md-sys-color-dark-tertiary)",
-                                borderRadius: "var(--radius-md)",
-                              }}
-                            >
-                              <Icon name="arrow_forward" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-                              <span style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>
-                                {movedAway.typeName} moved to {DEST_LABEL[movedAway.to].toLowerCase()}
-                              </span>
-                              <button onClick={handleUndo} className="ml-auto active:opacity-60 transition-opacity">
-                                <span style={{ fontSize: 13, fontWeight: 600, color: "var(--md-sys-color-neonindigo)" }}>Undo</span>
-                              </button>
-                            </div>
+                          {/* Account note preview */}
+                          {dest === "note" && (
+                            <>
+                              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--md-sys-color-text-muted)", margin: "4px 0 -2px" }}>
+                                Example
+                              </p>
+                              <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: "var(--radius-md)", padding: "16px 16px 14px" }}>
+                                <div className="flex items-start justify-between gap-2 mb-2">
+                                  <p style={{ fontSize: 15, fontWeight: 700, color: "var(--md-sys-color-text-primary)", lineHeight: 1.35, margin: 0 }}>
+                                    Sandra confirmed we're the frontrunner in their vendor eval — timeline is the sticking point
+                                  </p>
+                                  <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
+                                </div>
+                                <p style={{ fontSize: 13.5, color: "var(--md-sys-color-text-muted)", lineHeight: 1.45, margin: "0 0 10px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const }}>
+                                  Sandra shared that we're the frontrunner in their vendor evaluation. Budget approved, timeline is the sticking point.
+                                </p>
+                                <p style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)", margin: 0 }}>
+                                  Jul 27, 10:00 AM · 50 mins
+                                </p>
+                              </div>
+                            </>
                           )}
 
-                          {/* Left out notice (non-editable) */}
+                          {/* Action item preview */}
+                          {dest === "task" && (
+                            <>
+                              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--md-sys-color-text-muted)", margin: "4px 0 -2px" }}>
+                                Example
+                              </p>
+                              <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: "var(--radius-md)", padding: "14px 16px", border: "1px solid var(--md-sys-color-alpha-white-10)" }}>
+                                <div className="flex items-center gap-3">
+                                  <div style={{ width: 22, height: 22, borderRadius: "50%", border: "1.5px solid var(--md-sys-color-text-disabled)", flexShrink: 0 }} />
+                                  <div className="flex-1 min-w-0">
+                                    <p style={{ fontSize: 14.5, fontWeight: 600, color: "var(--md-sys-color-text-primary)", margin: "0 0 5px" }}>
+                                      Send phased rollout options doc
+                                    </p>
+                                    <div className="flex items-center gap-1.5">
+                                      <Icon name="calendar_today" size={12} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+                                      <span style={{ fontSize: 12.5, color: "var(--md-sys-color-neonindigo)" }}>August 28</span>
+                                    </div>
+                                  </div>
+                                  <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }} />
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {/* Left out notice */}
                           {dest === "skip" && data.unlinkedCount > 0 && (
                             <div
                               style={{
@@ -399,44 +422,6 @@ export default function ImportReviewPage() {
                               </div>
                             </div>
                           )}
-
-                          {/* Activity type cards */}
-                          {typesInDest.map((type) => {
-                            const isMoved = movedHere?.typeName === type.name;
-                            return (
-                              <div
-                                key={type.name}
-                                style={{
-                                  background: "var(--md-sys-color-dark-primary)",
-                                  borderRadius: "var(--radius-md)",
-                                  padding: "12px 14px",
-                                  border: isMoved ? "1px solid var(--md-sys-color-neonindigo)" : undefined,
-                                }}
-                              >
-                                <div className="flex items-center justify-between mb-2">
-                                  <span style={{ fontSize: 14.5, fontWeight: 600, color: "var(--md-sys-color-text-primary)" }}>
-                                    {type.name}
-                                  </span>
-                                  <span style={{ fontSize: 12.5, color: "var(--md-sys-color-text-muted)" }}>
-                                    {type.count}
-                                  </span>
-                                </div>
-                                {(() => {
-                                  const s = TYPE_SAMPLES[type.name];
-                                  return s ? (
-                                    <div>
-                                      <div style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", marginBottom: 3 }}>
-                                        "{s.subject}"
-                                      </div>
-                                      <div style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)" }}>
-                                        {s.account} · {s.date}
-                                      </div>
-                                    </div>
-                                  ) : null;
-                                })()}
-                              </div>
-                            );
-                          })}
                         </div>
                       </motion.div>
                     )}
