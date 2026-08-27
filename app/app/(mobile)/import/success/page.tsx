@@ -147,6 +147,7 @@ export default function ImportSuccessPage() {
             9 notes and 3 action items came across. You visited 2 weeks ago.
           </div>
           <button
+            onClick={() => router.push("/relationships/jacks-tire-elko")}
             className="flex items-center justify-center w-full active:scale-[.97] transition-transform"
             style={{
               height: 44,

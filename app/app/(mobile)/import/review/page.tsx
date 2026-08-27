@@ -571,7 +571,7 @@ export default function ImportReviewPage() {
         }}
       >
         <button
-          onClick={() => !(hasUnresolved && showExceptions) && router.push("/import/importing")}
+          onClick={() => !(hasUnresolved && showExceptions) && router.push("/import/field-map")}
           className="w-full flex items-center justify-center active:scale-[.97] transition-transform"
           style={{
             height: 50,
@@ -585,7 +585,7 @@ export default function ImportReviewPage() {
         >
           {hasUnresolved && showExceptions
             ? `${unresolvedTypes.length} ${unresolvedTypes.length === 1 ? "type needs" : "types need"} a quick decision`
-            : `Import ${netImport} activities`}
+            : "Continue"}
         </button>
       </div>
 
