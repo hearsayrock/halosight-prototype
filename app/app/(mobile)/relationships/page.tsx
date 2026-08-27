@@ -625,6 +625,7 @@ function CombinedPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const preview = searchParams.get("preview");
+  const noteState = searchParams.get("note") as "processing" | "ready" | "failed" | null;
 
   const { startCapture } = useCapture();
 
@@ -895,6 +896,94 @@ function CombinedPageContent() {
 
   return (
     <div className="relative flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
+
+      {/* ── NOTE STATUS BANNER (preview only) ─────────────────────────── */}
+      {noteState && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            padding: "9px 16px 8px",
+            background: noteState === "failed"
+              ? "var(--md-sys-color-alpha-coral-12)"
+              : "var(--md-sys-color-alpha-neonindigo-10)",
+            borderBottom: `1px solid ${
+              noteState === "failed"
+                ? "var(--md-sys-color-alpha-coral-25)"
+                : "var(--md-sys-color-alpha-neonindigo-18)"
+            }`,
+            flexShrink: 0,
+          }}
+        >
+          {noteState === "processing" && (
+            <>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, animation: "spin 1s linear infinite" }}>
+                <circle cx="7" cy="7" r="5.5" stroke="var(--md-sys-color-neonindigo)" strokeWidth="1.5" strokeOpacity="0.3" />
+                <path d="M7 1.5A5.5 5.5 0 0 1 12.5 7" stroke="var(--md-sys-color-neonindigo)" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--md-sys-color-neonindigo)" }}>
+                Preparing note · 100%
+              </span>
+            </>
+          )}
+          {noteState === "ready" && (
+            <>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
+                <circle cx="7" cy="7" r="5.5" stroke="var(--md-sys-color-brand-teal)" strokeWidth="1.5" />
+                <path d="M4.5 7l2 2 3-3" stroke="var(--md-sys-color-brand-teal)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--md-sys-color-brand-teal)" }}>
+                Note is ready
+              </span>
+              <button
+                style={{
+                  marginLeft: 4,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "var(--md-sys-color-brand-teal)",
+                  background: "var(--md-sys-color-alpha-white-10)",
+                  borderRadius: "var(--radius-full)",
+                  padding: "2px 10px",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                Review
+              </button>
+            </>
+          )}
+          {noteState === "failed" && (
+            <>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
+                <circle cx="7" cy="7" r="5.5" stroke="var(--md-sys-color-brand-coral)" strokeWidth="1.5" />
+                <path d="M7 4.5v3" stroke="var(--md-sys-color-brand-coral)" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="7" cy="9.5" r="0.75" fill="var(--md-sys-color-brand-coral)" />
+              </svg>
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--md-sys-color-brand-coral)" }}>
+                Note couldn't be prepared
+              </span>
+              <button
+                style={{
+                  marginLeft: 4,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "var(--md-sys-color-brand-coral)",
+                  background: "var(--md-sys-color-alpha-coral-12)",
+                  borderRadius: "var(--radius-full)",
+                  padding: "2px 10px",
+                  border: "1px solid var(--md-sys-color-alpha-coral-25)",
+                }}
+              >
+                Try again
+              </button>
+            </>
+          )}
+        </div>
+      )}
+      {noteState === "processing" && (
+        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      )}
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 pt-10 pb-3" style={{ flexShrink: 0 }}>
