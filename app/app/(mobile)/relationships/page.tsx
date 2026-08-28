@@ -908,89 +908,83 @@ function CombinedPageContent() {
 
       {/* ── NOTE STATUS BANNER (preview only — processing / failed) ────── */}
       {(noteState === "processing" || noteState === "failed") && (
-        <>
-          {noteState === "processing" && (
-            <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-          )}
-          {/* Mock status bar */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 20px 4px", flexShrink: 0 }}>
-            <span style={{ fontSize: 15, fontWeight: 600, color: "var(--md-sys-color-text-primary)", letterSpacing: "0.01em" }}>3:36</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              {/* Signal bars */}
-              <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
-                <rect x="0" y="8" width="3" height="4" rx="0.5" fill="var(--md-sys-color-text-primary)" />
-                <rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="var(--md-sys-color-text-primary)" />
-                <rect x="9" y="2.5" width="3" height="9.5" rx="0.5" fill="var(--md-sys-color-text-primary)" />
-                <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="var(--md-sys-color-text-primary)" />
-              </svg>
-              {/* Wifi */}
-              <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-                <path d="M8 9.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z" fill="var(--md-sys-color-text-primary)" />
-                <path d="M4.5 7A5 5 0 0 1 11.5 7" stroke="var(--md-sys-color-text-primary)" strokeWidth="1.4" strokeLinecap="round" />
-                <path d="M1.5 4.5A8.5 8.5 0 0 1 14.5 4.5" stroke="var(--md-sys-color-text-primary)" strokeWidth="1.4" strokeLinecap="round" />
-              </svg>
-              {/* Battery */}
-              <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
-                <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="var(--md-sys-color-text-primary)" strokeOpacity="0.35" />
-                <rect x="2" y="2" width="16" height="8" rx="1.5" fill="var(--md-sys-color-text-primary)" />
-                <path d="M23 4v4" stroke="var(--md-sys-color-text-primary)" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+        <div style={{ position: "relative", overflow: "hidden", flexShrink: 0 }}>
+          <style>{`
+            @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+            @keyframes blob1 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(60px,20px)} 66%{transform:translate(10px,-15px)} }
+            @keyframes blob2 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-50px,15px)} 66%{transform:translate(-10px,-20px)} }
+            @keyframes blob3 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(30px,-10px)} 66%{transform:translate(-35px,18px)} }
+          `}</style>
+
+          {/* Animated blobs */}
+          <div style={{ position: "absolute", inset: 0, filter: "blur(32px)", opacity: noteState === "processing" ? 0.9 : 0.7 }}>
+            <div style={{ position: "absolute", width: 180, height: 180, borderRadius: "50%", background: noteState === "failed" ? "#D6425C" : "#5C63D6", left: "-10%", top: "-40%", animation: "blob1 8s ease-in-out infinite" }} />
+            <div style={{ position: "absolute", width: 160, height: 160, borderRadius: "50%", background: noteState === "failed" ? "#FF6B5B" : "#8C92FF", right: "-5%", top: "-30%", animation: "blob2 11s ease-in-out infinite" }} />
+            <div style={{ position: "absolute", width: 140, height: 140, borderRadius: "50%", background: noteState === "failed" ? "#FF9C6B" : "#3B82F6", left: "30%", top: "-20%", animation: "blob3 9s ease-in-out infinite" }} />
+          </div>
+
+          {/* Dark overlay so text stays readable */}
+          <div style={{ position: "absolute", inset: 0, background: "rgba(10,11,22,0.55)" }} />
+
+          {/* Content */}
+          <div style={{ position: "relative" }}>
+            {/* Mock status bar */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 20px 4px" }}>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#fff", letterSpacing: "0.01em" }}>3:36</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+                  <rect x="0" y="8" width="3" height="4" rx="0.5" fill="white" />
+                  <rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="white" />
+                  <rect x="9" y="2.5" width="3" height="9.5" rx="0.5" fill="white" />
+                  <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="white" />
+                </svg>
+                <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+                  <path d="M8 9.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z" fill="white" />
+                  <path d="M4.5 7A5 5 0 0 1 11.5 7" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
+                  <path d="M1.5 4.5A8.5 8.5 0 0 1 14.5 4.5" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
+                </svg>
+                <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+                  <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="rgba(255,255,255,0.4)" />
+                  <rect x="2" y="2" width="16" height="8" rx="1.5" fill="white" />
+                  <path d="M23 4v4" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Banner row */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "10px 16px 14px" }}>
+              {noteState === "processing" && (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, animation: "spin 1s linear infinite" }}>
+                    <circle cx="8" cy="8" r="6.5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.75" />
+                    <path d="M8 1.5A6.5 6.5 0 0 1 14.5 8" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
+                  </svg>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
+                    Preparing note · 100%
+                  </span>
+                </>
+              )}
+              {noteState === "failed" && (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+                    <circle cx="8" cy="8" r="6.5" stroke="white" strokeWidth="1.75" />
+                    <path d="M8 5v3.5" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
+                    <circle cx="8" cy="11" r="0.9" fill="white" />
+                  </svg>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
+                    Note couldn't be prepared
+                  </span>
+                  <button style={{ marginLeft: 4, fontSize: 13, fontWeight: 600, color: "#fff", background: "rgba(255,255,255,0.15)", borderRadius: "var(--radius-full)", padding: "3px 11px", border: "1px solid rgba(255,255,255,0.25)" }}>
+                    Try again
+                  </button>
+                </>
+              )}
             </div>
           </div>
-          {/* Banner */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              padding: "10px 16px 12px",
-              background: noteState === "failed"
-                ? "var(--md-sys-color-alpha-coral-12)"
-                : "var(--md-sys-color-alpha-neonindigo-10)",
-              borderBottom: `1px solid ${noteState === "failed" ? "var(--md-sys-color-alpha-coral-25)" : "var(--md-sys-color-alpha-neonindigo-18)"}`,
-              flexShrink: 0,
-            }}
-          >
-            {noteState === "processing" && (
-              <>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, animation: "spin 1s linear infinite" }}>
-                  <circle cx="8" cy="8" r="6.5" stroke="var(--md-sys-color-neonindigo)" strokeWidth="1.75" strokeOpacity="0.3" />
-                  <path d="M8 1.5A6.5 6.5 0 0 1 14.5 8" stroke="var(--md-sys-color-neonindigo)" strokeWidth="1.75" strokeLinecap="round" />
-                </svg>
-                <span style={{ fontSize: 14, fontWeight: 500, color: "var(--md-sys-color-neonindigo)" }}>
-                  Preparing note · 100%
-                </span>
-              </>
-            )}
-            {noteState === "failed" && (
-              <>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-                  <circle cx="8" cy="8" r="6.5" stroke="var(--md-sys-color-brand-coral)" strokeWidth="1.75" />
-                  <path d="M8 5v3.5" stroke="var(--md-sys-color-brand-coral)" strokeWidth="1.75" strokeLinecap="round" />
-                  <circle cx="8" cy="11" r="0.9" fill="var(--md-sys-color-brand-coral)" />
-                </svg>
-                <span style={{ fontSize: 14, fontWeight: 500, color: "var(--md-sys-color-brand-coral)" }}>
-                  Note couldn't be prepared
-                </span>
-                <button
-                  style={{
-                    marginLeft: 4,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "var(--md-sys-color-brand-coral)",
-                    background: "var(--md-sys-color-alpha-coral-12)",
-                    borderRadius: "var(--radius-full)",
-                    padding: "3px 11px",
-                    border: "1px solid var(--md-sys-color-alpha-coral-25)",
-                  }}
-                >
-                  Try again
-                </button>
-              </>
-            )}
-          </div>
-        </>
+
+          {/* Bottom fade into page background */}
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 12, background: "linear-gradient(to bottom, transparent, var(--md-sys-color-background))" }} />
+        </div>
       )}
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
