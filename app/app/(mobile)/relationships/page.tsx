@@ -982,8 +982,8 @@ function CombinedPageContent() {
             </div>
           </div>
 
-          {/* Bottom fade into page background */}
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 12, background: "linear-gradient(to bottom, transparent, var(--md-sys-color-background))" }} />
+          {/* Hard bottom edge */}
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.1)" }} />
         </div>
       )}
 
