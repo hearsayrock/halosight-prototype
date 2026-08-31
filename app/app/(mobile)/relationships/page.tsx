@@ -625,7 +625,7 @@ function CombinedPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const preview = searchParams.get("preview");
-  const noteState = searchParams.get("note") as "processing" | "ready" | "failed" | null;
+  const noteState = searchParams.get("note") as "processing" | "multiprocess" | "ready" | "failed" | null;
 
   const { startCapture, readyCapture } = useCapture();
 
@@ -907,7 +907,7 @@ function CombinedPageContent() {
     <div className="relative flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
       {/* ── NOTE STATUS BANNER (preview only — processing / failed) ────── */}
-      {(noteState === "processing" || noteState === "failed") && (
+      {(noteState === "processing" || noteState === "multiprocess" || noteState === "failed") && (
         <div style={{ position: "relative", overflow: "hidden", flexShrink: 0 }}>
           <style>{`
             @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -917,7 +917,7 @@ function CombinedPageContent() {
           `}</style>
 
           {/* Animated blobs */}
-          <div style={{ position: "absolute", inset: 0, filter: "blur(32px)", opacity: noteState === "processing" ? 0.9 : 0.7 }}>
+          <div style={{ position: "absolute", inset: 0, filter: "blur(32px)", opacity: (noteState === "processing" || noteState === "multiprocess") ? 0.9 : 0.7 }}>
             <div style={{ position: "absolute", width: 180, height: 180, borderRadius: "50%", background: noteState === "failed" ? "#D6425C" : "#5C63D6", left: "-10%", top: "-40%", animation: "blob1 8s ease-in-out infinite" }} />
             <div style={{ position: "absolute", width: 160, height: 160, borderRadius: "50%", background: noteState === "failed" ? "#FF6B5B" : "#8C92FF", right: "-5%", top: "-30%", animation: "blob2 11s ease-in-out infinite" }} />
             <div style={{ position: "absolute", width: 140, height: 140, borderRadius: "50%", background: noteState === "failed" ? "#FF9C6B" : "#3B82F6", left: "30%", top: "-20%", animation: "blob3 9s ease-in-out infinite" }} />
@@ -961,6 +961,17 @@ function CombinedPageContent() {
                   </svg>
                   <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
                     Preparing note · 100%
+                  </span>
+                </>
+              )}
+              {noteState === "multiprocess" && (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, animation: "spin 1s linear infinite" }}>
+                    <circle cx="8" cy="8" r="6.5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.75" />
+                    <path d="M8 1.5A6.5 6.5 0 0 1 14.5 8" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
+                  </svg>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
+                    Processing 3 notes
                   </span>
                 </>
               )}
