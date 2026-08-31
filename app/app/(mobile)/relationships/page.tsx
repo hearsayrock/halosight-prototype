@@ -1171,7 +1171,7 @@ function CombinedPageContent() {
                 </div>
                 {/* Add button */}
                 <button
-                  onClick={() => setShowAddPicker(true)}
+                  onClick={() => { accountsInputRef.current?.blur(); setShowAddPicker(true); }}
                   className="active:opacity-60 transition-opacity"
                   style={{ width: 40, height: 40, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
                   aria-label="Add company"
@@ -1597,7 +1597,7 @@ function CombinedPageContent() {
             transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
           }}>
             <div style={{ pointerEvents: "auto" }}>
-              <CreateAccountCTA query={query} onOpen={() => setShowAddPicker(true)} />
+              <CreateAccountCTA query={query} onOpen={() => { accountsInputRef.current?.blur(); setShowAddPicker(true); }} />
             </div>
           </div>
         )}

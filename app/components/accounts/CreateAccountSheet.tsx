@@ -121,7 +121,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 className="text-[28px] font-bold mb-6"
                 style={{ color: "var(--md-sys-color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
-                New Lead
+                Add new account
               </h2>
 
               {/* Company field */}
@@ -180,7 +180,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                   opacity: name.trim() ? 1 : 0.4,
                 }}
               >
-                Create a lead
+                Create account
               </button>
 
             </div>

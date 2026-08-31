@@ -240,7 +240,7 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
                 className="text-[28px] font-bold mb-6"
                 style={{ color: "var(--md-sys-color-text-primary)", fontFamily: "Roboto Slab, Georgia, serif" }}
               >
-                New Lead
+                Add new lead
               </h2>
 
               {/* Company field */}
