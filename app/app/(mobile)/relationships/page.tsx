@@ -712,6 +712,75 @@ type TaskStatusFilter = "open" | "done";
 type TaskSortMode = "dueDate" | "account";
 type AccountTypeFilter = "all" | "prospect" | "distributor" | "sold-to" | "shipped-to";
 
+// ── Add type picker sheet ─────────────────────────────────────────────────────
+
+function AddTypePicker({ visible, onClose, onAccount, onLead }: {
+  visible: boolean; onClose: () => void; onAccount: () => void; onLead: () => void;
+}) {
+  const root = typeof document !== "undefined" ? document.getElementById("phone-overlay-root") : null;
+  if (!root) return null;
+  return createPortal(
+    <AnimatePresence>
+      {visible && (
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "auto" }}>
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)" }}
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+            transition={{ type: "spring", stiffness: 380, damping: 32 }}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "absolute", left: 0, right: 0,
+              bottom: "max(0px, calc(876px - 100vh))",
+              background: "var(--md-sys-color-dark-primary)",
+              borderRadius: "20px 20px 0 0",
+              padding: "20px 16px 36px",
+            }}
+          >
+            <div style={{ width: 36, height: 4, background: "var(--md-sys-color-alpha-white-10)", borderRadius: 99, margin: "-4px auto 20px" }} />
+            <p style={{ fontSize: 13, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", marginBottom: 12, paddingLeft: 4 }}>
+              What are you adding?
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <button
+                onClick={onAccount}
+                className="flex items-center gap-3 active:opacity-70 transition-opacity"
+                style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-md)", padding: "14px 16px", width: "100%" }}
+              >
+                <div style={{ width: 36, height: 36, borderRadius: "var(--radius-full)", background: "var(--md-sys-color-alpha-neonindigo-12)", border: "1px solid var(--md-sys-color-alpha-neonindigo-18)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Icon name="business" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+                </div>
+                <div style={{ textAlign: "left" }}>
+                  <p style={{ fontSize: 15, fontWeight: 700, color: "var(--md-sys-color-text-primary)", marginBottom: 1 }}>Account</p>
+                  <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>An existing customer or partner</p>
+                </div>
+              </button>
+              <button
+                onClick={onLead}
+                className="flex items-center gap-3 active:opacity-70 transition-opacity"
+                style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-md)", padding: "14px 16px", width: "100%" }}
+              >
+                <div style={{ width: 36, height: 36, borderRadius: "var(--radius-full)", background: "var(--md-sys-color-alpha-coral-12)", border: "1px solid var(--md-sys-color-alpha-coral-25)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Icon name="person_add" size={18} style={{ color: "var(--md-sys-color-brand-coral)" }} />
+                </div>
+                <div style={{ textAlign: "left" }}>
+                  <p style={{ fontSize: 15, fontWeight: 700, color: "var(--md-sys-color-text-primary)", marginBottom: 1 }}>Lead</p>
+                  <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>A prospect you're working to close</p>
+                </div>
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>,
+    root
+  );
+}
+
 type PageMode = "home" | "accounts" | "priorities";
 
 function CombinedPageContent() {
@@ -760,6 +829,11 @@ function CombinedPageContent() {
   const [showCreateSheet, setShowCreateSheet] = useState(false);
   // Create lead sheet (from + button on relationships header)
   const [showCreateLeadSheet, setShowCreateLeadSheet] = useState(false);
+  // Add picker — choose account or lead before opening create sheet
+  const [showAddPicker, setShowAddPicker] = useState(false);
+
+  // Accounts / Leads tab in the all-companies view
+  const [accountsTab, setAccountsTab] = useState<"accounts" | "leads">("accounts");
 
   // Accounts search (used in accounts mode)
   const [query, setQuery] = useState("");
@@ -869,12 +943,22 @@ function CombinedPageContent() {
     }
   }, [mode]);
 
+  const hasQuery = query.trim().length > 0;
+
   const myFiltered = useMemo(() => {
-    const byType = typeFilter === "all"
+    // When searching, ignore the tab and show all matches across accounts + leads.
+    // When not searching, filter by the active tab.
+    const byTab = query.trim().length > 0
       ? visibleAccounts
-      : typeFilter === "prospect"
+      : accountsTab === "leads"
         ? visibleAccounts.filter((a) => a.halosightType === "prospect")
-        : visibleAccounts.filter((a) => a.crmAccountType === typeFilter);
+        : visibleAccounts.filter((a) => a.halosightType !== "prospect");
+
+    const byType = typeFilter === "all"
+      ? byTab
+      : typeFilter === "prospect"
+        ? byTab.filter((a) => a.halosightType === "prospect")
+        : byTab.filter((a) => a.crmAccountType === typeFilter);
 
     const PRESET_DAYS: Record<string, number> = { "7d": 7, "14d": 14, "30d": 30, "90d": 90 };
     const byVisited = visitedFilter === "all"
@@ -895,7 +979,7 @@ function CombinedPageContent() {
           });
 
     return sortAccounts(searchAccounts(byVisited, query), sort);
-  }, [allAccounts, query, sort, typeFilter, visitedFilter, visitedFrom, visitedTo]);
+  }, [allAccounts, query, sort, typeFilter, visitedFilter, visitedFrom, visitedTo, accountsTab]);
   const taskGroups = useMemo(() => {
     const all = getAllItems()
       .filter(item =>
@@ -954,8 +1038,6 @@ function CombinedPageContent() {
   const nearestAccount = useMemo(() =>
     [...visibleAccounts].sort((a, b) => a.distanceMiles - b.distanceMiles)[0],
   [visibleAccounts]);
-  const hasQuery = query.trim().length > 0;
-
   const showSystemSection = systemState === "loading" || systemState === "done";
 
   // ── View all button (lives in section headers in home mode) ──────────────────
@@ -1199,12 +1281,52 @@ function CombinedPageContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
+              style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}
             >
+              {/* ── Accounts / Leads tabs ───────────────────────────────────── */}
+              {!hasQuery && (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid var(--md-sys-color-alpha-white-10)", flexShrink: 0, padding: "0 16px" }}>
+                  <div style={{ display: "flex", gap: 24 }}>
+                    {(["accounts", "leads"] as const).map((tab) => {
+                      const active = accountsTab === tab;
+                      return (
+                        <button
+                          key={tab}
+                          onClick={() => setAccountsTab(tab)}
+                          style={{
+                            paddingTop: 10,
+                            paddingBottom: 10,
+                            fontSize: 15,
+                            fontWeight: 700,
+                            color: active ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
+                            borderBottom: active ? "2px solid var(--md-sys-color-brand-teal)" : "2px solid transparent",
+                            marginBottom: -1,
+                            transition: "color 0.15s, border-color 0.15s",
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          {tab}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {/* Add button */}
+                  <button
+                    onClick={() => setShowAddPicker(true)}
+                    className="active:opacity-60 transition-opacity"
+                    style={{ width: 28, height: 28, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                    aria-label="Add company"
+                  >
+                    <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+                  </button>
+                </div>
+              )}
+
+              {/* Scrollable list */}
+              <div style={{ flex: 1, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}>
               {/* ── Skeleton preview: both sections loading ───────────────── */}
               {preview === "search-loading" && (
                 <>
-                  <SectionHeader label="Your Companies" count={0} onAdd={() => {}} />
                   <AccountListSkeleton rows={3} />
                   <div style={{ marginTop: 16 }}>
                     <SectionHeader label="Company-Wide Results" count={0} divider />
@@ -1214,9 +1336,6 @@ function CombinedPageContent() {
               )}
 
               {/* My accounts */}
-              {preview !== "search-loading" && showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
-              {preview !== "search-loading" && !showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
-
               {preview !== "search-loading" && (myFiltered.length > 0 ? (
                 <div className="flex flex-col">
                   {myFiltered.map((account, i) => (
@@ -1272,6 +1391,7 @@ function CombinedPageContent() {
                   )}
                 </div>
               )}
+              </div>{/* end scrollable list */}
             </motion.div>
           )}
 
@@ -1487,6 +1607,14 @@ function CombinedPageContent() {
 
       {/* Engagements drawer */}
       <EngagementsDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+
+      {/* Add picker — choose account or lead */}
+      <AddTypePicker
+        visible={showAddPicker}
+        onClose={() => setShowAddPicker(false)}
+        onAccount={() => { setShowAddPicker(false); setShowCreateSheet(true); }}
+        onLead={() => { setShowAddPicker(false); setShowCreateLeadSheet(true); }}
+      />
 
       {/* Create account sheet (search CTA) */}
       {showCreateSheet && (
