@@ -134,6 +134,90 @@ function ActivityCard({ item, accountId, isExternal, href }: { item: ActivityIte
   );
 }
 
+// ── Preparing note card ───────────────────────────────────────────────────────
+
+function PreparingNoteCard() {
+  return (
+    <>
+      <style>{`
+        @keyframes pnSpin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes pnPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.15; }
+        }
+        @keyframes pnShimmer {
+          0%   { transform: translateX(-200%); }
+          100% { transform: translateX(400%); }
+        }
+        .pn-spinner {
+          animation: pnSpin 1s linear infinite;
+          transform-origin: center;
+        }
+        .pn-dot {
+          animation: pnPulse 1.1s ease-in-out infinite;
+        }
+        .pn-shimmer {
+          animation: pnShimmer 1.6s ease-in-out infinite;
+        }
+        .pn-shimmer-2 { animation-delay: 0.35s; }
+        .pn-shimmer-3 { animation-delay: 0.7s; }
+      `}</style>
+      <motion.div
+        initial={{ opacity: 0, y: -4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 400, damping: 32 }}
+        style={{
+          background: "var(--md-sys-color-dark-secondary)",
+          borderRadius: "var(--radius-md)",
+          border: "1px solid rgba(139,146,255,0.22)",
+          padding: "14px 16px",
+        }}
+      >
+        {/* Header row */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+          <div
+            className="pn-spinner"
+            style={{
+              width: 14, height: 14, flexShrink: 0,
+              borderRadius: "50%",
+              border: "2px solid rgba(139,146,255,0.18)",
+              borderTopColor: "var(--md-sys-color-neonindigo)",
+            }}
+          />
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--md-sys-color-neonindigo)" }}>
+            Preparing note
+          </span>
+          <span
+            className="pn-dot"
+            style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--md-sys-color-neonindigo)", display: "block", flexShrink: 0 }}
+          />
+        </div>
+
+        {/* 3 shimmering skeleton lines */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+          {(["82%", "65%", "48%"] as const).map((w, i) => (
+            <div
+              key={w}
+              style={{ width: w, height: 11, borderRadius: "var(--radius-full)", background: "var(--md-sys-color-dark-tertiary)", overflow: "hidden" }}
+            >
+              <div
+                className={`pn-shimmer${i === 1 ? " pn-shimmer-2" : i === 2 ? " pn-shimmer-3" : ""}`}
+                style={{
+                  height: "100%",
+                  width: "50%",
+                  background: "linear-gradient(90deg, transparent 0%, rgba(139,146,255,0.28) 50%, transparent 100%)",
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> }) {
@@ -141,8 +225,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   const searchParams = useSearchParams();
   const router = useRouter();
   const preview = searchParams.get("preview"); // "loading" | "error" | null
+  const noteState = searchParams.get("note");  // "processing" | null
   const [activeTab, setActiveTab] = useState<"overview" | "activity">(
-    searchParams.get("tab") === "activity" ? "activity" : "overview"
+    searchParams.get("tab") === "activity" || searchParams.get("note") === "processing" ? "activity" : "overview"
   );
   const [showAddSheet, setShowAddSheet] = useState(false);
 
@@ -635,6 +720,10 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         {/* Activity */}
         {activeTab === "activity" && (
           <div className="flex flex-col gap-3 px-4 pb-4">
+
+            {/* Preparing note — shown when ?note=processing */}
+            {noteState === "processing" && <PreparingNoteCard />}
+
             {(detail?.recentActivity?.length || captureJustCompleted) ? (
               (detail?.recentActivity ?? [{ id: "new-capture", accountId: "new-capture", title: "Sandra confirmed we're the frontrunner for the contract", summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.", date: new Date(), durationMinutes: 28, hasTranscript: true, repName: "Jordan Mills", type: "visit" as const }]).map((item) => (
                 <ActivityCard
