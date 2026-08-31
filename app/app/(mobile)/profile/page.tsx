@@ -283,26 +283,17 @@ export default function ProfilePage() {
             <span style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)" }}>
               Halosight Lite
             </span>
-            <span
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: "0.07em",
-                textTransform: "uppercase",
-                color: "var(--md-sys-color-neonindigo)",
-                background: "var(--md-sys-color-alpha-neonindigo-12)",
-                border: "1px solid var(--md-sys-color-alpha-neonindigo-25)",
-                borderRadius: "var(--radius-full)",
-                padding: "2px 7px",
-                lineHeight: 1.6,
-              }}
-            >
-              Trial
-            </span>
           </div>
           <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.55 }}>
             You're exploring without a CRM connection. All data is local to this session.
           </p>
+          <button
+            onClick={() => router.push("/import/lite-vs-full")}
+            className="mt-2 active:opacity-60 transition-opacity"
+            style={{ fontSize: 13, color: "var(--md-sys-color-neonindigo)", fontWeight: 500 }}
+          >
+            See what's included in full Halosight
+          </button>
         </div>
       </div>
 

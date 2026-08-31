@@ -17,10 +17,11 @@ import Icon from "@/components/ui/Icon";
 
 const COMPARISON_ROWS = [
   { lite: "You import when you want", full: "Stays up to date on its own" },
-  { lite: "Recent activity", full: "Full account history" },
-  { lite: "Standard tasks and activities", full: "Your custom objects and fields" },
-  { lite: "Just your records", full: "Your whole team's" },
-  { lite: "You set it up in a minute", full: "Set up with your admin" },
+  { lite: "Recent activity", full: "Admin-selected historical backfill" },
+  { lite: "Selected supported CRM records", full: "Mapped custom fields on supported record types" },
+  { lite: "Just your records", full: "Shared team data, based on CRM permissions" },
+  { lite: "Self-serve setup", full: "Set up with your admin" },
+  { lite: "No write-back support", full: "Supported changes sync back to the CRM" },
 ];
 
 export default function LiteVsFullPage() {
@@ -56,9 +57,6 @@ export default function LiteVsFullPage() {
           >
             Two ways to work with Salesforce
           </h1>
-          <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.55 }}>
-            You're using quick import today. Nothing changes unless your organization moves to full integration.
-          </p>
         </div>
 
         {/* Comparison table */}
@@ -158,7 +156,7 @@ export default function LiteVsFullPage() {
 
         {/* Closing copy */}
         <p style={{ fontSize: 13.5, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, marginBottom: 20 }}>
-          Quick import is the right choice for most people getting started. Full integration is worth it when a whole team needs Halosight and Salesforce to agree without anyone pressing a button.
+          Like what you see? Full integration is where Halosight really starts working for you.
         </p>
 
         {/* CTA */}
