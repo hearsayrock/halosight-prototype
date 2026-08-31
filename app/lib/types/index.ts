@@ -33,8 +33,14 @@ export interface Account {
   parentId?: string;           // branch accounts only
   contactName?: string;
   contactTitle?: string;
+  contactEmail?: string;
   phone?: string;
   address?: string;
+  zip?: string;
+  website?: string;
+  industry?: string;
+  accountCategory?: string; // Customer, Prospect, Partner, Vendor
+  leadSource?: string;
   crmId?: string;
   healthScore?: number;        // 0–100
   annualRevenue?: number;

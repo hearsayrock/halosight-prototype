@@ -822,7 +822,6 @@ function CombinedPageContent() {
     markNeedsAttention(newAccount.id);
     setQuery("");
     setTypeFilter("all");
-    router.push(`/relationships/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
   }
 
   // Create account sheet (from search CTA)
