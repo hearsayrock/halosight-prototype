@@ -65,7 +65,7 @@ export const PLAYGROUNDS: Playground[] = [
     id: "playground/interaction-updates",
     name: "Interaction Updates",
     description: "Explore updates to interactions.",
-    url: "",
+    url: "https://halosight-prototype-git-playg-736146-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
     startedAt: "2026-08-19",
