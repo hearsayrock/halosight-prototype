@@ -698,7 +698,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
     >
       <Icon name="add" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
       <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-        Add a new lead
+        Add new company
         {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
       </span>
     </button>
@@ -1130,45 +1130,54 @@ function CombinedPageContent() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.22 }}
-                className="flex items-center gap-2 h-11 px-3"
-                style={{
-                  borderRadius: 999,
-                  background: "var(--md-sys-color-dark-secondary)",
-                  outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
-                }}
+                style={{ display: "flex", alignItems: "center", gap: 8 }}
               >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-                  <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
-                  <path d="M12 12L16 16" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
-                </svg>
-                <input
-                  ref={accountsInputRef}
-                  type="text"
-                  placeholder={showSystemSection ? "Searching all companies…" : "Search companies…"}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-[15px] outline-none"
-                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
-                />
-                {showSystemSection && (
-                  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
-                    ALL
-                  </span>
-                )}
-                {query && (
-                  <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
-                      <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                )}
-                <SortMenu
-                  current={sort}
-                  onChange={setSort}
-                  visitedFilter={visitedFilter}
-                  onVisitedChange={(v) => { setVisitedFilter(v); setVisitedFrom(null); setVisitedTo(null); }}
-                />
+                {/* Search pill */}
+                <div
+                  className="flex items-center gap-2 h-11 px-3"
+                  style={{
+                    flex: 1,
+                    borderRadius: 999,
+                    background: "var(--md-sys-color-dark-secondary)",
+                    outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+                    <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
+                    <path d="M12 12L16 16" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
+                  </svg>
+                  <input
+                    ref={accountsInputRef}
+                    type="text"
+                    placeholder={showSystemSection ? "Searching all companies…" : "Search companies…"}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="flex-1 bg-transparent text-[15px] outline-none"
+                    style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
+                  />
+                  {showSystemSection && (
+                    <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
+                      ALL
+                    </span>
+                  )}
+                  {query && (
+                    <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
+                        <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+                {/* Add button */}
+                <button
+                  onClick={() => setShowAddPicker(true)}
+                  className="active:opacity-60 transition-opacity"
+                  style={{ width: 40, height: 40, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                  aria-label="Add company"
+                >
+                  <Icon name="add" size={20} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+                </button>
               </motion.div>
             )}
             {/* priorities mode: title lives inside the body, not here */}
@@ -1285,40 +1294,29 @@ function CombinedPageContent() {
             >
               {/* ── Accounts / Leads tabs ───────────────────────────────────── */}
               {!hasQuery && (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid var(--md-sys-color-alpha-white-10)", flexShrink: 0, padding: "0 16px" }}>
-                  <div style={{ display: "flex", gap: 24 }}>
-                    {(["accounts", "leads"] as const).map((tab) => {
-                      const active = accountsTab === tab;
-                      return (
-                        <button
-                          key={tab}
-                          onClick={() => setAccountsTab(tab)}
-                          style={{
-                            paddingTop: 10,
-                            paddingBottom: 10,
-                            fontSize: 15,
-                            fontWeight: 700,
-                            color: active ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
-                            borderBottom: active ? "2px solid var(--md-sys-color-brand-teal)" : "2px solid transparent",
-                            marginBottom: -1,
-                            transition: "color 0.15s, border-color 0.15s",
-                            textTransform: "capitalize",
-                          }}
-                        >
-                          {tab}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {/* Add button */}
-                  <button
-                    onClick={() => setShowAddPicker(true)}
-                    className="active:opacity-60 transition-opacity"
-                    style={{ width: 28, height: 28, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
-                    aria-label="Add company"
-                  >
-                    <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-                  </button>
+                <div style={{ display: "flex", alignItems: "center", borderBottom: "1px solid var(--md-sys-color-alpha-white-10)", flexShrink: 0, padding: "0 16px", gap: 24 }}>
+                  {(["accounts", "leads"] as const).map((tab) => {
+                    const active = accountsTab === tab;
+                    return (
+                      <button
+                        key={tab}
+                        onClick={() => setAccountsTab(tab)}
+                        style={{
+                          paddingTop: 10,
+                          paddingBottom: 10,
+                          fontSize: 15,
+                          fontWeight: 700,
+                          color: active ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
+                          borderBottom: active ? "2px solid var(--md-sys-color-brand-teal)" : "2px solid transparent",
+                          marginBottom: -1,
+                          transition: "color 0.15s, border-color 0.15s",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        {tab}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
@@ -1599,7 +1597,7 @@ function CombinedPageContent() {
             transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
           }}>
             <div style={{ pointerEvents: "auto" }}>
-              <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
+              <CreateAccountCTA query={query} onOpen={() => setShowAddPicker(true)} />
             </div>
           </div>
         )}
