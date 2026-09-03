@@ -658,8 +658,9 @@ export default function DesignSystemPage() {
               Use for alternative secondary actions, featured badges, blog card highlights, and supportive elements that need visual distinction.
             </p>
             <div className="flex flex-wrap gap-4">
+              <ColorSwatch token="--md-sys-color-brand-teal-light" label="light" textColor="#111420" />
               <ColorSwatch token="--md-sys-color-brand-teal"       label="base" />
-              <ColorSwatch token="--md-sys-color-brand-teal-hover" label="hover" textColor="#111420" />
+              <ColorSwatch token="--md-sys-color-brand-teal-dark"  label="dark" />
             </div>
           </div>
 
@@ -694,6 +695,7 @@ export default function DesignSystemPage() {
 
           <div className="mb-6">
             <div className="flex flex-wrap gap-4">
+              <ColorSwatch token="--md-sys-color-dark-void"      label="dark-void"      />
               <ColorSwatch token="--md-sys-color-dark-base"      label="dark-base"      />
               <ColorSwatch token="--md-sys-color-dark-primary"   label="dark-primary"   />
               <ColorSwatch token="--md-sys-color-dark-secondary" label="dark-secondary" />
