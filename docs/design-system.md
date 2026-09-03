@@ -33,6 +33,7 @@ Tokens live in `/app/app/globals.css`. There is no `tailwind.config.ts` — Tail
 
 | Token | Value | Use |
 |---|---|---|
+| `--md-sys-color-dark-void` | `#04050B` | Near-black — deepest chrome |
 | `--md-sys-color-dark-base` | `#0D0F1A` | Off-black — deepest dark |
 | `--md-sys-color-dark-primary` | `#1A1D29` | Primary dark background |
 | `--md-sys-color-dark-secondary` | `#252A36` | Secondary dark — cards, list items |
@@ -189,7 +190,7 @@ Transparent overlays for glass effects, borders, and layered surfaces. Always ap
 | `--md-sys-color-alpha-white-18` | `rgba(255,255,255,0.18)` | Active fields, emphasized containers |
 | `--md-sys-color-alpha-neonindigo-10` | `rgba(179,184,255,0.10)` | Subtle purple backgrounds |
 | `--md-sys-color-alpha-neonindigo-glass` | `rgba(179,184,255,0.10)` | Glass nav background |
-| `--md-sys-color-alpha-dark-glass` | `#0d0f1a` | Active pill on glass nav |
+| `--md-sys-color-alpha-dark-glass` | `rgba(255,255,255,0.18)` | Active pill on glass nav |
 
 ### Gradients
 
@@ -379,17 +380,17 @@ Quick reference for Flutter engineers — maps components to their token roles:
 
 | Component | Tokens |
 |---|---|
-| `AccountListItem` | `dark-secondary` bg · `alpha-white-10` border · `radius-sm` · `text-primary` name · `text-muted` meta · `brand-purple-light` city/state · `brand-coral` today indicator |
+| `AccountListItem` | `dark-secondary` bg · `alpha-white-10` border · `radius-sm` · `text-primary` name · `text-muted` meta · `text-muted` city/state · `brand-coral` today indicator |
 | `AccountTypeIcon` | Custom SVG · `text-muted` stroke · `text-disabled` fill |
 | `SortMenu` trigger | `dark-secondary` bg · `text-muted` icon |
 | `SortMenu` dropdown | `dark-tertiary` bg · `text-primary` labels · `radius-xl` · `elevation-3` shadow |
-| `BottomNav` | `alpha-purple-glass` bg · `alpha-white-10` border · `alpha-dark-glass` active pill · `text-primary` active · `text-muted` inactive · `radius-full` |
+| `BottomNav` | `alpha-neonindigo-glass` bg · `alpha-white-10` border · `alpha-dark-glass` active pill · `text-primary` active · `text-muted` inactive · `radius-full` |
 | `Icon` | Material Symbols Rounded font · `currentColor` |
 | `MenuIcon` | Custom SVG · `text-muted` default fill |
 | Top bar | `background` bg · `dark-tertiary` border |
 | Inputs | `dark-secondary` bg · `text-primary` input · `text-disabled` placeholder |
 | Primary button | `brand-coral` bg · `text-inverse` label · `radius-xl` |
-| Secondary button | `brand-blue` bg · `text-primary` label · `radius-xl` |
+| Secondary button | `indigo` bg · `text-primary` label · `radius-xl` |
 
 ---
 

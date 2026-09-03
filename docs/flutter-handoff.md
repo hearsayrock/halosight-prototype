@@ -196,7 +196,7 @@ Tokens:
   name: text-primary, heading-6
   distance/meta: text-muted, text-sm (14px)
   lastVisited today: brand-coral
-  city/state: brand-purple-light, text-sm (14px)
+  city/state: text-muted, text-sm (14px)
 ```
 
 ### AccountTypeIcon
