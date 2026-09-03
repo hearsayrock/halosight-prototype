@@ -53,6 +53,37 @@ ThemeData halosightDarkTheme = ThemeData(
   scaffoldBackgroundColor: Color(0xFF111420), // --md-sys-color-background
   fontFamily: 'Barlow',
 );
+
+// Brand extension colors not mapped to M3 ColorScheme roles
+class HalosightColors extends ThemeExtension<HalosightColors> {
+  final Color brandTealLight;  // --md-sys-color-brand-teal-light  #8CB5C5
+  final Color brandTeal;       // --md-sys-color-brand-teal         #6B9DB0
+  final Color brandTealDark;   // --md-sys-color-brand-teal-dark    #4D8495
+
+  const HalosightColors({
+    required this.brandTealLight,
+    required this.brandTeal,
+    required this.brandTealDark,
+  });
+
+  static const defaults = HalosightColors(
+    brandTealLight: Color(0xFF8CB5C5),
+    brandTeal:      Color(0xFF6B9DB0),
+    brandTealDark:  Color(0xFF4D8495),
+  );
+
+  @override
+  HalosightColors copyWith({Color? brandTealLight, Color? brandTeal, Color? brandTealDark}) =>
+      HalosightColors(
+        brandTealLight: brandTealLight ?? this.brandTealLight,
+        brandTeal:      brandTeal      ?? this.brandTeal,
+        brandTealDark:  brandTealDark  ?? this.brandTealDark,
+      );
+
+  @override
+  HalosightColors lerp(HalosightColors? other, double t) => this;
+}
+// Usage: Theme.of(context).extension<HalosightColors>()!.brandTeal
 ```
 
 ---
@@ -165,7 +196,7 @@ Tokens:
   name: text-primary, heading-6
   distance/meta: text-muted, text-sm (14px)
   lastVisited today: brand-coral
-  city/state: brand-purple-light, text-sm (14px)
+  city/state: text-muted, text-sm (14px)
 ```
 
 ### AccountTypeIcon
