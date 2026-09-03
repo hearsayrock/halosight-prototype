@@ -695,6 +695,7 @@ export default function DesignSystemPage() {
 
           <div className="mb-6">
             <div className="flex flex-wrap gap-4">
+              <ColorSwatch token="--md-sys-color-dark-void"      label="dark-void"      />
               <ColorSwatch token="--md-sys-color-dark-base"      label="dark-base"      />
               <ColorSwatch token="--md-sys-color-dark-primary"   label="dark-primary"   />
               <ColorSwatch token="--md-sys-color-dark-secondary" label="dark-secondary" />
