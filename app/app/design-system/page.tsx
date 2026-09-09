@@ -1500,7 +1500,7 @@ export default function DesignSystemPage() {
           />
           <div className="max-w-xs mb-16">
             <div style={{ background: "var(--md-sys-color-background)", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
-              <BottomNav />
+              <BottomNav onCaptureTap={() => {}} />
             </div>
             <TokenLabel name="BottomNav — live component · background: --md-sys-color-alpha-neonindigo-glass · active pill: --md-sys-color-alpha-dark-glass" value="height: 66px · 32px padding sides & bottom · pill: --radius-full · active inset: 6px" />
           </div>
