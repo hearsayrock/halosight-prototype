@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import PhoneFrame from "@/components/layout/PhoneFrame";
 import PageTransition from "@/components/layout/PageTransition";
 import StaticBottomNav from "@/components/layout/StaticBottomNav";
@@ -25,7 +26,7 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
           <FakeCallProvider>
             <PhoneFrame>
               <PageTransition>{children}</PageTransition>
-              <StaticBottomNav />
+              <Suspense><StaticBottomNav /></Suspense>
               <CaptureWidget />
               <FakeCallOverlay />
               <DemoReset />
