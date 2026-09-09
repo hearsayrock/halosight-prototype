@@ -632,9 +632,11 @@ function CombinedPageContent() {
   // Page mode — derived from URL so browser back restores the expanded view
   const modeParam = searchParams.get("mode");
   const mode: PageMode = (modeParam === "accounts" || modeParam === "priorities") ? modeParam : "home";
+  const focusSearch = searchParams.get("focus") === "search";
 
-  function goToMode(m: "accounts" | "priorities") {
-    router.push(`/relationships?mode=${m}`, { scroll: false });
+  function goToMode(m: "accounts" | "priorities", focusSearch = false) {
+    const params = focusSearch ? `?mode=${m}&focus=search` : `?mode=${m}`;
+    router.push(`/relationships${params}`, { scroll: false });
   }
   function goHome() {
     router.push("/relationships");
@@ -771,9 +773,9 @@ function CombinedPageContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Auto-focus the right input when switching modes
+  // Auto-focus the right input when switching modes (only when explicitly requested via ?focus=search)
   useEffect(() => {
-    if (mode === "accounts") {
+    if (mode === "accounts" && focusSearch) {
       setTimeout(() => accountsInputRef.current?.focus(), 280);
     } else if (mode === "priorities") {
       setTimeout(() => prioritiesInputRef.current?.focus(), 280);
@@ -1150,7 +1152,7 @@ function CombinedPageContent() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.2 }}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: 48 }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: 80 }}
             >
               {preview === "loading" && <AccountListSkeleton rows={6} />}
               {preview === "error" && (
@@ -1170,7 +1172,7 @@ function CombinedPageContent() {
                       <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Companies
                       </span>
-                      <MiniSearchPill onClick={() => goToMode("accounts")} />
+                      <MiniSearchPill onClick={() => goToMode("accounts", true)} />
                     </div>
                     <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
                       {topAccounts.map((account, i) => (
@@ -1205,7 +1207,7 @@ function CombinedPageContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 152 : 80 }}
             >
               {/* ── Skeleton preview: both sections loading ───────────────── */}
               {preview === "search-loading" && (
@@ -1351,7 +1353,7 @@ function CombinedPageContent() {
               </div>
 
               {/* Scrollable groups */}
-              <div style={{ flex: 1, overflowY: "auto", paddingBottom: 48 }}>
+              <div style={{ flex: 1, overflowY: "auto", paddingBottom: 80 }}>
                 {taskGroups.length === 0 ? (
                   <div className="flex items-center justify-center py-20">
                     <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>

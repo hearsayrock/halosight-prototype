@@ -2,15 +2,18 @@
 
 /**
  * FLUTTER HANDOFF: BottomNav
- * Widget: StatefulWidget (manages active tab state)
- * Floating pill nav — 66px tall, 32px from bottom & sides.
- * Background: --md-sys-color-alpha-neonindigo-glass (liquid glass)
- * Active pill: --md-sys-color-alpha-dark-glass, inset 6px top/bottom/outer-edge
- * Tokens: text/primary (active), text/muted (inactive)
+ * Widget: StatelessWidget
+ * Flat bar at bottom with raised coral Capture button in center.
+ * No active pill — active state is icon + label color only.
+ * Tokens: --md-sys-color-dark-base, --md-sys-color-alpha-white-10,
+ *         --md-sys-color-brand-coral, --md-sys-color-text-primary,
+ *         --md-sys-color-text-muted
  */
 
+import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import Icon from "@/components/ui/Icon";
 
 function HomeIcon({ active }: { active: boolean }) {
   return (
@@ -25,7 +28,7 @@ function HomeIcon({ active }: { active: boolean }) {
   );
 }
 
-function AccountsIcon({ active }: { active: boolean }) {
+function CompaniesIcon({ active }: { active: boolean }) {
   return (
     <svg width="22" height="22" viewBox="0 0 18 18" fill="none">
       <path
@@ -38,65 +41,123 @@ function AccountsIcon({ active }: { active: boolean }) {
   );
 }
 
-export default function BottomNav() {
+interface Props {
+  onCaptureTap: () => void;
+}
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: "Barlow, system-ui, sans-serif",
+  fontSize: 10,
+  fontWeight: 600,
+  lineHeight: 1,
+};
+
+export default function BottomNav({ onCaptureTap }: Props) {
   const pathname = usePathname();
-  const isAccounts = pathname.startsWith("/relationships");
-  const isHome = pathname === "/relationships" || pathname === "/";
+  const searchParams = useSearchParams();
+  const mode = searchParams.get("mode");
+  const isCompanies = mode === "accounts";
+  const isHome = !isCompanies && (pathname === "/relationships" || pathname === "/home");
 
   return (
-    /* Outer wrapper: 32px padding on sides and bottom */
-    <div className="flex-shrink-0 px-8 pb-8">
-      <nav
-        className="relative flex items-center"
-        style={{
-          width: 230,
-          height: 66,
-          borderRadius: "var(--radius-full)",
-          background: "var(--md-sys-color-alpha-neonindigo-glass)",
-          backdropFilter: "blur(20px) saturate(180%)",
-          WebkitBackdropFilter: "blur(20px) saturate(180%)",
-          border: "1px solid var(--md-sys-color-alpha-white-10)",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2)",
-        }}
-      >
-        {/* Active pill — slides between halves, 6px inset top/bottom/outer-edge */}
+    /* Outer wrapper — 16px side padding + 12px bottom gap so bar floats */
+    <div style={{ padding: "0 24px 12px" }}>
+
+      {/* Relative container so Capture button can sit above the bar */}
+      <div style={{ position: "relative" }}>
+
+        {/* Capture button — floats above the bar, centered */}
         <div
-          className="absolute"
           style={{
-            top: 6,
-            bottom: 6,
-            left: isHome ? 6 : "50%",
-            right: isAccounts ? 6 : "50%",
-            background: "var(--md-sys-color-alpha-dark-glass)",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
-            borderRadius: "var(--radius-full)",
-            transition: "left 0.2s ease, right 0.2s ease",
+            position: "absolute",
+            top: 0,
+            left: "50%",
+            transform: "translateX(-50%) translateY(calc(-50% + 12px))",
+            zIndex: 2,
           }}
-        />
-
-        {/* Home */}
-        <Link
-          href="/relationships"
-          className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1 h-full"
         >
-          <HomeIcon active={isHome} />
-          <span className="label-serif" style={{ color: isHome ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)" }}>
-            Home
-          </span>
-        </Link>
+          <button
+            onClick={onCaptureTap}
+            className="active:opacity-80 transition-opacity"
+            style={{
+              width: 58,
+              height: 58,
+              borderRadius: "50%",
+              background: "var(--md-sys-color-brand-coral)",
+              border: "3px solid var(--md-sys-color-dark-base)",
+              boxShadow: "0 4px 18px rgba(0,0,0,0.70)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Icon name="add" size={26} style={{ color: "white" }} />
+          </button>
+        </div>
 
-        {/* Companies */}
-        <Link
-          href="/relationships"
-          className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1 h-full"
+        {/* Nav bar */}
+        <nav
+          style={{
+            display: "flex",
+            height: 64,
+            background: "rgba(13, 15, 26, 0.78)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            borderRadius: "var(--radius-full)",
+            border: "1px solid rgba(255, 255, 255, 0.10)",
+            paddingLeft: 12,
+            paddingRight: 12,
+          }}
         >
-          <AccountsIcon active={isAccounts} />
-          <span className="label-serif" style={{ color: isAccounts ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)" }}>
-            Companies
-          </span>
-        </Link>
-      </nav>
+          {/* Home */}
+          <Link
+            href="/relationships"
+            className="flex flex-col items-center justify-center gap-1 active:opacity-60 transition-opacity"
+            style={{ flex: 1, textDecoration: "none", paddingLeft: 24 }}
+          >
+            <HomeIcon active={isHome} />
+            <span
+              style={{
+                ...labelStyle,
+                color: isHome
+                  ? "var(--md-sys-color-text-primary)"
+                  : "var(--md-sys-color-text-muted)",
+              }}
+            >
+              Home
+            </span>
+          </Link>
+
+          {/* Center — spacer + Capture label */}
+          <div
+            className="flex flex-col items-center justify-end"
+            style={{ flex: 1, paddingBottom: 10 }}
+          >
+            <span style={{ ...labelStyle, color: "var(--md-sys-color-brand-coral)" }}>
+              Capture
+            </span>
+          </div>
+
+          {/* Companies */}
+          <Link
+            href="/relationships?mode=accounts"
+            className="flex flex-col items-center justify-center gap-1 active:opacity-60 transition-opacity"
+            style={{ flex: 1, textDecoration: "none", paddingRight: 24 }}
+          >
+            <CompaniesIcon active={isCompanies} />
+            <span
+              style={{
+                ...labelStyle,
+                color: isCompanies
+                  ? "var(--md-sys-color-text-primary)"
+                  : "var(--md-sys-color-text-muted)",
+              }}
+            >
+              Companies
+            </span>
+          </Link>
+        </nav>
+      </div>
     </div>
   );
 }

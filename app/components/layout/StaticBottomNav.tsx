@@ -3,21 +3,35 @@
 /**
  * Renders BottomNav as an absolute overlay anchored to the bottom of
  * phone-screen — outside PageTransition so it never slides with pages.
- * Hidden on the login screen ("/").
+ * Manages LogVisitSheet open state.
+ * Visible on: /relationships (home + companies)
  */
 
-import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { AnimatePresence } from "framer-motion";
 import BottomNav from "./BottomNav";
+import LogVisitSheet from "./LogVisitSheet";
 
 export default function StaticBottomNav() {
   const pathname = usePathname();
-  // Bottom nav is hidden on all screens in this playground
-  const ROOT_PAGES: string[] = [];
-  if (!ROOT_PAGES.includes(pathname)) return null;
+  const searchParams = useSearchParams();
+  const mode = searchParams.get("mode");
+  const [showSheet, setShowSheet] = useState(false);
+  const showNav = pathname === "/relationships" && (mode === null || mode === "accounts");
 
   return (
-    <div className="absolute bottom-0 left-0 z-50">
-      <BottomNav />
-    </div>
+    <>
+      {showNav && (
+        <div className="absolute bottom-0 left-0 right-0 z-50">
+          <BottomNav onCaptureTap={() => setShowSheet(true)} />
+        </div>
+      )}
+      <AnimatePresence>
+        {showNav && showSheet && (
+          <LogVisitSheet onClose={() => setShowSheet(false)} />
+        )}
+      </AnimatePresence>
+    </>
   );
 }
