@@ -56,7 +56,7 @@ export const PLAYGROUNDS: Playground[] = [
     id: "playground/new-colors",
     name: "New Colors",
     description: "Color exploration",
-    url: "",
+    url: "https://halosight-prototype-git-playg-b41d97-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
     startedAt: "2026-08-26",
