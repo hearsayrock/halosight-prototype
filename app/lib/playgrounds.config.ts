@@ -53,6 +53,15 @@ export const CURRENT_APP_URL = "https://halosight-prototype.vercel.app";
 
 export const PLAYGROUNDS: Playground[] = [
   {
+    id: "playground/new-colors",
+    name: "New Colors",
+    description: "Color exploration",
+    url: "",
+    author: "Nate",
+    status: "exploring",
+    startedAt: "2026-08-26",
+  },
+  {
     id: "playground/interaction-updates",
     name: "Interaction Updates",
     description: "Explore updates to interactions.",
@@ -74,24 +83,6 @@ export const PLAYGROUNDS: Playground[] = [
       { label: "Home (empty)", path: "/relationships?preview=empty" },
       { label: "Home (seeded)", path: "/relationships" },
     ],
-  },
-  {
-    id: "playground/july-13-prospecting-goals",
-    name: "July 13 Prospecting Goals",
-    description: "Explore prospecting goals and visit tracking features for the July 13 demo.",
-    url: "https://halosight-prototype-git-playg-60b352-nate-natesdesigns-projects.vercel.app",
-    author: "Nate",
-    status: "exploring",
-    startedAt: "2026-07-13",
-  },
-  {
-    id: "board-meeeting-ai-brainstorm",
-    name: "Board Meeting AI",
-    description: "Explore adding an AI chat agent.",
-    url: "https://halosight-prototype-git-board-b83846-nate-natesdesigns-projects.vercel.app",
-    author: "Nate",
-    status: "exploring",
-    startedAt: "2026-06-16",
   },
   {
     id: "playground/onboarding-flow",
