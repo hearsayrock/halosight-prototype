@@ -53,6 +53,15 @@ export const CURRENT_APP_URL = "https://halosight-prototype.vercel.app";
 
 export const PLAYGROUNDS: Playground[] = [
   {
+    id: "playground/add-company-test",
+    name: "Add Company Test",
+    description: "Build a one field add to test",
+    url: "",
+    author: "Nate",
+    status: "exploring",
+    startedAt: "2026-09-14",
+  },
+  {
     id: "playground/bottom-nav",
     name: "Bottom Nav",
     description: "Explore adding a bottom nav to the app",
