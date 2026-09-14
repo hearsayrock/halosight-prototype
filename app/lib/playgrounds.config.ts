@@ -56,7 +56,7 @@ export const PLAYGROUNDS: Playground[] = [
     id: "playground/add-company-test",
     name: "Add Company Test",
     description: "Build a one field add to test",
-    url: "",
+    url: "https://halosight-prototype-git-playg-3b8453-nate-natesdesigns-projects.vercel.app",
     author: "Nate",
     status: "exploring",
     startedAt: "2026-09-14",
