@@ -33,28 +33,14 @@ function ProspectBadge() {
   );
 }
 
-// ── CRM account type badge ────────────────────────────────────────────────────
+// ── Type label (3rd line of list row) ────────────────────────────────────────
 
-const CRM_LABEL: Record<CrmAccountType, string> = {
-  "sold-to":    "Sold-To",
-  "shipped-to": "Shipped-To",
-  "distributor":"Distributor",
-  "prospect":   "Prospect",
+const CRM_DISPLAY: Record<CrmAccountType, string> = {
+  "sold-to":    "SOLD-TO",
+  "shipped-to": "SHIPPED-TO",
+  "distributor":"DISTRIBUTOR",
+  "prospect":   "PROSPECT",
 };
-
-function CrmTypeBadge({ type }: { type: CrmAccountType }) {
-  return (
-    <span
-      className="text-11-bold px-2.5 py-0.5 rounded-full whitespace-nowrap"
-      style={{
-        background: "var(--md-sys-color-dark-tertiary)",
-        color: "var(--md-sys-color-text-muted)",
-      }}
-    >
-      {CRM_LABEL[type]}
-    </span>
-  );
-}
 
 // ── Task check icon ───────────────────────────────────────────────────────────
 
@@ -156,31 +142,46 @@ export default function AccountListItem({ account, isLast = false }: Props) {
 
           {/* Distance • location */}
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
-              {formatDistance(account.distanceMiles)}
-            </span>
-            {location && (
+            {account.distanceMiles <= 30 && (
               <>
-                <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
-                <span className="text-sm truncate" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                  {location}
+                <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                  {formatDistance(account.distanceMiles)}
                 </span>
+                {location && (
+                  <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
+                )}
               </>
+            )}
+            {location && (
+              <span className="text-sm truncate" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                {location}
+              </span>
             )}
           </div>
 
-          {/* Visited */}
-          <p className="text-sm mt-0.5">
-            <span style={{ color: "var(--md-sys-color-text-disabled)" }}>Visited </span>
-            <span className="font-semibold" style={{ color: "var(--md-sys-color-text-muted)" }}>
+          {/* Type • Visited */}
+          <div className="flex items-center gap-1 mt-0.5">
+            {account.halosightType === "prospect" ? (
+              <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-brand-teal)" }}>
+                LEAD
+              </span>
+            ) : account.crmAccountType ? (
+              <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                {CRM_DISPLAY[account.crmAccountType]}
+              </span>
+            ) : null}
+            {(account.halosightType === "prospect" || account.crmAccountType) && (
+              <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}> •</span>
+            )}
+            <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>Visited </span>
+            <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {label}
             </span>
-          </p>
+          </div>
         </div>
 
-        {/* Right — badge top (leads only), task + assignee bottom */}
-        <div className={`flex flex-col items-end gap-2 flex-shrink-0 ${account.halosightType === "prospect" ? "justify-between" : "justify-end"}`} style={{ minHeight: 60 }}>
-          {account.halosightType === "prospect" && <ProspectBadge />}
+        {/* Right — attention badge + task + assignee */}
+        <div className="flex flex-col items-end gap-2 flex-shrink-0 justify-end" style={{ minHeight: 60 }}>
           {showAttention && (
             <span
               className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"

@@ -618,6 +618,7 @@ type SystemSearchState = "idle" | "loading" | "done";
 type TaskStatusFilter = "open" | "done";
 type TaskSortMode = "dueDate" | "account";
 type AccountTypeFilter = "all" | "prospect" | "distributor" | "sold-to" | "shipped-to";
+type ShowFilter = "all" | "accounts" | "leads";
 
 type PageMode = "home" | "accounts" | "priorities";
 
@@ -633,8 +634,11 @@ function CombinedPageContent() {
   const modeParam = searchParams.get("mode");
   const mode: PageMode = (modeParam === "accounts" || modeParam === "priorities") ? modeParam : "home";
 
-  function goToMode(m: "accounts" | "priorities") {
-    router.push(`/relationships?mode=${m}`, { scroll: false });
+  const focusSearch = searchParams.get("focus") === "search";
+
+  function goToMode(m: "accounts" | "priorities", focus = false) {
+    const params = focus ? `?mode=${m}&focus=search` : `?mode=${m}`;
+    router.push(`/relationships${params}`, { scroll: false });
   }
   function goHome() {
     router.push("/relationships");
@@ -673,6 +677,9 @@ function CombinedPageContent() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("alphabetical");
   const [typeFilter, setTypeFilter]         = useState<AccountTypeFilter>("all");
+  const [showFilter, setShowFilter]         = useState<ShowFilter>("all");
+  const [withinFiveMi, setWithinFiveMi]     = useState(false);
+  const [fabOpen, setFabOpen]               = useState(false);
   const [visitedFilter, setVisitedFilter]   = useState<VisitedFilter>("all");
   const [visitedFrom, setVisitedFrom]       = useState<Date | null>(null);
   const [visitedTo, setVisitedTo]           = useState<Date | null>(null);
@@ -774,7 +781,8 @@ function CombinedPageContent() {
   // Auto-focus the right input when switching modes
   useEffect(() => {
     if (mode === "accounts") {
-      setTimeout(() => accountsInputRef.current?.focus(), 280);
+      if (focusSearch) setTimeout(() => accountsInputRef.current?.focus(), 280);
+      else setFabOpen(false);
     } else if (mode === "priorities") {
       setTimeout(() => prioritiesInputRef.current?.focus(), 280);
     } else {
@@ -787,17 +795,30 @@ function CombinedPageContent() {
   }, [mode]);
 
   const myFiltered = useMemo(() => {
+    let base = visibleAccounts;
+
+    // Show filter: all / accounts (CRM) / leads (Halosight)
+    if (showFilter === "leads") {
+      base = base.filter((a) => a.halosightType === "prospect");
+    } else if (showFilter === "accounts") {
+      base = base.filter((a) => a.halosightType !== "prospect");
+    }
+
+    // Type filter (CRM type or prospect)
     const byType = typeFilter === "all"
-      ? visibleAccounts
+      ? base
       : typeFilter === "prospect"
-        ? visibleAccounts.filter((a) => a.halosightType === "prospect")
-        : visibleAccounts.filter((a) => a.crmAccountType === typeFilter);
+        ? base.filter((a) => a.halosightType === "prospect")
+        : base.filter((a) => a.crmAccountType === typeFilter);
+
+    // Within 5 mi filter
+    const byDistance = withinFiveMi ? byType.filter((a) => a.distanceMiles <= 5) : byType;
 
     const PRESET_DAYS: Record<string, number> = { "7d": 7, "14d": 14, "30d": 30, "90d": 90 };
     const byVisited = visitedFilter === "all"
-      ? byType
+      ? byDistance
       : visitedFilter === "custom"
-        ? byType.filter((a) => {
+        ? byDistance.filter((a) => {
             const t = a.lastVisited.getTime();
             if (visitedFrom && t < visitedFrom.getTime()) return false;
             if (visitedTo) {
@@ -806,13 +827,13 @@ function CombinedPageContent() {
             }
             return true;
           })
-        : byType.filter((a) => {
+        : byDistance.filter((a) => {
             const cutoff = Date.now() - PRESET_DAYS[visitedFilter] * 86_400_000;
             return a.lastVisited.getTime() >= cutoff;
           });
 
     return sortAccounts(searchAccounts(byVisited, query), sort);
-  }, [allAccounts, query, sort, typeFilter, visitedFilter, visitedFrom, visitedTo]);
+  }, [allAccounts, query, sort, typeFilter, showFilter, withinFiveMi, visitedFilter, visitedFrom, visitedTo]);
   const taskGroups = useMemo(() => {
     const all = getAllItems()
       .filter(item =>
@@ -1114,10 +1135,11 @@ function CombinedPageContent() {
         )}
       </AnimatePresence> */}
 
-      {/* ── TYPE FILTER — moved into SortMenu; hidden for now ──────────── */}
-      {false && mode === "accounts" && (
+      {/* ── FILTER PILLS — accounts mode only ──────────────────────────── */}
+      <AnimatePresence>
+        {mode === "accounts" && (
           <motion.div
-            key="type-filter"
+            key="account-filters"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -1125,18 +1147,49 @@ function CombinedPageContent() {
             className="flex items-center gap-2 px-4 pb-3"
             style={{ flexShrink: 0 }}
           >
-            <VisitedFilterDropdown
-              value={visitedFilter}
-              customFrom={visitedFrom}
-              customTo={visitedTo}
-              onChange={(v, from, to) => {
-                setVisitedFilter(v);
-                setVisitedFrom(from ?? null);
-                setVisitedTo(to ?? null);
-              }}
+            {/* All / Accounts / Leads */}
+            <FilterDropdown
+              options={[
+                { value: "all" as ShowFilter, label: "All" },
+                { value: "accounts" as ShowFilter, label: "Accounts" },
+                { value: "leads" as ShowFilter, label: "Leads" },
+              ]}
+              value={showFilter}
+              onChange={setShowFilter}
             />
+
+            {/* Type */}
+            <FilterDropdown
+              options={[
+                { value: "all" as AccountTypeFilter, label: "Type" },
+                { value: "distributor" as AccountTypeFilter, label: "Distributor" },
+                { value: "sold-to" as AccountTypeFilter, label: "Sold-To" },
+                { value: "shipped-to" as AccountTypeFilter, label: "Ship-To" },
+                { value: "prospect" as AccountTypeFilter, label: "Prospective" },
+              ]}
+              value={typeFilter}
+              onChange={setTypeFilter}
+            />
+
+            {/* Within 5 mi toggle */}
+            <button
+              onClick={() => setWithinFiveMi((p) => !p)}
+              className="flex items-center gap-1.5 px-3 active:opacity-70 transition-opacity"
+              style={{
+                height: 32,
+                borderRadius: "var(--radius-full)",
+                background: withinFiveMi ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
+                border: withinFiveMi ? "none" : "1px solid rgba(255,255,255,0.10)",
+              }}
+            >
+              <Icon name="near_me" size={13} style={{ color: withinFiveMi ? "#fff" : "var(--md-sys-color-text-muted)" }} />
+              <span className="text-sm-bold" style={{ color: withinFiveMi ? "#fff" : "var(--md-sys-color-text-muted)" }}>
+                Within 5 mi
+              </span>
+            </button>
           </motion.div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* ── BODY ───────────────────────────────────────────────────────── */}
       <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
@@ -1170,7 +1223,7 @@ function CombinedPageContent() {
                       <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Companies
                       </span>
-                      <MiniSearchPill onClick={() => goToMode("accounts")} />
+                      <MiniSearchPill onClick={() => goToMode("accounts", true)} />
                     </div>
                     <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
                       {topAccounts.map((account, i) => (
@@ -1205,7 +1258,7 @@ function CombinedPageContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 100 }}
             >
               {/* ── Skeleton preview: both sections loading ───────────────── */}
               {preview === "search-loading" && (
@@ -1220,8 +1273,8 @@ function CombinedPageContent() {
               )}
 
               {/* My accounts */}
-              {preview !== "search-loading" && showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
-              {preview !== "search-loading" && !showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+              {preview !== "search-loading" && showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} />}
+              {preview !== "search-loading" && !showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} />}
 
               {preview !== "search-loading" && (myFiltered.length > 0 ? (
                 <div className="flex flex-col">
@@ -1471,6 +1524,96 @@ function CombinedPageContent() {
           )}
 
         </AnimatePresence>
+
+        {/* FAB — indigo circle, bottom-right, expands to show Add account / Add lead */}
+        {mode === "accounts" && (
+          <>
+            {/* Scrim to close FAB on outside tap */}
+            <AnimatePresence>
+              {fabOpen && (
+                <motion.div
+                  key="fab-scrim"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  onClick={() => setFabOpen(false)}
+                  style={{ position: "absolute", inset: 0, zIndex: 9 }}
+                />
+              )}
+            </AnimatePresence>
+
+            <div style={{ position: "absolute", bottom: 24, right: 16, zIndex: 10 }}>
+              {/* Expanded options */}
+              <AnimatePresence>
+                {fabOpen && (
+                  <div style={{ position: "absolute", bottom: 64, right: 0, display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
+                    {/* Add lead */}
+                    <motion.button
+                      key="fab-lead"
+                      initial={{ opacity: 0, y: 12, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 28, delay: 0.05 }}
+                      onClick={() => { setFabOpen(false); setShowCreateLeadSheet(true); }}
+                      className="flex items-center gap-2 px-4 active:opacity-70 transition-opacity"
+                      style={{
+                        height: 40,
+                        borderRadius: "var(--radius-full)",
+                        background: "var(--md-sys-color-dark-primary)",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <LeadStarIcon size={15} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+                      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>Add lead</span>
+                    </motion.button>
+
+                    {/* Add account */}
+                    <motion.button
+                      key="fab-account"
+                      initial={{ opacity: 0, y: 12, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                      onClick={() => { setFabOpen(false); setShowCreateSheet(true); }}
+                      className="flex items-center gap-2 px-4 active:opacity-70 transition-opacity"
+                      style={{
+                        height: 40,
+                        borderRadius: "var(--radius-full)",
+                        background: "var(--md-sys-color-dark-primary)",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <CompanyIcon size={15} style={{ color: "var(--md-sys-color-text-muted)" }} />
+                      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>Add account</span>
+                    </motion.button>
+                  </div>
+                )}
+              </AnimatePresence>
+
+              {/* FAB button */}
+              <motion.button
+                onClick={() => setFabOpen((p) => !p)}
+                className="flex items-center justify-center active:opacity-80 transition-opacity"
+                style={{
+                  width: 52,
+                  height: 52,
+                  borderRadius: "50%",
+                  background: "var(--md-sys-color-neonindigo)",
+                  boxShadow: "0 4px 18px rgba(0,0,0,0.55)",
+                }}
+                animate={{ rotate: fabOpen ? 45 : 0 }}
+                transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              >
+                <Icon name="add" size={24} style={{ color: "#fff" }} />
+              </motion.button>
+            </div>
+          </>
+        )}
 
         {/* Sticky "Add new lead" — pinned to page bottom, rises with keyboard */}
         {mode === "accounts" && hasQuery && systemState === "done" && (
