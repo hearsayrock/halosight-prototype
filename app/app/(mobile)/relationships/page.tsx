@@ -42,9 +42,9 @@ import CompletionToast from "@/components/ui/CompletionToast";
 import NoteSheet from "@/components/ui/NoteSheet";
 import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
+import FilterSheet from "@/components/ui/FilterSheet";
 import VisitedFilterDropdown, { type VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
-import CreateAccountSheet from "@/components/accounts/CreateAccountSheet";
-import CreateLeadSheet from "@/components/accounts/CreateLeadSheet";
+import CreateEntrySheet from "@/components/accounts/CreateEntrySheet";
 import FeedbackWidget from "@/components/ui/FeedbackWidget";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import { mockSystemAccounts, systemAccountReps } from "@/lib/mock-data/system-accounts";
@@ -668,10 +668,7 @@ function CombinedPageContent() {
     router.push(`/relationships/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
   }
 
-  // Create account sheet (from search CTA)
-  const [showCreateSheet, setShowCreateSheet] = useState(false);
-  // Create lead sheet (from + button on relationships header)
-  const [showCreateLeadSheet, setShowCreateLeadSheet] = useState(false);
+  const [createSheetType, setCreateSheetType] = useState<"account" | "lead" | null>(null);
 
   // Accounts search (used in accounts mode)
   const [query, setQuery] = useState("");
@@ -680,6 +677,7 @@ function CombinedPageContent() {
   const [showFilter, setShowFilter]         = useState<ShowFilter>("all");
   const [withinFiveMi, setWithinFiveMi]     = useState(false);
   const [fabOpen, setFabOpen]               = useState(false);
+  const [activeSheet, setActiveSheet]       = useState<"show" | "type" | null>(null);
   const [visitedFilter, setVisitedFilter]   = useState<VisitedFilter>("all");
   const [visitedFrom, setVisitedFrom]       = useState<Date | null>(null);
   const [visitedTo, setVisitedTo]           = useState<Date | null>(null);
@@ -1111,12 +1109,6 @@ function CombinedPageContent() {
                     </svg>
                   </button>
                 )}
-                <SortMenu
-                  current={sort}
-                  onChange={setSort}
-                  visitedFilter={visitedFilter}
-                  onVisitedChange={(v) => { setVisitedFilter(v); setVisitedFrom(null); setVisitedTo(null); }}
-                />
               </motion.div>
             )}
             {/* priorities mode: title lives inside the body, not here */}
@@ -1147,29 +1139,51 @@ function CombinedPageContent() {
             className="flex items-center gap-2 px-4 pb-3"
             style={{ flexShrink: 0 }}
           >
-            {/* All / Accounts / Leads */}
-            <FilterDropdown
-              options={[
-                { value: "all" as ShowFilter, label: "All" },
-                { value: "accounts" as ShowFilter, label: "Accounts" },
-                { value: "leads" as ShowFilter, label: "Leads" },
-              ]}
-              value={showFilter}
-              onChange={setShowFilter}
-            />
+            {/* All / Accounts / Leads pill */}
+            {(() => {
+              const showLabels: Record<ShowFilter, string> = { all: "All", accounts: "Accounts", leads: "Leads" };
+              const active = true;
+              return (
+                <button
+                  onClick={() => setActiveSheet("show")}
+                  className="flex items-center gap-1 px-3 active:opacity-70 transition-opacity"
+                  style={{
+                    height: 32,
+                    borderRadius: "var(--radius-full)",
+                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
+                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+                  }}
+                >
+                  <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
+                    {showLabels[showFilter]}
+                  </span>
+                  <Icon name="keyboard_arrow_down" size={16} style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
+                </button>
+              );
+            })()}
 
-            {/* Type */}
-            <FilterDropdown
-              options={[
-                { value: "all" as AccountTypeFilter, label: "Type" },
-                { value: "distributor" as AccountTypeFilter, label: "Distributor" },
-                { value: "sold-to" as AccountTypeFilter, label: "Sold-To" },
-                { value: "shipped-to" as AccountTypeFilter, label: "Ship-To" },
-                { value: "prospect" as AccountTypeFilter, label: "Prospective" },
-              ]}
-              value={typeFilter}
-              onChange={setTypeFilter}
-            />
+            {/* Type pill — hidden when "leads" is selected */}
+            {showFilter !== "leads" && (() => {
+              const typeLabels: Record<AccountTypeFilter, string> = { all: "Type", distributor: "Distributor", "sold-to": "Sold-To", "shipped-to": "Ship-To", prospect: "Prospective" };
+              const active = typeFilter !== "all";
+              return (
+                <button
+                  onClick={() => setActiveSheet("type")}
+                  className="flex items-center gap-1 px-3 active:opacity-70 transition-opacity"
+                  style={{
+                    height: 32,
+                    borderRadius: "var(--radius-full)",
+                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
+                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+                  }}
+                >
+                  <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
+                    {typeLabels[typeFilter]}
+                  </span>
+                  <Icon name="keyboard_arrow_down" size={16} style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
+                </button>
+              );
+            })()}
 
             {/* Within 5 mi toggle */}
             <button
@@ -1178,12 +1192,12 @@ function CombinedPageContent() {
               style={{
                 height: 32,
                 borderRadius: "var(--radius-full)",
-                background: withinFiveMi ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
-                border: withinFiveMi ? "none" : "1px solid rgba(255,255,255,0.10)",
+                background: withinFiveMi ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
+                border: withinFiveMi ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
               }}
             >
-              <Icon name="near_me" size={13} style={{ color: withinFiveMi ? "#fff" : "var(--md-sys-color-text-muted)" }} />
-              <span className="text-sm-bold" style={{ color: withinFiveMi ? "#fff" : "var(--md-sys-color-text-muted)" }}>
+              <Icon name="near_me" size={13} style={{ color: withinFiveMi ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
+              <span className="text-sm-bold" style={{ color: withinFiveMi ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
                 Within 5 mi
               </span>
             </button>
@@ -1223,7 +1237,7 @@ function CombinedPageContent() {
                       <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
                         Companies
                       </span>
-                      <MiniSearchPill onClick={() => goToMode("accounts", true)} />
+                      <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
                     <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
                       {topAccounts.map((account, i) => (
@@ -1263,7 +1277,6 @@ function CombinedPageContent() {
               {/* ── Skeleton preview: both sections loading ───────────────── */}
               {preview === "search-loading" && (
                 <>
-                  <SectionHeader label="Your Companies" count={0} onAdd={() => {}} />
                   <AccountListSkeleton rows={3} />
                   <div style={{ marginTop: 16 }}>
                     <SectionHeader label="Company-Wide Results" count={0} divider />
@@ -1273,8 +1286,6 @@ function CombinedPageContent() {
               )}
 
               {/* My accounts */}
-              {preview !== "search-loading" && showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} />}
-              {preview !== "search-loading" && !showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} />}
 
               {preview !== "search-loading" && (myFiltered.length > 0 ? (
                 <div className="flex flex-col">
@@ -1528,7 +1539,7 @@ function CombinedPageContent() {
         {/* FAB — indigo circle, bottom-right, expands to show Add account / Add lead */}
         {mode === "accounts" && (
           <>
-            {/* Scrim to close FAB on outside tap */}
+            {/* Scrim — darkens page and closes FAB on outside tap */}
             <AnimatePresence>
               {fabOpen && (
                 <motion.div
@@ -1536,9 +1547,9 @@ function CombinedPageContent() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
+                  transition={{ duration: 0.18 }}
                   onClick={() => setFabOpen(false)}
-                  style={{ position: "absolute", inset: 0, zIndex: 9 }}
+                  style={{ position: "absolute", inset: 0, zIndex: 9, background: "rgba(0,0,0,0.45)" }}
                 />
               )}
             </AnimatePresence>
@@ -1547,49 +1558,51 @@ function CombinedPageContent() {
               {/* Expanded options */}
               <AnimatePresence>
                 {fabOpen && (
-                  <div style={{ position: "absolute", bottom: 64, right: 0, display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
-                    {/* Add lead */}
-                    <motion.button
-                      key="fab-lead"
-                      initial={{ opacity: 0, y: 12, scale: 0.9 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.9 }}
-                      transition={{ type: "spring", stiffness: 380, damping: 28, delay: 0.05 }}
-                      onClick={() => { setFabOpen(false); setShowCreateLeadSheet(true); }}
-                      className="flex items-center gap-2 px-4 active:opacity-70 transition-opacity"
-                      style={{
-                        height: 40,
-                        borderRadius: "var(--radius-full)",
-                        background: "var(--md-sys-color-dark-primary)",
-                        border: "1px solid rgba(255,255,255,0.12)",
-                        boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      <LeadStarIcon size={15} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-                      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>Add lead</span>
-                    </motion.button>
-
-                    {/* Add account */}
+                  <div style={{ position: "absolute", bottom: 64, right: 3, display: "flex", flexDirection: "column", gap: 14, alignItems: "flex-end" }}>
+                    {/* Add account (top) */}
                     <motion.button
                       key="fab-account"
-                      initial={{ opacity: 0, y: 12, scale: 0.9 }}
+                      initial={{ opacity: 0, y: 16, scale: 0.88 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.9 }}
-                      transition={{ type: "spring", stiffness: 380, damping: 28 }}
-                      onClick={() => { setFabOpen(false); setShowCreateSheet(true); }}
-                      className="flex items-center gap-2 px-4 active:opacity-70 transition-opacity"
-                      style={{
-                        height: 40,
-                        borderRadius: "var(--radius-full)",
-                        background: "var(--md-sys-color-dark-primary)",
-                        border: "1px solid rgba(255,255,255,0.12)",
-                        boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-                        whiteSpace: "nowrap",
-                      }}
+                      exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 28, delay: 0.05 }}
+                      onClick={() => { setFabOpen(false); setCreateSheetType("account"); }}
+                      className="flex items-center gap-3 active:opacity-70 transition-opacity"
                     >
-                      <CompanyIcon size={15} style={{ color: "var(--md-sys-color-text-muted)" }} />
-                      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>Add account</span>
+                      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)", whiteSpace: "nowrap" }}>Add account</span>
+                      <div className="flex items-center justify-center flex-shrink-0"
+                        style={{
+                          width: 46, height: 46, borderRadius: "50%",
+                          background: "var(--md-sys-color-dark-secondary)",
+                          border: "1px solid var(--md-sys-color-dark-tertiary)",
+                          boxShadow: "0 4px 16px rgba(0,0,0,0.55)",
+                        }}
+                      >
+                        <CompanyIcon size={20} style={{ color: "var(--md-sys-color-brand-teal)" }} />
+                      </div>
+                    </motion.button>
+
+                    {/* Add lead (bottom) */}
+                    <motion.button
+                      key="fab-lead"
+                      initial={{ opacity: 0, y: 16, scale: 0.88 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                      onClick={() => { setFabOpen(false); setCreateSheetType("lead"); }}
+                      className="flex items-center gap-3 active:opacity-70 transition-opacity"
+                    >
+                      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)", whiteSpace: "nowrap" }}>Add lead</span>
+                      <div className="flex items-center justify-center flex-shrink-0"
+                        style={{
+                          width: 46, height: 46, borderRadius: "50%",
+                          background: "var(--md-sys-color-dark-secondary)",
+                          border: "1px solid var(--md-sys-color-dark-tertiary)",
+                          boxShadow: "0 4px 16px rgba(0,0,0,0.55)",
+                        }}
+                      >
+                        <Icon name="person_add" size={20} style={{ color: "var(--md-sys-color-warning-light)" }} />
+                      </div>
                     </motion.button>
                   </div>
                 )}
@@ -1628,28 +1641,49 @@ function CombinedPageContent() {
             transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
           }}>
             <div style={{ pointerEvents: "auto" }}>
-              <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
+              <CreateAccountCTA query={query} onOpen={() => setCreateSheetType("account")} />
             </div>
           </div>
         )}
       </div>
 
+      {/* Filter sheets */}
+      <FilterSheet
+        open={activeSheet === "show"}
+        onClose={() => setActiveSheet(null)}
+        label="Show"
+        options={[
+          { value: "all" as ShowFilter, label: "All" },
+          { value: "accounts" as ShowFilter, label: "Accounts" },
+          { value: "leads" as ShowFilter, label: "Leads" },
+        ]}
+        value={showFilter}
+        onChange={setShowFilter}
+      />
+      <FilterSheet
+        open={activeSheet === "type"}
+        onClose={() => setActiveSheet(null)}
+        label="Type"
+        options={[
+          { value: "all" as AccountTypeFilter, label: "All types" },
+          { value: "distributor" as AccountTypeFilter, label: "Distributor" },
+          { value: "sold-to" as AccountTypeFilter, label: "Sold-To" },
+          { value: "shipped-to" as AccountTypeFilter, label: "Ship-To" },
+          { value: "prospect" as AccountTypeFilter, label: "Prospective" },
+        ]}
+        value={typeFilter}
+        onChange={setTypeFilter}
+      />
+
       {/* Engagements drawer */}
       <EngagementsDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
-      {/* Create account sheet (search CTA) */}
-      {showCreateSheet && (
-        <CreateAccountSheet
-          initialName={query}
-          onClose={() => setShowCreateSheet(false)}
-          onCreated={handleAccountCreated}
-        />
-      )}
-
-      {/* Create lead sheet with duplicate detection (+ button) */}
-      {showCreateLeadSheet && (
-        <CreateLeadSheet
-          onClose={() => setShowCreateLeadSheet(false)}
+      {/* Create entry sheet — account or lead */}
+      {createSheetType && (
+        <CreateEntrySheet
+          initialType={createSheetType}
+          initialName={createSheetType === "account" ? query : ""}
+          onClose={() => setCreateSheetType(null)}
           onCreated={handleAccountCreated}
         />
       )}

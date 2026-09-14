@@ -159,22 +159,26 @@ export default function AccountListItem({ account, isLast = false }: Props) {
             )}
           </div>
 
-          {/* Type • Visited */}
-          <div className="flex items-center gap-1 mt-0.5">
+          {/* Type • [Contact] • Visited */}
+          <div className="flex items-center gap-1 mt-0.5 flex-wrap">
             {account.halosightType === "prospect" ? (
-              <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-brand-teal)" }}>
+              <span className="text-xs font-semibold" style={{ color: "var(--md-sys-color-warning-light)" }}>
                 LEAD
               </span>
             ) : account.crmAccountType ? (
-              <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-muted)" }}>
+              <span className="text-xs font-semibold" style={{ color: "var(--md-sys-color-brand-teal)" }}>
                 {CRM_DISPLAY[account.crmAccountType]}
               </span>
             ) : null}
-            {(account.halosightType === "prospect" || account.crmAccountType) && (
-              <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}> •</span>
+            {account.contactName && (
+              <>
+                <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
+                <span className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>{account.contactName}</span>
+              </>
             )}
-            <span className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>Visited </span>
-            <span className="text-sm font-semibold" style={{ color: "var(--md-sys-color-text-muted)" }}>
+            <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
+            <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>Visited </span>
+            <span className="text-xs font-semibold" style={{ color: "var(--md-sys-color-text-muted)" }}>
               {label}
             </span>
           </div>
@@ -191,15 +195,6 @@ export default function AccountListItem({ account, isLast = false }: Props) {
             </span>
           )}
 
-          {/* Task indicator + assignee */}
-          <div className="flex items-center gap-1.5">
-            {account.taskCount !== undefined && (
-              <TaskIndicator count={account.taskCount} />
-            )}
-            {account.assignedInitial && (
-              <AssigneeCircle initial={account.assignedInitial} />
-            )}
-          </div>
         </div>
       </div>
     </Link>
