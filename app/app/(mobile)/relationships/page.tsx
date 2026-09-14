@@ -605,7 +605,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
     >
       <Icon name="add" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
       <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-        Add a new lead
+        Add a new company
         {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
       </span>
     </button>
