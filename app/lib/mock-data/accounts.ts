@@ -21,6 +21,21 @@ export const mockAccounts: Account[] = [
     healthScore: 82,
   },
   {
+    id: "profleet-corp",
+    name: "ProFleet Maintenance",
+    type: "corporate",
+    crmAccountType: "distributor",
+    assignedInitial: "S",
+    taskCount: 0,
+    city: "Phoenix",
+    state: "AZ",
+    distanceMiles: 146,
+    lastVisited: daysAgo(6),
+    childCount: 14,
+    crmId: "SF-004",
+    healthScore: 74,
+  },
+  {
     id: "walmart-cedar-city",
     name: "Branch of Acme Co",
     type: "branch",
@@ -55,38 +70,22 @@ export const mockAccounts: Account[] = [
     healthScore: 65,
   },
   {
-    id: "profleet-corp",
-    name: "ProFleet Maintenance",
-    type: "corporate",
-    crmAccountType: "distributor",
-    assignedInitial: "S",
-    taskCount: 0,
-    city: "Phoenix",
-    state: "AZ",
-    distanceMiles: 146,
-    lastVisited: daysAgo(6),
-    childCount: 14,
-    crmId: "SF-004",
-    healthScore: 74,
-  },
-  {
-    id: "profleet-glendale-1",
-    name: "ProFleet Maintenance",
+    id: "desert-star-auto",
+    name: "Desert Star Automotive",
     type: "branch",
     crmAccountType: "sold-to",
-    assignedInitial: "S",
-    taskCount: 0,
+    assignedInitial: "A",
+    taskCount: 2,
     city: "Glendale",
     state: "AZ",
     distanceMiles: 0.75,
     lastVisited: daysAgo(90),
-    parentId: "profleet-corp",
     crmId: "SF-005",
     healthScore: 55,
   },
   {
-    id: "profleet-flagstaff",
-    name: "ProFleet Maintenance Store",
+    id: "mountain-west-fleet",
+    name: "Mountain West Fleet Supply",
     type: "branch",
     crmAccountType: "shipped-to",
     assignedInitial: "A",
@@ -95,13 +94,12 @@ export const mockAccounts: Account[] = [
     state: "AZ",
     distanceMiles: 845,
     lastVisited: daysAgo(21),
-    parentId: "profleet-corp",
     crmId: "SF-006",
     healthScore: 70,
   },
   {
-    id: "profleet-glendale-2",
-    name: "ProFleet Maintenance Store",
+    id: "glendale-truck-trailer",
+    name: "Glendale Truck & Trailer",
     type: "branch",
     crmAccountType: "sold-to",
     assignedInitial: "S",
@@ -111,13 +109,12 @@ export const mockAccounts: Account[] = [
     state: "AZ",
     distanceMiles: 3.5,
     lastVisited: new Date(),
-    parentId: "profleet-corp",
     crmId: "SF-007",
     healthScore: 88,
   },
   {
-    id: "profleet-tucson",
-    name: "ProFleet Maintenance Store",
+    id: "sunbelt-fleet-solutions",
+    name: "Sunbelt Fleet Solutions",
     type: "standalone",
     halosightType: "prospect",
     assignedInitial: "A",
@@ -203,7 +200,7 @@ const at = (daysBack: number, h: number, m: number) => {
 
 export const mockAccountDetails: Record<string, AccountDetail> = {
   "jacks-tire-elko": {
-    ...mockAccounts[2],
+    ...mockAccounts[3],
     relatedAccountCount: 3,
     lastVisitSummary:
       "Visited 2 weeks ago. Marcus walked me through a few recurring issues with their current supplier — lead times and inconsistent part quality. They're open to switching if we can demonstrate reliability.",
@@ -259,7 +256,7 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
     ],
   },
   "walmart-cedar-city": {
-    ...mockAccounts[1],
+    ...mockAccounts[2],
     relatedAccountCount: 7,
     lastVisitSummary:
       "Visited 3 days ago. Spoke with the store ops lead about ongoing friction with their current parts supplier — late deliveries are causing floor slowdowns. They're motivated to find a better solution before Q3 peak season hits.",
@@ -357,7 +354,7 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
     ],
   },
   "profleet-corp": {
-    ...mockAccounts[3],
+    ...mockAccounts[1],
     relatedAccountCount: 14,
     lastVisitSummary:
       "Visited 6 days ago. Good conversation with ops leadership about upcoming Q3 fleet expansion. Budget has been earmarked — they want a formal proposal by end of month.",
@@ -380,7 +377,7 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       { id: "pf-4", accountId: "profleet-corp", date: at(50, 11, 45), type: "call",  title: "Handled Glendale 1 parts delivery complaint — resolved same day", summary: "Handled complaint about delayed parts delivery at Glendale 1 location. Resolved same day.", durationMinutes: 22,  hasTranscript: false, repName: "Sarah Kim" },
     ],
   },
-  "profleet-glendale-2": {
+  "glendale-truck-trailer": {
     ...mockAccounts[6],
     relatedAccountCount: 14,
     lastVisitSummary:
@@ -396,9 +393,44 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       { id: "pg-t2", title: "Resolve pending invoice",         dueDate: daysFromNow(-1), status: "open", originActivity: "Invoice Follow-Up", originActivityId: "pg-2" },
     ],
     recentActivity: [
-      { id: "pg-1", accountId: "profleet-glendale-2", date: at(0, 9, 15),  type: "visit", title: "Q3 fleet expansion budget confirmed — strong opportunity for an expanded contract", summary: "Q3 fleet expansion discussed. Budget confirmed. Strong opportunity for expanded contract.",         durationMinutes: 45,  hasTranscript: true,  repName: "Jordan Mills" },
-      { id: "pg-2", accountId: "profleet-glendale-2", date: at(14, 11, 0), type: "call",  title: "Checked on the outstanding invoice — payment confirmed for this Friday", summary: "Checked on outstanding invoice from last month. Confirmed payment scheduled for this Friday.",       durationMinutes: 10,  hasTranscript: false, repName: "Sarah Kim" },
-      { id: "pg-3", accountId: "profleet-glendale-2", date: at(28, 14, 30), type: "visit", title: "Quarterly check-in — team satisfied with current service levels, no open issues", summary: "Standard quarterly check-in. No major issues. Team satisfied with current service levels.",          durationMinutes: 30,  hasTranscript: true,  repName: "Sarah Kim" },
+      { id: "pg-1", accountId: "glendale-truck-trailer", date: at(0, 9, 15),  type: "visit", title: "Q3 fleet expansion budget confirmed — strong opportunity for an expanded contract", summary: "Q3 fleet expansion discussed. Budget confirmed. Strong opportunity for expanded contract.",         durationMinutes: 45,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "pg-2", accountId: "glendale-truck-trailer", date: at(14, 11, 0), type: "call",  title: "Checked on the outstanding invoice — payment confirmed for this Friday", summary: "Checked on outstanding invoice from last month. Confirmed payment scheduled for this Friday.",       durationMinutes: 10,  hasTranscript: false, repName: "Sarah Kim" },
+      { id: "pg-3", accountId: "glendale-truck-trailer", date: at(28, 14, 30), type: "visit", title: "Quarterly check-in — team satisfied with current service levels, no open issues", summary: "Standard quarterly check-in. No major issues. Team satisfied with current service levels.",          durationMinutes: 30,  hasTranscript: true,  repName: "Sarah Kim" },
+    ],
+  },
+  "desert-star-auto": {
+    ...mockAccounts[4],
+    relatedAccountCount: 0,
+    lastVisitSummary:
+      "Visited 3 months ago. Spoke briefly with the service manager, Ray Navarro. They've been working through a transition in their parts supply chain and are open to exploring options. No urgency yet, but the door is open.",
+    ideasForThisTime: [
+      "Re-engage Ray — it's been a while since the last visit",
+      "Ask about how the supply chain transition played out",
+      "Introduce our delivery SLA as a differentiator",
+      "Find out if they have any fleet expansion planned for next year",
+    ],
+    actionItems: [
+      { id: "ds-t1", title: "Send follow-up intro deck", dueDate: daysFromNow(3), status: "open", originActivity: "Discovery Visit", originActivityId: "ds-1" },
+      { id: "ds-t2", title: "Loop in Ray on Q4 pricing", dueDate: null,           status: "open", originActivity: "Discovery Visit", originActivityId: "ds-1" },
+    ],
+    recentActivity: [
+      {
+        id: "ds-1", accountId: "desert-star-auto", date: at(90, 10, 15), type: "visit",
+        title: "Intro visit with Ray Navarro — supply chain pain points surfaced, open to future conversations",
+        summary: "Initial drop-in at Desert Star Automotive. Met with service manager Ray Navarro. He shared frustration with their current parts vendor — inconsistent lead times on specialty items. Not ready to switch yet but open to learning more.",
+        durationMinutes: 35, hasTranscript: false, repName: "Alex Chen",
+        aiSummary: {
+          title: "Ray flagged supply chain inconsistencies — a warm lead worth revisiting in Q4",
+          tldr: "First visit with Desert Star Automotive. Ray Navarro, the service manager, walked through ongoing friction with their current parts vendor — mostly around lead time unpredictability on specialty components. He's not actively shopping but mentioned they'll revisit vendor options in Q4.",
+          keyPoints: [
+            "**Lead time inconsistency** on specialty parts is the main pain point — Ray said delays have cost them billable hours.",
+            "Their current vendor relationship is month-to-month — **no long-term contract** locking them in.",
+            "Ray is the primary decision-maker for parts procurement; **no procurement committee** to navigate.",
+            "He mentioned a **Q4 planning review** where vendor options could come back up — a natural re-engagement window.",
+          ],
+        },
+      },
+      { id: "ds-2", accountId: "desert-star-auto", date: at(75, 14, 0), type: "call", title: "Quick check-in call — Ray confirmed still evaluating options, no decision yet", summary: "Brief follow-up call. Ray confirmed they're still evaluating but nothing imminent. Suggested looping back in Q4.", durationMinutes: 12, hasTranscript: false, repName: "Alex Chen" },
     ],
   },
   "innovative-tech-tucson": {
@@ -424,11 +456,11 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       { id: "it-3", accountId: "innovative-tech-tucson", date: at(60, 9, 0),   type: "visit", title: "First in-person with Sandra and two department leads — very positive reception", summary: "First in-person visit. Met with Sandra and two department leads. Very positive reception.", durationMinutes: 60,  hasTranscript: false, repName: "Jordan Mills" },
     ],
   },
-  "profleet-flagstaff": {
+  "mountain-west-fleet": {
     ...mockAccounts[5],
     relatedAccountCount: 14,
     lastVisitSummary:
-      "Visited 3 weeks ago. Toured the facility and met the new ops manager. Team is settling in well — discussed Q3 service needs and flagged some potential volume growth.",
+      "Visited 3 weeks ago. Toured the Flagstaff facility and met the new ops manager. Team is settling in well — discussed Q3 service needs and flagged some potential volume growth.",
     ideasForThisTime: [
       "Follow up on Q3 service volume estimate",
       "Introduce volume discount options",
@@ -441,8 +473,8 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       { id: "pf-flag-t3", title: "Submit volume discount sheet", dueDate: daysFromNow(9), status: "open", originActivity: "On-site Visit", originActivityId: "pf-flagstaff-1" },
     ],
     recentActivity: [
-      { id: "pf-flagstaff-1", accountId: "profleet-flagstaff", date: at(4, 10, 45), type: "visit", title: "Toured the Flagstaff facility and met the new ops manager — Q3 service needs discussed", summary: "Toured the Flagstaff facility and met the new ops manager. Discussed Q3 service needs and potential volume growth.", durationMinutes: 64, hasTranscript: true, repName: "Alex Chen" },
-      { id: "pf-flagstaff-2", accountId: "profleet-flagstaff", date: at(25, 14, 0), type: "call",  title: "First call with incoming ops manager ahead of the site visit — aligned on open items", summary: "First call with the incoming ops manager ahead of the on-site visit. Aligned on expectations and open items.", durationMinutes: 20, hasTranscript: false, repName: "Alex Chen" },
+      { id: "pf-flagstaff-1", accountId: "mountain-west-fleet", date: at(4, 10, 45), type: "visit", title: "Toured the Flagstaff facility and met the new ops manager — Q3 service needs discussed", summary: "Toured the Flagstaff facility and met the new ops manager. Discussed Q3 service needs and potential volume growth.", durationMinutes: 64, hasTranscript: true, repName: "Alex Chen" },
+      { id: "pf-flagstaff-2", accountId: "mountain-west-fleet", date: at(25, 14, 0), type: "call",  title: "First call with incoming ops manager ahead of the site visit — aligned on open items", summary: "First call with the incoming ops manager ahead of the on-site visit. Aligned on expectations and open items.", durationMinutes: 20, hasTranscript: false, repName: "Alex Chen" },
     ],
   },
   "riverbend-collision": {
