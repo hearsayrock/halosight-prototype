@@ -1140,13 +1140,15 @@ function CombinedPageContent() {
                   scaleY: acctHasScrolled && !acctScrollingUp ? 0.82 : 1,
                 }}
                 transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
-                style={{ pointerEvents: acctHasScrolled && !acctScrollingUp ? "none" : "auto", flex: 1, transformOrigin: "top center" }}
-                className="flex items-center gap-2 h-11 px-3"
                 style={{
+                  pointerEvents: acctHasScrolled && !acctScrollingUp ? "none" : "auto",
+                  flex: 1,
+                  transformOrigin: "top center",
                   borderRadius: 999,
                   background: "var(--md-sys-color-dark-secondary)",
                   outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
                 }}
+                className="flex items-center gap-2 h-11 px-3"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
                   <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
