@@ -22,6 +22,7 @@ import { useState, useRef, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
+import ScrollAwareTopBar from "@/components/ui/ScrollAwareTopBar";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import {
   buildSuggestions,
@@ -108,28 +109,25 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
+    <div className="h-full" style={{ background: "var(--md-sys-color-background)", position: "relative", overflow: "hidden" }}>
 
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 pt-4 pb-3 flex-shrink-0">
-        <button onClick={() => router.back()} className="active:opacity-60 transition-opacity" style={{ color: "var(--md-sys-color-text-muted)" }}>
-          <Icon name="arrow_back" size={22} />
-        </button>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-[17px] font-semibold truncate" style={{ color: "var(--md-sys-color-text-primary)" }}>
-            Meeting Review
-          </h1>
-          {account && (
-            <p className="text-[12px] truncate" style={{ color: "var(--md-sys-color-text-muted)" }}>{account.name}</p>
-          )}
-        </div>
-        <button onClick={() => router.push(`/relationships/${id}`)} className="text-sm active:opacity-60 transition-opacity" style={{ color: "var(--md-sys-color-text-muted)" }}>
-          Skip
-        </button>
-      </div>
+      <ScrollAwareTopBar
+        onBack={() => router.back()}
+        scrollRef={scrollRef}
+        rightSlot={
+          <button
+            onClick={() => router.push(`/relationships/${id}`)}
+            className="text-sm active:opacity-60 transition-opacity"
+            style={{ color: "var(--md-sys-color-text-muted)" }}
+          >
+            Skip
+          </button>
+        }
+      />
 
       {/* Scrollable conversation */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-3" style={{ overscrollBehavior: "contain" }}>
+      <div ref={scrollRef} style={{ position: "absolute", inset: 0, overflowY: "auto", overscrollBehavior: "contain" }}>
+      <div className="px-4" style={{ paddingTop: 86, paddingBottom: hasReview ? 220 : 24 }}>
         {!hasReview ? (
           <div className="flex flex-col items-center justify-center h-full gap-3 py-16 text-center">
             <Icon name="auto_awesome" size={32} style={{ color: "var(--md-sys-color-neonindigo)", opacity: 0.5 }} />
@@ -200,10 +198,11 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
           </div>
         )}
       </div>
+      </div>
 
-      {/* Footer */}
+      {/* Footer — position absolute so it doesn't scroll */}
       {hasReview && (
-        <div className="flex-shrink-0 px-4 pb-8 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="px-4 pb-8 pt-2" style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "var(--md-sys-color-background)", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
           <button
             className="w-full flex items-center justify-center gap-2 h-11 mb-3 font-semibold text-[14px] active:opacity-70 transition-opacity"
             style={{

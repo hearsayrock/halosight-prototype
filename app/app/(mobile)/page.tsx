@@ -73,8 +73,8 @@ export default function LoginPage() {
           <button
             className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-brand-coral)",
-              color: "var(--md-sys-color-text-primary)",
+              background: "var(--md-sys-color-surface-white)",
+              color: "var(--md-sys-color-text-inverse)",
               borderRadius: "var(--radius-xl)",
             }}
           >
@@ -112,8 +112,8 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      {/* Email login */}
-      <div className="mt-8 relative z-10">
+      {/* Email login — hidden for now, keeping for future use */}
+      {/* <div className="mt-8 relative z-10">
         <Link
           href="/relationships"
           className="text-sm font-medium"
@@ -121,7 +121,7 @@ export default function LoginPage() {
         >
           Log in with Email
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }
