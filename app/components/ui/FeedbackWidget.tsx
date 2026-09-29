@@ -155,7 +155,7 @@ function FeedbackSheet({
                   borderRadius: "var(--radius-md)",
                   padding: "14px 16px",
                   color: "var(--md-sys-color-text-primary)",
-                  caretColor: "var(--md-sys-color-brand-coral)",
+                  caretColor: "var(--md-sys-color-neonindigo)",
                   border: "none",
                   marginBottom: 16,
                   display: "block",
@@ -172,7 +172,7 @@ function FeedbackSheet({
                   height: 52,
                   borderRadius: "var(--radius-full)",
                   background: sent
-                    ? "rgba(46,204,113,0.15)"
+                    ? "color-mix(in srgb, var(--md-sys-color-success) 15%, transparent)"
                     : text.trim()
                       ? "var(--md-sys-color-brand-teal)"
                       : "var(--md-sys-color-dark-secondary)",

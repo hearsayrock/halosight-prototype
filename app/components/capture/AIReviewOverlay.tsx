@@ -164,12 +164,12 @@ function FieldCard({ field, onSave }: FieldCardProps) {
   const border = focused
     ? "1.5px solid rgba(139,146,255,0.6)"
     : isConfirmed
-    ? "1px solid rgba(46,204,113,0.45)"
+    ? "1px solid color-mix(in srgb, var(--md-sys-color-success) 45%, transparent)"
     : isUncertain
     ? "2px dashed rgba(139,146,255,0.65)"
     : "1px solid rgba(139,146,255,0.28)";
 
-  const bg = isConfirmed && !focused ? "rgba(46,204,113,0.05)" : "var(--md-sys-color-dark-secondary)";
+  const bg = isConfirmed && !focused ? "color-mix(in srgb, var(--md-sys-color-success) 5%, transparent)" : "var(--md-sys-color-dark-secondary)";
 
   const idleValueColor = isConfirmed
     ? "var(--md-sys-color-text-primary)"

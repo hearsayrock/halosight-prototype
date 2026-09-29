@@ -24,7 +24,7 @@ function ProspectBadge() {
     <span
       className="text-11-bold px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{
-        background: "rgba(107, 157, 176, 0.18)",
+        background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 18%, transparent)",
         color: "var(--md-sys-color-brand-teal)",
       }}
     >

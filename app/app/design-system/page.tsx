@@ -726,6 +726,24 @@ export default function DesignSystemPage() {
           <BrandSectionHeader id="semantic-colors" title="Semantic Colors" />
 
           <div className="mb-6">
+            <p className="text-[13px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "var(--md-sys-color-text-muted)" }}>Lime Chalk — positive, confirmed, value (also drives Success)</p>
+            <div className="flex flex-wrap gap-4 mt-4">
+              <ColorSwatch token="--md-sys-color-lime-chalk-light" label="light" textColor="#111420" />
+              <ColorSwatch token="--md-sys-color-lime-chalk"       label="base"  textColor="#111420" />
+              <ColorSwatch token="--md-sys-color-lime-chalk-dark"  label="dark"  textColor="#111420" />
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <p className="text-[13px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "var(--md-sys-color-text-muted)" }}>Ultraviolet — attention, needs action, due today</p>
+            <div className="flex flex-wrap gap-4 mt-4">
+              <ColorSwatch token="--md-sys-color-ultraviolet-light" label="light (text)" textColor="#111420" />
+              <ColorSwatch token="--md-sys-color-ultraviolet"       label="base (bg)" />
+              <ColorSwatch token="--md-sys-color-ultraviolet-dark"  label="dark" />
+            </div>
+          </div>
+
+          <div className="mb-6">
             <p className="text-[13px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "var(--md-sys-color-text-muted)" }}>Success</p>
             <div className="flex flex-wrap gap-4 mt-4">
               <ColorSwatch token="--md-sys-color-success-light" label="light" textColor="#111420" />

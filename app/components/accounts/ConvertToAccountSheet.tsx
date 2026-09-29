@@ -185,7 +185,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center mt-7"
                 style={{
                   background: "var(--md-sys-color-brand-teal)",
-                  color: "var(--md-sys-color-text-primary)",
+                  color: "var(--md-sys-color-text-inverse)",
                   borderRadius: "var(--radius-full)",
                 }}
               >
@@ -206,7 +206,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
             >
               <div
                 className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
-                style={{ background: "rgba(107, 157, 176, 0.15)" }}
+                style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}
               >
                 <Icon name="check_circle" fill size={36} style={{ color: "var(--md-sys-color-brand-teal)" }} />
               </div>
@@ -236,7 +236,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center mt-8"
                 style={{
                   background: "var(--md-sys-color-brand-teal)",
-                  color: "var(--md-sys-color-text-primary)",
+                  color: "var(--md-sys-color-text-inverse)",
                   borderRadius: "var(--radius-full)",
                 }}
               >

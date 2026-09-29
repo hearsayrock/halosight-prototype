@@ -180,8 +180,8 @@ function RequestSentSheet({ onClose }: { onClose: () => void }) {
                 width: 56,
                 height: 56,
                 borderRadius: "50%",
-                background: "rgba(46,204,113,0.12)",
-                border: "1px solid rgba(46,204,113,0.25)",
+                background: "color-mix(in srgb, var(--md-sys-color-success) 12%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--md-sys-color-success) 25%, transparent)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -258,7 +258,7 @@ export default function ProfilePage() {
         rightSlot={
           <button
             className="text-sm-bold active:opacity-60 transition-opacity"
-            style={{ color: "var(--md-sys-color-brand-coral)" }}
+            style={{ color: "var(--md-sys-color-ultraviolet-light)" }}
           >
             Log Out
           </button>

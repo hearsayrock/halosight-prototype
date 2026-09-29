@@ -37,7 +37,7 @@ export default function LoginPage() {
           width: 180,
           height: 180,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(255,107,90,0.10) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(139,146,255,0.12) 0%, transparent 70%)",
           bottom: "15%",
           right: "5%",
         }}

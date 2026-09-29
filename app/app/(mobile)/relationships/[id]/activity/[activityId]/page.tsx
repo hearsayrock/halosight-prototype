@@ -48,8 +48,8 @@ interface Contact {
 
 const DEMO_PARTICIPANTS: Participant[] = [
   { id: "you",  initials: "You", name: "You",          color: null,      isYou: true },
-  { id: "p-rn", initials: "RN",  name: "Ray Navarro",  color: "#3DBCB8", contactId: "c-rn", contactTitle: "Fleet Manager",    contactCompany: "Desert Star Auto" },
-  { id: "p-tm", initials: "TM",  name: "Terry Mills",  color: "#8B7FE8", contactId: "c-tm", contactTitle: "Service Director", contactCompany: "Desert Star Auto" },
+  { id: "p-rn", initials: "RN",  name: "Ray Navarro",  color: "#92C569", contactId: "c-rn", contactTitle: "Fleet Manager",    contactCompany: "Desert Star Auto" },
+  { id: "p-tm", initials: "TM",  name: "Terry Mills",  color: "#B594FF", contactId: "c-tm", contactTitle: "Service Director", contactCompany: "Desert Star Auto" },
 ];
 
 const DEMO_CONTACTS: Contact[] = [

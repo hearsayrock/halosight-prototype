@@ -123,7 +123,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
               style={{
                 background: "var(--md-sys-color-brand-teal)",
                 borderRadius: "var(--radius-full)",
-                color: "#fff",
+                color: "var(--md-sys-color-text-inverse)",
               }}
             >
               {hasNote ? "Save note" : "Done"}

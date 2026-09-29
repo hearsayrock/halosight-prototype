@@ -70,9 +70,9 @@ export default function CompletionToast({
               {/* Green check circle */}
               <div
                 className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
-                style={{ background: "#2ECC71" }}
+                style={{ background: "var(--md-sys-color-success)" }}
               >
-                <Icon name="check" size={14} style={{ color: "#fff" }} />
+                <Icon name="check" size={14} style={{ color: "var(--md-sys-color-text-inverse)" }} />
               </div>
 
               {/* Label */}

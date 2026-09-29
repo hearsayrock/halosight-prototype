@@ -94,7 +94,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
           transition={{ type: "spring", stiffness: 280, damping: 20 }}
           className="flex flex-col items-center gap-4"
         >
-          <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "rgba(107,157,176,0.12)" }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)" }}>
             <Icon name="cloud_done" fill size={34} style={{ color: "var(--md-sys-color-brand-teal)" }} />
           </div>
           <p className="text-[15px] font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
@@ -206,13 +206,12 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
           <button
             className="w-full flex items-center justify-center gap-2 h-11 mb-3 font-semibold text-[14px] active:opacity-70 transition-opacity"
             style={{
-              background: "rgba(255,107,90,0.1)",
-              border: "1px solid rgba(255,107,90,0.2)",
+              background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-full)",
-              color: "var(--md-sys-color-brand-coral)",
+              color: "var(--md-sys-color-neonindigo)",
             }}
           >
-            <Icon name="mic" size={18} style={{ color: "var(--md-sys-color-brand-coral)" }} />
+            <Icon name="mic" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
             Tell Me More
           </button>
 
@@ -247,7 +246,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
               className="flex-1 h-11 font-semibold text-[14px] transition-opacity"
               style={{
                 background: "var(--md-sys-color-brand-teal)",
-                color: "var(--md-sys-color-text-primary)",
+                color: "var(--md-sys-color-text-inverse)",
                 borderRadius: "var(--radius-full)",
                 opacity: selectedCount > 0 ? 1 : 0.35,
               }}
@@ -282,8 +281,8 @@ function SuggestionRow({ suggestion: s, onToggle }: { suggestion: Suggestion; on
       <div
         className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl transition-colors"
         style={{
-          background: s.selected ? "rgba(107,157,176,0.1)" : isUnknown ? "transparent" : "rgba(255,255,255,0.03)",
-          border: s.selected ? "1px solid rgba(107,157,176,0.2)" : "1px solid transparent",
+          background: s.selected ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 10%, transparent)" : isUnknown ? "transparent" : "rgba(255,255,255,0.03)",
+          border: s.selected ? "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)" : "1px solid transparent",
         }}
       >
         <div className="flex-shrink-0 mt-0.5">
@@ -311,7 +310,7 @@ function SuggestionRow({ suggestion: s, onToggle }: { suggestion: Suggestion; on
               background: s.selected ? (isHigh ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-warning)") : "transparent",
             }}
           >
-            {s.selected && <Icon name="check" size={10} style={{ color: "var(--md-sys-color-text-primary)" }} />}
+            {s.selected && <Icon name="check" size={10} style={{ color: "var(--md-sys-color-text-inverse)" }} />}
           </div>
         )}
       </div>

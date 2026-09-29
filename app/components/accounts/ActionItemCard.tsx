@@ -37,7 +37,7 @@ export default function ActionItemCard({ item, onComplete, pending = false }: Pr
       <button
         className="flex-shrink-0 w-5 h-5 rounded-full transition-all flex items-center justify-center"
         style={pending
-          ? { background: "#2ECC71", border: "1.5px solid #2ECC71" }
+          ? { background: "var(--md-sys-color-success)", border: "1.5px solid var(--md-sys-color-success)" }
           : { border: "1.5px solid var(--md-sys-color-text-disabled)" }
         }
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); onComplete?.(); }}

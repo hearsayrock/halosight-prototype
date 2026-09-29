@@ -646,7 +646,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   className="h-8 px-4 text-[12px] font-semibold rounded-full transition-opacity active:opacity-70"
                   style={{
                     background: contactForm.name.trim() ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-dark-tertiary)",
-                    color: contactForm.name.trim() ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-disabled)",
+                    color: contactForm.name.trim() ? "var(--md-sys-color-text-inverse)" : "var(--md-sys-color-text-disabled)",
                   }}
                 >
                   Save contact
@@ -867,12 +867,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
             className="h-11 px-6 text-sm-bold flex items-center gap-2 transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-brand-coral)",
-              color: "var(--md-sys-color-text-primary)",
+              background: "var(--md-sys-color-neonindigo)",
+              color: "var(--md-sys-color-text-inverse)",
               borderRadius: "var(--radius-full)",
             }}
           >
-            <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
+            <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-inverse)" }} />
             Log a Visit
           </button>
         </div>
@@ -1002,7 +1002,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 <div className="flex items-center gap-3">
                   <div
                     className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
-                    style={{ background: "rgba(107, 157, 176, 0.20)" }}
+                    style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)" }}
                   >
                     <div className="w-2 h-2 rounded-full" style={{ background: "var(--md-sys-color-brand-teal)" }} />
                   </div>

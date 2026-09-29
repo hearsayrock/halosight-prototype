@@ -312,11 +312,11 @@ function TaskStrip({
                   className="flex-shrink-0 w-5 h-5 rounded-full relative active:scale-90 transition-transform"
                 >
                   <div className="absolute inset-0 rounded-full"
-                    style={{ border: `1.5px solid ${isPending ? "#2ECC71" : "var(--md-sys-color-text-disabled)"}` }} />
+                    style={{ border: `1.5px solid ${isPending ? "var(--md-sys-color-success)" : "var(--md-sys-color-text-disabled)"}` }} />
                   {isPending && (
                     <div className="absolute inset-0 rounded-full flex items-center justify-center"
-                      style={{ background: "#2ECC71" }}>
-                      <Icon name="check" size={11} style={{ color: "#fff" }} />
+                      style={{ background: "var(--md-sys-color-success)" }}>
+                      <Icon name="check" size={11} style={{ color: "var(--md-sys-color-text-inverse)" }} />
                     </div>
                   )}
                 </button>
@@ -331,7 +331,7 @@ function TaskStrip({
                   <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
                     <span style={{
                       fontSize: 11,
-                      color: isToday ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-disabled)",
+                      color: isToday ? "var(--md-sys-color-ultraviolet-light)" : "var(--md-sys-color-text-disabled)",
                       fontWeight: 500,
                       flexShrink: 0,
                     }}>
@@ -1161,7 +1161,7 @@ function CombinedPageContent() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="flex-1 bg-transparent text-[15px] outline-none"
-                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
+                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-neonindigo)" }}
                 />
                 {showSystemSection && (
                   <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
@@ -1449,7 +1449,7 @@ function CombinedPageContent() {
                     value={prioritiesQuery}
                     onChange={(e) => setPrioritiesQuery(e.target.value)}
                     className="flex-1 bg-transparent text-15 outline-none"
-                    style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
+                    style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-neonindigo)" }}
                   />
                   {prioritiesQuery && (
                     <button onClick={() => setPrioritiesQuery("")} className="active:opacity-60 flex-shrink-0">
@@ -1526,9 +1526,9 @@ function CombinedPageContent() {
                                         exit={{ scale: 0, opacity: 0 }}
                                         transition={{ type: "spring", stiffness: 500, damping: 28 }}
                                         className="absolute inset-0 rounded-full flex items-center justify-center"
-                                        style={{ background: "#2ECC71" }}
+                                        style={{ background: "var(--md-sys-color-success)" }}
                                       >
-                                        <Icon name="check" size={12} style={{ color: "#fff" }} />
+                                        <Icon name="check" size={12} style={{ color: "var(--md-sys-color-text-inverse)" }} />
                                       </motion.div>
                                     )}
                                   </AnimatePresence>
@@ -1545,7 +1545,7 @@ function CombinedPageContent() {
                                   <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1">
                                       <Icon name="calendar_today" size={12} style={{ color: "var(--md-sys-color-neonindigo-dark)" }} />
-                                      <span className="text-xs font-medium" style={{ color: dueToday ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-disabled)" }}>
+                                      <span className="text-xs font-medium" style={{ color: dueToday ? "var(--md-sys-color-ultraviolet-light)" : "var(--md-sys-color-text-disabled)" }}>
                                         {item.dueDate ? item.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Due Today"}
                                       </span>
                                     </div>
@@ -1638,13 +1638,13 @@ function CombinedPageContent() {
               background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
               boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-              border: "1px solid rgba(46, 204, 113, 0.25)",
+              border: "1px solid color-mix(in srgb, var(--md-sys-color-success) 25%, transparent)",
               zIndex: 50,
             }}
           >
             <div
               className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(46, 204, 113, 0.15)" }}
+              style={{ background: "color-mix(in srgb, var(--md-sys-color-success) 15%, transparent)" }}
             >
               <Icon name="check" size={15} style={{ color: "var(--md-sys-color-semantic-success)" }} />
             </div>

@@ -286,7 +286,7 @@ function ActionItemDetailPageContent({
           {isDone && (
             <span
               className="text-[11px] font-semibold px-2 py-0.5 rounded-full ml-1"
-              style={{ background: "rgba(46,204,113,0.12)", color: "var(--md-sys-color-success)", border: "1px solid rgba(46,204,113,0.25)" }}
+              style={{ background: "color-mix(in srgb, var(--md-sys-color-success) 12%, transparent)", color: "var(--md-sys-color-success)", border: "1px solid color-mix(in srgb, var(--md-sys-color-success) 25%, transparent)" }}
             >
               Completed
             </span>
@@ -368,7 +368,7 @@ function ActionItemDetailPageContent({
             style={{
               background: "var(--md-sys-color-brand-teal)",
               borderRadius: "var(--radius-full)",
-              color: "var(--md-sys-color-text-primary)",
+              color: "var(--md-sys-color-text-inverse)",
             }}
           >
             <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.2)" }}>
