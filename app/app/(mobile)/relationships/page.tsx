@@ -42,9 +42,9 @@ import CompletionToast from "@/components/ui/CompletionToast";
 import NoteSheet from "@/components/ui/NoteSheet";
 import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
+import FilterSheet from "@/components/ui/FilterSheet";
 import VisitedFilterDropdown, { type VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
-import CreateAccountSheet from "@/components/accounts/CreateAccountSheet";
-import CreateLeadSheet from "@/components/accounts/CreateLeadSheet";
+import CreateEntrySheet from "@/components/accounts/CreateEntrySheet";
 import FeedbackWidget from "@/components/ui/FeedbackWidget";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import { mockSystemAccounts, systemAccountReps } from "@/lib/mock-data/system-accounts";
@@ -568,10 +568,10 @@ function SectionHeader({ label, count, onAdd, divider }: { label: string; count:
         <button
           onClick={onAdd}
           className="flex items-center justify-center active:opacity-60 transition-opacity"
-          style={{ width: 28, height: 28, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}
+          style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--md-sys-color-alpha-lime-chalk-12)" }}
           aria-label="Add new lead"
         >
-          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-lime-chalk)" }} />
         </button>
       )}
     </div>
@@ -605,7 +605,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
     >
       <Icon name="add" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
       <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-        Add a new lead
+        Add a new company
         {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
       </span>
     </button>
@@ -618,6 +618,7 @@ type SystemSearchState = "idle" | "loading" | "done";
 type TaskStatusFilter = "open" | "done";
 type TaskSortMode = "dueDate" | "account";
 type AccountTypeFilter = "all" | "prospect" | "distributor" | "sold-to" | "shipped-to";
+type ShowFilter = "all" | "accounts" | "leads";
 
 type PageMode = "home" | "accounts" | "priorities";
 
@@ -633,8 +634,11 @@ function CombinedPageContent() {
   const modeParam = searchParams.get("mode");
   const mode: PageMode = (modeParam === "accounts" || modeParam === "priorities") ? modeParam : "home";
 
-  function goToMode(m: "accounts" | "priorities") {
-    router.push(`/relationships?mode=${m}`, { scroll: false });
+  const focusSearch = searchParams.get("focus") === "search";
+
+  function goToMode(m: "accounts" | "priorities", focus = false) {
+    const params = focus ? `?mode=${m}&focus=search` : `?mode=${m}`;
+    router.push(`/relationships${params}`, { scroll: false });
   }
   function goHome() {
     router.push("/relationships");
@@ -664,15 +668,16 @@ function CombinedPageContent() {
     router.push(`/relationships/${newAccount.id}?just_created=true&name=${encodeURIComponent(newAccount.name)}`);
   }
 
-  // Create account sheet (from search CTA)
-  const [showCreateSheet, setShowCreateSheet] = useState(false);
-  // Create lead sheet (from + button on relationships header)
-  const [showCreateLeadSheet, setShowCreateLeadSheet] = useState(false);
+  const [createSheetType, setCreateSheetType] = useState<"account" | "lead" | null>(null);
 
   // Accounts search (used in accounts mode)
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("alphabetical");
   const [typeFilter, setTypeFilter]         = useState<AccountTypeFilter>("all");
+  const [showFilter, setShowFilter]         = useState<ShowFilter>("all");
+  const [withinFiveMi, setWithinFiveMi]     = useState(false);
+  const [fabOpen, setFabOpen]               = useState(false);
+  const [activeSheet, setActiveSheet]       = useState<"show" | "type" | null>(null);
   const [visitedFilter, setVisitedFilter]   = useState<VisitedFilter>("all");
   const [visitedFrom, setVisitedFrom]       = useState<Date | null>(null);
   const [visitedTo, setVisitedTo]           = useState<Date | null>(null);
@@ -833,7 +838,8 @@ function CombinedPageContent() {
   // Auto-focus the right input when switching modes
   useEffect(() => {
     if (mode === "accounts") {
-      setTimeout(() => accountsInputRef.current?.focus(), 280);
+      if (focusSearch) setTimeout(() => accountsInputRef.current?.focus(), 280);
+      else setFabOpen(false);
     } else if (mode === "priorities") {
       setTimeout(() => prioritiesInputRef.current?.focus(), 280);
     } else {
@@ -846,17 +852,30 @@ function CombinedPageContent() {
   }, [mode]);
 
   const myFiltered = useMemo(() => {
+    let base = visibleAccounts;
+
+    // Show filter: all / accounts (CRM) / leads (Halosight)
+    if (showFilter === "leads") {
+      base = base.filter((a) => a.halosightType === "prospect");
+    } else if (showFilter === "accounts") {
+      base = base.filter((a) => a.halosightType !== "prospect");
+    }
+
+    // Type filter (CRM type or prospect)
     const byType = typeFilter === "all"
-      ? visibleAccounts
+      ? base
       : typeFilter === "prospect"
-        ? visibleAccounts.filter((a) => a.halosightType === "prospect")
-        : visibleAccounts.filter((a) => a.crmAccountType === typeFilter);
+        ? base.filter((a) => a.halosightType === "prospect")
+        : base.filter((a) => a.crmAccountType === typeFilter);
+
+    // Within 5 mi filter
+    const byDistance = withinFiveMi ? byType.filter((a) => a.distanceMiles <= 5) : byType;
 
     const PRESET_DAYS: Record<string, number> = { "7d": 7, "14d": 14, "30d": 30, "90d": 90 };
     const byVisited = visitedFilter === "all"
-      ? byType
+      ? byDistance
       : visitedFilter === "custom"
-        ? byType.filter((a) => {
+        ? byDistance.filter((a) => {
             const t = a.lastVisited.getTime();
             if (visitedFrom && t < visitedFrom.getTime()) return false;
             if (visitedTo) {
@@ -865,13 +884,13 @@ function CombinedPageContent() {
             }
             return true;
           })
-        : byType.filter((a) => {
+        : byDistance.filter((a) => {
             const cutoff = Date.now() - PRESET_DAYS[visitedFilter] * 86_400_000;
             return a.lastVisited.getTime() >= cutoff;
           });
 
     return sortAccounts(searchAccounts(byVisited, query), sort);
-  }, [allAccounts, query, sort, typeFilter, visitedFilter, visitedFrom, visitedTo]);
+  }, [allAccounts, query, sort, typeFilter, showFilter, withinFiveMi, visitedFilter, visitedFrom, visitedTo]);
   const taskGroups = useMemo(() => {
     const all = getAllItems()
       .filter(item =>
@@ -1062,7 +1081,7 @@ function CombinedPageContent() {
         className="flex items-center justify-between px-4 pt-10 pb-3"
         style={{
           ...(mode === "accounts" || mode === "priorities"
-            ? { position: "absolute", top: 0, left: 0, right: 0, zIndex: 10, pointerEvents: "none" }
+            ? { position: "absolute", top: 0, left: 0, right: 0, zIndex: fabOpen ? 0 : 10, pointerEvents: "none" }
             : { flexShrink: 0 }),
           background:
             (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled)
@@ -1176,12 +1195,6 @@ function CombinedPageContent() {
                     </svg>
                   </button>
                 )}
-                <SortMenu
-                  current={sort}
-                  onChange={setSort}
-                  visitedFilter={visitedFilter}
-                  onVisitedChange={(v) => { setVisitedFilter(v); setVisitedFrom(null); setVisitedTo(null); }}
-                />
               </motion.div>
             )}
             {/* priorities mode: title lives inside the body, not here */}
@@ -1210,29 +1223,6 @@ function CombinedPageContent() {
         )}
       </AnimatePresence> */}
 
-      {/* ── TYPE FILTER — moved into SortMenu; hidden for now ──────────── */}
-      {false && mode === "accounts" && (
-          <motion.div
-            key="type-filter"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="flex items-center gap-2 px-4 pb-3"
-            style={{ flexShrink: 0 }}
-          >
-            <VisitedFilterDropdown
-              value={visitedFilter}
-              customFrom={visitedFrom}
-              customTo={visitedTo}
-              onChange={(v, from, to) => {
-                setVisitedFilter(v);
-                setVisitedFrom(from ?? null);
-                setVisitedTo(to ?? null);
-              }}
-            />
-          </motion.div>
-      )}
 
       {/* ── BODY ───────────────────────────────────────────────────────── */}
       <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
@@ -1302,12 +1292,77 @@ function CombinedPageContent() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
               ref={accountsScrollRef}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 104, paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 100, paddingBottom: systemState === "done" && hasQuery ? 120 : 100 }}
             >
+              {/* ── Filter pills — scroll with the list, hidden under the floating header ── */}
+          <div className="flex items-center gap-2 px-4 pb-3">
+            {/* All / Accounts / Leads pill */}
+            {(() => {
+              const showLabels: Record<ShowFilter, string> = { all: "All", accounts: "Accounts", leads: "Leads" };
+              const active = true;
+              return (
+                <button
+                  onClick={() => setActiveSheet("show")}
+                  className="flex items-center gap-1 px-3 active:opacity-70 transition-opacity"
+                  style={{
+                    height: 32,
+                    borderRadius: "var(--radius-full)",
+                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
+                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+                  }}
+                >
+                  <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
+                    {showLabels[showFilter]}
+                  </span>
+                  <Icon name="keyboard_arrow_down" size={16} style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
+                </button>
+              );
+            })()}
+
+            {/* Type pill — hidden when "leads" is selected */}
+            {showFilter !== "leads" && (() => {
+              const typeLabels: Record<AccountTypeFilter, string> = { all: "Type", distributor: "Distributor", "sold-to": "Sold-To", "shipped-to": "Ship-To", prospect: "Prospective" };
+              const active = typeFilter !== "all";
+              return (
+                <button
+                  onClick={() => setActiveSheet("type")}
+                  className="flex items-center gap-1 px-3 active:opacity-70 transition-opacity"
+                  style={{
+                    height: 32,
+                    borderRadius: "var(--radius-full)",
+                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
+                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+                  }}
+                >
+                  <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
+                    {typeLabels[typeFilter]}
+                  </span>
+                  <Icon name="keyboard_arrow_down" size={16} style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
+                </button>
+              );
+            })()}
+
+            {/* Within 5 mi toggle */}
+            <button
+              onClick={() => setWithinFiveMi((p) => !p)}
+              className="flex items-center gap-1.5 px-3 active:opacity-70 transition-opacity"
+              style={{
+                height: 32,
+                borderRadius: "var(--radius-full)",
+                background: withinFiveMi ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
+                border: withinFiveMi ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+              }}
+            >
+              <Icon name="near_me" size={13} style={{ color: withinFiveMi ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
+              <span className="text-sm-bold" style={{ color: withinFiveMi ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
+                Within 5 mi
+              </span>
+            </button>
+          </div>
+
               {/* ── Skeleton preview: both sections loading ───────────────── */}
               {preview === "search-loading" && (
                 <>
-                  <SectionHeader label="Your Companies" count={0} onAdd={() => {}} />
                   <AccountListSkeleton rows={3} />
                   <div style={{ marginTop: 16 }}>
                     <SectionHeader label="Company-Wide Results" count={0} divider />
@@ -1317,8 +1372,6 @@ function CombinedPageContent() {
               )}
 
               {/* My accounts */}
-              {preview !== "search-loading" && showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
-              {preview !== "search-loading" && !showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
 
               {preview !== "search-loading" && (myFiltered.length > 0 ? (
                 <div className="flex flex-col">
@@ -1584,6 +1637,98 @@ function CombinedPageContent() {
 
         </AnimatePresence>
 
+        {/* FAB — indigo circle, bottom-right, expands to show Add account / Add lead */}
+        {mode === "accounts" && (
+          <>
+            {/* Scrim — darkens page and closes FAB on outside tap */}
+            <AnimatePresence>
+              {fabOpen && (
+                <motion.div
+                  key="fab-scrim"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  onClick={() => setFabOpen(false)}
+                  style={{ position: "absolute", inset: 0, zIndex: 9, background: "rgba(0,0,0,0.45)" }}
+                />
+              )}
+            </AnimatePresence>
+
+            <div style={{ position: "absolute", bottom: 24, right: 16, zIndex: 10 }}>
+              {/* Expanded options */}
+              <AnimatePresence>
+                {fabOpen && (
+                  <div style={{ position: "absolute", bottom: 64, right: 3, display: "flex", flexDirection: "column", gap: 14, alignItems: "flex-end" }}>
+                    {/* Add account (top) */}
+                    <motion.button
+                      key="fab-account"
+                      initial={{ opacity: 0, y: 16, scale: 0.88 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 28, delay: 0.05 }}
+                      onClick={() => { setFabOpen(false); setCreateSheetType("account"); }}
+                      className="flex items-center gap-3 active:opacity-70 transition-opacity"
+                    >
+                      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)", whiteSpace: "nowrap" }}>Add account</span>
+                      <div className="flex items-center justify-center flex-shrink-0"
+                        style={{
+                          width: 46, height: 46, borderRadius: "50%",
+                          background: "var(--md-sys-color-dark-secondary)",
+                          border: "1px solid var(--md-sys-color-dark-tertiary)",
+                          boxShadow: "0 4px 16px rgba(0,0,0,0.55)",
+                        }}
+                      >
+                        <CompanyIcon size={20} style={{ color: "var(--md-sys-color-brand-teal)" }} />
+                      </div>
+                    </motion.button>
+
+                    {/* Add lead (bottom) */}
+                    <motion.button
+                      key="fab-lead"
+                      initial={{ opacity: 0, y: 16, scale: 0.88 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                      onClick={() => { setFabOpen(false); setCreateSheetType("lead"); }}
+                      className="flex items-center gap-3 active:opacity-70 transition-opacity"
+                    >
+                      <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)", whiteSpace: "nowrap" }}>Add lead</span>
+                      <div className="flex items-center justify-center flex-shrink-0"
+                        style={{
+                          width: 46, height: 46, borderRadius: "50%",
+                          background: "var(--md-sys-color-dark-secondary)",
+                          border: "1px solid var(--md-sys-color-dark-tertiary)",
+                          boxShadow: "0 4px 16px rgba(0,0,0,0.55)",
+                        }}
+                      >
+                        <Icon name="person_add" size={20} style={{ color: "var(--md-sys-color-warning-light)" }} />
+                      </div>
+                    </motion.button>
+                  </div>
+                )}
+              </AnimatePresence>
+
+              {/* FAB button */}
+              <motion.button
+                onClick={() => setFabOpen((p) => !p)}
+                className="flex items-center justify-center active:opacity-80 transition-opacity"
+                style={{
+                  width: 52,
+                  height: 52,
+                  borderRadius: "50%",
+                  background: "var(--md-sys-color-neonindigo)",
+                  boxShadow: "0 4px 18px rgba(0,0,0,0.55)",
+                }}
+                animate={{ rotate: fabOpen ? 45 : 0 }}
+                transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              >
+                <Icon name="add" size={24} style={{ color: "var(--md-sys-color-text-inverse)" }} />
+              </motion.button>
+            </div>
+          </>
+        )}
+
         {/* Sticky "Add new lead" — pinned to page bottom, rises with keyboard */}
         {mode === "accounts" && hasQuery && systemState === "done" && (
           <div style={{
@@ -1597,28 +1742,49 @@ function CombinedPageContent() {
             transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
           }}>
             <div style={{ pointerEvents: "auto" }}>
-              <CreateAccountCTA query={query} onOpen={() => setShowCreateSheet(true)} />
+              <CreateAccountCTA query={query} onOpen={() => setCreateSheetType("account")} />
             </div>
           </div>
         )}
       </div>
 
+      {/* Filter sheets */}
+      <FilterSheet
+        open={activeSheet === "show"}
+        onClose={() => setActiveSheet(null)}
+        label="Show"
+        options={[
+          { value: "all" as ShowFilter, label: "All" },
+          { value: "accounts" as ShowFilter, label: "Accounts" },
+          { value: "leads" as ShowFilter, label: "Leads" },
+        ]}
+        value={showFilter}
+        onChange={setShowFilter}
+      />
+      <FilterSheet
+        open={activeSheet === "type"}
+        onClose={() => setActiveSheet(null)}
+        label="Type"
+        options={[
+          { value: "all" as AccountTypeFilter, label: "All types" },
+          { value: "distributor" as AccountTypeFilter, label: "Distributor" },
+          { value: "sold-to" as AccountTypeFilter, label: "Sold-To" },
+          { value: "shipped-to" as AccountTypeFilter, label: "Ship-To" },
+          { value: "prospect" as AccountTypeFilter, label: "Prospective" },
+        ]}
+        value={typeFilter}
+        onChange={setTypeFilter}
+      />
+
       {/* Engagements drawer */}
       <EngagementsDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
-      {/* Create account sheet (search CTA) */}
-      {showCreateSheet && (
-        <CreateAccountSheet
-          initialName={query}
-          onClose={() => setShowCreateSheet(false)}
-          onCreated={handleAccountCreated}
-        />
-      )}
-
-      {/* Create lead sheet with duplicate detection (+ button) */}
-      {showCreateLeadSheet && (
-        <CreateLeadSheet
-          onClose={() => setShowCreateLeadSheet(false)}
+      {/* Create entry sheet — account or lead */}
+      {createSheetType && (
+        <CreateEntrySheet
+          initialType={createSheetType}
+          initialName={createSheetType === "account" ? query : ""}
+          onClose={() => setCreateSheetType(null)}
           onCreated={handleAccountCreated}
         />
       )}

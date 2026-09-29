@@ -172,7 +172,7 @@ function renderRichText(
   boldParts.forEach((part, pi) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       nodes.push(
-        <strong key={`b${pi}`} style={{ color: "var(--md-sys-color-text-primary)", fontWeight: 700 }}>
+        <strong key={`b${pi}`} style={{ color: "var(--md-sys-color-lime-chalk)", fontWeight: 700 }}>
           {part.slice(2, -2)}
         </strong>
       );

@@ -16,6 +16,7 @@ export const mockAccounts: Account[] = [
     state: "AR",
     distanceMiles: 56.7,
     lastVisited: daysAgo(3),
+    contactName: "Linda Ferris",
     childCount: 14,
     crmId: "SF-001",
     healthScore: 82,

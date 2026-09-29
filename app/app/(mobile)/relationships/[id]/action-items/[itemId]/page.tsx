@@ -267,9 +267,9 @@ function ActionItemDetailPageContent({
           <button
             onClick={() => setIsEditing(true)}
             className="flex items-center gap-1.5 px-4 h-8 text-sm-bold rounded-full active:opacity-70 transition-opacity"
-            style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-text-primary)" }}
+            style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-lime-chalk)" }}
           >
-            <Icon name="border_color" size={13} style={{ color: "var(--md-sys-color-text-muted)" }} />
+            <Icon name="border_color" size={13} style={{ color: "var(--md-sys-color-lime-chalk)" }} />
             Edit
           </button>
         }
