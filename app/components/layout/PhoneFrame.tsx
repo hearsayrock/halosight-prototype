@@ -21,6 +21,7 @@ import DevPanel, { type DeviceSize } from "./DevPanel";
 import PlaygroundNav from "./PlaygroundNav";
 import MobileKeyboard from "./MobileKeyboard";
 import DevModeOverlay from "./DevModeOverlay";
+import ThemeSwitch from "./ThemeSwitch";
 
 const SIZES: Record<DeviceSize, { width: number; height: number }> = {
   se:  { width: 375, height: 667 },
@@ -135,8 +136,8 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
                 width: 44,
                 height: 44,
                 borderRadius: "50%",
-                background: "rgba(255, 255, 255, 0.18)",
-                border: "1.5px solid rgba(255, 255, 255, 0.35)",
+                background: "color-mix(in srgb, var(--md-sys-color-text-primary) 18%, transparent)",
+                border: "1.5px solid color-mix(in srgb, var(--md-sys-color-text-primary) 35%, transparent)",
                 transform: "translate(-50%, -50%)",
                 pointerEvents: "none",
                 zIndex: 9999,
@@ -158,6 +159,7 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
       )}
 
       <DevModeOverlay />
+      <ThemeSwitch />
     </div>
   );
 }

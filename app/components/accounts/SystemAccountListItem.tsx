@@ -37,7 +37,7 @@ export default function SystemAccountListItem({ account, assignedRep, isLast = f
         {!isLast && (
           <div
             className="absolute bottom-0 left-0 right-0"
-            style={{ height: 1, background: "rgba(255,255,255,0.08)" }}
+            style={{ height: 1, background: "color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)" }}
           />
         )}
 

@@ -110,6 +110,16 @@
   --md-sys-color-alpha-ultraviolet-14:   rgba(123, 63, 242, 0.14);
   --md-sys-color-alpha-bg-glass:     rgba(17, 20, 32, 0.82);  /* scrolled header backdrop */
 
+  /* ── Chrome helpers (theme-aware) ───────────────────────────────────────── */
+  --md-sys-color-glass:          rgba(20, 23, 38, 0.88);   /* floating back-button / header glass */
+  --md-sys-color-glass-border:   rgba(255, 255, 255, 0.08);
+  --md-sys-color-scrim:          rgba(0, 0, 0, 0.55);      /* modal / sheet backdrop */
+  --md-sys-color-stage:          #0B0D16;                  /* desktop area around the phone frame */
+  --md-sys-shadow-rgb:           0, 0, 0;                  /* use: rgba(var(--md-sys-shadow-rgb), calc(0.5 * var(--md-sys-shadow-k))) */
+  --md-sys-shadow-k:             1;
+  --md-sys-color-on-white:       #111420;                  /* text on a fixed white surface (e.g. Google button) */
+  --md-sys-shadow-sheet:         0 -8px 32px rgba(0, 0, 0, 0.45);   /* bottom sheets / drawers — cast upward */
+
   /* ── Extended Palette ────────────────────────────────────────────────────── */
   --md-ref-palette-ext-cyan:   #5BBFCC;
   --md-ref-palette-ext-lime:   #89B347;
@@ -124,92 +134,118 @@
    Applied when data-theme="light" is set on <html>.
    Same token names, different values — Flutter swaps ThemeData per theme.
 ──────────────────────────────────────────────────────────────────────────── */
+/* ─── Light Theme ─────────────────────────────────────────────────────────────
+   Applied when data-theme="light" is set on <html>.
+   NOT an inversion: surfaces are indigo-tinted whites, brand hues are darkened
+   per role, and every text/background pair below was checked against WCAG
+   (body text >= 4.5:1, placeholders >= 3:1). The "-light" variants are the
+   text-on-tint shades, so in this theme they are DARKER than the base.
+──────────────────────────────────────────────────────────────────────────── */
 :root[data-theme="light"] {
 
   /* ── App Surface ─────────────────────────────────────────────────────────── */
-  --md-sys-color-background:  #F5F7FA;
-  --md-sys-color-surface-dim: #E9EDF4;
+  --md-sys-color-background:  #F3F4FA;   /* page — faint indigo-tinted white   */
+  --md-sys-color-surface-dim: #E9ECF6;
 
-  /* ── Light Surface → Dark (for "Dark Theme Colors" preview in light mode) ── */
-  --md-sys-color-surface-white: #111420;
-  --md-sys-color-surface-light: #1A1D29;
-  --md-sys-color-surface-gray:  #252A36;
+  /* ── Fixed surfaces (do not flip) ────────────────────────────────────────── */
+  --md-sys-color-surface-white: #FFFFFF;
+  --md-sys-color-surface-light: #F8FAFC;
+  --md-sys-color-surface-gray:  #F1F5F9;
 
-  /* ── Dark Scale → Light Scale ────────────────────────────────────────────── */
-  --md-sys-color-dark-void:      #FFFFFF;
-  --md-sys-color-dark-base:      #F4F7FB;
-  --md-sys-color-dark-primary:   #E8EFF7;
-  --md-sys-color-dark-secondary: #D9E3EF;
-  --md-sys-color-dark-tertiary:  #C5D2E3;
+  /* ── Elevation scale (name kept for token parity with dark) ──────────────── */
+  --md-sys-color-dark-void:      #FFFFFF;   /* chrome                          */
+  --md-sys-color-dark-base:      #F8F9FD;
+  --md-sys-color-dark-primary:   #FFFFFF;   /* cards on the page               */
+  --md-sys-color-dark-secondary: #E5E8F5;   /* pills, inputs, rows on cards    */
+  --md-sys-color-dark-tertiary:  #D2D7EA;   /* borders, menus, disabled fills  */
 
-  /* ── Text (inverted) ─────────────────────────────────────────────────────── */
-  --md-sys-color-text-primary:   #0F1724;
-  --md-sys-color-text-secondary: #3A4066;
-  --md-sys-color-text-muted:     #5C6388;
-  --md-sys-color-text-disabled:  #8E93B3;
-  --md-sys-color-text-inverse:   #F7F8FF;
+  /* ── Text ────────────────────────────────────────────────────────────────── */
+  --md-sys-color-text-primary:   #12152B;   /* 16:1 on page                    */
+  --md-sys-color-text-secondary: #40456A;   /* body — 8:1                      */
+  --md-sys-color-text-muted:     #585E84;   /* metadata — 5.3:1 on secondary   */
+  --md-sys-color-text-disabled:  #7C82A6;   /* placeholders — 3.4:1            */
+  --md-sys-color-text-inverse:   #F7F8FF;   /* text on filled indigo/lime/etc. */
 
-  /* ── Accents (light) ─────────────────────────────────────────────────────── */
-  --md-sys-color-lime-chalk-light: #A9D580;
-  --md-sys-color-lime-chalk:       #4F8A2B;
-  --md-sys-color-lime-chalk-dark:  #3C6B20;
-  --md-sys-color-ultraviolet-light: #9B7BF0;
+  /* ── Brand — Neon Indigo ─────────────────────────────────────────────────── */
+  --md-sys-color-neonindigo-light: #3A41B0;  /* text on indigo tint            */
+  --md-sys-color-neonindigo:       #4A52D0;  /* fill (5.8:1 w/ inverse) + text */
+  --md-sys-color-neonindigo-dark:  #343BA6;
+
+  /* ── Brand — Coral Ember ─────────────────────────────────────────────────── */
+  --md-sys-color-brand-coral-light: #B5312A;
+  --md-sys-color-brand-coral:       #B5312A;
+  --md-sys-color-brand-coral-dark:  #952620;
+
+  /* ── Accent — Lime Chalk ─────────────────────────────────────────────────── */
+  --md-sys-color-lime-chalk-light: #2F6414;
+  --md-sys-color-lime-chalk:       #387019;
+  --md-sys-color-lime-chalk-dark:  #2B5613;
+
+  /* ── Accent — Ultraviolet ────────────────────────────────────────────────── */
+  --md-sys-color-ultraviolet-light: #5B25C2;
   --md-sys-color-ultraviolet:       #6A2FD8;
   --md-sys-color-ultraviolet-dark:  #5222B0;
 
-  /* ── Brand — Neon Indigo (darkened for light bg contrast) ───────────────── */
-  --md-sys-color-neonindigo-light: #C5C9FF;
-  --md-sys-color-neonindigo:       #5058D4;
-  --md-sys-color-neonindigo-dark:  #3B42B8;
-
-  /* ── Brand — Coral Ember (darkened for light bg contrast) ───────────────── */
-  --md-sys-color-brand-coral-light: #FFB0A8;
-  --md-sys-color-brand-coral:       #C83D2D;
-  --md-sys-color-brand-coral-dark:  #A82E20;
-
-  /* ── Brand — Indigo (darkened for light bg contrast) ────────────────────── */
-  --md-sys-color-indigo-light: #9BA3F5;
+  /* ── Brand — Indigo ──────────────────────────────────────────────────────── */
+  --md-sys-color-indigo-light: #6E76E8;
   --md-sys-color-indigo:       #4850C4;
   --md-sys-color-indigo-dark:  #363FAF;
 
-  /* ── Brand — Halosight Custom ────────────────────────────────────────────── */
-  --md-sys-color-brand-teal-light: #C5C9FF;
-  --md-sys-color-brand-teal:       #5058D4;
-  --md-sys-color-brand-teal-dark:  #3B42B8;
-  --md-sys-color-brand-teal-hover: #C5C9FF;
-  --md-sys-color-recording:        #D93028;
+  /* ── Brand — Halosight Custom (teal retired → indigo) ────────────────────── */
+  --md-sys-color-brand-teal-light: #3A41B0;
+  --md-sys-color-brand-teal:       #4A52D0;
+  --md-sys-color-brand-teal-dark:  #343BA6;
+  --md-sys-color-brand-teal-hover: #3A41B0;
+  --md-sys-color-brand-pink:       #C2337F;
+  --md-sys-color-recording:        #D02A22;
 
-  /* ── Semantic (darkened for light bg contrast) ───────────────────────────── */
-  --md-sys-color-success-light: #A9D580;
-  --md-sys-color-success:       #4F8A2B;
-  --md-sys-color-success-dark:  #3C6B20;
+  /* ── Semantic ────────────────────────────────────────────────────────────── */
+  --md-sys-color-success-light: #2F6414;
+  --md-sys-color-success:       #387019;
+  --md-sys-color-success-dark:  #2B5613;
 
-  --md-sys-color-warning-light: #F9D98A;
-  --md-sys-color-warning:       #C47D10;
-  --md-sys-color-warning-dark:  #9B620C;
+  --md-sys-color-warning-light: #8C5600;
+  --md-sys-color-warning:       #8C5600;
+  --md-sys-color-warning-dark:  #6F4400;
 
-  --md-sys-color-error-light: #FFB8B8;
-  --md-sys-color-error:       #CC1F21;
-  --md-sys-color-error-dark:  #A81819;
+  --md-sys-color-error-light: #C42021;
+  --md-sys-color-error:       #C42021;
+  --md-sys-color-error-dark:  #9E1719;
 
-  --md-sys-color-info-light: #BFDBFE;
-  --md-sys-color-info:       #1D6FBF;
-  --md-sys-color-info-dark:  #155899;
+  --md-sys-color-info-light: #1A66B0;
+  --md-sys-color-info:       #1A66B0;
+  --md-sys-color-info-dark:  #134F8C;
 
-  /* ── Data Visualization (adjusted for light bg) ──────────────────────────── */
-  --md-sys-color-data-account:  #4A7D93;
-  --md-sys-color-data-recency:  #5058D4;
-  --md-sys-color-data-crm-sync: #1A9E4A;
-  --md-sys-color-data-review:   #C47D10;
+  /* ── Data Visualization ──────────────────────────────────────────────────── */
+  --md-sys-color-data-account:  #3E7690;
+  --md-sys-color-data-recency:  #4A52D0;
+  --md-sys-color-data-crm-sync: #387019;
+  --md-sys-color-data-review:   #8C5600;
 
-  /* ── Alpha (flip to dark-on-light) ───────────────────────────────────────── */
-  --md-sys-color-alpha-white-10:           rgba(0, 0, 0, 0.07);
-  --md-sys-color-alpha-white-18:           rgba(0, 0, 0, 0.11);
-  --md-sys-color-alpha-lime-chalk-12:      rgba(79, 138, 43, 0.12);
+  /* ── Alpha (dark-on-light) ───────────────────────────────────────────────── */
+  --md-sys-color-alpha-white-10:           rgba(18, 21, 43, 0.08);
+  --md-sys-color-alpha-white-18:           rgba(18, 21, 43, 0.13);
+  --md-sys-color-alpha-lime-chalk-12:      rgba(56, 112, 25, 0.12);
   --md-sys-color-alpha-ultraviolet-14:     rgba(106, 47, 216, 0.12);
-  --md-sys-color-alpha-neonindigo-10:      rgba(80, 88, 212, 0.08);
-  --md-sys-color-alpha-neonindigo-glass:   rgba(80, 88, 212, 0.08);
-  --md-sys-color-alpha-dark-glass:         rgba(0, 0, 0, 0.09);
-  --md-sys-color-alpha-bg-glass:           rgba(245, 247, 250, 0.88);
+  --md-sys-color-alpha-neonindigo-10:      rgba(74, 82, 208, 0.10);
+  --md-sys-color-alpha-neonindigo-glass:   rgba(74, 82, 208, 0.10);
+  --md-sys-color-alpha-dark-glass:         rgba(18, 21, 43, 0.10);
+  --md-sys-color-alpha-bg-glass:           rgba(243, 244, 250, 0.88);
+
+  /* ── Chrome helpers ──────────────────────────────────────────────────────── */
+  --md-sys-color-glass:          rgba(255, 255, 255, 0.92);
+  --md-sys-color-glass-border:   rgba(18, 21, 43, 0.10);
+  --md-sys-color-scrim:          rgba(243, 244, 250, 0.78);   /* light wash over content */
+  --md-sys-color-stage:          #E3E6F2;
+  --md-sys-shadow-rgb:           40, 46, 94;      /* indigo-tinted, never pure black on light */
+  --md-sys-shadow-k:             0.32;
+  --md-sys-color-on-white:       #111420;
+  --md-sys-shadow-sheet:         0 -1px 0 rgba(18, 21, 43, 0.06), 0 -10px 40px rgba(40, 46, 94, 0.22), 0 -2px 8px rgba(40, 46, 94, 0.10);
+
+  /* ── Gradients ───────────────────────────────────────────────────────────── */
+  --gradient-login:      radial-gradient(ellipse 70% 60% at 50% 40%, #DDE0FA 0%, #ECEEFB 45%, #F3F4FA 100%);
+  --gradient-hero:       linear-gradient(to bottom right, #FFFFFF, #E9ECF7, #FFFFFF);
+  --gradient-card:       linear-gradient(to bottom right, #E9ECF7, #D2D7EA);
+  --gradient-text-brand: linear-gradient(to right, #4A52D0, #343BA6);
 
 }

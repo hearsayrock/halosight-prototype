@@ -47,6 +47,20 @@ Tokens live in `/app/app/globals.css`. There is no `tailwind.config.ts` — Tail
 | `--md-sys-color-surface-light` | `#F8FAFC` | Light background |
 | `--md-sys-color-surface-gray` | `#F1F5F9` | Subtle gray background |
 
+### Light Theme (in-app toggle)
+
+Set with `<html data-theme="light">`; users switch it under **Profile → Appearance** (persisted in `localStorage` as `halosight-theme`, applied before first paint by a tiny script in `app/layout.tsx`). Same token names, different values — Flutter swaps `ThemeData`.
+
+The light theme is **designed, not inverted**:
+
+- **Surfaces** are indigo-tinted whites: page `#F3F4FA`, cards `dark-primary` = `#FFFFFF`, pills/inputs `dark-secondary` = `#E5E8F5`, borders/menus `dark-tertiary` = `#D2D7EA`.
+- **Text** is `#12152B` / `#40456A` (body) / `#585E84` (muted) / `#7C82A6` (placeholder). Body and muted clear 4.5:1 on every surface; placeholders clear 3:1.
+- **`-light` variants are text-on-tint shades.** They are never used as fills, so in light mode they are *darker* than the base (e.g. `neonindigo-light` = `#3A41B0`), not lighter.
+- **Brand fills** are deepened so `text-inverse` (near-white) on them passes 4.5:1 (indigo `#4A52D0`, lime chalk `#387019`, ultraviolet `#6A2FD8`, coral `#B5312A`).
+- **Fills use `text-inverse` for their label/icon** in both themes (dark text on the light dark-mode fills, light text on the deep light-mode fills). Do not hard-code `#fff`.
+
+Theme-aware chrome tokens (use these instead of raw `rgba()`): `--md-sys-color-glass` / `-glass-border` (floating back button), `--md-sys-color-scrim` (sheet backdrops), `--md-sys-color-stage` (desktop area around the phone), `--md-sys-color-on-white` (text on fixed white surfaces), and for shadows `rgba(var(--md-sys-shadow-rgb), calc(<alpha> * var(--md-sys-shadow-k)))`. Tints of a brand color should be `color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)` so they follow the theme.
+
 ### Text Colors
 
 | Token | Value | Use |

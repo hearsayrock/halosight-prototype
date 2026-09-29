@@ -24,7 +24,7 @@ export default function LoginPage() {
           width: 320,
           height: 320,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(139,146,255,0.18) 0%, transparent 70%)",
+          background: "radial-gradient(circle, color-mix(in srgb, var(--md-sys-color-neonindigo) 18%, transparent) 0%, transparent 70%)",
           top: "5%",
           left: "50%",
           transform: "translateX(-50%)",
@@ -37,7 +37,7 @@ export default function LoginPage() {
           width: 180,
           height: 180,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(139,146,255,0.12) 0%, transparent 70%)",
+          background: "radial-gradient(circle, color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent) 0%, transparent 70%)",
           bottom: "15%",
           right: "5%",
         }}
@@ -45,13 +45,16 @@ export default function LoginPage() {
 
       {/* Logo */}
       <div className="mb-8 relative z-10">
-        <Image
-          src="/logo-white.png"
-          alt="Halosight"
-          width={220}
-          height={60}
-          priority
-          style={{ objectFit: "contain", height: "auto" }}
+        <div
+          role="img"
+          aria-label="Halosight"
+          style={{
+            width: 220,
+            height: 50,
+            background: "var(--md-sys-color-text-primary)",
+            WebkitMask: "url(/logo-white.png) center / contain no-repeat",
+            mask: "url(/logo-white.png) center / contain no-repeat",
+          }}
         />
       </div>
 
@@ -74,7 +77,8 @@ export default function LoginPage() {
             className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
+              color: "var(--md-sys-color-on-white)",
+              border: "1px solid var(--md-sys-color-alpha-white-10)",
               borderRadius: "var(--radius-xl)",
             }}
           >
@@ -88,7 +92,8 @@ export default function LoginPage() {
             className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
+              color: "var(--md-sys-color-on-white)",
+              border: "1px solid var(--md-sys-color-alpha-white-10)",
               borderRadius: "var(--radius-xl)",
             }}
           >
@@ -102,7 +107,8 @@ export default function LoginPage() {
             className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
+              color: "var(--md-sys-color-on-white)",
+              border: "1px solid var(--md-sys-color-alpha-white-10)",
               borderRadius: "var(--radius-xl)",
             }}
           >

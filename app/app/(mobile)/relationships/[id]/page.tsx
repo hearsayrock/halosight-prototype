@@ -119,9 +119,9 @@ function ActivityCard({ item, accountId, isExternal, href }: { item: ActivityIte
             <span
               className="text-2xs-bold px-1.5 py-0.5 rounded-full"
               style={{
-                background: "rgba(139,146,255,0.10)",
+                background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 10%, transparent)",
                 color: "var(--md-sys-color-neonindigo)",
-                border: "1px solid rgba(139,146,255,0.18)",
+                border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 18%, transparent)",
               }}
             >
               Unassigned
@@ -172,7 +172,7 @@ function PreparingNoteCard() {
         style={{
           background: "var(--md-sys-color-dark-secondary)",
           borderRadius: "var(--radius-md)",
-          border: "1px solid rgba(139,146,255,0.22)",
+          border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 22%, transparent)",
           padding: "14px 16px",
         }}
       >
@@ -183,7 +183,7 @@ function PreparingNoteCard() {
             style={{
               width: 14, height: 14, flexShrink: 0,
               borderRadius: "50%",
-              border: "2px solid rgba(139,146,255,0.18)",
+              border: "2px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 18%, transparent)",
               borderTopColor: "var(--md-sys-color-neonindigo)",
             }}
           />
@@ -208,7 +208,7 @@ function PreparingNoteCard() {
                 style={{
                   height: "100%",
                   width: "50%",
-                  background: "linear-gradient(90deg, transparent 0%, rgba(139,146,255,0.28) 50%, transparent 100%)",
+                  background: "linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--md-sys-color-neonindigo) 28%, transparent) 50%, transparent 100%)",
                 }}
               />
             </div>
@@ -456,9 +456,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 display: "flex", alignItems: "center", justifyContent: "center",
                 borderRadius: "50%",
                 border: "none",
-                background: scrolledPast ? "rgba(20, 23, 38, 0.88)" : "transparent",
+                background: scrolledPast ? "var(--md-sys-color-glass)" : "transparent",
                 backdropFilter: scrolledPast ? "blur(16px) saturate(180%)" : undefined,
-                boxShadow: scrolledPast ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
+                boxShadow: scrolledPast ? "inset 0 0 0 1px var(--md-sys-color-glass-border)" : "none",
                 transition: "background 180ms ease",
               }}
             >
@@ -575,8 +575,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               <div
                 className="flex items-start gap-2.5 px-3.5 py-3 mb-3"
                 style={{
-                  background: "rgba(139, 146, 255, 0.08)",
-                  border: "1px solid rgba(139, 146, 255, 0.18)",
+                  background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 8%, transparent)",
+                  border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 18%, transparent)",
                   borderRadius: "var(--radius-md)",
                 }}
               >
@@ -593,8 +593,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             <div
               className="mb-3 px-3.5 py-3"
               style={{
-                background: "rgba(245,166,35,0.06)",
-                border: "1px solid rgba(245,166,35,0.25)",
+                background: "color-mix(in srgb, var(--md-sys-color-warning) 6%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--md-sys-color-warning) 25%, transparent)",
                 borderRadius: "var(--radius-md)",
               }}
             >
@@ -661,8 +661,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               onClick={() => router.push(`/relationships/${id}/review`)}
               className="w-full flex items-center gap-2.5 px-3.5 py-3 mb-4 active:opacity-70 transition-opacity text-left"
               style={{
-                background: "rgba(139,146,255,0.08)",
-                border: "1px solid rgba(139,146,255,0.2)",
+                background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 8%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)",
                 borderRadius: "var(--radius-md)",
               }}
             >
@@ -733,9 +733,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
               className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
               style={{
-                border: "1.5px dashed rgba(139,146,255,0.45)",
+                border: "1.5px dashed color-mix(in srgb, var(--md-sys-color-neonindigo) 45%, transparent)",
                 borderRadius: "var(--radius-xl)",
-                background: "rgba(139,146,255,0.04)",
+                background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 4%, transparent)",
               }}
             >
               <Icon name="auto_awesome" size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
@@ -926,7 +926,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => setShowDisqualifyConfirm(false)}
-                style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 70, pointerEvents: "auto" }}
+                style={{ position: "absolute", inset: 0, background: "var(--md-sys-color-scrim)", zIndex: 70, pointerEvents: "auto" }}
               />
               {/* Sheet */}
               <motion.div
@@ -942,6 +942,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   pointerEvents: "auto",
                   background: "var(--md-sys-color-dark-secondary)",
                   borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+                  boxShadow: "var(--md-sys-shadow-sheet)",
                   padding: "28px 24px 44px",
                 }}
               >
@@ -954,7 +955,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 <button
                   onClick={() => { setShowDisqualifyConfirm(false); handleDisqualify(); }}
                   className="w-full py-3.5 rounded-full text-base font-semibold active:opacity-80 transition-opacity mb-3"
-                  style={{ background: "var(--md-sys-color-brand-coral)", color: "#fff" }}
+                  style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}
                 >
                   Yes, disqualify
                 </button>
@@ -995,7 +996,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   background: "var(--md-sys-color-dark-secondary)",
                   borderRadius: "var(--radius-xl)",
                   border: "1px solid var(--md-sys-color-dark-tertiary)",
-                  boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.3)",
+                  boxShadow: "0 12px 40px rgba(var(--md-sys-shadow-rgb), calc(0.55 * var(--md-sys-shadow-k))), 0 4px 12px rgba(var(--md-sys-shadow-rgb), calc(0.3 * var(--md-sys-shadow-k)))",
                   padding: "12px 16px",
                 }}
               >

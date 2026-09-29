@@ -162,12 +162,12 @@ function FieldCard({ field, onSave }: FieldCardProps) {
   }, [field.value, isEmpty, focused]);
 
   const border = focused
-    ? "1.5px solid rgba(139,146,255,0.6)"
+    ? "1.5px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 60%, transparent)"
     : isConfirmed
     ? "1px solid color-mix(in srgb, var(--md-sys-color-success) 45%, transparent)"
     : isUncertain
-    ? "2px dashed rgba(139,146,255,0.65)"
-    : "1px solid rgba(139,146,255,0.28)";
+    ? "2px dashed color-mix(in srgb, var(--md-sys-color-neonindigo) 65%, transparent)"
+    : "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 28%, transparent)";
 
   const bg = isConfirmed && !focused ? "color-mix(in srgb, var(--md-sys-color-success) 5%, transparent)" : "var(--md-sys-color-dark-secondary)";
 
@@ -501,7 +501,7 @@ export default function AIReviewOverlay() {
                       <motion.div
                         key="ring-outer"
                         className="absolute rounded-full pointer-events-none"
-                        style={{ inset: "-8px", background: "rgba(139,146,255,0.22)" }}
+                        style={{ inset: "-8px", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 22%, transparent)" }}
                         initial={{ scale: 1.08 }}
                         animate={{ scale: [1.08, 1.28, 1.08] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -510,7 +510,7 @@ export default function AIReviewOverlay() {
                       <motion.div
                         key="ring-inner"
                         className="absolute inset-0 rounded-full pointer-events-none"
-                        style={{ background: "rgba(139,146,255,0.22)" }}
+                        style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 22%, transparent)" }}
                         initial={{ scale: 1.16 }}
                         animate={{ scale: [1.16, 1.28, 1.16] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -523,14 +523,14 @@ export default function AIReviewOverlay() {
                 className="absolute inset-0 rounded-full flex items-center justify-center z-10"
                 style={{
                   background: "var(--md-sys-color-neonindigo)",
-                  boxShadow: "0 4px 20px rgba(139,146,255,0.3)",
+                  boxShadow: "0 4px 20px color-mix(in srgb, var(--md-sys-color-neonindigo) 30%, transparent)",
                 }}
                 onPointerDown={startListening}
                 onPointerUp={stopListening}
                 onPointerLeave={() => { if (listening) stopListening(); }}
                 whileTap={{ scale: 0.93 }}
               >
-                <Icon name="mic" size={34} style={{ color: "#fff" }} />
+                <Icon name="mic" size={34} style={{ color: "var(--md-sys-color-text-inverse)" }} />
               </motion.button>
               </div>{/* end button wrapper */}
 
@@ -584,7 +584,7 @@ function SideButton({
         className="w-12 h-12 rounded-full flex items-center justify-center"
         style={{
           background: isPurple ? "var(--md-sys-color-alpha-neonindigo-10)" : "var(--md-sys-color-dark-secondary)",
-          border: isPurple ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.08)",
+          border: isPurple ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)",
         }}
       >
         <Icon name={icon} size={22} style={{ color: isPurple ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)" }} />

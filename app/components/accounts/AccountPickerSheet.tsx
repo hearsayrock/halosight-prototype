@@ -102,7 +102,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
       {/* Backdrop */}
       <motion.div
         className="absolute inset-0"
-        style={{ background: "rgba(0,0,0,0.55)", zIndex: 60 }}
+        style={{ background: "var(--md-sys-color-scrim)", zIndex: 60 }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -117,6 +117,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
           zIndex: 61,
           background: "var(--md-sys-color-dark-primary)",
           borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+          boxShadow: "var(--md-sys-shadow-sheet)",
           maxHeight: "72%",
           display: "flex",
           flexDirection: "column",

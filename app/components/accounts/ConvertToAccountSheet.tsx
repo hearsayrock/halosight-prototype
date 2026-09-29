@@ -67,7 +67,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
       {/* Backdrop — only dismissible on form step */}
       <motion.div
         className="absolute inset-0"
-        style={{ background: "rgba(0,0,0,0.6)" }}
+        style={{ background: "var(--md-sys-color-scrim)" }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -81,6 +81,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
         style={{
           background: "var(--md-sys-color-background)",
           borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+          boxShadow: "var(--md-sys-shadow-sheet)",
           maxHeight: "92%",
           overflowY: "auto",
         }}
@@ -128,10 +129,10 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                         background: sel ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
                       }}
                     >
-                      <span className="text-[13px] font-semibold leading-tight" style={{ color: "var(--md-sys-color-text-primary)" }}>
+                      <span className="text-[13px] font-semibold leading-tight" style={{ color: sel ? "var(--md-sys-color-text-inverse)" : "var(--md-sys-color-text-primary)" }}>
                         {t.label}
                       </span>
-                      <span className="text-[10px] mt-1" style={{ color: sel ? "rgba(255,255,255,0.6)" : "var(--md-sys-color-text-disabled)" }}>
+                      <span className="text-[10px] mt-1" style={{ color: sel ? "color-mix(in srgb, var(--md-sys-color-text-inverse) 60%, transparent)" : "var(--md-sys-color-text-disabled)" }}>
                         {t.sub}
                       </span>
                     </button>

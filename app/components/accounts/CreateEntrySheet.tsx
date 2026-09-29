@@ -83,9 +83,9 @@ function DuplicateCallout({
             onClick={() => onViewExisting(account)}
             className="w-full text-left flex items-center justify-between px-3 py-2.5 active:opacity-70 transition-opacity"
             style={{
-              background: "rgba(245, 166, 35, 0.08)",
+              background: "color-mix(in srgb, var(--md-sys-color-warning) 8%, transparent)",
               borderRadius: "var(--radius-sm)",
-              border: "1px solid rgba(245, 166, 35, 0.18)",
+              border: "1px solid color-mix(in srgb, var(--md-sys-color-warning) 18%, transparent)",
             }}
           >
             <div className="min-w-0">
@@ -211,7 +211,7 @@ export default function CreateEntrySheet({ initialType, initialName = "", onClos
           {/* Backdrop */}
           <motion.div
             className="absolute inset-0"
-            style={{ background: "rgba(0,0,0,0.6)" }}
+            style={{ background: "var(--md-sys-color-scrim)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -227,6 +227,7 @@ export default function CreateEntrySheet({ initialType, initialName = "", onClos
               transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
               background: "var(--md-sys-color-background)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+              boxShadow: "var(--md-sys-shadow-sheet)",
               maxHeight: "88%",
               overflowY: "auto",
             }}
@@ -257,7 +258,7 @@ export default function CreateEntrySheet({ initialType, initialName = "", onClos
                     height: 32,
                     borderRadius: "var(--radius-full)",
                     background: "var(--md-sys-color-dark-secondary)",
-                    border: "1px solid rgba(255,255,255,0.10)",
+                    border: "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 10%, transparent)",
                     flexShrink: 0,
                   }}
                 >
@@ -293,10 +294,10 @@ export default function CreateEntrySheet({ initialType, initialName = "", onClos
                       color: "var(--md-sys-color-text-primary)",
                       border: `1.5px solid ${
                         showDupeCallout
-                          ? "rgba(245, 166, 35, 0.45)"
+                          ? "color-mix(in srgb, var(--md-sys-color-warning) 45%, transparent)"
                           : focused
-                            ? "rgba(139,146,255,0.55)"
-                            : "rgba(255,255,255,0.08)"
+                            ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 55%, transparent)"
+                            : "color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)"
                       }`,
                       transition: "border-color 0.15s",
                       paddingRight: dupeState === "checking" ? 44 : undefined,
@@ -310,7 +311,7 @@ export default function CreateEntrySheet({ initialType, initialName = "", onClos
                         style={{
                           width: 16, height: 16,
                           borderRadius: "50%",
-                          border: "2px solid rgba(139,146,255,0.25)",
+                          border: "2px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 25%, transparent)",
                           borderTopColor: "var(--md-sys-color-neonindigo)",
                         }}
                       />
@@ -355,7 +356,7 @@ export default function CreateEntrySheet({ initialType, initialName = "", onClos
                   style={{
                     height: 52,
                     background: "var(--md-sys-color-neonindigo)",
-                    color: "var(--md-sys-color-text-primary)",
+                    color: "var(--md-sys-color-text-inverse)",
                     borderRadius: "var(--radius-full)",
                     opacity: name.trim() ? 1 : 0.4,
                   }}

@@ -85,7 +85,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
           {/* Backdrop */}
           <motion.div
             className="absolute inset-0"
-            style={{ background: "rgba(0,0,0,0.6)" }}
+            style={{ background: "var(--md-sys-color-scrim)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -101,6 +101,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
               background: "var(--md-sys-color-background)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+              boxShadow: "var(--md-sys-shadow-sheet)",
               maxHeight: "88%",
               overflowY: "auto",
             }}
@@ -146,7 +147,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                     background: "var(--md-sys-color-dark-secondary)",
                     borderRadius: "var(--radius-lg)",
                     color: "var(--md-sys-color-text-primary)",
-                    border: `1.5px solid ${focused ? "rgba(139,146,255,0.55)" : "rgba(255,255,255,0.08)"}`,
+                    border: `1.5px solid ${focused ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 55%, transparent)" : "color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)"}`,
                     transition: "border-color 0.15s",
                   }}
                 />
@@ -175,7 +176,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                 style={{
                   height: 52,
                   background: "var(--md-sys-color-neonindigo)",
-                  color: "var(--md-sys-color-text-primary)",
+                  color: "var(--md-sys-color-text-inverse)",
                   borderRadius: "var(--radius-full)",
                   opacity: name.trim() ? 1 : 0.4,
                 }}

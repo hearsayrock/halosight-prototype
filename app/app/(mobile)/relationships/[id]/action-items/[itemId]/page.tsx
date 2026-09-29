@@ -215,7 +215,7 @@ function ActionItemDetailPageContent({
 
         {/* Delete confirmation */}
         {showDelete && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center px-6" style={{ background: "rgba(0,0,0,0.6)" }}>
+          <div className="absolute inset-0 z-50 flex items-center justify-center px-6" style={{ background: "var(--md-sys-color-scrim)" }}>
             <div
               className="w-full p-6 flex flex-col gap-4"
               style={{
@@ -371,8 +371,8 @@ function ActionItemDetailPageContent({
               color: "var(--md-sys-color-text-inverse)",
             }}
           >
-            <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.2)" }}>
-              <Icon name="check" size={13} style={{ color: "#fff" }} />
+            <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "color-mix(in srgb, var(--md-sys-color-text-primary) 20%, transparent)" }}>
+              <Icon name="check" size={13} style={{ color: "var(--md-sys-color-text-inverse)" }} />
             </div>
             Mark as Complete
           </button>

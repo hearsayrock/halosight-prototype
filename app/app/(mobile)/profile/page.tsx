@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import ScrollAwareTopBar from "@/components/ui/ScrollAwareTopBar";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: () => void }) {
   const [note, setNote] = useState("");
@@ -40,7 +41,7 @@ function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: 
         <div className="absolute inset-0" style={{ pointerEvents: "auto" }}>
           <motion.div
             className="absolute inset-0"
-            style={{ background: "rgba(0,0,0,0.55)" }}
+            style={{ background: "var(--md-sys-color-scrim)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -53,6 +54,7 @@ function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: 
               transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
               background: "var(--md-sys-color-dark-primary)",
               borderRadius: "20px 20px 0 0",
+              boxShadow: "var(--md-sys-shadow-sheet)",
               padding: "22px 20px 32px",
               maxHeight: "85%",
               overflowY: "auto",
@@ -117,7 +119,7 @@ function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: 
                 height: 50,
                 borderRadius: "var(--radius-full)",
                 background: "var(--md-sys-color-error)",
-                color: "#fff",
+                color: "var(--md-sys-color-text-inverse)",
                 fontSize: 16,
                 fontWeight: 600,
                 marginBottom: 12,
@@ -154,7 +156,7 @@ function RequestSentSheet({ onClose }: { onClose: () => void }) {
         <div className="absolute inset-0" style={{ pointerEvents: "auto" }}>
           <motion.div
             className="absolute inset-0"
-            style={{ background: "rgba(0,0,0,0.55)" }}
+            style={{ background: "var(--md-sys-color-scrim)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -167,6 +169,7 @@ function RequestSentSheet({ onClose }: { onClose: () => void }) {
               transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
               background: "var(--md-sys-color-dark-primary)",
               borderRadius: "20px 20px 0 0",
+              boxShadow: "var(--md-sys-shadow-sheet)",
               padding: "36px 20px 44px",
             }}
             initial={{ y: "100%" }}
@@ -291,6 +294,7 @@ export default function ProfilePage() {
 
       {/* Menu items */}
       <div className="flex flex-col gap-2 px-4 mb-6">
+        <ThemeToggle />
         {MENU_ITEMS.map((item) => (
           <button
             key={item.label}

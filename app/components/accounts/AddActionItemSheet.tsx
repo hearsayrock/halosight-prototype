@@ -82,7 +82,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
       {/* Backdrop */}
       <motion.div
         className="absolute inset-0"
-        style={{ background: "rgba(0,0,0,0.6)" }}
+        style={{ background: "var(--md-sys-color-scrim)" }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -96,6 +96,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
         style={{
           background: "var(--md-sys-color-background)",
           borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+          boxShadow: "var(--md-sys-shadow-sheet)",
           maxHeight: "88%",
           overflowY: "auto",
         }}
@@ -163,7 +164,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
                           background: isSel ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
                         }}
                       >
-                        <span className="text-xs-bold" style={{ color: isSel ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)" }}>
+                        <span className="text-xs-bold" style={{ color: isSel ? "var(--md-sys-color-text-inverse)" : "var(--md-sys-color-text-muted)" }}>
                           {getDayLabel(date, today)}
                         </span>
                         <span className="text-lg-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>

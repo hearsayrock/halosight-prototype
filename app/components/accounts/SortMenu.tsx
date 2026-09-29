@@ -118,7 +118,7 @@ export default function SortMenu({ current, onChange, visitedFilter = "all", onV
                 transformOrigin: "top right",
                 background: "var(--md-sys-color-dark-tertiary)",
                 borderRadius: "var(--radius-xl)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
+                boxShadow: "0 8px 32px rgba(var(--md-sys-shadow-rgb), calc(0.6 * var(--md-sys-shadow-k))), 0 2px 8px rgba(var(--md-sys-shadow-rgb), calc(0.4 * var(--md-sys-shadow-k)))",
                 paddingTop: 16,
                 paddingBottom: 16,
                 paddingLeft: 20,
@@ -165,7 +165,7 @@ export default function SortMenu({ current, onChange, visitedFilter = "all", onV
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "8px 0" }}
+                style={{ height: 1, background: "color-mix(in srgb, var(--md-sys-color-text-primary) 7%, transparent)", margin: "8px 0" }}
               />
 
               {/* Visit date section label */}

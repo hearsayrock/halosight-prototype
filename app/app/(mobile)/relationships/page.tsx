@@ -174,7 +174,7 @@ function EngagementsDrawer({
             style={{
               position: "absolute",
               inset: 0,
-              background: "rgba(0,0,0,0.55)",
+              background: "var(--md-sys-color-scrim)",
               zIndex: 200,
               pointerEvents: "auto",
             }}
@@ -285,7 +285,7 @@ function TaskStrip({
         background: "var(--md-sys-color-dark-primary)",
         borderRadius: 16,
         overflow: "hidden",
-        border: "1px solid rgba(255,255,255,0.08)",
+        border: "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)",
       }}>
         <AnimatePresence mode="popLayout" initial={false}>
           {tasks.slice(0, 4).map((task, i) => {
@@ -304,7 +304,7 @@ function TaskStrip({
               >
                 {!isLast && (
                   <div className="absolute bottom-0 left-0 right-0"
-                    style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
+                    style={{ height: 1, background: "color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)" }} />
                 )}
                 {/* Check circle */}
                 <button
@@ -380,7 +380,7 @@ function DashboardGrid({
         style={{
           borderRadius: "var(--radius-xl)",
           background: "var(--md-sys-color-dark-primary)",
-          border: "1px solid rgba(139,146,255,0.2)",
+          border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)",
           padding: "18px 18px 16px",
         }}
       >
@@ -400,7 +400,7 @@ function DashboardGrid({
           style={{
             position: "absolute", top: -50, right: -50,
             width: 180, height: 180, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(139,146,255,0.16) 0%, transparent 65%)",
+            background: "radial-gradient(circle, color-mix(in srgb, var(--md-sys-color-neonindigo) 16%, transparent) 0%, transparent 65%)",
             pointerEvents: "none",
           }}
         />
@@ -459,10 +459,10 @@ function DashboardGrid({
             height: 44,
             background: "var(--md-sys-color-neonindigo)",
             borderRadius: "var(--radius-full)",
-            color: "var(--md-sys-color-text-primary)",
+            color: "var(--md-sys-color-text-inverse)",
           }}
         >
-          <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
+          <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-inverse)" }} />
           <span className="text-sm-bold">Log a Visit</span>
         </button>
 
@@ -482,7 +482,7 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
       <div className="flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity relative">
         {!isLast && (
           <div className="absolute bottom-0 left-0 right-0"
-            style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
+            style={{ height: 1, background: "color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)" }} />
         )}
         {/* Type icon — hidden for now, may restore later
         <div className="flex-shrink-0">
@@ -512,7 +512,7 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
           {hasTask && (
             <span
               className="flex items-center gap-1 px-1.5 rounded-full"
-              style={{ background: "rgba(139, 146, 255, 0.18)", height: 20 }}
+              style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 18%, transparent)", height: 20 }}
             >
               <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
                 <path
@@ -543,7 +543,7 @@ function CompactAccountRow({ account, isLast }: { account: Account; isLast: bool
 
 function SectionHeader({ label, count, onAdd, divider }: { label: string; count: number; onAdd?: () => void; divider?: boolean }) {
   if (divider) {
-    const line = { flex: 1, height: 1, background: "rgba(255,255,255,0.08)" } as const;
+    const line = { flex: 1, height: 1, background: "color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)" } as const;
     return (
       <div className="flex items-center gap-3 px-4 py-2">
         <div style={line} />
@@ -695,8 +695,6 @@ function CombinedPageContent() {
 
   const prioritiesScrollRef = useRef<HTMLDivElement>(null);
   const [priHasScrolled, setPriHasScrolled] = useState(false);
-  const [priScrollingUp, setPriScrollingUp] = useState(false);
-  const priLastScrollTopRef = useRef(0);
 
   useEffect(() => {
     if (mode !== "accounts") {
@@ -726,16 +724,12 @@ function CombinedPageContent() {
   useEffect(() => {
     if (mode !== "priorities") {
       setPriHasScrolled(false);
-      setPriScrollingUp(false);
-      priLastScrollTopRef.current = 0;
       return;
     }
     let el: HTMLDivElement | null = null;
     function onScroll() {
       const top = el!.scrollTop;
       setPriHasScrolled(top > 10);
-      setPriScrollingUp(top < priLastScrollTopRef.current);
-      priLastScrollTopRef.current = top;
     }
     const raf = requestAnimationFrame(() => {
       el = prioritiesScrollRef.current;
@@ -1118,9 +1112,9 @@ function CombinedPageContent() {
                 width: 36, height: 36,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 borderRadius: "50%",
-                background: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "rgba(20, 23, 38, 0.88)" : "transparent",
+                background: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "var(--md-sys-color-glass)" : "transparent",
                 backdropFilter: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "blur(16px) saturate(180%)" : undefined,
-                boxShadow: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
+                boxShadow: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "inset 0 0 0 1px var(--md-sys-color-glass-border)" : "none",
                 transition: "background 180ms ease",
                 pointerEvents: "auto",
               }}
@@ -1183,7 +1177,7 @@ function CombinedPageContent() {
                   style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-neonindigo)" }}
                 />
                 {showSystemSection && (
-                  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
                     ALL
                   </span>
                 )}
@@ -1203,9 +1197,9 @@ function CombinedPageContent() {
 
         {mode !== "accounts" && (
           <div style={{
-            opacity: mode === "priorities" && priHasScrolled && !priScrollingUp ? 0 : 1,
-            transform: mode === "priorities" && priHasScrolled && !priScrollingUp ? "translateY(-8px) scale(0.88)" : "translateY(0) scale(1)",
-            pointerEvents: mode === "priorities" && priHasScrolled && !priScrollingUp ? "none" : "auto",
+            opacity: mode === "priorities" && priHasScrolled ? 0 : 1,
+            transform: mode === "priorities" && priHasScrolled ? "translateY(-8px) scale(0.88)" : "translateY(0) scale(1)",
+            pointerEvents: mode === "priorities" && priHasScrolled ? "none" : "auto",
             transition: "opacity 200ms cubic-bezier(0.32, 0.72, 0, 1), transform 200ms cubic-bezier(0.32, 0.72, 0, 1)",
             transformOrigin: "top right",
           }}>
@@ -1258,7 +1252,7 @@ function CombinedPageContent() {
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
-                    <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
+                    <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)" }}>
                       {topAccounts.map((account, i) => (
                         <CompactAccountRow key={account.id} account={account} isLast={i === topAccounts.length - 1} />
                       ))}
@@ -1307,8 +1301,8 @@ function CombinedPageContent() {
                   style={{
                     height: 32,
                     borderRadius: "var(--radius-full)",
-                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
-                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+                    background: active ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" : "var(--md-sys-color-dark-secondary)",
+                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 10%, transparent)",
                   }}
                 >
                   <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
@@ -1330,8 +1324,8 @@ function CombinedPageContent() {
                   style={{
                     height: 32,
                     borderRadius: "var(--radius-full)",
-                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
-                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+                    background: active ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" : "var(--md-sys-color-dark-secondary)",
+                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 10%, transparent)",
                   }}
                 >
                   <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
@@ -1349,8 +1343,8 @@ function CombinedPageContent() {
               style={{
                 height: 32,
                 borderRadius: "var(--radius-full)",
-                background: withinFiveMi ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
-                border: withinFiveMi ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+                background: withinFiveMi ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" : "var(--md-sys-color-dark-secondary)",
+                border: withinFiveMi ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 10%, transparent)",
               }}
             >
               <Icon name="near_me" size={13} style={{ color: withinFiveMi ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
@@ -1383,7 +1377,7 @@ function CombinedPageContent() {
                 <div className="mx-4 mt-2 rounded-2xl flex flex-col items-center gap-4 px-5 py-6"
                   style={{ background: "var(--md-sys-color-dark-secondary)" }}>
                   <div className="w-11 h-11 rounded-full flex items-center justify-center"
-                    style={{ background: "rgba(139,146,255,0.12)" }}>
+                    style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)" }}>
                     <Icon name="search_off" size={22} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   </div>
                   <div className="text-center">
@@ -1408,7 +1402,7 @@ function CombinedPageContent() {
                       <SectionHeader label="Company-Wide Results" count={systemResults.length} divider />
                       {systemResults.length > 0 ? (
                         <div className="flex flex-col mx-4 rounded-2xl overflow-hidden"
-                          style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                          style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)" }}>
                           {systemResults.map((account, i) => (
                             <SystemAccountListItem
                               key={account.id}
@@ -1449,10 +1443,10 @@ function CombinedPageContent() {
                   paddingTop: 90,
                   background: priHasScrolled ? "transparent" : "var(--md-sys-color-background)",
                   transition: "background 220ms ease",
-                  opacity: priHasScrolled && !priScrollingUp ? 0 : 1,
-                  transform: priHasScrolled && !priScrollingUp ? "translateY(-14px) scale(0.95)" : "translateY(0) scale(1)",
+                  opacity: priHasScrolled ? 0 : 1,
+                  transform: priHasScrolled ? "translateY(-14px) scale(0.95)" : "translateY(0) scale(1)",
                   transformOrigin: "top center",
-                  pointerEvents: priHasScrolled && !priScrollingUp ? "none" : "auto",
+                  pointerEvents: priHasScrolled ? "none" : "auto",
                   transitionProperty: "opacity, transform, background",
                   transitionDuration: "200ms, 200ms, 220ms",
                   transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1), cubic-bezier(0.32, 0.72, 0, 1), ease",
@@ -1553,7 +1547,7 @@ function CombinedPageContent() {
                             >
                               {i < group.items.length - 1 && (
                                 <div className="absolute bottom-0 left-3 right-3"
-                                  style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
+                                  style={{ height: 1, background: "color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)" }} />
                               )}
                               {/* Check circle */}
                               <div className="py-3.5">
@@ -1650,7 +1644,7 @@ function CombinedPageContent() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.18 }}
                   onClick={() => setFabOpen(false)}
-                  style={{ position: "absolute", inset: 0, zIndex: 9, background: "rgba(0,0,0,0.45)" }}
+                  style={{ position: "absolute", inset: 0, zIndex: 9, background: "var(--md-sys-color-scrim)" }}
                 />
               )}
             </AnimatePresence>
@@ -1676,7 +1670,7 @@ function CombinedPageContent() {
                           width: 46, height: 46, borderRadius: "50%",
                           background: "var(--md-sys-color-dark-secondary)",
                           border: "1px solid var(--md-sys-color-dark-tertiary)",
-                          boxShadow: "0 4px 16px rgba(0,0,0,0.55)",
+                          boxShadow: "0 4px 16px rgba(var(--md-sys-shadow-rgb), calc(0.55 * var(--md-sys-shadow-k)))",
                         }}
                       >
                         <CompanyIcon size={20} style={{ color: "var(--md-sys-color-brand-teal)" }} />
@@ -1699,7 +1693,7 @@ function CombinedPageContent() {
                           width: 46, height: 46, borderRadius: "50%",
                           background: "var(--md-sys-color-dark-secondary)",
                           border: "1px solid var(--md-sys-color-dark-tertiary)",
-                          boxShadow: "0 4px 16px rgba(0,0,0,0.55)",
+                          boxShadow: "0 4px 16px rgba(var(--md-sys-shadow-rgb), calc(0.55 * var(--md-sys-shadow-k)))",
                         }}
                       >
                         <Icon name="person_add" size={20} style={{ color: "var(--md-sys-color-warning-light)" }} />
@@ -1718,7 +1712,7 @@ function CombinedPageContent() {
                   height: 52,
                   borderRadius: "50%",
                   background: "var(--md-sys-color-neonindigo)",
-                  boxShadow: "0 4px 18px rgba(0,0,0,0.55)",
+                  boxShadow: "0 4px 18px rgba(var(--md-sys-shadow-rgb), calc(0.55 * var(--md-sys-shadow-k)))",
                 }}
                 animate={{ rotate: fabOpen ? 45 : 0 }}
                 transition={{ type: "spring", stiffness: 380, damping: 28 }}
@@ -1803,7 +1797,7 @@ function CombinedPageContent() {
               bottom: 40,
               background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+              boxShadow: "0 8px 32px rgba(var(--md-sys-shadow-rgb), calc(0.5 * var(--md-sys-shadow-k)))",
               border: "1px solid color-mix(in srgb, var(--md-sys-color-success) 25%, transparent)",
               zIndex: 50,
             }}

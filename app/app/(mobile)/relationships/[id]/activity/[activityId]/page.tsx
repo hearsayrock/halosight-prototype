@@ -48,8 +48,8 @@ interface Contact {
 
 const DEMO_PARTICIPANTS: Participant[] = [
   { id: "you",  initials: "You", name: "You",          color: null,      isYou: true },
-  { id: "p-rn", initials: "RN",  name: "Ray Navarro",  color: "#92C569", contactId: "c-rn", contactTitle: "Fleet Manager",    contactCompany: "Desert Star Auto" },
-  { id: "p-tm", initials: "TM",  name: "Terry Mills",  color: "#B594FF", contactId: "c-tm", contactTitle: "Service Director", contactCompany: "Desert Star Auto" },
+  { id: "p-rn", initials: "RN",  name: "Ray Navarro",  color: "var(--md-sys-color-lime-chalk)", contactId: "c-rn", contactTitle: "Fleet Manager",    contactCompany: "Desert Star Auto" },
+  { id: "p-tm", initials: "TM",  name: "Terry Mills",  color: "var(--md-sys-color-ultraviolet-light)", contactId: "c-tm", contactTitle: "Service Director", contactCompany: "Desert Star Auto" },
 ];
 
 const DEMO_CONTACTS: Contact[] = [
@@ -222,7 +222,7 @@ function ParticipantAvatar({ participant, size = 36 }: { participant: Participan
         fontFamily: "Barlow, sans-serif",
         fontSize,
         fontWeight: 700,
-        color: participant.isYou ? "var(--md-sys-color-text-muted)" : "#fff",
+        color: participant.isYou ? "var(--md-sys-color-text-muted)" : "var(--md-sys-color-text-inverse)",
         lineHeight: 1,
         userSelect: "none",
       }}>
@@ -281,7 +281,7 @@ function ParticipantsDrawer({
       <div
         onClick={close}
         style={{
-          position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 40,
+          position: "absolute", inset: 0, background: "var(--md-sys-color-scrim)", zIndex: 40,
           opacity: visible ? 1 : 0,
           transition: `opacity ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
         }}
@@ -290,6 +290,7 @@ function ParticipantsDrawer({
         position: "absolute", bottom: 0, left: 0, right: 0,
         background: "var(--md-sys-color-dark-secondary)",
         borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+        boxShadow: "var(--md-sys-shadow-sheet)",
         zIndex: 41,
         maxHeight: "80%",
         display: "flex", flexDirection: "column",
@@ -503,7 +504,7 @@ function SpeakerDrawer({
       <div
         onClick={close}
         style={{
-          position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 40,
+          position: "absolute", inset: 0, background: "var(--md-sys-color-scrim)", zIndex: 40,
           opacity: visible ? 1 : 0,
           transition: `opacity ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
         }}
@@ -512,6 +513,7 @@ function SpeakerDrawer({
         position: "absolute", bottom: 0, left: 0, right: 0,
         background: "var(--md-sys-color-dark-secondary)",
         borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+        boxShadow: "var(--md-sys-shadow-sheet)",
         zIndex: 41,
         maxHeight: "85%",
         display: "flex", flexDirection: "column",
@@ -591,8 +593,8 @@ function SpeakerDrawer({
                       display: "flex", alignItems: "center", gap: 6,
                       fontFamily: "Barlow, sans-serif", fontSize: 14, fontWeight: 500,
                       color: op.color ?? "var(--md-sys-color-text-primary)",
-                      background: `color-mix(in srgb, ${op.color ?? "#fff"} 12%, transparent)`,
-                      border: `1px solid color-mix(in srgb, ${op.color ?? "#fff"} 28%, transparent)`,
+                      background: `color-mix(in srgb, ${op.color ?? "var(--md-sys-color-text-primary)"} 12%, transparent)`,
+                      border: `1px solid color-mix(in srgb, ${op.color ?? "var(--md-sys-color-text-primary)"} 28%, transparent)`,
                       borderRadius: "var(--radius-full)",
                       padding: "6px 14px", cursor: "pointer",
                     }}
@@ -834,7 +836,7 @@ function InteractionDetailPageContent({
   function handleAddParticipant() {
     const nonYou = participants.filter(p => !p.isYou);
     const n = nonYou.length + 1;
-    const speakerColors = ["#E8855A", "#6BB8E8", "#E8C55A", "#5AE8A0", "#E85AA0"];
+    const speakerColors = ["var(--md-sys-color-brand-coral)", "var(--md-sys-color-info)", "var(--md-sys-color-warning)", "var(--md-sys-color-lime-chalk)", "var(--md-sys-color-brand-pink)"];
     setParticipants(prev => [...prev, {
       id: `p-new-${Date.now()}`,
       initials: `S${n}`,
@@ -902,9 +904,9 @@ function InteractionDetailPageContent({
     borderRadius: "50%",
     border: "none",
     cursor: "pointer",
-    background: hasScrolled ? "rgba(20, 23, 38, 0.88)" : "transparent",
+    background: hasScrolled ? "var(--md-sys-color-glass)" : "transparent",
     backdropFilter: hasScrolled ? "blur(16px) saturate(180%)" : undefined,
-    boxShadow: hasScrolled ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
+    boxShadow: hasScrolled ? "inset 0 0 0 1px var(--md-sys-color-glass-border)" : "none",
     transition: "background 180ms ease",
     opacity: visible ? 1 : 0,
     pointerEvents: visible ? "auto" : "none",
@@ -983,7 +985,7 @@ function InteractionDetailPageContent({
                   background: "var(--md-sys-color-dark-primary)",
                   borderRadius: "var(--radius-md)",
                   border: "1px solid var(--md-sys-color-alpha-white-10)",
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
+                  boxShadow: "0 8px 32px rgba(var(--md-sys-shadow-rgb), calc(0.6 * var(--md-sys-shadow-k))), 0 2px 8px rgba(var(--md-sys-shadow-rgb), calc(0.4 * var(--md-sys-shadow-k)))",
                   overflow: "hidden",
                 }}>
                   {(["inperson", "phone"] as const).map((type) => {
@@ -1042,7 +1044,7 @@ function InteractionDetailPageContent({
                     <span style={{
                       fontFamily: "Barlow, sans-serif",
                       fontSize: p.isYou ? 9 : 10, fontWeight: 700,
-                      color: p.isYou ? "var(--md-sys-color-text-muted)" : "#fff",
+                      color: p.isYou ? "var(--md-sys-color-text-muted)" : "var(--md-sys-color-text-inverse)",
                       lineHeight: 1, userSelect: "none",
                     }}>
                       {p.initials}
@@ -1179,7 +1181,7 @@ function InteractionDetailPageContent({
                         transition: "all 180ms ease",
                       }}
                     >
-                      {isPending && <Icon name="check" size={12} style={{ color: "#fff" }} />}
+                      {isPending && <Icon name="check" size={12} style={{ color: "var(--md-sys-color-text-inverse)" }} />}
                     </button>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{

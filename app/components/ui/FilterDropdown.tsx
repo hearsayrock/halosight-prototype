@@ -81,7 +81,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
           gap: isFiltered ? 4 : 2,
           background: open ? "var(--md-sys-color-neonindigo)" : isFiltered ? "var(--md-sys-color-dark-secondary)" : "var(--md-sys-color-dark-secondary)",
           borderRadius: "var(--radius-full)",
-          color: open ? "#fff" : "var(--md-sys-color-text-primary)",
+          color: open ? "var(--md-sys-color-text-inverse)" : "var(--md-sys-color-text-primary)",
         }}
       >
         {isFiltered && !open && (
@@ -99,7 +99,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
         <Icon
           name={open ? "keyboard_arrow_up" : "keyboard_arrow_down"}
           size={18}
-          style={{ color: open ? "rgba(255,255,255,0.7)" : "var(--md-sys-color-text-muted)" }}
+          style={{ color: open ? "color-mix(in srgb, var(--md-sys-color-text-inverse) 70%, transparent)" : "var(--md-sys-color-text-muted)" }}
         />
       </button>
 
@@ -121,7 +121,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
                 transformOrigin: "top left",
                 background: "var(--md-sys-color-dark-tertiary)",
                 borderRadius: "var(--radius-xl)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
+                boxShadow: "0 8px 32px rgba(var(--md-sys-shadow-rgb), calc(0.6 * var(--md-sys-shadow-k))), 0 2px 8px rgba(var(--md-sys-shadow-rgb), calc(0.4 * var(--md-sys-shadow-k)))",
                 paddingTop: 8,
                 paddingBottom: 8,
                 minWidth: 148,

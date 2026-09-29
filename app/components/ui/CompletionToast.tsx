@@ -61,7 +61,7 @@ export default function CompletionToast({
               background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl)",
               border: "1px solid var(--md-sys-color-dark-tertiary)",
-              boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.3)",
+              boxShadow: "0 12px 40px rgba(var(--md-sys-shadow-rgb), calc(0.55 * var(--md-sys-shadow-k))), 0 4px 12px rgba(var(--md-sys-shadow-rgb), calc(0.3 * var(--md-sys-shadow-k)))",
               padding: "12px 16px",
             }}
           >

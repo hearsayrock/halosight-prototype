@@ -56,7 +56,7 @@ export default function BottomNav() {
           backdropFilter: "blur(20px) saturate(180%)",
           WebkitBackdropFilter: "blur(20px) saturate(180%)",
           border: "1px solid var(--md-sys-color-alpha-white-10)",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2)",
+          boxShadow: "0 8px 32px rgba(var(--md-sys-shadow-rgb), calc(0.35 * var(--md-sys-shadow-k))), 0 2px 8px rgba(var(--md-sys-shadow-rgb), calc(0.2 * var(--md-sys-shadow-k)))",
         }}
       >
         {/* Active pill — slides between halves, 6px inset top/bottom/outer-edge */}

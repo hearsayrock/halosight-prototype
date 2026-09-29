@@ -65,7 +65,7 @@ function TaskIndicator({ count }: { count: number }) {
     <span
       className="flex items-center gap-1 px-1.5 rounded-full"
       style={{
-        background: "rgba(139, 146, 255, 0.18)",
+        background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 18%, transparent)",
         height: 20,
       }}
     >
@@ -118,7 +118,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
         className="flex items-start gap-3 px-4 py-3.5 active:opacity-70 transition-opacity relative"
       >
         {/* Separator — inset 12px each side, hidden on last item */}
-        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />}
+        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)" }} />}
 
         {/* Type icon — hidden for now, may restore later
         <div className="flex-shrink-0 mt-[4px]">
@@ -190,7 +190,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
           {showAttention && (
             <span
               className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
-              style={{ background: "rgba(245,166,35,0.15)", color: "var(--md-sys-color-warning)", border: "1px solid rgba(245,166,35,0.3)" }}
+              style={{ background: "color-mix(in srgb, var(--md-sys-color-warning) 15%, transparent)", color: "var(--md-sys-color-warning)", border: "1px solid color-mix(in srgb, var(--md-sys-color-warning) 30%, transparent)" }}
             >
               Needs Info
             </span>

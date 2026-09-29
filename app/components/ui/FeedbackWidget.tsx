@@ -66,7 +66,7 @@ function FeedbackSheet({
           {/* Backdrop */}
           <motion.div
             className="absolute inset-0"
-            style={{ background: "rgba(0,0,0,0.6)" }}
+            style={{ background: "var(--md-sys-color-scrim)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -82,6 +82,7 @@ function FeedbackSheet({
               transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
               background: "var(--md-sys-color-background)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+              boxShadow: "var(--md-sys-shadow-sheet)",
               maxHeight: "90%",
               overflowY: "auto",
             }}
@@ -129,7 +130,7 @@ function FeedbackSheet({
                       style={{
                         borderRadius: "var(--radius-full)",
                         border: `1.5px solid ${active ? "transparent" : "var(--md-sys-color-dark-tertiary)"}`,
-                        background: active ? "rgba(139,146,255,0.18)" : "transparent",
+                        background: active ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 18%, transparent)" : "transparent",
                         color: active ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)",
                         fontSize: 14,
                         fontWeight: active ? 600 : 500,
@@ -216,7 +217,7 @@ export default function FeedbackWidget() {
           background: "var(--md-sys-color-dark-primary)",
           borderRadius: "var(--radius-xl)",
           padding: "18px 18px 16px",
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 8%, transparent)",
         }}
       >
         {/* Eyebrow */}

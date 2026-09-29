@@ -144,7 +144,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
               <div className="flex items-start gap-2.5">
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid rgba(139,146,255,0.2)" }}
+                  style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)" }}
                 >
                   <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                 </div>
@@ -185,7 +185,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-start gap-2.5">
                   <div
                     className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid rgba(139,146,255,0.2)" }}
+                    style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)" }}
                   >
                     <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   </div>
@@ -202,7 +202,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
 
       {/* Footer — position absolute so it doesn't scroll */}
       {hasReview && (
-        <div className="px-4 pb-8 pt-2" style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "var(--md-sys-color-background)", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="px-4 pb-8 pt-2" style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "var(--md-sys-color-background)", borderTop: "1px solid color-mix(in srgb, var(--md-sys-color-text-primary) 5%, transparent)" }}>
           <button
             className="w-full flex items-center justify-center gap-2 h-11 mb-3 font-semibold text-[14px] active:opacity-70 transition-opacity"
             style={{
@@ -281,7 +281,7 @@ function SuggestionRow({ suggestion: s, onToggle }: { suggestion: Suggestion; on
       <div
         className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl transition-colors"
         style={{
-          background: s.selected ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 10%, transparent)" : isUnknown ? "transparent" : "rgba(255,255,255,0.03)",
+          background: s.selected ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 10%, transparent)" : isUnknown ? "transparent" : "color-mix(in srgb, var(--md-sys-color-text-primary) 3%, transparent)",
           border: s.selected ? "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)" : "1px solid transparent",
         }}
       >
@@ -321,7 +321,7 @@ function SuggestionRow({ suggestion: s, onToggle }: { suggestion: Suggestion; on
 function AIMessage({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-2.5">
-      <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid rgba(139,146,255,0.2)" }}>
+      <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)" }}>
         <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
       </div>
       <div className="max-w-[82%] px-3.5 py-2.5 rounded-2xl rounded-tl-sm" style={{ background: "var(--md-sys-color-dark-secondary)" }}>
@@ -336,7 +336,7 @@ function AIMessage({ text }: { text: string }) {
 function RepMessage({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[78%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm" style={{ background: "rgba(139,146,255,0.12)", border: "1px solid rgba(139,146,255,0.15)" }}>
+      <div className="max-w-[78%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm" style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}>
         <p className="text-[13px] leading-relaxed" style={{ color: "var(--md-sys-color-text-primary)" }}>{text}</p>
       </div>
     </div>

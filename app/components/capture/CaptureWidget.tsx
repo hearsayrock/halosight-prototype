@@ -193,7 +193,7 @@ export default function CaptureWidget() {
                     className="flex items-center gap-3 px-4 pt-4 pb-7"
                   >
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className="w-2 h-2 rounded-full" style={{ background: "#ff4444" }} />
+                      <span className="w-2 h-2 rounded-full" style={{ background: "var(--md-sys-color-recording)" }} />
                       <span
                         className="text-sm-bold tabular-nums"
                         style={{ color: "var(--md-sys-color-text-primary)", minWidth: 44 }}
@@ -219,8 +219,8 @@ export default function CaptureWidget() {
                       onClick={callInterrupted ? undefined : finishCapture}
                       className="flex-shrink-0 h-9 px-4 text-sm-bold rounded-full transition-opacity"
                       style={{
-                        background: callInterrupted ? "rgba(255,255,255,0.12)" : "var(--md-sys-color-neonindigo)",
-                        color: callInterrupted ? "rgba(255,255,255,0.4)" : "var(--md-sys-color-text-inverse)",
+                        background: callInterrupted ? "color-mix(in srgb, var(--md-sys-color-text-primary) 12%, transparent)" : "var(--md-sys-color-neonindigo)",
+                        color: callInterrupted ? "color-mix(in srgb, var(--md-sys-color-text-primary) 40%, transparent)" : "var(--md-sys-color-text-inverse)",
                         cursor: callInterrupted ? "default" : undefined,
                       }}
                     >
@@ -287,7 +287,7 @@ export default function CaptureWidget() {
                         transition={{ duration: 0.2 }}
                         onClick={handleViewNote}
                         className="flex-shrink-0 h-8 px-4 text-sm-bold rounded-full active:opacity-70 transition-opacity"
-                        style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-primary)" }}
+                        style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-inverse)" }}
                       >
                         View Note
                       </motion.button>

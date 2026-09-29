@@ -57,7 +57,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
               position: "absolute",
               inset: 0,
               zIndex: 70,
-              background: "rgba(0,0,0,0.48)",
+              background: "var(--md-sys-color-scrim)",
               pointerEvents: "auto",
             }}
           />
@@ -78,6 +78,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
               pointerEvents: "auto",
               background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+              boxShadow: "var(--md-sys-shadow-sheet)",
               padding: "20px 16px 36px",
             }}
           >

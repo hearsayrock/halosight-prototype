@@ -43,7 +43,7 @@ export default function ActionItemCard({ item, onComplete, pending = false }: Pr
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); onComplete?.(); }}
         aria-label="Complete item"
       >
-        {pending && <Icon name="check" size={12} style={{ color: "#fff" }} />}
+        {pending && <Icon name="check" size={12} style={{ color: "var(--md-sys-color-text-inverse)" }} />}
       </button>
 
       {/* Content */}

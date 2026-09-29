@@ -65,7 +65,7 @@ export default function FilterSheet<T extends string>({
               position: "absolute",
               inset: 0,
               zIndex: 70,
-              background: "rgba(0,0,0,0.52)",
+              background: "var(--md-sys-color-scrim)",
               pointerEvents: "auto",
             }}
           />
@@ -86,12 +86,13 @@ export default function FilterSheet<T extends string>({
               pointerEvents: "auto",
               background: "var(--md-sys-color-dark-secondary)",
               borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
+              boxShadow: "var(--md-sys-shadow-sheet)",
               paddingBottom: 36,
             }}
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3 pb-1">
-              <div style={{ width: 36, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.18)" }} />
+              <div style={{ width: 36, height: 4, borderRadius: 2, background: "color-mix(in srgb, var(--md-sys-color-text-primary) 18%, transparent)" }} />
             </div>
 
             {/* Section label */}
@@ -121,7 +122,7 @@ export default function FilterSheet<T extends string>({
                     {!isLast && (
                       <div
                         className="absolute bottom-0 left-5 right-5"
-                        style={{ height: 1, background: "rgba(255,255,255,0.07)" }}
+                        style={{ height: 1, background: "color-mix(in srgb, var(--md-sys-color-text-primary) 7%, transparent)" }}
                       />
                     )}
                     <span
