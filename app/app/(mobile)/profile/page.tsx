@@ -258,7 +258,7 @@ export default function ProfilePage() {
         rightSlot={
           <button
             className="text-sm-bold active:opacity-60 transition-opacity"
-            style={{ color: "var(--md-sys-color-brand-plum)" }}
+            style={{ color: "var(--md-sys-color-brand-coral)" }}
           >
             Log Out
           </button>

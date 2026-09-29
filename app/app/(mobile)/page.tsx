@@ -73,8 +73,8 @@ export default function LoginPage() {
           <button
             className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-neonindigo)",
-              color: "var(--md-sys-color-text-primary)",
+              background: "var(--md-sys-color-surface-white)",
+              color: "var(--md-sys-color-text-inverse)",
               borderRadius: "var(--radius-xl)",
             }}
           >

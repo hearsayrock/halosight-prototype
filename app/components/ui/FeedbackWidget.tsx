@@ -155,7 +155,7 @@ function FeedbackSheet({
                   borderRadius: "var(--radius-md)",
                   padding: "14px 16px",
                   color: "var(--md-sys-color-text-primary)",
-                  caretColor: "var(--md-sys-color-neonindigo)",
+                  caretColor: "var(--md-sys-color-brand-coral)",
                   border: "none",
                   marginBottom: 16,
                   display: "block",
