@@ -12,7 +12,7 @@
  *
  * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-text-primary,
  *         --md-sys-color-text-muted, --md-sys-color-text-disabled, --md-sys-color-neonindigo,
- *         --md-sys-color-semantic-success, --radius-lg, --radius-full
+ *         --md-sys-color-success, --radius-lg, --radius-full
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -172,7 +172,7 @@ function FieldCard({ field, onSave }: FieldCardProps) {
   const bg = isConfirmed && !focused ? "color-mix(in srgb, var(--md-sys-color-success) 5%, transparent)" : "var(--md-sys-color-dark-secondary)";
 
   const idleValueColor = isConfirmed
-    ? "var(--md-sys-color-text-primary)"
+    ? "var(--md-sys-color-lime-chalk)"
     : isHigh
     ? "var(--md-sys-color-neonindigo)"
     : "var(--md-sys-color-text-muted)";
@@ -202,7 +202,7 @@ function FieldCard({ field, onSave }: FieldCardProps) {
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>{field.label}</span>
             {isHigh && !focused && <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />}
-            {isConfirmed && !focused && <span className="text-[15px] font-bold" style={{ color: "var(--md-sys-color-semantic-success)" }}>✓</span>}
+            {isConfirmed && !focused && <span className="text-[15px] font-bold" style={{ color: "var(--md-sys-color-success)" }}>✓</span>}
           </div>
           <input
             ref={inputRef}
@@ -249,7 +249,7 @@ function FieldCard({ field, onSave }: FieldCardProps) {
                 </motion.span>
               )}
               {!focused && isConfirmed && (
-                <motion.span key="check" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }} className="text-[15px] font-bold flex-shrink-0" style={{ color: "var(--md-sys-color-semantic-success)" }}>
+                <motion.span key="check" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }} className="text-[15px] font-bold flex-shrink-0" style={{ color: "var(--md-sys-color-success)" }}>
                   ✓
                 </motion.span>
               )}

@@ -1646,7 +1646,7 @@ function CombinedPageContent() {
               className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
               style={{ background: "color-mix(in srgb, var(--md-sys-color-success) 15%, transparent)" }}
             >
-              <Icon name="check" size={15} style={{ color: "var(--md-sys-color-semantic-success)" }} />
+              <Icon name="check" size={15} style={{ color: "var(--md-sys-color-success)" }} />
             </div>
             <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
               {successToast}

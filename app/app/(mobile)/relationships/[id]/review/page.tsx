@@ -94,8 +94,8 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
           transition={{ type: "spring", stiffness: 280, damping: 20 }}
           className="flex flex-col items-center gap-4"
         >
-          <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)" }}>
-            <Icon name="cloud_done" fill size={34} style={{ color: "var(--md-sys-color-brand-teal)" }} />
+          <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "var(--md-sys-color-alpha-lime-chalk-12)" }}>
+            <Icon name="cloud_done" fill size={34} style={{ color: "var(--md-sys-color-lime-chalk)" }} />
           </div>
           <p className="text-[15px] font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
             Synced to Salesforce
@@ -286,7 +286,7 @@ function SuggestionRow({ suggestion: s, onToggle }: { suggestion: Suggestion; on
         }}
       >
         <div className="flex-shrink-0 mt-0.5">
-          {isHigh && <Icon name="check_circle" fill size={16} style={{ color: s.selected ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-text-disabled)" }} />}
+          {isHigh && <Icon name="check_circle" fill size={16} style={{ color: s.selected ? "var(--md-sys-color-lime-chalk)" : "var(--md-sys-color-text-disabled)" }} />}
           {s.confidence === "medium" && <Icon name="warning" fill size={16} style={{ color: s.selected ? "var(--md-sys-color-warning)" : "var(--md-sys-color-text-disabled)" }} />}
           {isUnknown && <Icon name="help" fill size={16} style={{ color: "var(--md-sys-color-text-disabled)", opacity: 0.5 }} />}
         </div>
@@ -306,8 +306,8 @@ function SuggestionRow({ suggestion: s, onToggle }: { suggestion: Suggestion; on
           <div
             className="flex-shrink-0 w-4 h-4 rounded-full border mt-0.5 flex items-center justify-center"
             style={{
-              borderColor: s.selected ? (isHigh ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-warning)") : "var(--md-sys-color-text-disabled)",
-              background: s.selected ? (isHigh ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-warning)") : "transparent",
+              borderColor: s.selected ? (isHigh ? "var(--md-sys-color-lime-chalk)" : "var(--md-sys-color-warning)") : "var(--md-sys-color-text-disabled)",
+              background: s.selected ? (isHigh ? "var(--md-sys-color-lime-chalk)" : "var(--md-sys-color-warning)") : "transparent",
             }}
           >
             {s.selected && <Icon name="check" size={10} style={{ color: "var(--md-sys-color-text-inverse)" }} />}

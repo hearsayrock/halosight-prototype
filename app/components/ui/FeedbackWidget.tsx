@@ -177,7 +177,7 @@ function FeedbackSheet({
                       ? "var(--md-sys-color-brand-teal)"
                       : "var(--md-sys-color-dark-secondary)",
                   color: sent
-                    ? "var(--md-sys-color-semantic-success)"
+                    ? "var(--md-sys-color-success)"
                     : text.trim()
                       ? "var(--md-sys-color-text-primary)"
                       : "var(--md-sys-color-text-disabled)",
