@@ -831,7 +831,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
         {/* Activity */}
         {!effectiveJustCreated && activeTab === "activity" && (
-          <div className="flex flex-col gap-3 px-4 pb-24">
+          <div className="flex flex-col gap-3 px-4 pb-24" style={{ paddingTop: 16 }}>
             {noteState === "processing" && <PreparingNoteCard />}
             {(detail?.recentActivity?.length || captureJustCompleted) ? (
               (detail?.recentActivity ?? [{ id: "new-capture", accountId: "new-capture", title: "Sandra confirmed we're the frontrunner for the contract", summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.", date: new Date(), durationMinutes: 28, hasTranscript: true, repName: "Jordan Mills", type: "visit" as const }]).map((item) => (
