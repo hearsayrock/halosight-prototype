@@ -3,8 +3,10 @@ import PageTransition from "@/components/layout/PageTransition";
 import StaticBottomNav from "@/components/layout/StaticBottomNav";
 import { ActionItemsProvider } from "@/lib/context/ActionItemsContext";
 import { CaptureProvider } from "@/lib/context/CaptureContext";
+import { FakeCallProvider } from "@/lib/context/FakeCallContext";
 import { AccountStateProvider } from "@/lib/context/AccountStateContext";
 import CaptureWidget from "@/components/capture/CaptureWidget";
+import FakeCallOverlay from "@/components/capture/FakeCallOverlay";
 import DemoReset from "@/components/layout/DemoReset";
 
 /**
@@ -20,12 +22,15 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
     <AccountStateProvider>
       <ActionItemsProvider>
         <CaptureProvider>
-          <PhoneFrame>
-            <PageTransition>{children}</PageTransition>
-            <StaticBottomNav />
-            <CaptureWidget />
-            <DemoReset />
-          </PhoneFrame>
+          <FakeCallProvider>
+            <PhoneFrame>
+              <PageTransition>{children}</PageTransition>
+              <StaticBottomNav />
+              <CaptureWidget />
+              <FakeCallOverlay />
+              <DemoReset />
+            </PhoneFrame>
+          </FakeCallProvider>
         </CaptureProvider>
       </ActionItemsProvider>
     </AccountStateProvider>

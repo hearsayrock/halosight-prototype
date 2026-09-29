@@ -16,7 +16,8 @@ interface CaptureContextValue {
   accountId: string | null;
   accountName: string | null;
   canSwitchAccount: boolean;
-  startCapture: (accountId: string, accountName: string, allowSwitch?: boolean) => void;
+  isProspect: boolean;
+  startCapture: (accountId: string, accountName: string, allowSwitch?: boolean, isProspect?: boolean) => void;
   switchAccount: (accountId: string, accountName: string) => void;
   finishCapture: () => void;
   reviewCapture: () => void;
@@ -31,11 +32,13 @@ export function CaptureProvider({ children }: { children: React.ReactNode }) {
   const [accountId, setAccountId]        = useState<string | null>(null);
   const [accountName, setAccountName]    = useState<string | null>(null);
   const [canSwitchAccount, setCanSwitch] = useState(false);
+  const [isProspect, setIsProspect]      = useState(false);
 
-  const startCapture = useCallback((id: string, name: string, allowSwitch = false) => {
+  const startCapture = useCallback((id: string, name: string, allowSwitch = false, prospect = false) => {
     setAccountId(id);
     setAccountName(name);
     setCanSwitch(allowSwitch);
+    setIsProspect(prospect);
     setStatus("recording");
   }, []);
 
@@ -52,11 +55,12 @@ export function CaptureProvider({ children }: { children: React.ReactNode }) {
     setAccountId(null);
     setAccountName(null);
     setCanSwitch(false);
+    setIsProspect(false);
   }, []);
 
   return (
     <CaptureContext.Provider value={{
-      status, accountId, accountName, canSwitchAccount,
+      status, accountId, accountName, canSwitchAccount, isProspect,
       startCapture, switchAccount, finishCapture, reviewCapture, readyCapture, dismissCapture,
     }}>
       {children}

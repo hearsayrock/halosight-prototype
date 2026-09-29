@@ -17,6 +17,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { useFakeCall } from "@/lib/context/FakeCallContext";
+import { useCapture } from "@/lib/context/CaptureContext";
 
 // ── Token map ─────────────────────────────────────────────────────────────────
 
@@ -319,6 +321,8 @@ export default function DevModeOverlay() {
   const [active, setActive]   = useState(false);
   const [hover, setHover]     = useState<HoverInfo | null>(null);
   const activeRef = useRef(false);
+  const { triggerCall, callStatus } = useFakeCall();
+  const { status: captureStatus }   = useCapture();
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -419,6 +423,30 @@ export default function DevModeOverlay() {
 
   return createPortal(
     <>
+      {/* Fake call trigger — only during an active recording */}
+      {captureStatus === "recording" && callStatus === "idle" && (
+        <button
+          data-dev-overlay="true"
+          onClick={triggerCall}
+          title="Simulate incoming call"
+          style={{
+            position: "fixed", bottom: 14, right: 105, zIndex: 9999,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            width: 32, height: 32,
+            borderRadius: 99,
+            background: "rgba(52, 199, 89, 0.15)",
+            border: "1px solid rgba(52, 199, 89, 0.4)",
+            color: "rgba(52, 199, 89, 0.8)",
+            cursor: "pointer",
+            transition: "background 0.15s",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = "rgba(52, 199, 89, 0.25)")}
+          onMouseLeave={e => (e.currentTarget.style.background = "rgba(52, 199, 89, 0.15)")}
+        >
+          <span className="ms" style={{ fontSize: 15, fontVariationSettings: '"FILL" 1, "wght" 400, "GRAD" 0, "opsz" 20' }}>call</span>
+        </button>
+      )}
+
       {/* Badge — clickable toggle */}
       <button
         data-dev-overlay="true"

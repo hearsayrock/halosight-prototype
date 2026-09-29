@@ -581,7 +581,7 @@ function SectionHeader({ label, count, onAdd, divider }: { label: string; count:
 function SystemSearchSkeleton() {
   return (
     <div className="flex flex-col gap-0">
-      {[...Array(4)].map((_, i) => (
+      {[...Array(3)].map((_, i) => (
         <div key={i} className="flex items-start gap-3 px-4 py-3.5">
           <div className="flex-1 flex flex-col gap-2">
             <div className="skeleton-bone" style={{ width: "60%", height: 14 }} />
@@ -625,8 +625,9 @@ function CombinedPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const preview = searchParams.get("preview");
+  const noteState = searchParams.get("note") as "processing" | "multiprocess" | "ready" | "failed" | null;
 
-  const { startCapture } = useCapture();
+  const { startCapture, readyCapture } = useCapture();
 
   // Page mode — derived from URL so browser back restores the expanded view
   const modeParam = searchParams.get("mode");
@@ -682,6 +683,65 @@ function CombinedPageContent() {
   const [globalMode] = useState(true);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accountsInputRef = useRef<HTMLInputElement>(null);
+  const accountsScrollRef = useRef<HTMLDivElement>(null);
+  const [acctHasScrolled, setAcctHasScrolled] = useState(false);
+  const [acctScrollingUp, setAcctScrollingUp] = useState(false);
+  const acctLastScrollTopRef = useRef(0);
+
+  const prioritiesScrollRef = useRef<HTMLDivElement>(null);
+  const [priHasScrolled, setPriHasScrolled] = useState(false);
+  const [priScrollingUp, setPriScrollingUp] = useState(false);
+  const priLastScrollTopRef = useRef(0);
+
+  useEffect(() => {
+    if (mode !== "accounts") {
+      setAcctHasScrolled(false);
+      setAcctScrollingUp(false);
+      acctLastScrollTopRef.current = 0;
+      return;
+    }
+    let el: HTMLDivElement | null = null;
+    function onScroll() {
+      const top = el!.scrollTop;
+      setAcctHasScrolled(top > 10);
+      setAcctScrollingUp(top < acctLastScrollTopRef.current);
+      acctLastScrollTopRef.current = top;
+    }
+    const raf = requestAnimationFrame(() => {
+      el = accountsScrollRef.current;
+      if (!el) return;
+      el.addEventListener("scroll", onScroll, { passive: true });
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      el?.removeEventListener("scroll", onScroll);
+    };
+  }, [mode]);
+
+  useEffect(() => {
+    if (mode !== "priorities") {
+      setPriHasScrolled(false);
+      setPriScrollingUp(false);
+      priLastScrollTopRef.current = 0;
+      return;
+    }
+    let el: HTMLDivElement | null = null;
+    function onScroll() {
+      const top = el!.scrollTop;
+      setPriHasScrolled(top > 10);
+      setPriScrollingUp(top < priLastScrollTopRef.current);
+      priLastScrollTopRef.current = top;
+    }
+    const raf = requestAnimationFrame(() => {
+      el = prioritiesScrollRef.current;
+      if (!el) return;
+      el.addEventListener("scroll", onScroll, { passive: true });
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      el?.removeEventListener("scroll", onScroll);
+    };
+  }, [mode]);
 
   // Priorities search (used in priorities mode)
   const [prioritiesQuery, setPrioritiesQuery] = useState("");
@@ -760,6 +820,15 @@ function CombinedPageContent() {
       }, 500);
     }
   }, [query, globalMode]);
+
+  // Pre-seed the CaptureWidget into "ready" state for the ?note=ready preview URL
+  useEffect(() => {
+    if (noteState === "ready") {
+      startCapture("innovative-tech-tucson", "Innovative Tech");
+      readyCapture();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Auto-focus the right input when switching modes
   useEffect(() => {
@@ -896,8 +965,112 @@ function CombinedPageContent() {
   return (
     <div className="relative flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
 
+      {/* ── NOTE STATUS BANNER (preview only — processing / failed) ────── */}
+      {(noteState === "processing" || noteState === "multiprocess" || noteState === "failed") && (
+        <div style={{ position: "relative", overflow: "hidden", flexShrink: 0 }}>
+          <style>{`
+            @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+            @keyframes blob1 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(60px,20px)} 66%{transform:translate(10px,-15px)} }
+            @keyframes blob2 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-50px,15px)} 66%{transform:translate(-10px,-20px)} }
+            @keyframes blob3 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(30px,-10px)} 66%{transform:translate(-35px,18px)} }
+          `}</style>
+
+          {/* Animated blobs */}
+          <div style={{ position: "absolute", inset: 0, filter: "blur(32px)", opacity: (noteState === "processing" || noteState === "multiprocess") ? 0.9 : 0.7 }}>
+            <div style={{ position: "absolute", width: 180, height: 180, borderRadius: "50%", background: noteState === "failed" ? "#D6425C" : "#5C63D6", left: "-10%", top: "-40%", animation: "blob1 8s ease-in-out infinite" }} />
+            <div style={{ position: "absolute", width: 160, height: 160, borderRadius: "50%", background: noteState === "failed" ? "#FF6B5B" : "#8C92FF", right: "-5%", top: "-30%", animation: "blob2 11s ease-in-out infinite" }} />
+            <div style={{ position: "absolute", width: 140, height: 140, borderRadius: "50%", background: noteState === "failed" ? "#FF9C6B" : "#3B82F6", left: "30%", top: "-20%", animation: "blob3 9s ease-in-out infinite" }} />
+          </div>
+
+          {/* Dark overlay so text stays readable */}
+          <div style={{ position: "absolute", inset: 0, background: "rgba(10,11,22,0.55)" }} />
+
+          {/* Content */}
+          <div style={{ position: "relative" }}>
+            {/* Mock status bar */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 20px 4px" }}>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#fff", letterSpacing: "0.01em" }}>3:36</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+                  <rect x="0" y="8" width="3" height="4" rx="0.5" fill="white" />
+                  <rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="white" />
+                  <rect x="9" y="2.5" width="3" height="9.5" rx="0.5" fill="white" />
+                  <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="white" />
+                </svg>
+                <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+                  <path d="M8 9.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z" fill="white" />
+                  <path d="M4.5 7A5 5 0 0 1 11.5 7" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
+                  <path d="M1.5 4.5A8.5 8.5 0 0 1 14.5 4.5" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
+                </svg>
+                <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+                  <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="rgba(255,255,255,0.4)" />
+                  <rect x="2" y="2" width="16" height="8" rx="1.5" fill="white" />
+                  <path d="M23 4v4" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Banner row */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "10px 16px 14px" }}>
+              {noteState === "processing" && (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, animation: "spin 1s linear infinite" }}>
+                    <circle cx="8" cy="8" r="6.5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.75" />
+                    <path d="M8 1.5A6.5 6.5 0 0 1 14.5 8" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
+                  </svg>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
+                    Preparing note · 100%
+                  </span>
+                </>
+              )}
+              {noteState === "multiprocess" && (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, animation: "spin 1s linear infinite" }}>
+                    <circle cx="8" cy="8" r="6.5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.75" />
+                    <path d="M8 1.5A6.5 6.5 0 0 1 14.5 8" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
+                  </svg>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
+                    Processing 3 notes
+                  </span>
+                </>
+              )}
+              {noteState === "failed" && (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+                    <circle cx="8" cy="8" r="6.5" stroke="white" strokeWidth="1.75" />
+                    <path d="M8 5v3.5" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
+                    <circle cx="8" cy="11" r="0.9" fill="white" />
+                  </svg>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
+                    Note couldn't be prepared
+                  </span>
+                  <button style={{ marginLeft: 4, fontSize: 13, fontWeight: 600, color: "#fff", background: "rgba(255,255,255,0.15)", borderRadius: "var(--radius-full)", padding: "3px 11px", border: "1px solid rgba(255,255,255,0.25)" }}>
+                    Try again
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Hard bottom edge */}
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.1)" }} />
+        </div>
+      )}
+
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 pt-10 pb-3" style={{ flexShrink: 0 }}>
+      <div
+        className="flex items-center justify-between px-4 pt-10 pb-3"
+        style={{
+          ...(mode === "accounts" || mode === "priorities"
+            ? { position: "absolute", top: 0, left: 0, right: 0, zIndex: 10, pointerEvents: "none" }
+            : { flexShrink: 0 }),
+          background:
+            (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled)
+              ? "transparent"
+              : "var(--md-sys-color-background)",
+          transition: "background 220ms ease",
+        }}
+      >
         <AnimatePresence mode="wait" initial={false}>
           {mode === "home" ? (
             <motion.button
@@ -922,7 +1095,16 @@ function CombinedPageContent() {
               onClick={goHome}
               className="active:opacity-60 transition-opacity flex-shrink-0"
               aria-label="Back"
-              style={{ padding: "4px 2px" }}
+              style={{
+                width: 36, height: 36,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                borderRadius: "50%",
+                background: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "rgba(20, 23, 38, 0.88)" : "transparent",
+                backdropFilter: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "blur(16px) saturate(180%)" : undefined,
+                boxShadow: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
+                transition: "background 180ms ease",
+                pointerEvents: "auto",
+              }}
             >
               <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-secondary)" }} />
             </motion.button>
@@ -952,15 +1134,21 @@ function CombinedPageContent() {
               <motion.div
                 key="accounts-search-bar-header"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="flex items-center gap-2 h-11 px-3"
+                animate={{
+                  opacity: acctHasScrolled && !acctScrollingUp ? 0 : 1,
+                  y: acctHasScrolled && !acctScrollingUp ? -10 : 0,
+                  scaleY: acctHasScrolled && !acctScrollingUp ? 0.82 : 1,
+                }}
+                transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
                 style={{
+                  pointerEvents: acctHasScrolled && !acctScrollingUp ? "none" : "auto",
+                  flex: 1,
+                  transformOrigin: "top center",
                   borderRadius: 999,
                   background: "var(--md-sys-color-dark-secondary)",
                   outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
                 }}
+                className="flex items-center gap-2 h-11 px-3"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
                   <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
@@ -1000,7 +1188,17 @@ function CombinedPageContent() {
           </AnimatePresence>
         </div>
 
-        {mode !== "accounts" && ProfileButton}
+        {mode !== "accounts" && (
+          <div style={{
+            opacity: mode === "priorities" && priHasScrolled && !priScrollingUp ? 0 : 1,
+            transform: mode === "priorities" && priHasScrolled && !priScrollingUp ? "translateY(-8px) scale(0.88)" : "translateY(0) scale(1)",
+            pointerEvents: mode === "priorities" && priHasScrolled && !priScrollingUp ? "none" : "auto",
+            transition: "opacity 200ms cubic-bezier(0.32, 0.72, 0, 1), transform 200ms cubic-bezier(0.32, 0.72, 0, 1)",
+            transformOrigin: "top right",
+          }}>
+            {ProfileButton}
+          </div>
+        )}
       </div>
 
       {/* ── PINNED SEARCH BAR — moved into header row for accounts mode ── */}
@@ -1059,7 +1257,7 @@ function CombinedPageContent() {
                   {/* Dashboard */}
                   <DashboardGrid
                     suggestedAccount={topAccounts[0]}
-                    onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true)}
+                    onStartVisit={() => startCapture(topAccounts[0].id, topAccounts[0].name, true, topAccounts[0].halosightType === "prospect")}
                   />
 
                   {/* Companies section */}
@@ -1103,13 +1301,26 @@ function CombinedPageContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
+              ref={accountsScrollRef}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 82, paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
             >
-              {/* My accounts */}
-              {showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
-              {!showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+              {/* ── Skeleton preview: both sections loading ───────────────── */}
+              {preview === "search-loading" && (
+                <>
+                  <SectionHeader label="Your Companies" count={0} onAdd={() => {}} />
+                  <AccountListSkeleton rows={3} />
+                  <div style={{ marginTop: 16 }}>
+                    <SectionHeader label="Company-Wide Results" count={0} divider />
+                    <SystemSearchSkeleton />
+                  </div>
+                </>
+              )}
 
-              {myFiltered.length > 0 ? (
+              {/* My accounts */}
+              {preview !== "search-loading" && showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+              {preview !== "search-loading" && !showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+
+              {preview !== "search-loading" && (myFiltered.length > 0 ? (
                 <div className="flex flex-col">
                   {myFiltered.map((account, i) => (
                     <AccountListItem key={account.id} account={account} isLast={i === myFiltered.length - 1} />
@@ -1129,9 +1340,9 @@ function CombinedPageContent() {
                     <p className="text-sm leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
                   </div>
                 </div>
-              ) : null}
+              ) : null)}
 
-              {showSystemSection && (
+              {preview !== "search-loading" && showSystemSection && (
                 <div style={{ marginTop: 16 }}>
                   {systemState === "loading" && (
                     <>
@@ -1175,10 +1386,25 @@ function CombinedPageContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-              style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}
+              style={{ position: "absolute", inset: 0 }}
             >
-              {/* Pinned header (title + filters + search) */}
-              <div className="px-4 pb-3" style={{ flexShrink: 0, paddingTop: 8 }}>
+              {/* Floating header (title + filters + search) — fades on scroll */}
+              <div
+                className="px-4 pb-3"
+                style={{
+                  position: "absolute", top: 0, left: 0, right: 0, zIndex: 5,
+                  paddingTop: 90,
+                  background: priHasScrolled ? "transparent" : "var(--md-sys-color-background)",
+                  transition: "background 220ms ease",
+                  opacity: priHasScrolled && !priScrollingUp ? 0 : 1,
+                  transform: priHasScrolled && !priScrollingUp ? "translateY(-14px) scale(0.95)" : "translateY(0) scale(1)",
+                  transformOrigin: "top center",
+                  pointerEvents: priHasScrolled && !priScrollingUp ? "none" : "auto",
+                  transitionProperty: "opacity, transform, background",
+                  transitionDuration: "200ms, 200ms, 220ms",
+                  transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1), cubic-bezier(0.32, 0.72, 0, 1), ease",
+                }}
+              >
                 <div className="flex items-end justify-between gap-3 mb-3">
                   <h1 style={{
                     color: "var(--md-sys-color-text-primary)",
@@ -1237,7 +1463,7 @@ function CombinedPageContent() {
               </div>
 
               {/* Scrollable groups */}
-              <div style={{ flex: 1, overflowY: "auto", paddingBottom: 48 }}>
+              <div ref={prioritiesScrollRef} style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 195, paddingBottom: 48 }}>
                 {taskGroups.length === 0 ? (
                   <div className="flex items-center justify-center py-20">
                     <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>
