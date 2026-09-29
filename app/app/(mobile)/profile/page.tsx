@@ -10,11 +10,12 @@
  * Flutter equivalent: profile_page.dart
  */
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
+import ScrollAwareTopBar from "@/components/ui/ScrollAwareTopBar";
 
 function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: () => void }) {
   const [note, setNote] = useState("");
@@ -244,36 +245,30 @@ const MENU_ITEMS = [
 
 export default function ProfilePage() {
   const router = useRouter();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [showDeleteSheet, setShowDeleteSheet] = useState(false);
   const [showSentSheet, setShowSentSheet] = useState(false);
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
+    <div className="h-full" style={{ background: "var(--md-sys-color-background)", position: "relative", overflow: "hidden" }}>
 
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-10 pb-6">
-        <button
-          onClick={() => router.back()}
-          className="p-1 active:opacity-60 transition-opacity"
-        >
-          <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
-        </button>
-        <h1
-          className="text-[18px] font-bold"
-          style={{ color: "var(--md-sys-color-text-primary)" }}
-        >
-          Profile
-        </h1>
-        <button
-          className="text-sm-bold active:opacity-60 transition-opacity"
-          style={{ color: "var(--md-sys-color-brand-coral)" }}
-        >
-          Log Out
-        </button>
-      </div>
+      <ScrollAwareTopBar
+        onBack={() => router.back()}
+        scrollRef={scrollRef}
+        rightSlot={
+          <button
+            className="text-sm-bold active:opacity-60 transition-opacity"
+            style={{ color: "var(--md-sys-color-brand-coral)" }}
+          >
+            Log Out
+          </button>
+        }
+      />
+
+      <div ref={scrollRef} style={{ position: "absolute", inset: 0, overflowY: "auto" }}>
 
       {/* Avatar + user info */}
-      <div className="flex flex-col items-center px-4 mb-8">
+      <div className="flex flex-col items-center px-4 mb-8" style={{ paddingTop: 86 }}>
         <div
           className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
           style={{ background: "#607D8B" }}
@@ -339,6 +334,7 @@ export default function ProfilePage() {
         <RequestSentSheet onClose={() => setShowSentSheet(false)} />
       )}
 
+      </div>
     </div>
   );
 }
