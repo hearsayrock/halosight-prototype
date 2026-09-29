@@ -1302,7 +1302,7 @@ function CombinedPageContent() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
               ref={accountsScrollRef}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 82, paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 104, paddingBottom: systemState === "done" && hasQuery ? 120 : 48 }}
             >
               {/* ── Skeleton preview: both sections loading ───────────────── */}
               {preview === "search-loading" && (
