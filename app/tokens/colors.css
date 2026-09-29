@@ -96,6 +96,7 @@
   --md-sys-color-alpha-neonindigo-10:    rgba(179, 184, 255, 0.10);
   --md-sys-color-alpha-neonindigo-glass: rgba(179, 184, 255, 0.10);
   --md-sys-color-alpha-dark-glass:   rgba(255, 255, 255, 0.18);
+  --md-sys-color-alpha-bg-glass:     rgba(17, 20, 32, 0.82);  /* scrolled header backdrop */
 
   /* ── Extended Palette ────────────────────────────────────────────────────── */
   --md-ref-palette-ext-cyan:   #5BBFCC;
@@ -187,5 +188,6 @@
   --md-sys-color-alpha-neonindigo-10:      rgba(80, 88, 212, 0.08);
   --md-sys-color-alpha-neonindigo-glass:   rgba(80, 88, 212, 0.08);
   --md-sys-color-alpha-dark-glass:         rgba(0, 0, 0, 0.09);
+  --md-sys-color-alpha-bg-glass:           rgba(245, 247, 250, 0.88);
 
 }

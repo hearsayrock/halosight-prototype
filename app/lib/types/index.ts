@@ -78,6 +78,7 @@ export interface ActivityItem {
   hasTranscript: boolean;
   repName: string;
   aiSummary?: ActivityAISummary;
+  interactionType?: "inperson" | "phone";
 }
 
 export interface Interaction {

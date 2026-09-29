@@ -688,6 +688,65 @@ function CombinedPageContent() {
   const [globalMode] = useState(true);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accountsInputRef = useRef<HTMLInputElement>(null);
+  const accountsScrollRef = useRef<HTMLDivElement>(null);
+  const [acctHasScrolled, setAcctHasScrolled] = useState(false);
+  const [acctScrollingUp, setAcctScrollingUp] = useState(false);
+  const acctLastScrollTopRef = useRef(0);
+
+  const prioritiesScrollRef = useRef<HTMLDivElement>(null);
+  const [priHasScrolled, setPriHasScrolled] = useState(false);
+  const [priScrollingUp, setPriScrollingUp] = useState(false);
+  const priLastScrollTopRef = useRef(0);
+
+  useEffect(() => {
+    if (mode !== "accounts") {
+      setAcctHasScrolled(false);
+      setAcctScrollingUp(false);
+      acctLastScrollTopRef.current = 0;
+      return;
+    }
+    let el: HTMLDivElement | null = null;
+    function onScroll() {
+      const top = el!.scrollTop;
+      setAcctHasScrolled(top > 10);
+      setAcctScrollingUp(top < acctLastScrollTopRef.current);
+      acctLastScrollTopRef.current = top;
+    }
+    const raf = requestAnimationFrame(() => {
+      el = accountsScrollRef.current;
+      if (!el) return;
+      el.addEventListener("scroll", onScroll, { passive: true });
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      el?.removeEventListener("scroll", onScroll);
+    };
+  }, [mode]);
+
+  useEffect(() => {
+    if (mode !== "priorities") {
+      setPriHasScrolled(false);
+      setPriScrollingUp(false);
+      priLastScrollTopRef.current = 0;
+      return;
+    }
+    let el: HTMLDivElement | null = null;
+    function onScroll() {
+      const top = el!.scrollTop;
+      setPriHasScrolled(top > 10);
+      setPriScrollingUp(top < priLastScrollTopRef.current);
+      priLastScrollTopRef.current = top;
+    }
+    const raf = requestAnimationFrame(() => {
+      el = prioritiesScrollRef.current;
+      if (!el) return;
+      el.addEventListener("scroll", onScroll, { passive: true });
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      el?.removeEventListener("scroll", onScroll);
+    };
+  }, [mode]);
 
   // Priorities search (used in priorities mode)
   const [prioritiesQuery, setPrioritiesQuery] = useState("");
@@ -1018,7 +1077,19 @@ function CombinedPageContent() {
       )}
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 pt-10 pb-3" style={{ flexShrink: 0 }}>
+      <div
+        className="flex items-center justify-between px-4 pt-10 pb-3"
+        style={{
+          ...(mode === "accounts" || mode === "priorities"
+            ? { position: "absolute", top: 0, left: 0, right: 0, zIndex: 10, pointerEvents: "none" }
+            : { flexShrink: 0 }),
+          background:
+            (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled)
+              ? "transparent"
+              : "var(--md-sys-color-background)",
+          transition: "background 220ms ease",
+        }}
+      >
         <AnimatePresence mode="wait" initial={false}>
           {mode === "home" ? (
             <motion.button
@@ -1043,7 +1114,16 @@ function CombinedPageContent() {
               onClick={goHome}
               className="active:opacity-60 transition-opacity flex-shrink-0"
               aria-label="Back"
-              style={{ padding: "4px 2px" }}
+              style={{
+                width: 36, height: 36,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                borderRadius: "50%",
+                background: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "rgba(20, 23, 38, 0.88)" : "transparent",
+                backdropFilter: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "blur(16px) saturate(180%)" : undefined,
+                boxShadow: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
+                transition: "background 180ms ease",
+                pointerEvents: "auto",
+              }}
             >
               <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-secondary)" }} />
             </motion.button>
@@ -1073,15 +1153,21 @@ function CombinedPageContent() {
               <motion.div
                 key="accounts-search-bar-header"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="flex items-center gap-2 h-11 px-3"
+                animate={{
+                  opacity: acctHasScrolled && !acctScrollingUp ? 0 : 1,
+                  y: acctHasScrolled && !acctScrollingUp ? -10 : 0,
+                  scaleY: acctHasScrolled && !acctScrollingUp ? 0.82 : 1,
+                }}
+                transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
                 style={{
+                  pointerEvents: acctHasScrolled && !acctScrollingUp ? "none" : "auto",
+                  flex: 1,
+                  transformOrigin: "top center",
                   borderRadius: 999,
                   background: "var(--md-sys-color-dark-secondary)",
                   outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
                 }}
+                className="flex items-center gap-2 h-11 px-3"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
                   <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
@@ -1115,7 +1201,17 @@ function CombinedPageContent() {
           </AnimatePresence>
         </div>
 
-        {mode !== "accounts" && ProfileButton}
+        {mode !== "accounts" && (
+          <div style={{
+            opacity: mode === "priorities" && priHasScrolled && !priScrollingUp ? 0 : 1,
+            transform: mode === "priorities" && priHasScrolled && !priScrollingUp ? "translateY(-8px) scale(0.88)" : "translateY(0) scale(1)",
+            pointerEvents: mode === "priorities" && priHasScrolled && !priScrollingUp ? "none" : "auto",
+            transition: "opacity 200ms cubic-bezier(0.32, 0.72, 0, 1), transform 200ms cubic-bezier(0.32, 0.72, 0, 1)",
+            transformOrigin: "top right",
+          }}>
+            {ProfileButton}
+          </div>
+        )}
       </div>
 
       {/* ── PINNED SEARCH BAR — moved into header row for accounts mode ── */}
@@ -1272,7 +1368,8 @@ function CombinedPageContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingBottom: systemState === "done" && hasQuery ? 120 : 100 }}
+              ref={accountsScrollRef}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 82, paddingBottom: systemState === "done" && hasQuery ? 120 : 100 }}
             >
               {/* ── Skeleton preview: both sections loading ───────────────── */}
               {preview === "search-loading" && (
@@ -1353,10 +1450,25 @@ function CombinedPageContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
-              style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}
+              style={{ position: "absolute", inset: 0 }}
             >
-              {/* Pinned header (title + filters + search) */}
-              <div className="px-4 pb-3" style={{ flexShrink: 0, paddingTop: 8 }}>
+              {/* Floating header (title + filters + search) — fades on scroll */}
+              <div
+                className="px-4 pb-3"
+                style={{
+                  position: "absolute", top: 0, left: 0, right: 0, zIndex: 5,
+                  paddingTop: 90,
+                  background: priHasScrolled ? "transparent" : "var(--md-sys-color-background)",
+                  transition: "background 220ms ease",
+                  opacity: priHasScrolled && !priScrollingUp ? 0 : 1,
+                  transform: priHasScrolled && !priScrollingUp ? "translateY(-14px) scale(0.95)" : "translateY(0) scale(1)",
+                  transformOrigin: "top center",
+                  pointerEvents: priHasScrolled && !priScrollingUp ? "none" : "auto",
+                  transitionProperty: "opacity, transform, background",
+                  transitionDuration: "200ms, 200ms, 220ms",
+                  transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1), cubic-bezier(0.32, 0.72, 0, 1), ease",
+                }}
+              >
                 <div className="flex items-end justify-between gap-3 mb-3">
                   <h1 style={{
                     color: "var(--md-sys-color-text-primary)",
@@ -1415,7 +1527,7 @@ function CombinedPageContent() {
               </div>
 
               {/* Scrollable groups */}
-              <div style={{ flex: 1, overflowY: "auto", paddingBottom: 48 }}>
+              <div ref={prioritiesScrollRef} style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 195, paddingBottom: 48 }}>
                 {taskGroups.length === 0 ? (
                   <div className="flex items-center justify-center py-20">
                     <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>

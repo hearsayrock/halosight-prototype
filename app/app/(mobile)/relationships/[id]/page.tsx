@@ -27,6 +27,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import KebabMenu from "@/components/ui/KebabMenu";
+import InsightCard from "@/components/accounts/InsightCard";
 import ConvertToAccountSheet from "@/components/accounts/ConvertToAccountSheet";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
@@ -230,6 +231,12 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     searchParams.get("tab") === "activity" || searchParams.get("note") === "processing" ? "activity" : "overview"
   );
   const [showAddSheet, setShowAddSheet] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const rowBRef = useRef<HTMLDivElement>(null);
+  const lastScrollTopRef = useRef(0);
+  const [scrolledPast, setScrolledPast] = useState(false);
+  const [scrollingUp, setScrollingUp] = useState(false);
+  const [showInfoSheet, setShowInfoSheet] = useState(false);
 
   const { getItems, updateItem } = useActionItems();
   const [completedItemIds, setCompletedItemIds] = useState<string[]>([]);
@@ -325,6 +332,16 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     disqualify(id);
     router.push("/relationships");
   }
+  function handleContentScroll() {
+    const el = scrollRef.current;
+    const rowB = rowBRef.current;
+    if (!el || !rowB) return;
+    const current = el.scrollTop;
+    setScrolledPast(current > rowB.offsetHeight + 4);
+    setScrollingUp(current < lastScrollTopRef.current);
+    lastScrollTopRef.current = current;
+  }
+
   const isCapturing = captureStatus !== "idle" && capturingId === id;
 
   const justCreated = searchParams.get("just_created") === "true";
@@ -349,6 +366,16 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   const account = detail ?? mockAccount ?? (justCreated && justCreatedName
     ? { id, name: justCreatedName, type: "standalone" as const, halosightType: "prospect" as const, distanceMiles: 0, lastVisited: new Date(), taskCount: 0 }
     : undefined);
+
+  const typeLabel = (() => {
+    if (!account) return "";
+    if (account.halosightType === "prospect") return "Lead";
+    const crmMap: Record<string, string> = { distributor: "Distributor", "sold-to": "Sold-To", "shipped-to": "Shipped-To" };
+    if (account.crmAccountType && crmMap[account.crmAccountType]) return crmMap[account.crmAccountType];
+    return account.type === "corporate" ? "Corporate" : account.type === "branch" ? "Branch" : "Company";
+  })();
+  const locationMeta = account ? [account.city, account.state].filter(Boolean).join(", ") : "";
+  const visitedDaysAgo = account ? Math.round((Date.now() - account.lastVisited.getTime()) / 86_400_000) : 0;
 
   // When capture is ready (or was just completed) for a new lead, transition out of "just created" empty state
   const captureJustCompleted =
@@ -393,268 +420,353 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
+    <div className="h-full" style={{ background: "var(--md-sys-color-background)", position: "relative" }}>
 
-      {/* Header */}
-      <div className="pt-10 px-4 pb-4">
-
-        {/* Back button row */}
-        <div className="relative flex items-center justify-between mb-3">
-          <button onClick={() => router.push("/relationships")} className="p-1 active:opacity-60 transition-opacity">
-            <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
-          </button>
-          {account.halosightType === "prospect" && !effectiveJustCreated && (
-            <span
-              className="absolute left-1/2 -translate-x-1/2 text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap"
-              style={{ background: "rgba(107, 157, 176, 0.18)", color: "var(--md-sys-color-brand-teal)" }}
+      {/* ── Row A — top bar (always visible) ─────────────────────────────────── */}
+      {(() => {
+        const showGlass = scrolledPast && scrollingUp;
+        const showControls = !scrolledPast || scrollingUp;
+        return (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 10,
+              paddingTop: 40,
+              paddingBottom: 10,
+              paddingLeft: 16,
+              paddingRight: 16,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              background: showGlass ? "var(--md-sys-color-alpha-bg-glass)" : "transparent",
+              backdropFilter: showGlass ? "blur(20px) saturate(180%)" : undefined,
+              transition: "background 180ms ease",
+            }}
+          >
+            {/* Back — gains glassy circle once content scrolls past Row B */}
+            <button
+              onClick={() => router.push("/relationships")}
+              aria-label="Go back"
+              className="active:opacity-60 transition-opacity flex-shrink-0"
+              style={{
+                width: 36, height: 36,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                borderRadius: "50%",
+                border: "none",
+                background: scrolledPast ? "rgba(20, 23, 38, 0.88)" : "transparent",
+                backdropFilter: scrolledPast ? "blur(16px) saturate(180%)" : undefined,
+                boxShadow: scrolledPast ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
+                transition: "background 180ms ease",
+              }}
             >
-              Lead
+              <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-primary)" }} />
+            </button>
+
+            {/* Compact name — fades in when scrolling back up past Row B */}
+            <span
+              style={{
+                flex: 1,
+                fontSize: 17,
+                fontWeight: 700,
+                fontFamily: "Roboto Slab, Georgia, serif",
+                color: "var(--md-sys-color-text-primary)",
+                opacity: showGlass ? 1 : 0,
+                transition: "opacity 160ms ease",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                pointerEvents: showGlass ? "auto" : "none",
+              }}
+            >
+              {account.name}
             </span>
-          )}
-          {account.halosightType === "prospect" && !effectiveJustCreated && (
-            <KebabMenu
-              items={[
-                { label: "Disqualify", onClick: () => setShowDisqualifyConfirm(true), destructive: true },
-              ]}
-            />
-          )}
+
+            {/* Info / Kebab — visible at top and when scrolling up; hidden when scrolling down */}
+            <div
+              style={{
+                marginLeft: "auto",
+                flexShrink: 0,
+                opacity: showControls ? 1 : 0,
+                pointerEvents: showControls ? "auto" : "none",
+                transition: "opacity 160ms ease",
+              }}
+            >
+              {account.halosightType === "prospect" && !effectiveJustCreated ? (
+                <KebabMenu
+                  items={[
+                    { label: "Disqualify", onClick: () => setShowDisqualifyConfirm(true), destructive: true },
+                  ]}
+                />
+              ) : (
+                <button
+                  onClick={() => setShowInfoSheet(true)}
+                  aria-label="Account details"
+                  className="active:opacity-60 transition-opacity"
+                  style={{
+                    width: 32, height: 32,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    borderRadius: "50%", background: "transparent", border: "none",
+                  }}
+                >
+                  <Icon name="info" size={24} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── Scroll container — fills full height, content scrolls behind Row A ── */}
+      <div
+        ref={scrollRef}
+        className="pb-24"
+        style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, overflowY: "auto" }}
+        onScroll={handleContentScroll}
+      >
+
+        {/* Row B — large name + type/location meta (paddingTop clears Row A height) */}
+        <div ref={rowBRef} style={{ padding: "86px 20px 12px" }}>
+          <h1
+            style={{
+              fontFamily: "Roboto Slab, Georgia, serif",
+              fontSize: 32,
+              fontWeight: 700,
+              letterSpacing: -0.4,
+              lineHeight: 1.15,
+              color: "var(--md-sys-color-text-primary)",
+              margin: 0,
+            }}
+          >
+            {account.name}
+          </h1>
+          <div style={{ display: "flex", gap: 8, marginTop: 6, alignItems: "center" }}>
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "var(--md-sys-color-brand-teal)",
+              }}
+            >
+              {typeLabel}
+            </span>
+            {locationMeta && (
+              <>
+                <span style={{ color: "var(--md-sys-color-text-muted)" }}>·</span>
+                <span style={{ fontSize: 15, color: "var(--md-sys-color-text-muted)" }}>{locationMeta}</span>
+              </>
+            )}
+          </div>
         </div>
 
-        {/* Account name — font size scales down so long names stay 2–3 lines max */}
-        <h1
-          className="w-full text-center font-bold leading-snug px-6 mb-2 line-clamp-2"
-          style={{
-            color: "var(--md-sys-color-text-primary)",
-            fontFamily: "Roboto Slab, Georgia, serif",
-            fontSize:
-              account.name.length > 55 ? 17 :
-              account.name.length > 38 ? 20 :
-              account.name.length > 25 ? 23 :
-              26,
-          }}
-        >
-          {account.name}
-        </h1>
+        {/* Banners (px-4) */}
+        <div className="px-4">
+          {/* Unowned account banner */}
+          {isExternalAccount && !justCreated && (() => {
+            const repName = systemAccountReps[account.id];
+            const message = repName
+              ? `You're viewing ${repName}'s account — notes you capture here will be visible to them.`
+              : "This account isn't assigned to a rep — notes you capture here will be visible to your team.";
+            return (
+              <div
+                className="flex items-start gap-2.5 px-3.5 py-3 mb-3"
+                style={{
+                  background: "rgba(139, 146, 255, 0.08)",
+                  border: "1px solid rgba(139, 146, 255, 0.18)",
+                  borderRadius: "var(--radius-md)",
+                }}
+              >
+                <Icon name="info" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, marginTop: 1 }} />
+                <span className="body-xs leading-snug" style={{ color: "var(--md-sys-color-text-secondary)" }}>
+                  {message}
+                </span>
+              </div>
+            );
+          })()}
 
-        {/* Account metadata — address */}
-        {account.address && (
-          <div className="flex items-center justify-center gap-1 mb-3">
-            <Icon name="location_on" size={13} style={{ color: "var(--md-sys-color-text-muted)", flexShrink: 0 }} />
-            <span className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>
-              {account.address}
-            </span>
-          </div>
-        )}
-
-        {/* Unowned account banner — shown for system/CRM accounts not owned by the current rep */}
-        {isExternalAccount && !justCreated && (() => {
-          const repName = systemAccountReps[account.id];
-          const message = repName
-            ? `You're viewing ${repName}'s account — notes you capture here will be visible to them.`
-            : "This account isn't assigned to a rep — notes you capture here will be visible to your team.";
-          return (
+          {/* Needs Attention banner */}
+          {account.halosightType === "prospect" && needsAttention(id) && !contactSaved && !effectiveJustCreated && !captureJustCompleted && (
             <div
-              className="flex items-start gap-2.5 px-3.5 py-3 mb-3 mx-1"
+              className="mb-3 px-3.5 py-3"
               style={{
-                background: "rgba(139, 146, 255, 0.08)",
-                border: "1px solid rgba(139, 146, 255, 0.18)",
+                background: "rgba(245,166,35,0.06)",
+                border: "1px solid rgba(245,166,35,0.25)",
                 borderRadius: "var(--radius-md)",
               }}
             >
-              <Icon name="info" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, marginTop: 1 }} />
-              <span className="body-xs leading-snug" style={{ color: "var(--md-sys-color-text-secondary)" }}>
-                {message}
-              </span>
+              <div className="flex items-center gap-2 mb-2.5">
+                <Icon name="error" fill size={14} style={{ color: "var(--md-sys-color-warning)", flexShrink: 0 }} />
+                <span className="text-[11px] font-semibold" style={{ color: "var(--md-sys-color-warning)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                  {justCreated ? "Who are you meeting with?" : "Missing contact info"}
+                </span>
+              </div>
+              <p className="text-[11px] mb-3" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                {justCreated
+                  ? "This lead is synced to CRM. Add contact details when you know them — none of this is required right now."
+                  : "Fill in contact details whenever you have them. This lead will sync without them."}
+              </p>
+              <div className="flex flex-col gap-2">
+                {[
+                  { key: "name", placeholder: "Full name", label: "Name *" },
+                  { key: "title", placeholder: "Job title", label: "Title" },
+                  { key: "phone", placeholder: "Phone number", label: "Phone" },
+                ].map(({ key, placeholder, label }) => (
+                  <div key={key}>
+                    <p className="text-[10px] font-semibold mb-1" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>{label}</p>
+                    <input
+                      type={key === "phone" ? "tel" : "text"}
+                      placeholder={placeholder}
+                      value={contactForm[key as keyof typeof contactForm]}
+                      onChange={(e) => setContactForm((f) => ({ ...f, [key]: e.target.value }))}
+                      className="w-full text-[14px] outline-none px-3 py-2"
+                      style={{
+                        background: "var(--md-sys-color-dark-secondary)",
+                        borderRadius: "var(--radius-sm)",
+                        color: "var(--md-sys-color-text-primary)",
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center justify-between mt-3">
+                <button
+                  onClick={() => { clearNeedsAttention(id); setContactSaved(true); }}
+                  className="text-[12px] active:opacity-60 transition-opacity"
+                  style={{ color: "var(--md-sys-color-text-muted)" }}
+                >
+                  Skip for now
+                </button>
+                <button
+                  onClick={handleSaveContact}
+                  disabled={!contactForm.name.trim()}
+                  className="h-8 px-4 text-[12px] font-semibold rounded-full transition-opacity active:opacity-70"
+                  style={{
+                    background: contactForm.name.trim() ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-dark-tertiary)",
+                    color: contactForm.name.trim() ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-disabled)",
+                  }}
+                >
+                  Save contact
+                </button>
+              </div>
             </div>
-          );
-        })()}
+          )}
 
-        {/* Needs Attention banner — contact info for existing leads missing contact info */}
-        {account.halosightType === "prospect" && needsAttention(id) && !contactSaved && !effectiveJustCreated && !captureJustCompleted && (
+          {/* AI review ready banner */}
+          {account.halosightType === "prospect" && id === "innovative-tech-tucson" && !effectiveJustCreated && (
+            <button
+              onClick={() => router.push(`/relationships/${id}/review`)}
+              className="w-full flex items-center gap-2.5 px-3.5 py-3 mb-4 active:opacity-70 transition-opacity text-left"
+              style={{
+                background: "rgba(139,146,255,0.08)",
+                border: "1px solid rgba(139,146,255,0.2)",
+                borderRadius: "var(--radius-md)",
+              }}
+            >
+              <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+              <span className="flex-1 text-[13px] font-medium" style={{ color: "var(--md-sys-color-text-secondary)" }}>
+                AI found <span style={{ color: "var(--md-sys-color-neonindigo)", fontWeight: 700 }}>3 CRM updates</span> from your last visit
+              </span>
+              <Icon name="arrow_forward" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+            </button>
+          )}
+        </div>
+
+        {/* Tab row — sticky only when scrolling up past Row B, otherwise travels with content */}
+        {!effectiveJustCreated && (
           <div
-            className="mx-1 mb-3 px-3.5 py-3"
             style={{
-              background: "rgba(245,166,35,0.06)",
-              border: "1px solid rgba(245,166,35,0.25)",
-              borderRadius: "var(--radius-md)",
+              position: scrolledPast && scrollingUp ? "sticky" : "relative",
+              top: scrolledPast && scrollingUp ? 86 : 0,
+              zIndex: 5,
+              display: "flex",
+              gap: 24,
+              padding: "0 20px",
+              background: "var(--md-sys-color-background)",
+              borderBottom: "1px solid var(--md-sys-color-alpha-white-10)",
             }}
           >
-            <div className="flex items-center gap-2 mb-2.5">
-              <Icon name="error" fill size={14} style={{ color: "var(--md-sys-color-warning)", flexShrink: 0 }} />
-              <span className="text-[11px] font-semibold" style={{ color: "var(--md-sys-color-warning)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                {justCreated ? "Who are you meeting with?" : "Missing contact info"}
-              </span>
-            </div>
-            <p className="text-[11px] mb-3" style={{ color: "var(--md-sys-color-text-muted)" }}>
-              {justCreated
-                ? "This lead is synced to CRM. Add contact details when you know them — none of this is required right now."
-                : "Fill in contact details whenever you have them. This lead will sync without them."}
-            </p>
-            <div className="flex flex-col gap-2">
-              {[
-                { key: "name", placeholder: "Full name", label: "Name *" },
-                { key: "title", placeholder: "Job title", label: "Title" },
-                { key: "phone", placeholder: "Phone number", label: "Phone" },
-              ].map(({ key, placeholder, label }) => (
-                <div key={key}>
-                  <p className="text-[10px] font-semibold mb-1" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>{label}</p>
-                  <input
-                    type={key === "phone" ? "tel" : "text"}
-                    placeholder={placeholder}
-                    value={contactForm[key as keyof typeof contactForm]}
-                    onChange={(e) => setContactForm((f) => ({ ...f, [key]: e.target.value }))}
-                    className="w-full text-[14px] outline-none px-3 py-2"
-                    style={{
-                      background: "var(--md-sys-color-dark-secondary)",
-                      borderRadius: "var(--radius-sm)",
-                      color: "var(--md-sys-color-text-primary)",
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center justify-between mt-3">
+            {(["overview", "activity"] as const).map((tab) => (
               <button
-                onClick={() => { clearNeedsAttention(id); setContactSaved(true); }}
-                className="text-[12px] active:opacity-60 transition-opacity"
-                style={{ color: "var(--md-sys-color-text-muted)" }}
-              >
-                Skip for now
-              </button>
-              <button
-                onClick={handleSaveContact}
-                disabled={!contactForm.name.trim()}
-                className="h-8 px-4 text-[12px] font-semibold rounded-full transition-opacity active:opacity-70"
+                key={tab}
+                onClick={() => setActiveTab(tab)}
                 style={{
-                  background: contactForm.name.trim() ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-dark-tertiary)",
-                  color: contactForm.name.trim() ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-disabled)",
+                  fontSize: 16,
+                  fontWeight: 600,
+                  fontFamily: "Barlow, sans-serif",
+                  padding: "10px 0",
+                  color: activeTab === tab ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
+                  boxShadow: activeTab === tab ? "inset 0 -2px 0 0 var(--md-sys-color-brand-teal)" : "none",
+                  transition: "color 140ms ease",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
                 }}
               >
-                Save contact
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
-            </div>
+            ))}
           </div>
         )}
 
-        {/* AI review ready banner — shown for accounts with a pending meeting review */}
-        {account.halosightType === "prospect" && id === "innovative-tech-tucson" && !effectiveJustCreated && (
-          <button
-            onClick={() => router.push(`/relationships/${id}/review`)}
-            className="w-full flex items-center gap-2.5 px-3.5 py-3 mb-4 mx-0 active:opacity-70 transition-opacity text-left"
-            style={{
-              background: "rgba(139,146,255,0.08)",
-              border: "1px solid rgba(139,146,255,0.2)",
-              borderRadius: "var(--radius-md)",
-            }}
-          >
-            <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-            <span className="flex-1 text-[13px] font-medium" style={{ color: "var(--md-sys-color-text-secondary)" }}>
-              AI found <span style={{ color: "var(--md-sys-color-neonindigo)", fontWeight: 700 }}>3 CRM updates</span> from your last visit
-            </span>
-            <Icon name="arrow_forward" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-          </button>
-        )}
-
-        {/* Tabs — hidden on just-created blank slate */}
-        {!effectiveJustCreated && <div
-          className="flex p-1 gap-1 mx-auto"
-          style={{ width: 255, background: "var(--md-sys-color-dark-primary)", borderRadius: "var(--radius-full)" }}
-        >
-          {(["overview", "activity"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className="flex-1 py-2 text-sm-bold transition-all capitalize"
+        {/* Just-created empty state */}
+        {effectiveJustCreated && (
+          <div className="flex flex-col items-center justify-center px-8 pb-24 text-center" style={{ paddingTop: 48 }}>
+            <Icon name="auto_awesome" size={32} style={{ color: "var(--md-sys-color-neonindigo)", marginBottom: 20 }} />
+            <h2
               style={{
-                borderRadius: "var(--radius-full)",
-                background: activeTab === tab ? "var(--md-sys-color-dark-secondary)" : "transparent",
-                color: activeTab === tab ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
+                fontFamily: "Roboto Slab, Georgia, serif",
+                fontSize: 22, fontWeight: 700,
+                color: "var(--md-sys-color-text-primary)",
+                lineHeight: 1.25, marginBottom: 12,
               }}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              And just like that,<br />{account.name} exists.
+            </h2>
+            <p className="text-15" style={{ lineHeight: 1.6, color: "var(--md-sys-color-text-muted)", maxWidth: 280, marginBottom: 32 }}>
+              No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and nowhere to go but up.
+            </p>
+            <button
+              onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
+              className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
+              style={{
+                border: "1.5px dashed rgba(139,146,255,0.45)",
+                borderRadius: "var(--radius-xl)",
+                background: "rgba(139,146,255,0.04)",
+              }}
+            >
+              <Icon name="auto_awesome" size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-[15px] font-bold leading-snug mb-1" style={{ color: "var(--md-sys-color-neonindigo)" }}>
+                  Log your first visit
+                </p>
+                <p className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                  We'll fill Salesforce automatically.
+                </p>
+              </div>
+              <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
             </button>
-          ))}
-        </div>}
-      </div>
-
-      {/* Just-created empty state — replaces tabs entirely */}
-      {effectiveJustCreated && (
-        <div className="flex-1 flex flex-col items-center justify-center px-8 pb-24 text-center">
-          <Icon name="auto_awesome" size={32} style={{ color: "var(--md-sys-color-neonindigo)", marginBottom: 20 }} />
-          <h2
-            style={{
-              fontFamily: "Roboto Slab, Georgia, serif",
-              fontSize: 22, fontWeight: 700,
-              color: "var(--md-sys-color-text-primary)",
-              lineHeight: 1.25, marginBottom: 12,
-            }}
-          >
-            And just like that,<br />{account.name} exists.
-          </h2>
-          <p className="text-15" style={{ lineHeight: 1.6, color: "var(--md-sys-color-text-muted)", maxWidth: 280, marginBottom: 32 }}>
-            No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and nowhere to go but up.
-          </p>
-
-          <button
-            onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
-            className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
-            style={{
-              border: "1.5px dashed rgba(139,146,255,0.45)",
-              borderRadius: "var(--radius-xl)",
-              background: "rgba(139,146,255,0.04)",
-            }}
-          >
-            <Icon name="auto_awesome" size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-            <div className="flex-1 min-w-0 text-left">
-              <p className="text-[15px] font-bold leading-snug mb-1" style={{ color: "var(--md-sys-color-neonindigo)" }}>
-                Log your first visit
-              </p>
-              <p className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                We'll fill Salesforce automatically.
-              </p>
-            </div>
-            <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-          </button>
-        </div>
-      )}
-
-      {/* Tab content — pb accounts for capture button + BottomNav */}
-      {!effectiveJustCreated && <div className="flex-1 overflow-y-auto pb-24">
+          </div>
+        )}
 
         {/* Overview */}
-        {activeTab === "overview" && (
+        {!effectiveJustCreated && activeTab === "overview" && (
           <div className="px-4 pb-4">
-            {/* Detail-only sections */}
             {(detail || captureJustCompleted) ? (
-              <>
-                <section className="mb-6">
-                  <h2 className="heading-6 mb-2" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                    Last Time
-                  </h2>
-                  <p className="text-base leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                    {detail?.lastVisitSummary ?? DEMO_CAPTURE_OVERVIEW.lastVisitSummary}
-                  </p>
-                </section>
-
-                <section className="mb-6">
-                  <h2 className="heading-6 mb-3" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                    Ideas for this Time
-                  </h2>
-                  <ul className="flex flex-col gap-2.5">
-                    {(detail?.ideasForThisTime ?? DEMO_CAPTURE_OVERVIEW.ideasForThisTime).map((idea, i) => (
-                      <li key={i} className="flex items-start gap-2.5">
-                        <span
-                          className="flex-shrink-0 mt-[10px] w-1.5 h-1.5 rounded-full"
-                          style={{ background: "var(--md-sys-color-text-muted)" }}
-                        />
-                        <span className="text-base leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                          {idea}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 20, marginTop: 16 }}>
+                <InsightCard
+                  eyebrow="Last Time"
+                  visitedDaysAgo={visitedDaysAgo}
+                  body={detail?.lastVisitSummary ?? DEMO_CAPTURE_OVERVIEW.lastVisitSummary}
+                />
+                <InsightCard
+                  eyebrow="Ideas for Next Time"
+                  body={detail?.ideasForThisTime ?? DEMO_CAPTURE_OVERVIEW.ideasForThisTime}
+                />
+              </div>
             ) : (
               <div className="py-8 text-center mb-2">
                 <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>
@@ -718,12 +830,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         )}
 
         {/* Activity */}
-        {activeTab === "activity" && (
-          <div className="flex flex-col gap-3 px-4 pb-4">
-
-            {/* Preparing note — shown when ?note=processing */}
+        {!effectiveJustCreated && activeTab === "activity" && (
+          <div className="flex flex-col gap-3 px-4 pb-24">
             {noteState === "processing" && <PreparingNoteCard />}
-
             {(detail?.recentActivity?.length || captureJustCompleted) ? (
               (detail?.recentActivity ?? [{ id: "new-capture", accountId: "new-capture", title: "Sandra confirmed we're the frontrunner for the contract", summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.", date: new Date(), durationMinutes: 28, hasTranscript: true, repName: "Jordan Mills", type: "visit" as const }]).map((item) => (
                 <ActivityCard
@@ -746,7 +855,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           </div>
         )}
 
-      </div>}
+      </div>
 
       {/* Log a Visit CTA — hidden while a capture is active for this account */}
       {!isCapturing && (
