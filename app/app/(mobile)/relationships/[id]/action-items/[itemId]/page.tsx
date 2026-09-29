@@ -12,6 +12,7 @@ import { use, useState, useEffect, useRef, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Icon from "@/components/ui/Icon";
+import ScrollAwareTopBar from "@/components/ui/ScrollAwareTopBar";
 import { CompanyIcon } from "@/components/ui/CustomIcons";
 import MiniCalendar from "@/components/accounts/MiniCalendar";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
@@ -50,6 +51,7 @@ function ActionItemDetailPageContent({
   const [saved,     setSaved]     = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -256,25 +258,26 @@ function ActionItemDetailPageContent({
   const isDone = item.status === "done";
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
+    <div className="h-full" style={{ background: "var(--md-sys-color-background)", position: "relative", overflow: "hidden" }}>
 
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-10 pb-4">
-        <button onClick={() => router.push(`/relationships/${accountId}`)} className="p-1 active:opacity-60 transition-opacity">
-          <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-muted)" }} />
-        </button>
-        <button
-          onClick={() => setIsEditing(true)}
-          className="flex items-center gap-1.5 px-4 h-8 text-sm-bold rounded-full active:opacity-70 transition-opacity"
-          style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-text-primary)" }}
-        >
-          <Icon name="border_color" size={13} style={{ color: "var(--md-sys-color-text-muted)" }} />
-          Edit
-        </button>
-      </div>
+      <ScrollAwareTopBar
+        onBack={() => router.push(`/relationships/${accountId}`)}
+        scrollRef={scrollRef}
+        rightSlot={
+          <button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center gap-1.5 px-4 h-8 text-sm-bold rounded-full active:opacity-70 transition-opacity"
+            style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-text-primary)" }}
+          >
+            <Icon name="border_color" size={13} style={{ color: "var(--md-sys-color-text-muted)" }} />
+            Edit
+          </button>
+        }
+      />
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto px-4 pb-32">
+      <div ref={scrollRef} style={{ position: "absolute", inset: 0, overflowY: "auto" }}>
+      <div className="px-4 pb-32" style={{ paddingTop: 86 }}>
 
         {/* Status badge + eyebrow */}
         <div className="flex items-center gap-2 mb-3">
@@ -346,6 +349,7 @@ function ActionItemDetailPageContent({
           </>
         )}
 
+      </div>
       </div>
 
       {/* Bottom CTA */}

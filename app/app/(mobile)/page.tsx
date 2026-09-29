@@ -112,8 +112,8 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      {/* Email login */}
-      <div className="mt-8 relative z-10">
+      {/* Email login — hidden for now, keeping for future use */}
+      {/* <div className="mt-8 relative z-10">
         <Link
           href="/relationships"
           className="text-sm font-medium"
@@ -121,7 +121,7 @@ export default function LoginPage() {
         >
           Log in with Email
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }
