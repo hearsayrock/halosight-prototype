@@ -647,10 +647,10 @@ function CombinedPageContent() {
   // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { isDisqualified, markNeedsAttention } = useAccountState();
+  const { isDisqualified, markNeedsAttention, createdAccounts, addCreatedAccount } = useAccountState();
 
   // Dynamic account list — starts with mock data, grows as user creates accounts
-  const [allAccounts, setAllAccounts] = useState<Account[]>(mockAccounts);
+  const allAccounts = useMemo<Account[]>(() => [...createdAccounts, ...mockAccounts], [createdAccounts]);
 
   // Filter out disqualified leads from all account computations
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -661,7 +661,7 @@ function CombinedPageContent() {
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function handleAccountCreated(newAccount: Account) {
-    setAllAccounts((prev) => [newAccount, ...prev]);
+    addCreatedAccount(newAccount);
     markNeedsAttention(newAccount.id);
     setQuery("");
     setTypeFilter("all");
@@ -1081,7 +1081,7 @@ function CombinedPageContent() {
         className="flex items-center justify-between px-4 pt-10 pb-3"
         style={{
           ...(mode === "accounts" || mode === "priorities"
-            ? { position: "absolute", top: 0, left: 0, right: 0, zIndex: 10, pointerEvents: "none" }
+            ? { position: "absolute", top: 0, left: 0, right: 0, zIndex: fabOpen ? 0 : 10, pointerEvents: "none" }
             : { flexShrink: 0 }),
           background:
             (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled)
@@ -1223,83 +1223,6 @@ function CombinedPageContent() {
         )}
       </AnimatePresence> */}
 
-      {/* ── FILTER PILLS — accounts mode only ──────────────────────────── */}
-      <AnimatePresence>
-        {mode === "accounts" && (
-          <motion.div
-            key="account-filters"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="flex items-center gap-2 px-4 pb-3"
-            style={{ flexShrink: 0 }}
-          >
-            {/* All / Accounts / Leads pill */}
-            {(() => {
-              const showLabels: Record<ShowFilter, string> = { all: "All", accounts: "Accounts", leads: "Leads" };
-              const active = true;
-              return (
-                <button
-                  onClick={() => setActiveSheet("show")}
-                  className="flex items-center gap-1 px-3 active:opacity-70 transition-opacity"
-                  style={{
-                    height: 32,
-                    borderRadius: "var(--radius-full)",
-                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
-                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
-                  }}
-                >
-                  <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
-                    {showLabels[showFilter]}
-                  </span>
-                  <Icon name="keyboard_arrow_down" size={16} style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
-                </button>
-              );
-            })()}
-
-            {/* Type pill — hidden when "leads" is selected */}
-            {showFilter !== "leads" && (() => {
-              const typeLabels: Record<AccountTypeFilter, string> = { all: "Type", distributor: "Distributor", "sold-to": "Sold-To", "shipped-to": "Ship-To", prospect: "Prospective" };
-              const active = typeFilter !== "all";
-              return (
-                <button
-                  onClick={() => setActiveSheet("type")}
-                  className="flex items-center gap-1 px-3 active:opacity-70 transition-opacity"
-                  style={{
-                    height: 32,
-                    borderRadius: "var(--radius-full)",
-                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
-                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
-                  }}
-                >
-                  <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
-                    {typeLabels[typeFilter]}
-                  </span>
-                  <Icon name="keyboard_arrow_down" size={16} style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
-                </button>
-              );
-            })()}
-
-            {/* Within 5 mi toggle */}
-            <button
-              onClick={() => setWithinFiveMi((p) => !p)}
-              className="flex items-center gap-1.5 px-3 active:opacity-70 transition-opacity"
-              style={{
-                height: 32,
-                borderRadius: "var(--radius-full)",
-                background: withinFiveMi ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
-                border: withinFiveMi ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
-              }}
-            >
-              <Icon name="near_me" size={13} style={{ color: withinFiveMi ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
-              <span className="text-sm-bold" style={{ color: withinFiveMi ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
-                Within 5 mi
-              </span>
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── BODY ───────────────────────────────────────────────────────── */}
       <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
@@ -1369,8 +1292,74 @@ function CombinedPageContent() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.24, ease: [0.32, 0, 0.18, 1] }}
               ref={accountsScrollRef}
-              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 82, paddingBottom: systemState === "done" && hasQuery ? 120 : 100 }}
+              style={{ position: "absolute", inset: 0, overflowY: "auto", paddingTop: 100, paddingBottom: systemState === "done" && hasQuery ? 120 : 100 }}
             >
+              {/* ── Filter pills — scroll with the list, hidden under the floating header ── */}
+          <div className="flex items-center gap-2 px-4 pb-3">
+            {/* All / Accounts / Leads pill */}
+            {(() => {
+              const showLabels: Record<ShowFilter, string> = { all: "All", accounts: "Accounts", leads: "Leads" };
+              const active = true;
+              return (
+                <button
+                  onClick={() => setActiveSheet("show")}
+                  className="flex items-center gap-1 px-3 active:opacity-70 transition-opacity"
+                  style={{
+                    height: 32,
+                    borderRadius: "var(--radius-full)",
+                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
+                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+                  }}
+                >
+                  <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
+                    {showLabels[showFilter]}
+                  </span>
+                  <Icon name="keyboard_arrow_down" size={16} style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
+                </button>
+              );
+            })()}
+
+            {/* Type pill — hidden when "leads" is selected */}
+            {showFilter !== "leads" && (() => {
+              const typeLabels: Record<AccountTypeFilter, string> = { all: "Type", distributor: "Distributor", "sold-to": "Sold-To", "shipped-to": "Ship-To", prospect: "Prospective" };
+              const active = typeFilter !== "all";
+              return (
+                <button
+                  onClick={() => setActiveSheet("type")}
+                  className="flex items-center gap-1 px-3 active:opacity-70 transition-opacity"
+                  style={{
+                    height: 32,
+                    borderRadius: "var(--radius-full)",
+                    background: active ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
+                    border: active ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+                  }}
+                >
+                  <span className="text-sm-bold" style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
+                    {typeLabels[typeFilter]}
+                  </span>
+                  <Icon name="keyboard_arrow_down" size={16} style={{ color: active ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
+                </button>
+              );
+            })()}
+
+            {/* Within 5 mi toggle */}
+            <button
+              onClick={() => setWithinFiveMi((p) => !p)}
+              className="flex items-center gap-1.5 px-3 active:opacity-70 transition-opacity"
+              style={{
+                height: 32,
+                borderRadius: "var(--radius-full)",
+                background: withinFiveMi ? "rgba(139,146,255,0.15)" : "var(--md-sys-color-dark-secondary)",
+                border: withinFiveMi ? "1.5px solid var(--md-sys-color-neonindigo)" : "1px solid rgba(255,255,255,0.10)",
+              }}
+            >
+              <Icon name="near_me" size={13} style={{ color: withinFiveMi ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }} />
+              <span className="text-sm-bold" style={{ color: withinFiveMi ? "var(--md-sys-color-neonindigo-light)" : "var(--md-sys-color-text-muted)" }}>
+                Within 5 mi
+              </span>
+            </button>
+          </div>
+
               {/* ── Skeleton preview: both sections loading ───────────────── */}
               {preview === "search-loading" && (
                 <>

@@ -142,7 +142,7 @@ export default function AccountListItem({ account, isLast = false }: Props) {
 
           {/* Distance • location */}
           <div className="flex items-center gap-1.5 mt-0.5">
-            {account.distanceMiles <= 30 && (
+            {account.distanceMiles > 0 && account.distanceMiles <= 30 && (
               <>
                 <span className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>
                   {formatDistance(account.distanceMiles)}
@@ -176,11 +176,19 @@ export default function AccountListItem({ account, isLast = false }: Props) {
                 <span className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>{account.contactName}</span>
               </>
             )}
-            <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
-            <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>Visited </span>
-            <span className="text-xs font-semibold" style={{ color: "var(--md-sys-color-text-muted)" }}>
-              {label}
-            </span>
+            {(account.halosightType === "prospect" || account.crmAccountType || account.contactName) && (
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
+            )}
+            {account.neverVisited ? (
+              <span className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>No visits yet</span>
+            ) : (
+              <>
+                <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>Visited </span>
+                <span className="text-xs font-semibold" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                  {label}
+                </span>
+              </>
+            )}
           </div>
         </div>
 

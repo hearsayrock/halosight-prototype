@@ -1036,7 +1036,7 @@ function InteractionDetailPageContent({
                     display: "flex", alignItems: "center", justifyContent: "center",
                     marginLeft: i > 0 ? -8 : 0,
                     position: "relative",
-                    zIndex: participants.length - i,
+                    zIndex: i + 1,
                     flexShrink: 0,
                   }}>
                     <span style={{

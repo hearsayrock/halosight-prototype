@@ -3,12 +3,14 @@
 /**
  * FLUTTER HANDOFF: AccountStateContext
  * Tracks in-session account state overrides — disqualified leads, needs-attention
- * flags, and rep-entered contact overrides.
+ * flags, rep-entered contact overrides, and companies created this session
+ * (kept until a refresh).
  * In production this would write to the backend; here it's ephemeral React state.
  * Flutter equivalent: account_state_provider.dart / AccountRepository
  */
 
 import { createContext, useContext, useState } from "react";
+import type { Account } from "@/lib/types";
 
 export interface ContactInfo {
   contactName?: string;
@@ -25,6 +27,9 @@ interface AccountStateContextValue {
   clearNeedsAttention: (id: string) => void;
   getContactOverride: (id: string) => ContactInfo | undefined;
   updateContact: (id: string, info: ContactInfo) => void;
+  createdAccounts: Account[];
+  addCreatedAccount: (account: Account) => void;
+  markCreatedVisited: (id: string) => void;
 }
 
 const AccountStateContext = createContext<AccountStateContextValue>({
@@ -36,12 +41,26 @@ const AccountStateContext = createContext<AccountStateContextValue>({
   clearNeedsAttention: () => {},
   getContactOverride: () => undefined,
   updateContact: () => {},
+  createdAccounts: [],
+  addCreatedAccount: () => {},
+  markCreatedVisited: () => {},
 });
 
 export function AccountStateProvider({ children }: { children: React.ReactNode }) {
   const [disqualifiedIds, setDisqualifiedIds] = useState<Set<string>>(new Set());
   const [attentionIds, setAttentionIds] = useState<Set<string>>(new Set());
   const [contactOverrides, setContactOverrides] = useState<Map<string, ContactInfo>>(new Map());
+  const [createdAccounts, setCreatedAccounts] = useState<Account[]>([]);
+
+  function markCreatedVisited(id: string) {
+    setCreatedAccounts((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, neverVisited: false, lastVisited: new Date() } : a))
+    );
+  }
+
+  function addCreatedAccount(account: Account) {
+    setCreatedAccounts((prev) => [account, ...prev.filter((a) => a.id !== account.id)]);
+  }
 
   function disqualify(id: string) {
     setDisqualifiedIds((prev) => new Set([...prev, id]));
@@ -89,6 +108,9 @@ export function AccountStateProvider({ children }: { children: React.ReactNode }
         clearNeedsAttention,
         getContactOverride,
         updateContact,
+        createdAccounts,
+        addCreatedAccount,
+        markCreatedVisited,
       }}
     >
       {children}

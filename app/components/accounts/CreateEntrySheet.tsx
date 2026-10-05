@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import Icon from "@/components/ui/Icon";
 import type { Account } from "@/lib/types";
 import { mockAccounts } from "@/lib/mock-data/accounts";
+import { useAccountState } from "@/lib/context/AccountStateContext";
 
 type EntryType = "account" | "lead";
 type DupeState = "idle" | "checking" | "found" | "none";
@@ -34,10 +35,10 @@ interface Props {
   onCreated: (account: Account) => void;
 }
 
-function findDuplicates(query: string): Account[] {
+function findDuplicates(query: string, accounts: Account[]): Account[] {
   const q = query.toLowerCase().trim();
   if (q.length < 2) return [];
-  return mockAccounts.filter((a) => {
+  return accounts.filter((a) => {
     const name = a.name.toLowerCase();
     return name.includes(q) || q.includes(name);
   });
@@ -134,6 +135,7 @@ export default function CreateEntrySheet({ initialType, initialName = "", onClos
   const [dupeState,  setDupeState]  = useState<DupeState>("idle");
   const [duplicates, setDuplicates] = useState<Account[]>([]);
   const [dismissed,  setDismissed]  = useState(false);
+  const { createdAccounts } = useAccountState();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const dupeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -154,11 +156,11 @@ export default function CreateEntrySheet({ initialType, initialName = "", onClos
     }
     setDupeState("checking");
     dupeTimerRef.current = setTimeout(() => {
-      const results = findDuplicates(trimmed);
+      const results = findDuplicates(trimmed, [...createdAccounts, ...mockAccounts]);
       setDuplicates(results);
       setDupeState(results.length > 0 ? "found" : "none");
     }, 400);
-  }, []);
+  }, [createdAccounts]);
 
   function handleNameChange(value: string) {
     setName(value);
@@ -184,6 +186,7 @@ export default function CreateEntrySheet({ initialType, initialName = "", onClos
       halosightType: entryType === "lead" ? "prospect" : "account",
       distanceMiles: 0,
       lastVisited: new Date(),
+      neverVisited: true,
       taskCount: 0,
     });
     setIsVisible(false);

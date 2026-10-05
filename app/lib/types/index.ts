@@ -29,6 +29,8 @@ export interface Account {
   state?: string;
   distanceMiles: number;
   lastVisited: Date;
+  /** True for companies created in-app that have had no visit yet (lastVisited is just the creation time). */
+  neverVisited?: boolean;
   childCount?: number;         // corporate accounts only
   parentId?: string;           // branch accounts only
   contactName?: string;

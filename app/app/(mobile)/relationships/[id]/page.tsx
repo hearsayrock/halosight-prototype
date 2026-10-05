@@ -288,7 +288,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   }
 
   const { status: captureStatus, accountId: capturingId, startCapture } = useCapture();
-  const { disqualify, restore, needsAttention, clearNeedsAttention, updateContact, getContactOverride } = useAccountState();
+  const { disqualify, restore, needsAttention, clearNeedsAttention, updateContact, getContactOverride, createdAccounts, markCreatedVisited } = useAccountState();
 
   // Contact info for leads — form state for the Needs Attention banner
   const [contactForm, setContactForm] = useState({ name: "", title: "", phone: "" });
@@ -344,7 +344,10 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   const isCapturing = captureStatus !== "idle" && capturingId === id;
 
-  const justCreated = searchParams.get("just_created") === "true";
+  const createdAccount = createdAccounts.find((a) => a.id === id);
+  // A company created in-app with no visit yet: treated like a new lead so its first visit gets the AI read
+  const isFirstVisitPending = !!createdAccount?.neverVisited;
+  const justCreated = searchParams.get("just_created") === "true" || isFirstVisitPending;
   const justCreatedName = searchParams.get("name") ?? "";
   const capturedParam = searchParams.get("captured") === "true";
 
@@ -358,7 +361,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   };
 
   const detail = mockAccountDetails[id];
-  const mockAccount = mockAccounts.find((a) => a.id === id);
+  const mockAccount = mockAccounts.find((a) => a.id === id) ?? createdAccount;
   // True for system/CRM accounts not in the rep's Halosight portfolio
   const isExternalAccount = !mockAccount;
 
@@ -382,6 +385,10 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
     (captureStatus === "ready" && capturingId === id && !detail) ||
     (capturedParam && !detail);
   const effectiveJustCreated = justCreated && !captureJustCompleted;
+
+  useEffect(() => {
+    if (isFirstVisitPending && captureStatus === "ready" && capturingId === id) markCreatedVisited(id);
+  }, [isFirstVisitPending, captureStatus, capturingId, id, markCreatedVisited]);
 
   // ── Preview states ────────────────────────────────────────────────────────
   if (preview === "loading") return <AccountDetailSkeleton />;
@@ -730,7 +737,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               No visits yet. No notes. Nothing to sync to the CRM. Just potential, a blank slate, and nowhere to go but up.
             </p>
             <button
-              onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
+              onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect" || isFirstVisitPending)}
               className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
               style={{
                 border: "1.5px dashed rgba(139,146,255,0.45)",
@@ -864,7 +871,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
           style={{ bottom: 32 }}
         >
           <button
-            onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
+            onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect" || isFirstVisitPending)}
             className="h-11 px-6 text-sm-bold flex items-center gap-2 transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-brand-coral)",

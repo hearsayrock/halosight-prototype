@@ -403,6 +403,13 @@ export default function AIReviewOverlay() {
                   >
                     Here's the read on {accountName ?? "this lead"}
                   </h2>
+                  <p
+                    className="flex items-start gap-1.5 mt-2.5 text-[13px]"
+                    style={{ color: "var(--md-sys-color-text-secondary)", lineHeight: 1.45 }}
+                  >
+                    <Icon name="cloud_sync" size={16} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, marginTop: 1 }} />
+                    These fields will sync to the matching account fields in your CRM.
+                  </p>
                 </motion.div>
               ) : (
                 <motion.div
