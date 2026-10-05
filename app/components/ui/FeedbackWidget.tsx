@@ -8,8 +8,9 @@
  *         --md-sys-color-text-disabled, --md-sys-color-neonindigo, --md-sys-color-brand-teal,
  *         --radius-xl, --radius-full, --radius-md
  *
- * Entry card lives inline in the home scroll. Tapping a category pill opens
- * a bottom sheet portaled into #phone-overlay-root with that type pre-selected.
+ * Entry card lives inline in the home scroll: eyebrow, title, subtitle and three full-width
+ * options (bug / idea / write my own). Tapping one opens a bottom sheet portaled into
+ * #phone-overlay-root with that type pre-selected.
  */
 
 import { useState } from "react";
@@ -17,13 +18,19 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 
-type FeedbackType = "idea" | "bug" | "ai-quality" | "general";
+type FeedbackType = "bug" | "idea" | "other";
 
 const TYPES: { id: FeedbackType; label: string; icon: string; placeholder: string }[] = [
-  { id: "idea",       label: "Idea",       icon: "lightbulb",    placeholder: "What should we build or change?" },
-  { id: "bug",        label: "Bug",        icon: "bug_report",   placeholder: "What broke? What did you expect to happen?" },
-  { id: "ai-quality", label: "AI quality", icon: "auto_awesome", placeholder: "Which summary or insight was off, and how?" },
-  { id: "general",    label: "General",    icon: "chat_bubble",  placeholder: "Tell us more…" },
+  { id: "bug",   label: "Bug",   icon: "bug_report", placeholder: "What broke? What did you expect to happen?" },
+  { id: "idea",  label: "Idea",  icon: "lightbulb",  placeholder: "What should we build or change?" },
+  { id: "other", label: "Other", icon: "more_horiz", placeholder: "Tell us more…" },
+];
+
+// Entry-card shortcuts — each opens the sheet with that type preselected
+const ENTRY_OPTIONS: { type: FeedbackType; label: string; icon: string; fill: boolean }[] = [
+  { type: "bug",     label: "I noticed a bug",        icon: "bug_report", fill: true  },
+  { type: "idea",    label: "I wish the app could...", icon: "lightbulb",  fill: false },
+  { type: "other", label: "Write my own",           icon: "edit",       fill: true  },
 ];
 
 // ── Sheet ─────────────────────────────────────────────────────────────────────
@@ -40,7 +47,7 @@ function FeedbackSheet({
   const [sent, setSent] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
-  const currentType = TYPES.find((t) => t.id === selected)!;
+  const currentType = TYPES.find((t) => t.id === selected) ?? TYPES[0];
 
   function handleSend() {
     if (!text.trim()) return;
@@ -214,18 +221,20 @@ export default function FeedbackWidget() {
         className="mx-4 mb-6"
         style={{
           background: "var(--md-sys-color-dark-primary)",
-          borderRadius: "var(--radius-xl)",
-          padding: "18px 18px 16px",
-          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: "var(--radius-md)",
+          padding: 16,
+          border: "1px solid var(--md-sys-color-alpha-white-10)",
         }}
       >
         {/* Eyebrow */}
-        <div className="flex items-center gap-1.5 mb-3">
-          <Icon name="feedback" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+        <div className="flex items-center" style={{ gap: 8, height: 20 }}>
+          <Icon name="campaign" fill size={20} style={{ color: "var(--md-sys-color-neonindigo)" }} />
           <span
             style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: "0.09em",
-              textTransform: "uppercase", color: "var(--md-sys-color-neonindigo)",
+              fontFamily: "Roboto Slab, Georgia, serif",
+              fontSize: 14.2, fontWeight: 700, lineHeight: "20px",
+              position: "relative", top: 0.8,
+              color: "var(--md-sys-color-neonindigo)",
             }}
           >
             Share Feedback
@@ -234,35 +243,47 @@ export default function FeedbackWidget() {
 
         {/* Title */}
         <p
-          className="font-bold mb-1"
-          style={{ fontSize: 18, color: "var(--md-sys-color-text-primary)", lineHeight: 1.25 }}
+          style={{
+            marginTop: 12.5,
+            fontFamily: "Roboto Slab, Georgia, serif",
+            fontSize: 22.5, fontWeight: 700, lineHeight: "28px",
+            color: "var(--md-sys-color-text-primary)",
+          }}
         >
           Help shape Halosight
         </p>
 
         {/* Subtitle */}
-        <p className="text-[13px] mb-4" style={{ color: "var(--md-sys-color-text-muted)", lineHeight: 1.5 }}>
-          We&apos;re brand new and reading every note. Tell us what&apos;s working — or what&apos;s missing.
+        <p
+          style={{
+            marginTop: 8.5,
+            fontSize: 15.3, fontWeight: 300, lineHeight: "22px",
+            color: "var(--md-sys-color-text-muted)",
+          }}
+        >
+          Not sure where to start? Try one:
         </p>
 
-        {/* Category pills */}
-        <div className="flex flex-wrap gap-2">
-          {TYPES.map((t) => (
+        {/* Full-width options */}
+        <div className="flex flex-col" style={{ gap: 12, marginTop: 17 }}>
+          {ENTRY_OPTIONS.map((o) => (
             <button
-              key={t.id}
-              onClick={() => setSheetType(t.id)}
-              className="flex items-center gap-1.5 px-3 py-2 active:opacity-70 transition-opacity"
+              key={o.type}
+              onClick={() => setSheetType(o.type)}
+              className="flex items-center w-full text-left active:opacity-70 transition-opacity"
               style={{
-                borderRadius: "var(--radius-full)",
-                border: "1.5px solid var(--md-sys-color-dark-tertiary)",
-                background: "transparent",
-                color: "var(--md-sys-color-text-secondary)",
-                fontSize: 13,
-                fontWeight: 500,
+                height: 48,
+                paddingLeft: 12,
+                gap: 8.5,
+                borderRadius: "var(--radius-md)",
+                background: "var(--md-sys-color-background)",
+                color: "var(--md-sys-color-text-primary)",
+                fontSize: 15.3,
+                fontWeight: 300,
               }}
             >
-              <Icon name={t.icon} size={14} style={{ color: "var(--md-sys-color-text-muted)" }} />
-              {t.label}
+              <Icon name={o.icon} fill={o.fill} size={24} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+              {o.label}
             </button>
           ))}
         </div>
