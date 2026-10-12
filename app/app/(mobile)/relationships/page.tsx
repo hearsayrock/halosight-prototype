@@ -831,6 +831,21 @@ function CombinedPageContent() {
   // Add picker — choose account or lead before opening create sheet
   const [showAddPicker, setShowAddPicker] = useState(false);
 
+  // Deep links: /relationships?create=account | ?create=lead open the matching sheet directly
+  const createParam = searchParams.get("create");
+  useEffect(() => {
+    if (createParam === "account") setShowCreateSheet(true);
+    else if (createParam === "lead") setShowCreateLeadSheet(true);
+  }, [createParam]);
+
+  function clearCreateParam() {
+    if (!searchParams.get("create")) return;
+    const next = new URLSearchParams(searchParams.toString());
+    next.delete("create");
+    const qs = next.toString();
+    router.replace(`/relationships${qs ? `?${qs}` : ""}`, { scroll: false });
+  }
+
   // Accounts / Leads tab in the all-companies view
   const [accountsTab, setAccountsTab] = useState<"accounts" | "leads">("accounts");
 
@@ -1617,7 +1632,7 @@ function CombinedPageContent() {
       {showCreateSheet && (
         <CreateAccountSheet
           initialName={query}
-          onClose={() => setShowCreateSheet(false)}
+          onClose={() => { setShowCreateSheet(false); clearCreateParam(); }}
           onCreated={handleAccountCreated}
         />
       )}
@@ -1625,7 +1640,7 @@ function CombinedPageContent() {
       {/* Create lead sheet with duplicate detection (+ button) */}
       {showCreateLeadSheet && (
         <CreateLeadSheet
-          onClose={() => setShowCreateLeadSheet(false)}
+          onClose={() => { setShowCreateLeadSheet(false); clearCreateParam(); }}
           onCreated={handleAccountCreated}
         />
       )}
