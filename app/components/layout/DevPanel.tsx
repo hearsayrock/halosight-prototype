@@ -302,9 +302,9 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
         </div>
       </div>
 
-      {/* Handoff */}
+      {/* Design system */}
       <a
-        href="/handoff"
+        href="/design-system"
         target="_blank"
         rel="noopener noreferrer"
         style={{
@@ -324,7 +324,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
         onMouseEnter={e => (e.currentTarget.style.opacity = "0.75")}
         onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
       >
-        Flutter handoff ↗
+        Design system ↗
       </a>
 
       {/* Reset */}

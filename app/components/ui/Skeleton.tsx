@@ -46,13 +46,10 @@ function AccountListItemSkeleton({ isLast = false }: { isLast?: boolean }) {
         <Bone width="32%" height={13} />
       </div>
 
-      {/* Right — badge + task/assignee row */}
+      {/* Right — type pill + count badge (no assignee circle) */}
       <div className="flex flex-col items-end justify-between gap-2 flex-shrink-0" style={{ minHeight: 60 }}>
         <Bone width={68} height={20} radius={20} />
-        <div className="flex items-center gap-1.5">
-          <Bone width={32} height={20} radius={20} />
-          <Bone width={22} height={22} radius={11} />
-        </div>
+        <Bone width={55} height={22.5} radius={11} />
       </div>
     </div>
   );

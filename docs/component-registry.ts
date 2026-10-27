@@ -11,7 +11,7 @@
  *   4. Always check `usage.antiPatterns` before writing markup
  *   5. Every new component must be added here AND reflected on /design-system
  *
- * Source of truth for tokens: /app/app/globals.css
+ * Source of truth for tokens: app/tokens/*.css (hand-maintained; published values live in the design-system repo's tokens/tokens.json)
  * Live viewer: localhost:3000/design-system
  * Flutter handoff details: docs/flutter-handoff.md
  */
@@ -66,7 +66,13 @@ interface ComponentMeta {
     neverUseFor: string[];
     alwaysRemember: string[];
   };
+  /** One line per change, newest first: "YYYY-MM-DD: what changed". Lets Flutter see what moved since the last conversion. */
+  changelog?: string[];
 }
+
+// NOTE: entries written from 2026-10-27 onward cite design-system token PATHS
+// (e.g. "color.semantic.error"), not CSS variable names or hex values. Older entries still
+// use CSS names and are converted as each component is updated.
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
@@ -159,26 +165,36 @@ import BottomNav from "@/components/layout/BottomNav";
     category: "feature",
     type: "interactive",
     description:
-      "Tappable account card showing type icon, name, distance, last-visited recency, " +
-      "and optional city/state. Used in the accounts list. Navigates to /accounts/:id on tap.",
+      "Row in the companies list. Variant `owned` (default): name, distance • location, last-visited recency, " +
+      "and risk and task count badges; navigates to /relationships/:id. " +
+      "Variant `crm`: a CRM account owned by another rep (company-wide search results): muted name and an " +
+      "\"Owner: <name>\" line and a trailing chevron, no visit line or badges; calls onSelect. " +
+      "Variant `home`: the compact row in the home Companies card: name, distance · address, risk and task badges, no chevron. " +
+      "`crm` and `home` rows sit inside <AccountListCard> (filled card); `owned` is an open row.",
     file: "app/components/accounts/AccountListItem.tsx",
-    designSystemSection: "#cards",
+    designSystemSection: "#account-list-item",
     flutterEquivalent: "AccountsViewAccountListItem — lib/view/_widget/account_list/accounts_view_account_list_item.dart",
     tokens: {
       required: [
-        { token: "--md-sys-color-dark-secondary",     role: "card background" },
-        { token: "--md-sys-color-alpha-white-10",     role: "card border (1px)" },
-        { token: "--radius-sm",                role: "card border radius" },
-        { token: "--md-sys-color-text-primary",       role: "account name" },
-        { token: "--md-sys-color-text-muted",         role: "distance and last-visited text" },
-        { token: "--md-sys-color-brand-coral",        role: "last-visited label when isToday = true" },
-        { token: "--md-sys-color-neonindigo-light", role: "city, state text" },
+        { token: "color.text.primary",            role: "account name (all variants)" },
+        { token: "color.text.muted",              role: "distance, location, last-visited text and the owner's name" },
+        { token: "color.text.disabled",           role: "separator dots and the \"Visited\" / \"Owner:\" labels" },
+        { token: "color.dark.primary",            role: "AccountListCard fill (crm, home)" },
+        { token: "color.dark.tertiary",           role: "row separators (crm, home)" },
+        { token: "radius.lg",                     role: "AccountListCard corners" },
+        { token: "color.semantic.error",          role: "risk badge background (18% opacity)" },
+        { token: "color.semantic.error-light",    role: "risk badge icon and number" },
+        { token: "color.neonindigo.base",         role: "tasks badge background (20% opacity)" },
+        { token: "color.neonindigo.light",        role: "tasks badge icon and number" },
+        { token: "color.brand.teal",              role: "Lead badge text" },
+        { token: "color.semantic.warning",        role: "Needs Info badge" },
+        { token: "radius.full",                   role: "all badges" },
       ],
       forbidden: [
-        "Raw hex for background (#202535, #252A36, etc.)",
-        "--md-sys-color-dark-primary (too dark — loses hierarchy against page bg)",
-        "--md-sys-color-text-disabled for city/state (too faint — use brand-purple-light)",
-        "Adding a count badge (removed — do not re-add)",
+        "Raw hex or rgba() for badge colors — derive the background from the token at the stated opacity",
+        "A grey placeholder badge for a zero count — a count of 0 or undefined renders nothing",
+        "Giving an `owned` row a card background; crm and home rows get theirs from <AccountListCard>, not from the row",
+        "A chevron on the home variant — it was dropped to give the badges room",
       ],
     },
     props: [
@@ -186,22 +202,48 @@ import BottomNav from "@/components/layout/BottomNav";
         name: "account",
         type: "Account",
         required: true,
-        description: "Account entity from lib/types — includes id, name, type, distanceMiles, lastVisited, city, state",
+        description:
+          "Account entity from lib/types. Uses name, distanceMiles, address | city+state, lastVisited, " +
+          "halosightType, crmAccountType, taskCount, riskCount.",
+      },
+      {
+        name: "isLast",
+        type: "boolean",
+        required: false,
+        default: "false",
+        description: "Hides the bottom separator on the last row of a list.",
+      },
+      {
+        name: "variant",
+        type: '"owned" | "crm" | "home"',
+        required: false,
+        default: '"owned"',
+        description: "owned = a company in the rep's portfolio. crm = a CRM account owned by another rep. home = the compact row in the home Companies card.",
+      },
+      {
+        name: "ownerName",
+        type: "string",
+        required: false,
+        description: 'crm variant only — the owning rep\'s name, shown as "Owner: <name>".',
+      },
+      {
+        name: "onSelect",
+        type: "(account: Account) => void",
+        required: false,
+        description: "crm variant only — called on tap instead of navigating.",
       },
     ],
     usage: {
       patterns: [
         {
-          name: "accounts list",
-          when: "Rendering the flat list of accounts on /accounts",
+          name: "companies list",
+          when: "Rendering the flat list of companies",
           code: `
 import AccountListItem from "@/components/accounts/AccountListItem";
-import type { Account } from "@/lib/types";
 
-// Inside a flex column with gap-2
-<div className="flex flex-col gap-2 px-4 py-2">
-  {accounts.map((account) => (
-    <AccountListItem key={account.id} account={account} />
+<div className="flex flex-col">
+  {accounts.map((account, i) => (
+    <AccountListItem key={account.id} account={account} isLast={i === accounts.length - 1} />
   ))}
 </div>`,
         },
@@ -209,17 +251,17 @@ import type { Account } from "@/lib/types";
       antiPatterns: [
         {
           scenario: "Building an account row with a plain <div> or <Link>",
-          why: "AccountListItem handles card styling, icon alignment, recency color, distance formatting, and navigation",
-          instead: "Use <AccountListItem account={account} /> — pass the full Account object",
+          why: "AccountListItem handles the layout, recency text, distance formatting, badges and navigation",
+          instead: "Use <AccountListItem account={account} /> and pass the full Account object",
         },
         {
-          scenario: "Showing city/state in --md-sys-color-text-muted",
-          why: "City/state is intentionally purple-light to distinguish it from the distance/recency metadata",
-          instead: "Always use --md-sys-color-neonindigo-light for city and state",
+          scenario: "Showing a badge when the count is 0",
+          why: "The design hides the badge entirely; there is no empty or grey state",
+          instead: "Pass the count through; the component renders nothing for 0 or undefined",
         },
         {
-          scenario: "Adding hover background highlight",
-          why: "Mobile cards use active:opacity-70 — hover states are not part of the mobile design spec",
+          scenario: "Adding a hover background highlight",
+          why: "Mobile rows use active:opacity-70 — hover states are not part of the mobile design spec",
           instead: "Keep active:opacity-70 transition-opacity only",
         },
       ],
@@ -228,20 +270,88 @@ import type { Account } from "@/lib/types";
       priority: "high",
       useWhen: [
         "Rendering any list of Account objects",
-        "Showing account search results",
-        "Showing filtered/sorted account lists",
+        "Showing account search results or filtered/sorted lists",
       ],
       neverUseFor: [
-        "Non-account entities (contacts, activities, etc.) — build a new component",
-        "Detail screen headers — that's a different layout pattern",
+        "Non-account entities (contacts, activities) — build a new component",
+        "Detail screen headers — that is a different layout pattern",
+        "Non-account entities in a list — the crm variant is still an Account, not a different entity",
       ],
       alwaysRemember: [
-        "Icon and city/state use mt-[3px] / mt-[2px] to align with the title baseline — do not change",
-        "heading-6 is the correct class for account name (Roboto Slab 18px/700)",
+        "Badge order is risk, then tasks, 8px apart. There is no assignee circle on either variant",
+        "Risk badge: `warning` icon, error tone. Tasks badge: `check_box` icon, indigo tone. Both 22.5px tall, full radius, number Barlow 500 11.5px",
         "formatLastVisited() and formatDistance() from lib/utils handle all formatting — never format inline",
-        "gap-2 between cards, px-4 py-2 on the list container",
       ],
     },
+    changelog: [
+      "2026-10-27: added `variant=\"home\"` (replaces the inline CompactAccountRow in the relationships page) and the exported AccountListCard wrapper. crm and home rows now share the card look: 17px/600 name, 13px muted second line, 19px (crm) / 13px (home) row padding, full-width dark.tertiary separators. crm gained a trailing chevron.",
+      "2026-10-27: removed the assignee initial circle from both variants (Account.assignedInitial deleted). The crm variant now shows \"Owner: <name>\" in place of distance and address; prop renamed assignedRep -> ownerName.",
+      "2026-10-27: SystemAccountListItem merged in as `variant=\"crm\"` (look unchanged). Badges moved to the shared CountBadge.",
+      "2026-10-27: added the risk badge (Account.riskCount). Count badges now hide at 0 instead of showing a grey icon. Tasks badge icon is now `check_box` at a larger size, with lighter indigo text.",
+    ],
+  },
+
+  // ── CountBadge ──────────────────────────────────────────────────────────────
+  {
+    name: "CountBadge",
+    category: "ui-primitive",
+    type: "display",
+    description:
+      "Icon + number pill for per-account counts. Two tones: `risk` (warning icon, error colors) and " +
+      "`tasks` (check_box icon, indigo colors). Renders nothing when the count is 0 or undefined.",
+    file: "app/components/accounts/CountBadge.tsx",
+    designSystemSection: "#cards",
+    flutterEquivalent: "AccountCountBadge — lib/view/_widget/account_list/account_count_badge.dart",
+    tokens: {
+      required: [
+        { token: "color.semantic.error",        role: "risk background (18% opacity)" },
+        { token: "color.semantic.error-light",  role: "risk icon and number" },
+        { token: "color.neonindigo.base",       role: "tasks background (20% opacity)" },
+        { token: "color.neonindigo.light",      role: "tasks icon and number" },
+        { token: "radius.full",                 role: "pill shape" },
+      ],
+      forbidden: [
+        "Raw hex or rgba() — derive backgrounds from the token at the stated opacity",
+        "Rendering a zero-count badge or a grey placeholder",
+      ],
+    },
+    props: [
+      { name: "tone", type: '"risk" | "tasks"', required: true, description: "Selects icon and colors." },
+      { name: "count", type: "number", required: false, description: "Shown in the pill. 0 or undefined renders nothing." },
+      { name: "label", type: "string", required: true, description: 'Screen-reader noun, e.g. "open risks"; read as "<count> <label>".' },
+    ],
+    usage: {
+      patterns: [
+        {
+          name: "account row badges",
+          when: "Showing open risks and tasks on a company row",
+          code: `
+import CountBadge from "@/components/accounts/CountBadge";
+
+<div className="flex items-center" style={{ gap: 8 }}>
+  <CountBadge tone="risk" count={account.riskCount} label="open risks" />
+  <CountBadge tone="tasks" count={account.taskCount} label="open tasks" />
+</div>`,
+        },
+      ],
+      antiPatterns: [
+        {
+          scenario: "Guarding with `count > 0 &&` before rendering",
+          why: "CountBadge already hides itself at 0; the extra guard adds noise",
+          instead: "Pass the count straight through",
+        },
+      ],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Showing open risk or task counts next to an account"],
+      neverUseFor: ["Status labels (Lead, Needs Info) — those are text pills, not counts"],
+      alwaysRemember: [
+        "Order is risk then tasks, 8px apart",
+        "22.5px tall; icon in a 24px slot; number Barlow 500 11.5px",
+      ],
+    },
+    changelog: ["2026-10-27: extracted from AccountListItem so the home rows and the list share one badge."],
   },
 
   // ── AccountTypeIcon ─────────────────────────────────────────────────────────

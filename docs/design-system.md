@@ -3,13 +3,13 @@
 > The Halosight design system is M3-aligned, Flutter-ready, and Figma-portable. All tokens are named to map directly to Flutter `ThemeData` and Figma variables.
 
 **Live viewer:** `localhost:3000/design-system`  
-**Source of truth:** `/app/app/globals.css` — editing this file updates every swatch on the live viewer automatically.
+**Source of truth:** `app/tokens/*.css` — hand-maintained for now; editing them updates every swatch on the live viewer automatically. Published token values live in the separate design-system repo (`tokens/tokens.json`); see `docs/token-pipeline.md`.
 
 ---
 
 ## Token Architecture
 
-Tokens live in `/app/app/globals.css`. There is no `tailwind.config.ts` — Tailwind v4 uses a CSS-first config.
+Tokens live in `app/tokens/` (`colors.css`, `spacing.css`, `typography.css`, `fonts.css`, `icons.css`), imported by `app/app/globals.css`. There is no `tailwind.config.ts` — Tailwind v4 uses a CSS-first config.
 
 | Layer | Location | Purpose |
 |---|---|---|
@@ -209,7 +209,7 @@ Defined in `:root` (not `@theme inline`) — referenced via `var(--gradient-*)`.
 
 ## Typography
 
-Two font families, both self-hosted via `@font-face` in `globals.css`. No Google CDN dependency.
+Two font families, both self-hosted via `@font-face` in `app/tokens/fonts.css`. No Google CDN dependency.
 
 | Variable | Family | Use |
 |---|---|---|
@@ -265,7 +265,7 @@ Used for nav labels, timestamps, micro-copy. Two families available at 10px.
 
 ### Material Symbols Rounded
 
-Self-hosted variable font at `/public/fonts/material-symbols/MaterialSymbolsRounded.woff2`. Loaded via `@font-face` in `globals.css`. Icon names are identical to the [Figma Material Symbols community library](https://www.figma.com/community/file/1035203688168086460).
+Self-hosted variable font at `/public/fonts/material-symbols/MaterialSymbolsRounded.woff2`. Loaded via `@font-face` in `app/tokens/fonts.css`. Icon names are identical to the [Figma Material Symbols community library](https://www.figma.com/community/file/1035203688168086460).
 
 **Component:** `<Icon name="home" />` — see `/app/components/ui/Icon.tsx`
 
@@ -380,7 +380,7 @@ Quick reference for Flutter engineers — maps components to their token roles:
 
 | Component | Tokens |
 |---|---|
-| `AccountListItem` | `dark-secondary` bg · `alpha-white-10` border · `radius-sm` · `text-primary` name · `text-muted` meta · `text-muted` city/state · `brand-coral` today indicator |
+| `AccountListItem` | See the component's handoff comment and `/design-system#account-list-item` — three variants (owned, crm, home) plus the `CountBadge` sub-component |
 | `AccountTypeIcon` | Custom SVG · `text-muted` stroke · `text-disabled` fill |
 | `SortMenu` trigger | `dark-secondary` bg · `text-muted` icon |
 | `SortMenu` dropdown | `dark-tertiary` bg · `text-primary` labels · `radius-xl` · `elevation-3` shadow |

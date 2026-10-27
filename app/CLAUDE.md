@@ -6,12 +6,12 @@
 - **Never use raw hex values** — always `var(--md-sys-color-*)` tokens
 - **Never use raw px values for border-radius** — always `var(--radius-*)` tokens
 - Alpha/glass effects use `--md-sys-color-alpha-*` tokens + `backdropFilter`
-- If a color doesn't have a token, add it to `globals.css` first
+- If a color doesn't have a token, add it to `app/tokens/colors.css` first
 
 ## Component Rules — look before you build
 Before writing any UI element, check these locations in order:
 1. `components/ui/` — generic primitives (Icon, MenuIcon, Skeleton, FilterDropdown, CompletionToast, ErrorState)
-2. `components/accounts/` — account feature components (AccountListItem, SortMenu, SystemAccountListItem)
+2. `components/accounts/` — account feature components (AccountListItem — `owned`, `crm` and `home` variants + `AccountListCard`, CountBadge, SortMenu)
 3. `components/layout/` — structural layout (StaticBottomNav, PlaygroundNav, etc.)
 
 If the component exists, **use it**. Do not re-implement inline.

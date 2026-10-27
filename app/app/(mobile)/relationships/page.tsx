@@ -31,8 +31,8 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
-import AccountListItem from "@/components/accounts/AccountListItem";
-import SystemAccountListItem from "@/components/accounts/SystemAccountListItem";
+import AccountListItem, { AccountListCard } from "@/components/accounts/AccountListItem";
+import CountBadge from "@/components/accounts/CountBadge";
 import SortMenu from "@/components/accounts/SortMenu";
 import Icon from "@/components/ui/Icon";
 import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
@@ -468,74 +468,6 @@ function DashboardGrid({
 
       </div>
     </div>
-  );
-}
-
-// ── Compact account row (collapsed top-accounts view) ─────────────────────────
-
-function CompactAccountRow({ account, isLast }: { account: Account; isLast: boolean }) {
-  const hasTask = (account.taskCount ?? 0) > 0;
-  const { needsAttention } = useAccountState();
-  const showAttention = account.halosightType === "prospect" && needsAttention(account.id);
-  return (
-    <Link href={`/relationships/${account.id}`}>
-      <div className="flex items-center gap-3 px-4 py-3 active:opacity-70 transition-opacity relative">
-        {!isLast && (
-          <div className="absolute bottom-0 left-0 right-0"
-            style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
-        )}
-        {/* Type icon — hidden for now, may restore later
-        <div className="flex-shrink-0">
-          {account.halosightType === "prospect" ? (
-            <LeadStarIcon size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-          ) : (
-            <CompanyIcon size={16} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-          )}
-        </div>
-        */}
-        {/* Left — name + meta */}
-        <div className="flex-1 min-w-0">
-          <p className="text-15-bold truncate" style={{ color: "var(--md-sys-color-text-primary)", lineHeight: 1.2 }}>
-            {account.name}
-          </p>
-          <p className="body-xs" style={{ color: "var(--md-sys-color-text-muted)", marginTop: 2 }}>
-            {[account.distanceMiles < 999 ? `${account.distanceMiles} mi` : null,
-              account.address ?? (account.city && account.state ? `${account.city}, ${account.state}` : null)]
-              .filter(Boolean).join(" · ")}
-          </p>
-        </div>
-        {/* Right — attention indicator + task badge + chevron */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {showAttention && (
-            <Icon name="error" fill size={15} style={{ color: "var(--md-sys-color-warning)" }} />
-          )}
-          {hasTask && (
-            <span
-              className="flex items-center gap-1 px-1.5 rounded-full"
-              style={{ background: "rgba(139, 146, 255, 0.18)", height: 20 }}
-            >
-              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
-                <path
-                  d="M4.5 6L5.5 7L7.5 5M2.5 1.5H9.5C10.0523 1.5 10.5 1.94772 10.5 2.5V9.5C10.5 10.0523 10.0523 10.5 9.5 10.5H2.5C1.94772 10.5 1.5 10.0523 1.5 9.5V2.5C1.5 1.94772 1.94772 1.5 2.5 1.5Z"
-                  stroke="var(--md-sys-color-neonindigo)"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span
-                className="text-11-bold"
-                style={{ color: "var(--md-sys-color-neonindigo)", lineHeight: 1 }}
-              >
-                {account.taskCount}
-              </span>
-            </span>
-          )}
-          <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
-            <path d="M1 1L6 6L1 11" stroke="var(--md-sys-color-text-disabled)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
-      </div>
-    </Link>
   );
 }
 
@@ -1268,11 +1200,11 @@ function CombinedPageContent() {
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
-                    <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: 16, overflow: "hidden", marginLeft: 16, marginRight: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
+                    <AccountListCard>
                       {topAccounts.map((account, i) => (
-                        <CompactAccountRow key={account.id} account={account} isLast={i === topAccounts.length - 1} />
+                        <AccountListItem key={account.id} variant="home" account={account} isLast={i === topAccounts.length - 1} />
                       ))}
-                    </div>
+                    </AccountListCard>
                   </div>
 
                   {/* Priorities section */}
@@ -1354,18 +1286,18 @@ function CombinedPageContent() {
                     <>
                       <SectionHeader label="Company-Wide Results" count={systemResults.length} divider />
                       {systemResults.length > 0 ? (
-                        <div className="flex flex-col mx-4 rounded-2xl overflow-hidden"
-                          style={{ background: "var(--md-sys-color-dark-primary)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                        <AccountListCard>
                           {systemResults.map((account, i) => (
-                            <SystemAccountListItem
+                            <AccountListItem
                               key={account.id}
+                              variant="crm"
                               account={account}
-                              assignedRep={systemAccountReps[account.id] ?? "Unknown"}
+                              ownerName={systemAccountReps[account.id] ?? "Unknown"}
                               isLast={i === systemResults.length - 1}
                               onSelect={(a) => router.push(`/relationships/${a.id}`)}
                             />
                           ))}
-                        </div>
+                        </AccountListCard>
                       ) : (
                         <div className="px-4 py-6 text-center">
                           <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>Not found anywhere in Tomorrowland Innovations.</p>

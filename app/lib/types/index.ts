@@ -23,8 +23,8 @@ export interface Account {
   type: AccountType;
   halosightType?: HalosightAccountType; // Set at creation — prospect vs established account
   crmAccountType?: CrmAccountType;      // CRM classification shown on card badge
-  assignedInitial?: string;             // team member initial shown on card (e.g. "A")
   taskCount?: number;              // open to-dos for this account
+  riskCount?: number;              // open AI-flagged risks for this account (hidden when 0/undefined)
   city?: string;
   state?: string;
   distanceMiles: number;

@@ -386,7 +386,7 @@ export default function Story1Page() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a href="/handoff" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</a>
+          <a href="/" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</a>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
           <span style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-text-primary)" }}>Story 1</span>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>

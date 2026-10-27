@@ -27,6 +27,8 @@ interface Account {
   state?: string;
   distanceMiles: number;          // From rep's current location
   lastVisited: Date;              // Most recent visit date
+  taskCount?: number;             // Open to-dos; the tasks badge is hidden when 0 or undefined
+  riskCount?: number;             // Open AI-flagged risks; the risk badge is hidden when 0 or undefined
   childCount?: number;            // Corporate accounts only
   parentId?: string;              // Branch accounts only
   contactName?: string;

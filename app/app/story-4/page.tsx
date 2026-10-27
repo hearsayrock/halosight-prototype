@@ -341,7 +341,7 @@ export default function Story4Page() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a href="/handoff" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</a>
+          <a href="/" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</a>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
           <a href="/story-1" style={{ fontSize: 14, color: "var(--md-sys-color-text-muted)", textDecoration: "none" }}>Story 1</a>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>

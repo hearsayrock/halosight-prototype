@@ -108,7 +108,7 @@ When adding a reusable component, update `docs/component-architecture.md` if it 
 
 ## Design System
 
-- Use the design tokens in `app/app/globals.css`.
+- Use the design tokens in `app/tokens/` (imported by `app/app/globals.css`).
 - Preserve the dark operational visual language unless the user explicitly asks for a new direction.
 - Primary action color is coral. Secondary/info accent is blue.
 - Use Barlow as the primary UI typeface.

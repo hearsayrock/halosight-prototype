@@ -12,7 +12,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import AccountListItem from "@/components/accounts/AccountListItem";
+import AccountListItem, { AccountListCard } from "@/components/accounts/AccountListItem";
+import CountBadge from "@/components/accounts/CountBadge";
+import { ComponentArea, AreaGroup, VariantCard, SubComponentCard, StateSample } from "@/components/design-system/ComponentArea";
 import ActionItemCard from "@/components/accounts/ActionItemCard";
 import BottomNav from "@/components/layout/BottomNav";
 import SortMenu from "@/components/accounts/SortMenu";
@@ -38,6 +40,7 @@ const SECTIONS = [
   { id: "buttons",     label: "Buttons" },
   { id: "inputs",      label: "Inputs" },
   { id: "badges",      label: "Badges & Chips" },
+  { id: "account-list-item", label: "Account List Item" },
   { id: "cards",       label: "Cards & Lists" },
   { id: "menus",       label: "Menus" },
   { id: "icons",       label: "Icons" },
@@ -401,6 +404,11 @@ function TabBarDemo() {
 }
 
 // ─── Main Page ─────────────────────────────────────────────────────────────
+const SAMPLE_IDS = ["walmart-corp", "jacks-tire-elko", "southwestern-consolidated"];
+const sampleOwned = SAMPLE_IDS.map((id) => mockAccounts.find((a) => a.id === id)).filter((a): a is (typeof mockAccounts)[number] => !!a);
+
+const sampleHome = [...sampleOwned, ...mockAccounts.filter((a) => !SAMPLE_IDS.includes(a.id)).slice(0, 1)];
+
 export default function DesignSystemPage() {
   const [inputValue, setInputValue] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -1149,23 +1157,115 @@ export default function DesignSystemPage() {
             </div>
           </div>
 
+          {/* ── Account List Item (component area) ─────────────────────── */}
+          <ComponentArea
+            id="account-list-item"
+            name="Account List Item"
+            kind="Library"
+            description="One row in an account list. A single widget with a variant for each place it appears; the count badges are a separate sub-component it composes."
+            source="components/accounts/AccountListItem.tsx"
+            flutter="accounts_view_account_list_item.dart"
+            anatomy="name · meta lines · type pill · count badges (owned) — name · owner (crm)"
+          >
+            <AreaGroup title="Variants" count={3}>
+              <VariantCard
+                name="Owned"
+                prop='variant="owned"'
+                status="default"
+                description="A company in the rep's own portfolio. Tapping opens the account."
+                notes={[
+                  "Name, distance • location, and last-visited recency",
+                  "Lead / Needs Info pill on top right when relevant",
+                  "Risk and task badges bottom right; each hides at 0",
+                  "Separator inset 12px each side",
+                ]}
+              >
+                <div className="flex flex-col">
+                  {sampleOwned.map((account, i) => (
+                    <AccountListItem key={account.id} account={account} isLast={i === sampleOwned.length - 1} />
+                  ))}
+                </div>
+              </VariantCard>
+
+              <VariantCard
+                name="Company-wide (CRM)"
+                prop='variant="crm"'
+                description="A CRM account owned by another rep, shown in company-wide search results. Calls onSelect instead of navigating."
+                notes={[
+                  "Name plus “Owner: <rep name>” and a trailing chevron — no distance, address, visit line, or badges",
+                  "Sits in an AccountListCard: dark-primary fill, hairline border, radius-lg, no extra top/bottom padding; trailing chevron; full-width separators",
+                  "Props: ownerName, onSelect",
+                ]}
+              >
+                <div className="py-4"><AccountListCard>
+                  {sampleOwned.map((account, i) => (
+                    <AccountListItem
+                      key={account.id}
+                      variant="crm"
+                      account={account}
+                      ownerName={["Linda F.", "Carlos R.", "Dana M."][i % 3]}
+                      isLast={i === sampleOwned.length - 1}
+                      onSelect={() => {}}
+                    />
+                  ))}
+                </AccountListCard></div>
+              </VariantCard>
+
+              <VariantCard
+                name="Home"
+                prop='variant="home"'
+                description="The compact row in the home screen's Companies card. Same card as the company-wide variant, but these are the rep's own accounts, so risks and tasks show."
+                notes={[
+                  "Name plus “distance · address” — no visit line",
+                  "Risk and task badges on the right, each hidden at 0; no chevron so the badges get the room",
+                  "Warning icon when a lead still needs info",
+                  "Sits in an AccountListCard; 71px rows",
+                ]}
+              >
+                <div className="py-4"><AccountListCard>
+                  {sampleHome.map((account, i) => (
+                    <AccountListItem key={account.id} variant="home" account={account} isLast={i === sampleHome.length - 1} />
+                  ))}
+                </AccountListCard></div>
+              </VariantCard>
+            </AreaGroup>
+
+            <AreaGroup title="Sub-components" count={1}>
+              <SubComponentCard
+                name="Count Badge"
+                source="components/accounts/CountBadge.tsx"
+                usedBy={["Account List Item (owned)", "Account List Item (home)"]}
+                description="Icon + number pill. Renders nothing at 0 or undefined, so there is no grey or empty state."
+                notes={[
+                  "22.5px tall, full radius; number is Barlow 500 11.5px",
+                  "Risk: error at 18% fill, error-light icon + number",
+                  "Tasks: neonindigo at 20% fill, neonindigo-light icon + number",
+                  "Pair with 8px between badges",
+                ]}
+              >
+                <StateSample caption='tone="risk" count=1'><CountBadge tone="risk" count={1} label="open risks" /></StateSample>
+                <StateSample caption='tone="tasks" count=2'><CountBadge tone="tasks" count={2} label="open tasks" /></StateSample>
+                <StateSample caption="both, 8px apart">
+                  <div className="flex items-center" style={{ gap: 8 }}>
+                    <CountBadge tone="risk" count={2} label="open risks" />
+                    <CountBadge tone="tasks" count={5} label="open tasks" />
+                  </div>
+                </StateSample>
+                <StateSample caption="count=0 → renders nothing">
+                  <span style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)" }}>(hidden)</span>
+                  <CountBadge tone="risk" count={0} label="open risks" />
+                </StateSample>
+              </SubComponentCard>
+            </AreaGroup>
+          </ComponentArea>
+
           {/* ── Cards & Lists ─────────────────────────────────────────── */}
           <SectionHeader
             id="cards"
             title="Cards & Lists"
-            subtitle="Account list items, AI output cards, and info cards."
+            subtitle="Action items, tasks, activity, and AI output cards."
           />
           <div className="space-y-8 mb-16">
-            <div>
-              <SubHeader title="Account List Items (live component)" />
-              <div className="flex flex-col">
-                {mockAccounts.slice(0, 4).map((account, i) => (
-                  <AccountListItem key={account.id} account={account} isLast={i === 3} />
-                ))}
-              </div>
-              <TokenLabel name="AccountListItem — separator: --md-sys-color-dark-tertiary border-bottom · no card bg" value="name: 600 16px · meta: text-sm · badge: dark-tertiary pill · task pill: coral-light 20% opacity bg" />
-            </div>
-
             <div>
               <SubHeader title="Action Item Cards (live component)" />
               <div className="flex flex-col gap-2 max-w-sm">
