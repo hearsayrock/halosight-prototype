@@ -84,6 +84,21 @@
   --md-sys-color-info:       #4DA3FF;
   --md-sys-color-info-dark:  #1D6FBF;
 
+  /* Published names (color.semantic.* → --md-sys-color-semantic-*). Aliases of the short names above
+     until the token generator (DELIVERY-1475) replaces them; same values, so no visual change. */
+  --md-sys-color-semantic-success-light: var(--md-sys-color-success-light);
+  --md-sys-color-semantic-success: var(--md-sys-color-success);
+  --md-sys-color-semantic-success-dark: var(--md-sys-color-success-dark);
+  --md-sys-color-semantic-warning-light: var(--md-sys-color-warning-light);
+  --md-sys-color-semantic-warning: var(--md-sys-color-warning);
+  --md-sys-color-semantic-warning-dark: var(--md-sys-color-warning-dark);
+  --md-sys-color-semantic-error-light: var(--md-sys-color-error-light);
+  --md-sys-color-semantic-error: var(--md-sys-color-error);
+  --md-sys-color-semantic-error-dark: var(--md-sys-color-error-dark);
+  --md-sys-color-semantic-info-light: var(--md-sys-color-info-light);
+  --md-sys-color-semantic-info: var(--md-sys-color-info);
+  --md-sys-color-semantic-info-dark: var(--md-sys-color-info-dark);
+
   /* ── Data Visualization ──────────────────────────────────────────────────── */
   --md-sys-color-data-account:  #6B9DB0;
   --md-sys-color-data-recency:  #8B92FF;
@@ -175,6 +190,21 @@
   --md-sys-color-info-light: #BFDBFE;
   --md-sys-color-info:       #1D6FBF;
   --md-sys-color-info-dark:  #155899;
+
+  /* Published names (color.semantic.* → --md-sys-color-semantic-*). Aliases of the short names above
+     until the token generator (DELIVERY-1475) replaces them; same values, so no visual change. */
+  --md-sys-color-semantic-success-light: var(--md-sys-color-success-light);
+  --md-sys-color-semantic-success: var(--md-sys-color-success);
+  --md-sys-color-semantic-success-dark: var(--md-sys-color-success-dark);
+  --md-sys-color-semantic-warning-light: var(--md-sys-color-warning-light);
+  --md-sys-color-semantic-warning: var(--md-sys-color-warning);
+  --md-sys-color-semantic-warning-dark: var(--md-sys-color-warning-dark);
+  --md-sys-color-semantic-error-light: var(--md-sys-color-error-light);
+  --md-sys-color-semantic-error: var(--md-sys-color-error);
+  --md-sys-color-semantic-error-dark: var(--md-sys-color-error-dark);
+  --md-sys-color-semantic-info-light: var(--md-sys-color-info-light);
+  --md-sys-color-semantic-info: var(--md-sys-color-info);
+  --md-sys-color-semantic-info-dark: var(--md-sys-color-info-dark);
 
   /* ── Data Visualization (adjusted for light bg) ──────────────────────────── */
   --md-sys-color-data-account:  #4A7D93;

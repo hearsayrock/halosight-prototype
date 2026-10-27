@@ -33,7 +33,7 @@
 
 ## Findings worth fixing
 
-- **Undefined token referenced (`†`).** `--md-sys-color-semantic-success` is used in `FeedbackWidget` (line 180), `AIReviewOverlay` (lines 205 and 252) and the companies page (line 1649), but the prototype only defines `--md-sys-color-success`. The new name matches the design-system rule, but nothing defines it yet, so those checkmarks and confirmations render with no color. Either point them at the current name now, or define the new name.
+- **Undefined token referenced (`†`) — fixed 2026-10-27.** `--md-sys-color-semantic-success` is used in `FeedbackWidget`, `AIReviewOverlay` and the companies page, but only the short name `--md-sys-color-success` was defined, so those checkmarks had no color. `tokens/colors.css` now defines `--md-sys-color-semantic-{success,warning,error,info}` (and `-light` / `-dark`) as aliases of the short names, in both themes, same values. The generator (DELIVERY-1475) replaces the aliases later.
 - **Hard-coded colors** remain in most feature components (see the column). They should become tokens before a component is documented as handoff-ready.
 
 ## Library (18)
