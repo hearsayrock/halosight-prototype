@@ -14,6 +14,20 @@
   100% { background-position:  400px 0; }
 }
 
+/* "Listening bars" — the in-progress indicator (ThinkingDots). Dots that stretch into capsules in a staggered,
+   slightly off-beat wave, like a voice level. Heights animate (not scale) so the ends stay round. */
+@keyframes halo-bar {
+  0%, 100% { height: var(--halo-min); opacity: 0.5; }
+  35%      { height: var(--halo-max); opacity: 1; }
+  65%      { height: calc(var(--halo-min) + (var(--halo-max) - var(--halo-min)) * 0.35); opacity: 0.8; }
+}
+.halo-bar {
+  animation: halo-bar var(--halo-duration, 1.2s) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .halo-bar { animation: none; height: calc(var(--halo-min) + (var(--halo-max) - var(--halo-min)) * 0.4); opacity: 0.8; }
+}
+
 .skeleton-bone {
   border-radius: 6px;
   background: linear-gradient(

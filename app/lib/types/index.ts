@@ -51,7 +51,11 @@ export interface ActionItem {
   description?: string;   // why this action item was created
   originActivity?: string; // name of the visit/call this item was generated from
   originActivityId?: string; // links to /relationships/[accountId]/activity/[originActivityId]
+  originType?: ActionItemOriginType; // kind of interaction it came from; shown on the drawer's interaction card
 }
+
+/** Where an action item came from. Items with no origin type show no icon. */
+export type ActionItemOriginType = "meeting" | "spoken-note";
 
 export interface AccountDetail extends Account {
   lastVisitSummary: string;
@@ -79,6 +83,8 @@ export interface ActivityItem {
   repName: string;
   aiSummary?: ActivityAISummary;
   interactionType?: "inperson" | "phone";
+  /** Where the activity came from. Undefined = logged in Halosight. */
+  source?: "salesforce";
 }
 
 export interface Interaction {
@@ -151,3 +157,25 @@ export interface CrmUpdate {
 }
 
 export type SortOption = "alphabetical" | "distance" | "lastVisited" | "company";
+
+// ─── Account chat ──────────────────────────────────────────────────────────
+
+export type ChatRole = "user" | "assistant";
+
+/** One message in an account chat. `draft` is a quoted block (e.g. an email the assistant wrote) shown under the text. */
+export interface ChatTurn {
+  id: string;
+  role: ChatRole;
+  text: string;
+  draft?: string;
+}
+
+/** A saved chat shown in the history menu. */
+export interface ChatThread {
+  id: string;
+  title: string;
+  /** "Today", "Yesterday", "Tuesday" */
+  whenLabel: string;
+  messageCount: number;
+  pinned: boolean;
+}

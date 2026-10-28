@@ -16,8 +16,8 @@
  * responsible for rendering it inside an overlay root with AnimatePresence.
  */
 
+import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import Icon from "@/components/ui/Icon";
 
@@ -99,37 +99,9 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
 
   return (
     <>
-      {/* Backdrop */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ background: "rgba(0,0,0,0.55)", zIndex: 60 }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={onClose}
-      />
-
-      {/* Sheet */}
-      <motion.div
-        className="absolute left-0 right-0 bottom-0"
-        style={{
-          zIndex: 61,
-          background: "var(--md-sys-color-dark-primary)",
-          borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-          maxHeight: "72%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 380, damping: 38 }}
-      >
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
-        </div>
+      {/* Backdrop + panel (shared drawer chrome) */}
+      <DrawerBackdrop onClick={onClose} zIndex={60} />
+      <DrawerPanel zIndex={61} maxHeight="72%" flexColumn>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-2 pb-3 flex-shrink-0">
@@ -216,7 +188,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
             </p>
           )}
         </div>
-      </motion.div>
+      </DrawerPanel>
     </>
   );
 }

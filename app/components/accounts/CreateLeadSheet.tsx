@@ -19,6 +19,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/ui/Icon";
@@ -201,37 +202,9 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
       {isVisible && (
         <div className="absolute inset-0" style={{ pointerEvents: "auto" }}>
 
-          {/* Backdrop */}
-          <motion.div
-            className="absolute inset-0"
-            style={{ background: "rgba(0,0,0,0.6)" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => setIsVisible(false)}
-          />
-
-          {/* Sheet */}
-          <motion.div
-            className="absolute left-0 right-0"
-            style={{
-              bottom: "var(--keyboard-inset, 0px)",
-              transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
-              background: "var(--md-sys-color-background)",
-              borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-              maxHeight: "88%",
-              overflowY: "auto",
-            }}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 380, damping: 38 }}
-          >
-            {/* Handle */}
-            <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
-            </div>
+          {/* Backdrop + panel (shared drawer chrome) */}
+      <DrawerBackdrop onClick={() => setIsVisible(false)} />
+      <DrawerPanel maxHeight="88%" keyboardAware>
 
             <div className="px-5 pt-4 pb-10">
 
@@ -341,7 +314,7 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
               </button>
 
             </div>
-          </motion.div>
+          </DrawerPanel>
 
         </div>
       )}

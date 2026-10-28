@@ -11,7 +11,7 @@
  * Flutter equivalent: accounts_view_account_list_item.dart (one widget; variant is an enum)
  *
  * owned (default) — a company in the rep's portfolio. Navigates to /relationships/:id.
- *   Open row (no card fill), 1px separator inset 12px each side. Left: name, distance • location,
+ *   Open row (no card fill), 1px separator inset 16px each side. Left: name, distance • location,
  *   "Visited <recency>". Right (bottom-aligned): Lead / Needs Info pill when relevant, then
  *   <CountBadge> risk and <CountBadge> tasks (8px apart, each hidden at 0). No assignee indicator.
  *
@@ -19,21 +19,19 @@
  *   Two lines: name (color.text.primary, 17px/600) and "Owner: <ownerName>" (color.text.muted, 13px/400),
  *   with a trailing chevron_right (20px, color.text.muted). No distance, address, visit line or badges.
  *   Rows are 19px vertical padding with a full-width color.dark.tertiary separator. Rows sit inside
- *   <AccountListCard>: color.dark.primary fill, 1px hairline border, radius.lg, no extra vertical padding (first/last rows get the same 19px as every row).
+ *   <ListCard> (components/ui/ListCard.tsx).
  *
  * home — the compact row in the home screen's Companies card. Navigates to /relationships/:id.
  *   Name (17px/600, color.text.primary) and "<distance> mi · <address>" (13px, color.text.muted), 13px row
  *   padding (71px with separator). Right: a warning `error` icon when a lead needs info, then <CountBadge>
- *   risk and tasks (8px apart, each hidden at 0). No chevron — the space goes to the badges. Sits in <AccountListCard>.
+ *   risk and tasks (8px apart, each hidden at 0). No chevron — the space goes to the badges. Sits in <ListCard>.
  *
  * Count badges are the shared CountBadge component (components/accounts/CountBadge.tsx).
  *
- * Tokens: color.text.primary, color.text.muted, color.text.disabled, color.dark.primary + color.dark.tertiary (crm card),
- *         radius.lg,
+ * Tokens: color.text.primary, color.text.muted, color.text.disabled, color.dark.tertiary (row separators),
  *         color.brand.teal (Lead pill), color.semantic.warning (Needs Info pill)
  */
 
-import type { ReactNode } from "react";
 import Link from "next/link";
 import Icon from "@/components/ui/Icon";
 import type { Account, CrmAccountType } from "@/lib/types";
@@ -49,7 +47,7 @@ function ProspectBadge() {
     <span
       className="text-11-bold px-2.5 py-0.5 rounded-full whitespace-nowrap"
       style={{
-        background: "rgba(107, 157, 176, 0.18)",
+        background: "color-mix(in srgb, var(--md-sys-color-brand-teal) 18%, transparent)",
         color: "var(--md-sys-color-brand-teal)",
       }}
     >
@@ -182,22 +180,6 @@ function HomeAccountRow({ account, isLast = false }: { account: Account; isLast?
   );
 }
 
-/** Container for crm + home rows: filled card, hairline border, rows separated full-width. */
-export function AccountListCard({ children }: { children: ReactNode }) {
-  return (
-    <div
-      className="flex flex-col mx-4 overflow-hidden"
-      style={{
-        borderRadius: "var(--radius-lg)",
-        background: "var(--md-sys-color-dark-primary)",
-        border: "1px solid rgba(255,255,255,0.1)",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 // ── owned variant: a company in the rep's portfolio ───────────────────────────
 
 function OwnedAccountRow({ account, isLast = false }: { account: Account; isLast?: boolean }) {
@@ -211,8 +193,8 @@ function OwnedAccountRow({ account, isLast = false }: { account: Account; isLast
       <div
         className="flex items-start gap-3 px-4 py-3.5 active:opacity-70 transition-opacity relative"
       >
-        {/* Separator — inset 12px each side, hidden on last item */}
-        {!isLast && <div className="absolute bottom-0 left-3 right-3" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />}
+        {/* Separator — inset 16px each side, hidden on last item */}
+        {!isLast && <div className="absolute bottom-0 left-4 right-4" style={{ height: 1, background: "var(--md-sys-color-alpha-white-10)" }} />}
 
         {/* Type icon — hidden for now, may restore later
         <div className="flex-shrink-0 mt-[4px]">
@@ -265,7 +247,7 @@ function OwnedAccountRow({ account, isLast = false }: { account: Account; isLast
           {showAttention && (
             <span
               className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
-              style={{ background: "rgba(245,166,35,0.15)", color: "var(--md-sys-color-warning)", border: "1px solid rgba(245,166,35,0.3)" }}
+              style={{ background: "color-mix(in srgb, var(--md-sys-color-warning) 15%, transparent)", color: "var(--md-sys-color-warning)", border: "1px solid color-mix(in srgb, var(--md-sys-color-warning) 30%, transparent)" }}
             >
               Needs Info
             </span>
@@ -273,7 +255,7 @@ function OwnedAccountRow({ account, isLast = false }: { account: Account; isLast
 
           {/* Count badges + assignee */}
           <div className="flex items-center gap-1.5">
-            <div className="flex items-center" style={{ gap: 8 }}>
+            <div className="flex items-center" style={{ gap: "var(--spacing-2)" }}>
               <CountBadge tone="risk" count={account.riskCount} label="open risks" />
               <CountBadge tone="tasks" count={account.taskCount} label="open tasks" />
             </div>

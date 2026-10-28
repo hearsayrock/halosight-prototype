@@ -24,7 +24,7 @@ app/
 │   │   ├── PhoneFrame.tsx        # Web-only phone viewport simulator
 │   │   └── BottomNav.tsx         # Floating glass pill bottom navigation
 │   ├── accounts/                 # Account-specific components
-│   │   ├── AccountListItem.tsx   # One widget, three variants (owned / crm / home) + AccountListCard wrapper
+│   │   ├── AccountListItem.tsx   # One widget, three variants (owned / crm / home) (card wrapper is ui/ListCard)
 │   │   ├── AccountTypeIcon.tsx   # Corporate/branch/standalone SVG icon
 │   │   └── SortMenu.tsx          # Sort dropdown overlay
 │   ├── capture/                  # Capture meeting flow components
@@ -77,7 +77,7 @@ Domain-specific. Tied to a feature area. Reusable across screens within that fea
 
 | Component | Description | Flutter equivalent |
 |---|---|---|
-| `AccountListItem` | Account row with `owned`, `crm` and `home` variants; exports `AccountListCard` | `AccountsViewAccountListItem` |
+| `AccountListItem` | Account row with `owned`, `crm` and `home` variants; card wrapper is `ui/ListCard` | `AccountsViewAccountListItem` |
 | `CountBadge` | Icon + number pill (risk / tasks), hides at 0 | `AccountCountBadge` |
 | `AccountTypeIcon` | SVG icon for corporate / branch / standalone account types | `CustomPainter` |
 | `SortMenu` | Sort dropdown with checkmark selection | `PopupMenuButton` or custom overlay |

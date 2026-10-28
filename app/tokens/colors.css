@@ -112,6 +112,7 @@
   --md-sys-color-alpha-neonindigo-glass: rgba(179, 184, 255, 0.10);
   --md-sys-color-alpha-dark-glass:   rgba(255, 255, 255, 0.18);
   --md-sys-color-alpha-bg-glass:     rgba(17, 20, 32, 0.82);  /* scrolled header backdrop */
+  --md-sys-color-alpha-scrim:        rgba(0, 0, 0, 0.60);     /* dim behind drawers and dialogs */
 
   /* ── Extended Palette ────────────────────────────────────────────────────── */
   --md-ref-palette-ext-cyan:   #5BBFCC;
@@ -219,5 +220,6 @@
   --md-sys-color-alpha-neonindigo-glass:   rgba(80, 88, 212, 0.08);
   --md-sys-color-alpha-dark-glass:         rgba(0, 0, 0, 0.09);
   --md-sys-color-alpha-bg-glass:           rgba(245, 247, 250, 0.88);
+  --md-sys-color-alpha-scrim:              rgba(17, 20, 32, 0.32);
 
 }

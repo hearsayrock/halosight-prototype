@@ -14,7 +14,8 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { DrawerBackdrop, DrawerPanel, DrawerBody } from "@/components/ui/Drawer";
+import { AnimatePresence } from "framer-motion";
 import Icon from "./Icon";
 
 interface Props {
@@ -46,41 +47,10 @@ export default function NoteSheet({ visible, onDone }: Props) {
       {visible && (
         <>
           {/* Backdrop — tap to complete without a note */}
-          <motion.div
-            key="note-sheet-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => onDone("")}
-            style={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 70,
-              background: "rgba(0,0,0,0.48)",
-              pointerEvents: "auto",
-            }}
-          />
+          <DrawerBackdrop onClick={() => onDone("")} zIndex={70} />
 
-          {/* Sheet */}
-          <motion.div
-            key="note-sheet"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 380, damping: 38 }}
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              zIndex: 71,
-              pointerEvents: "auto",
-              background: "var(--md-sys-color-dark-secondary)",
-              borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-              padding: "20px 16px 36px",
-            }}
-          >
+          <DrawerPanel zIndex={71} maxHeight="100%">
+          <DrawerBody>
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
               <span
@@ -128,7 +98,8 @@ export default function NoteSheet({ visible, onDone }: Props) {
             >
               {hasNote ? "Save note" : "Done"}
             </button>
-          </motion.div>
+          </DrawerBody>
+          </DrawerPanel>
         </>
       )}
     </AnimatePresence>,

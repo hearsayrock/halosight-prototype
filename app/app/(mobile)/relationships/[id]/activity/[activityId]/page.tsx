@@ -15,9 +15,11 @@
 import React, { use, useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Icon from "@/components/ui/Icon";
+import Menu from "@/components/ui/Menu";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
 import NoteSheet from "@/components/ui/NoteSheet";
+import ActionItemList, { ActionItemsHeader } from "@/components/accounts/ActionItemList";
 import { mockAccounts, mockAccountDetails } from "@/lib/mock-data/accounts";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import type { ActionItem, ActivityItem } from "@/lib/types";
@@ -112,18 +114,6 @@ function formatOccurredAt(date: Date): string {
   const d = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   const t = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   return `${d} · ${t}`;
-}
-
-function dueDateMeta(date: Date | null): { text: string; teal: boolean } {
-  if (!date) return { text: "No due date", teal: false };
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const due = new Date(date); due.setHours(0, 0, 0, 0);
-  const diff = Math.round((due.getTime() - today.getTime()) / 86_400_000);
-  if (diff < -1) return { text: `Overdue ${-diff} days`, teal: true };
-  if (diff === -1) return { text: "Due yesterday", teal: true };
-  if (diff === 0) return { text: "Due today", teal: true };
-  if (diff === 1) return { text: "Due tomorrow", teal: false };
-  return { text: `Due ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`, teal: false };
 }
 
 function replaceAllOccurrences(text: string, oldName: string, newName: string): string {
@@ -957,61 +947,17 @@ function InteractionDetailPageContent({
             {/* Interaction type picker */}
             <div style={{ position: "relative" }}>
               {typePickerOpen && (
-                <div className="fixed inset-0" style={{ zIndex: 20 }} onClick={() => setTypePickerOpen(false)} />
-              )}
-              <button
-                onClick={() => setTypePickerOpen((o) => !o)}
-                style={{
-                  display: "flex", alignItems: "center", gap: 2,
-                  background: "none", border: "none", cursor: "pointer",
-                  padding: 0, position: "relative", zIndex: 21,
-                }}
-              >
-                <span style={{
-                  fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600,
-                  color: "var(--md-sys-color-neonindigo)",
-                }}>
-                  {interactionLabel}
-                </span>
-                <Icon name="unfold_more" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-              </button>
-
-              {typePickerOpen && (
-                <div style={{
-                  position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 21,
-                  minWidth: 180,
-                  background: "var(--md-sys-color-dark-primary)",
-                  borderRadius: "var(--radius-md)",
-                  border: "1px solid var(--md-sys-color-alpha-white-10)",
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
-                  overflow: "hidden",
-                }}>
-                  {(["inperson", "phone"] as const).map((type) => {
-                    const label = type === "phone" ? "Phone call" : "In-person";
-                    const selected = interactionType === type;
-                    return (
-                      <button
-                        key={type}
-                        onClick={() => { setInteractionTypeOverride(type); setTypePickerOpen(false); }}
-                        style={{
-                          width: "100%", display: "flex", alignItems: "center",
-                          justifyContent: "space-between", padding: "10px 18px",
-                          background: "none", border: "none", cursor: "pointer", textAlign: "left",
-                        }}
-                      >
-                        <span style={{
-                          fontFamily: "Barlow, sans-serif", fontSize: 16, fontWeight: 500,
-                          color: "var(--md-sys-color-text-primary)",
-                        }}>
-                          {label}
-                        </span>
-                        {selected && (
-                          <Icon name="check" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+                <Menu
+                  variant="check"
+                  minWidth={180}
+                  style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 21 }}
+                  items={(["inperson", "phone"] as const).map((type) => ({
+                    id: type,
+                    label: type === "phone" ? "Phone call" : "In-person",
+                    selected: interactionType === type,
+                    onSelect: () => { setInteractionTypeOverride(type); setTypePickerOpen(false); },
+                  }))}
+                />
               )}
             </div>
           </div>
@@ -1129,77 +1075,20 @@ function InteractionDetailPageContent({
 
         {/* Action Items */}
         <div style={{ padding: "28px 20px 48px" }}>
-          <div style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
-          }}>
-            <span style={{
-              fontFamily: "Barlow, sans-serif", fontSize: 11, fontWeight: 600,
-              letterSpacing: "0.12em", textTransform: "uppercase",
-              color: "var(--md-sys-color-text-muted)",
-            }}>
-              Action Items
-            </span>
-            <button
-              onClick={() => setShowAddSheet(true)}
-              aria-label="Add action item"
-              style={{
-                width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center",
-                background: "none", border: "none", cursor: "pointer",
-                color: "var(--md-sys-color-text-primary)", marginRight: -4,
-              }}
-            >
-              <Icon name="add" size={20} />
-            </button>
-          </div>
+          {activityActionItems.length > 0 && (
+            <div className="-mx-4">
+              <ActionItemsHeader action={{ kind: "add", onClick: () => setShowAddSheet(true) }} />
+            </div>
+          )}
 
           {activityActionItems.length > 0 ? (
-            <div style={{
-              borderRadius: "var(--radius-xl)", overflow: "hidden",
-              border: "1px solid var(--md-sys-color-alpha-white-10)",
-            }}>
-              {activityActionItems.map((item, i) => {
-                const due = dueDateMeta(item.dueDate);
-                const isPending = pendingItemId === item.id;
-                return (
-                  <div
-                    key={item.id}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 14, padding: "14px 16px",
-                      borderTop: i > 0 ? "1px solid var(--md-sys-color-alpha-white-10)" : "none",
-                    }}
-                  >
-                    <button
-                      onClick={() => handleComplete(item.id)}
-                      aria-label="Mark complete"
-                      style={{
-                        width: 24, height: 24, borderRadius: "50%", flexShrink: 0,
-                        border: isPending ? "none" : "1.5px solid var(--md-sys-color-text-disabled)",
-                        background: isPending ? "var(--md-sys-color-success)" : "transparent",
-                        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                        transition: "all 180ms ease",
-                      }}
-                    >
-                      {isPending && <Icon name="check" size={12} style={{ color: "#fff" }} />}
-                    </button>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{
-                        fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600,
-                        lineHeight: "22px", color: "var(--md-sys-color-text-primary)",
-                      }}>
-                        {item.title}
-                      </p>
-                      <p style={{
-                        fontFamily: "Barlow, sans-serif", fontSize: 13, lineHeight: "18px",
-                        marginTop: 2,
-                        color: due.teal ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-text-muted)",
-                      }}>
-                        {due.text}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <ActionItemList
+              className=""
+              entries={activityActionItems.map((item) => ({ item, accountId: id }))}
+              pendingId={pendingItemId}
+              onComplete={handleComplete}
+              collapsedCount={3}
+            />
           ) : (
             <button
               onClick={() => setShowAddSheet(true)}

@@ -5,7 +5,7 @@
  * Widget: StatefulWidget (manages open/close)
  * Props: currentSort (SortOption), onSortChange callback
  * Flutter equivalent: PopupMenuButton or custom overlay
- * Tokens: dark-tertiary (fill), text/primary, elevation-3
+ * Tokens: panel and rows come from Menu (components/ui/Menu.tsx), `check` variant with section labels
  *
  * Animation: iOS UIMenu — menu scales in from top-right anchor with a
  * spring bounce. Transform origin is top-right so the corner stays pinned
@@ -15,6 +15,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { SortOption } from "@/lib/types";
+import { MenuPanel, MenuRow, MenuSectionLabel, MenuDivider, menuPanelVariants, menuPanelTransition } from "@/components/ui/Menu";
 import type { VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -31,45 +32,6 @@ const VISIT_PRESETS: { value: VisitedFilter; label: string }[] = [
   { value: "30d",  label: "Last 30 days"  },
   { value: "90d",  label: "Last 90 days"  },
 ];
-
-function CheckIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-      <path
-        d="M3 8L6.5 11.5L13 5"
-        stroke="var(--md-sys-color-text-primary)"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-// Menu container: springs open from scale 0 → 1, origin pinned to top-right.
-// stiffness/damping tuned to match iOS UIMenu overshoot (~10%).
-const menuVariants = {
-  hidden: { opacity: 0, scale: 0.01 },
-  visible: { opacity: 1, scale: 1 },
-  exit:   { opacity: 0, scale: 0.01 },
-};
-
-const menuTransition = {
-  type: "spring" as const,
-  stiffness: 380,
-  damping: 22,
-  mass: 0.9,
-};
-
-// Opacity only — items fade in with a stagger after the container springs open.
-const itemVariants = {
-  hidden:  { opacity: 0 },
-  visible: (i: number) => ({
-    opacity: 1,
-    transition: { delay: i * 0.04 + 0.06, duration: 0.15 },
-  }),
-  exit: { opacity: 0, transition: { duration: 0.05 } },
-};
 
 interface Props {
   current: SortOption;
@@ -108,96 +70,47 @@ export default function SortMenu({ current, onChange, visitedFilter = "all", onV
 
             {/* Menu — top-right corner anchored to where the button sits */}
             <motion.div
-              className="absolute right-0 top-0 z-20 w-56"
-              variants={menuVariants}
+              className="absolute right-0 top-0 z-20"
+              variants={menuPanelVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
-              transition={menuTransition}
-              style={{
-                transformOrigin: "top right",
-                background: "var(--md-sys-color-dark-tertiary)",
-                borderRadius: "var(--radius-xl)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
-                paddingTop: 16,
-                paddingBottom: 16,
-                paddingLeft: 20,
-                paddingRight: 20,
-                display: "flex",
-                flexDirection: "column",
-              }}
+              transition={menuPanelTransition}
+              style={{ transformOrigin: "top right" }}
             >
-              {/* Sort section label */}
-              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", padding: "0 20px 6px" }}>Sort</p>
-
-              {SORT_OPTIONS.map((opt, i) => {
-                const isSelected = current === opt.value;
-                return (
-                  <motion.button
+              <MenuPanel minWidth={224}>
+                <MenuSectionLabel>Sort</MenuSectionLabel>
+                {SORT_OPTIONS.map((opt, i) => (
+                  <MenuRow
                     key={opt.value}
-                    custom={i}
-                    variants={itemVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    onClick={() => { onChange(opt.value); setOpen(false); }}
-                    className="w-full flex items-center text-left body-base"
-                    style={{
-                      gap: 12,
-                      paddingTop: 10,
-                      paddingBottom: 10,
-                      background: "transparent",
-                      color: "var(--md-sys-color-text-primary)",
+                    index={i}
+                    variant="check"
+                    item={{
+                      id: opt.value,
+                      label: opt.label,
+                      selected: current === opt.value,
+                      onSelect: () => { onChange(opt.value); setOpen(false); },
                     }}
-                  >
-                    <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
-                      {isSelected && <CheckIcon />}
-                    </span>
-                    {opt.label}
-                  </motion.button>
-                );
-              })}
+                  />
+                ))}
 
-              {/* Divider */}
-              <motion.div
-                custom={SORT_OPTIONS.length}
-                variants={itemVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "8px 0" }}
-              />
+                <MenuDivider />
 
-              {/* Visit date section label */}
-              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", padding: "0 20px 6px" }}>Visit Date</p>
-
-              {VISIT_PRESETS.map((opt, i) => {
-                const isSelected = visitedFilter === opt.value;
-                return (
-                  <motion.button
+                <MenuSectionLabel>Visit Date</MenuSectionLabel>
+                {VISIT_PRESETS.map((opt, i) => (
+                  <MenuRow
                     key={opt.value}
-                    custom={SORT_OPTIONS.length + 2 + i}
-                    variants={itemVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    onClick={() => { onVisitedChange?.(opt.value); setOpen(false); }}
-                    className="w-full flex items-center text-left text-base"
-                    style={{
-                      gap: 12,
-                      paddingTop: 10,
-                      paddingBottom: 10,
-                      background: "transparent",
-                      color: "var(--md-sys-color-text-primary)",
+                    index={SORT_OPTIONS.length + 2 + i}
+                    variant="check"
+                    item={{
+                      id: opt.value,
+                      label: opt.label,
+                      selected: visitedFilter === opt.value,
+                      onSelect: () => { onVisitedChange?.(opt.value); setOpen(false); },
                     }}
-                  >
-                    <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
-                      {isSelected && <CheckIcon />}
-                    </span>
-                    {opt.label}
-                  </motion.button>
-                );
-              })}
+                  />
+                ))}
+              </MenuPanel>
             </motion.div>
           </>
         )}

@@ -8,6 +8,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import MiniCalendar from "./MiniCalendar";
@@ -79,35 +80,9 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
     {isVisible && (
     <div className="absolute inset-0" style={{ pointerEvents: "auto" }}>
 
-      {/* Backdrop */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ background: "rgba(0,0,0,0.6)" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={handleClose}
-      />
-
-      {/* Sheet */}
-      <motion.div
-        className="absolute left-0 right-0 bottom-0"
-        style={{
-          background: "var(--md-sys-color-background)",
-          borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-          maxHeight: "88%",
-          overflowY: "auto",
-        }}
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 380, damping: 38 }}
-      >
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
-        </div>
+      {/* Backdrop + panel (shared drawer chrome) */}
+      <DrawerBackdrop onClick={handleClose} />
+      <DrawerPanel maxHeight="88%">
 
         <div className="px-5 pt-3 pb-8">
           {/* Heading */}
@@ -238,7 +213,7 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
             Add action item
           </button>
         </div>
-      </motion.div>
+      </DrawerPanel>
 
     </div>
     )}

@@ -11,8 +11,6 @@
 
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import CompletionToast from "@/components/ui/CompletionToast";
 import NoteSheet from "@/components/ui/NoteSheet";
@@ -20,6 +18,7 @@ import FilterDropdown from "@/components/ui/FilterDropdown";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import type { ActionItem } from "@/lib/types";
+import ActionItemList from "@/components/accounts/ActionItemList";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -42,167 +41,6 @@ const startOfToday = (() => {
 
 function dueSortKey(date: Date | null): number {
   return date ? date.getTime() : startOfToday.getTime();
-}
-
-function isToday(date: Date | null): boolean {
-  if (!date) return true;
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime() === startOfToday.getTime();
-}
-
-function formatDate(date: Date | null): string {
-  if (!date) return "Due Today";
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-// ── Person icon ───────────────────────────────────────────────────────────────
-
-function PersonIcon({ size = 12 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-      <path
-        d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-        stroke="var(--md-sys-color-text-disabled)"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-// ── Check circle ──────────────────────────────────────────────────────────────
-
-function CheckCircle({ checked, onCheck }: { checked: boolean; onCheck: () => void }) {
-  return (
-    <button
-      onClick={onCheck}
-      className="relative flex-shrink-0 w-5 h-5 rounded-full active:scale-90 transition-transform"
-    >
-      {/* Empty ring */}
-      <div
-        className="absolute inset-0 rounded-full transition-opacity duration-150"
-        style={{
-          border: "1.5px solid var(--md-sys-color-text-disabled)",
-          opacity: checked ? 0 : 1,
-        }}
-      />
-      {/* Filled circle */}
-      <AnimatePresence>
-        {checked && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 500, damping: 28 }}
-            className="absolute inset-0 rounded-full flex items-center justify-center"
-            style={{ background: "#2ECC71" }}
-          >
-            <Icon name="check" size={12} style={{ color: "#fff" }} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </button>
-  );
-}
-
-// ── Task row ──────────────────────────────────────────────────────────────────
-
-function TaskRow({
-  item,
-  accountId,
-  accountName,
-  isLast,
-  isPending,
-  onCheck,
-}: {
-  item: FlatItem;
-  accountId: string;
-  accountName: string;
-  isLast: boolean;
-  isPending: boolean;
-  onCheck: () => void;
-}) {
-  const dueToday = isToday(item.dueDate);
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.28 }}
-      className="flex items-center gap-3 px-4 relative"
-    >
-      {!isLast && (
-        <div
-          className="absolute bottom-0 left-3 right-3"
-          style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }}
-        />
-      )}
-
-      {/* Circle — does NOT navigate */}
-      <div className="py-3.5">
-        <CheckCircle checked={isPending} onCheck={onCheck} />
-      </div>
-
-      {/* Content + chevron — navigates to detail */}
-      <Link
-        href={`/relationships/${accountId}/action-items/${item.id}`}
-        className="flex-1 flex items-center gap-3 py-3.5"
-      >
-        <div className="flex-1 min-w-0">
-          <p
-            className="text-base-bold leading-snug mb-1"
-            style={{ color: "var(--md-sys-color-text-primary)" }}
-          >
-            {item.title}
-          </p>
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-1">
-              <Icon
-                name="calendar_today"
-                size={12}
-                style={{ color: "var(--md-sys-color-neonindigo-dark)" }}
-              />
-              <span
-                className="text-xs font-medium"
-                style={{
-                  color: dueToday
-                    ? "var(--md-sys-color-brand-coral)"
-                    : "var(--md-sys-color-text-disabled)",
-                }}
-              >
-                {formatDate(item.dueDate)}
-              </span>
-            </div>
-            <div className="flex items-center gap-1">
-              <PersonIcon size={12} />
-              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
-                {accountName}
-              </span>
-            </div>
-          </div>
-        </div>
-        <Icon
-          name="chevron_right"
-          size={18}
-          style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 2 }}
-        />
-      </Link>
-
-      {/* Origin activity link icon — outside content Link to avoid nested anchors */}
-      {item.originActivityId && (
-        <Link
-          href={`/relationships/${item.accountId}/activity/${item.originActivityId}`}
-          className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
-          style={{ width: 44, height: 44 }}
-        >
-          <Icon name="link" size={16} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-        </Link>
-      )}
-    </motion.div>
-  );
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -444,20 +282,21 @@ export default function TasksPage() {
                 </span>
               </div>
 
-              {/* Rows */}
-              <AnimatePresence mode="popLayout" initial={false}>
-                {group.items.map((item, i) => (
-                  <TaskRow
-                    key={item.id}
-                    item={item}
-                    accountId={item.accountId}
-                    accountName={ACCOUNT_NAME[item.accountId] ?? item.accountId}
-                    isLast={i === group.items.length - 1}
-                    isPending={item.id === pendingItemId}
-                    onCheck={() => handleCheck(item.id, item.accountId)}
-                  />
-                ))}
-              </AnimatePresence>
+              {/* Rows — shared list, open "page" variant */}
+              <ActionItemList
+                variant="page"
+                showAccountName
+                entries={group.items.map((item) => ({
+                  item: { ...item, dueDate: item.dueDate ?? new Date() },
+                  accountId: item.accountId,
+                  accountName: ACCOUNT_NAME[item.accountId] ?? item.accountId,
+                }))}
+                pendingId={pendingItemId}
+                onComplete={(id) => {
+                  const item = group.items.find((x) => x.id === id);
+                  if (item) handleCheck(item.id, item.accountId);
+                }}
+              />
             </section>
           ))
         )}

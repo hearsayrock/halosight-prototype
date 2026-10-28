@@ -31,8 +31,8 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
-import AccountListItem, { AccountListCard } from "@/components/accounts/AccountListItem";
-import CountBadge from "@/components/accounts/CountBadge";
+import AccountListItem from "@/components/accounts/AccountListItem";
+import ListCard from "@/components/ui/ListCard";
 import SortMenu from "@/components/accounts/SortMenu";
 import Icon from "@/components/ui/Icon";
 import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
@@ -53,7 +53,8 @@ import type { HomeTask, HomeActivity } from "@/lib/mock-data/home";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
 import { useAccountState } from "@/lib/context/AccountStateContext";
-import type { Account, SortOption } from "@/lib/types";
+import type { Account, ActionItem, SortOption } from "@/lib/types";
+import ActionItemList, { ActionItemsHeader, type ActionItemEntry } from "@/components/accounts/ActionItemList";
 import { formatLastVisited, formatDistance } from "@/lib/utils";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -259,107 +260,6 @@ function EngagementsDrawer({
   const root = document.getElementById("phone-overlay-root");
   if (!root) return null;
   return createPortal(overlay, root);
-}
-
-// ── Task row (compact) ────────────────────────────────────────────────────────
-
-function formatTaskDue(dueDate: Date | null): string {
-  if (!dueDate) return "Today";
-  return dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-function TaskStrip({
-  tasks,
-  pendingId,
-  onCheck,
-}: {
-  tasks: HomeTask[];
-  pendingId: string | null;
-  onCheck: (task: HomeTask) => void;
-}) {
-  if (tasks.length === 0) return null;
-
-  return (
-    <div className="px-4 mb-4">
-      <div style={{
-        background: "var(--md-sys-color-dark-primary)",
-        borderRadius: 16,
-        overflow: "hidden",
-        border: "1px solid rgba(255,255,255,0.08)",
-      }}>
-        <AnimatePresence mode="popLayout" initial={false}>
-          {tasks.slice(0, 4).map((task, i) => {
-            const isPending = task.id === pendingId;
-            const isToday = task.dueDate === null;
-            const isLast = i === Math.min(tasks.length, 4) - 1;
-            return (
-              <motion.div
-                key={task.id}
-                layout
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.24 }}
-                className="flex items-center gap-3 px-3.5 py-3 relative"
-              >
-                {!isLast && (
-                  <div className="absolute bottom-0 left-0 right-0"
-                    style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
-                )}
-                {/* Check circle */}
-                <button
-                  onClick={() => onCheck(task)}
-                  className="flex-shrink-0 w-5 h-5 rounded-full relative active:scale-90 transition-transform"
-                >
-                  <div className="absolute inset-0 rounded-full"
-                    style={{ border: `1.5px solid ${isPending ? "#2ECC71" : "var(--md-sys-color-text-disabled)"}` }} />
-                  {isPending && (
-                    <div className="absolute inset-0 rounded-full flex items-center justify-center"
-                      style={{ background: "#2ECC71" }}>
-                      <Icon name="check" size={11} style={{ color: "#fff" }} />
-                    </div>
-                  )}
-                </button>
-                {/* Task info */}
-                <Link
-                  href={`/relationships/${task.accountId}/action-items/${task.itemId}`}
-                  className="flex-1 min-w-0"
-                >
-                  <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)", lineHeight: 1.3 }}>
-                    {task.title}
-                  </p>
-                  <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
-                    <span style={{
-                      fontSize: 11,
-                      color: isToday ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-disabled)",
-                      fontWeight: 500,
-                      flexShrink: 0,
-                    }}>
-                      {formatTaskDue(task.dueDate)}
-                    </span>
-                    <span className="text-11" style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0 }}>·</span>
-                    <span className="text-11" style={{ color: "var(--md-sys-color-text-disabled)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {task.accountName}
-                    </span>
-                  </div>
-                </Link>
-                {/* Origin activity link — outside the content Link to avoid nested anchors */}
-                {task.originActivityId && (
-                  <Link
-                    href={`/relationships/${task.accountId}/activity/${task.originActivityId}`}
-                    className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
-                    style={{ width: 44, height: 44 }}
-                  >
-                    <Icon name="link" size={16} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-                  </Link>
-                )}
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
-    </div>
-  );
 }
 
 // ── Dashboard card ────────────────────────────────────────────────────────────
@@ -698,6 +598,23 @@ function CombinedPageContent() {
   } | null>(null);
 
   const availableTasks = mockTasks.filter((t) => !completedTaskIds.includes(t.id));
+
+  // Home tasks → shared action item entries. HomeTask.dueDate null means "due today".
+  const homeActionEntries: ActionItemEntry[] = availableTasks.map((task) => {
+    const stored = getItems(task.accountId).find((i) => i.id === task.itemId);
+    const base: ActionItem = stored ?? { id: task.itemId, title: task.title, dueDate: task.dueDate, status: "open" };
+    return {
+      item: { ...base, id: task.id, dueDate: task.dueDate ?? new Date() },
+      accountId: task.accountId,
+      itemId: task.itemId,
+      accountName: task.accountName,
+    };
+  });
+  const pendingTaskItemId = pendingTaskId;
+  function handleCheckItem(taskId: string) {
+    const task = availableTasks.find((t) => t.id === taskId);
+    if (task) handleCheck(task);
+  }
 
   function handleCheck(task: HomeTask) {
     if (pendingTaskId) return;
@@ -1200,22 +1117,23 @@ function CombinedPageContent() {
                       </span>
                       <MiniSearchPill onClick={() => goToMode("accounts")} />
                     </div>
-                    <AccountListCard>
+                    <ListCard className="mx-4">
                       {topAccounts.map((account, i) => (
                         <AccountListItem key={account.id} variant="home" account={account} isLast={i === topAccounts.length - 1} />
                       ))}
-                    </AccountListCard>
+                    </ListCard>
                   </div>
 
                   {/* Priorities section */}
-                  <div>
-                    <div className="flex items-center justify-between px-4 py-2">
-                      <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
-                        Action Items
-                      </span>
-                      <MiniSearchPill onClick={() => goToMode("priorities")} />
-                    </div>
-                    <TaskStrip tasks={availableTasks} pendingId={pendingTaskId} onCheck={handleCheck} />
+                  <div className="mb-4">
+                    <ActionItemsHeader action={{ kind: "viewAll", onClick: () => goToMode("priorities") }} />
+                    <ActionItemList
+                      entries={homeActionEntries}
+                      pendingId={pendingTaskItemId}
+                      onComplete={handleCheckItem}
+                      showAccountName
+                      limit={4}
+                    />
                   </div>
 
                   {/* Feedback widget */}
@@ -1286,7 +1204,7 @@ function CombinedPageContent() {
                     <>
                       <SectionHeader label="Company-Wide Results" count={systemResults.length} divider />
                       {systemResults.length > 0 ? (
-                        <AccountListCard>
+                        <ListCard className="mx-4">
                           {systemResults.map((account, i) => (
                             <AccountListItem
                               key={account.id}
@@ -1297,7 +1215,7 @@ function CombinedPageContent() {
                               onSelect={(a) => router.push(`/relationships/${a.id}`)}
                             />
                           ))}
-                        </AccountListCard>
+                        </ListCard>
                       ) : (
                         <div className="px-4 py-6 text-center">
                           <p className="text-sm" style={{ color: "var(--md-sys-color-text-disabled)" }}>Not found anywhere in Tomorrowland Innovations.</p>
@@ -1415,98 +1333,28 @@ function CombinedPageContent() {
                         </span>
                       </div>
 
-                      {/* Task rows */}
-                      <AnimatePresence mode="popLayout" initial={false}>
-                        {group.items.map((item, i) => {
-                          const isPending = item.id === pendingTaskId;
-                          const dueToday = !item.dueDate || item.dueDate.getTime() < startOfToday.getTime() + 86_400_000;
-                          return (
-                            <motion.div
-                              key={item.id}
-                              layout
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{ duration: 0.28 }}
-                              className="flex items-center gap-3 px-4 relative"
-                            >
-                              {i < group.items.length - 1 && (
-                                <div className="absolute bottom-0 left-3 right-3"
-                                  style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
-                              )}
-                              {/* Check circle */}
-                              <div className="py-3.5">
-                                <button
-                                  onClick={() => {
-                                    if (pendingTaskId) return;
-                                    setPendingTaskId(item.id);
-                                    setPendingNoteInfo({ accountId: item.accountId, itemId: item.id });
-                                    timerRef.current = setTimeout(() => {
-                                      updateItem(item.accountId, { ...item, status: "done" });
-                                      setPendingTaskId(null);
-                                      setPendingNoteInfo(null);
-                                    }, 8000);
-                                  }}
-                                  className="relative flex-shrink-0 w-5 h-5 rounded-full active:scale-90 transition-transform"
-                                >
-                                  <div className="absolute inset-0 rounded-full transition-opacity duration-150"
-                                    style={{ border: "1.5px solid var(--md-sys-color-text-disabled)", opacity: isPending ? 0 : 1 }} />
-                                  <AnimatePresence>
-                                    {isPending && (
-                                      <motion.div
-                                        initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                                        exit={{ scale: 0, opacity: 0 }}
-                                        transition={{ type: "spring", stiffness: 500, damping: 28 }}
-                                        className="absolute inset-0 rounded-full flex items-center justify-center"
-                                        style={{ background: "#2ECC71" }}
-                                      >
-                                        <Icon name="check" size={12} style={{ color: "#fff" }} />
-                                      </motion.div>
-                                    )}
-                                  </AnimatePresence>
-                                </button>
-                              </div>
-                              {/* Row content */}
-                              <Link href={`/relationships/${item.accountId}/action-items/${item.id}`}
-                                className="flex-1 flex items-center gap-3 py-3.5">
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-base-bold leading-snug mb-1"
-                                    style={{ color: "var(--md-sys-color-text-primary)" }}>
-                                    {item.title}
-                                  </p>
-                                  <div className="flex items-center gap-3">
-                                    <div className="flex items-center gap-1">
-                                      <Icon name="calendar_today" size={12} style={{ color: "var(--md-sys-color-neonindigo-dark)" }} />
-                                      <span className="text-xs font-medium" style={{ color: dueToday ? "var(--md-sys-color-brand-coral)" : "var(--md-sys-color-text-disabled)" }}>
-                                        {item.dueDate ? item.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Due Today"}
-                                      </span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                                        <path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-                                          stroke="var(--md-sys-color-text-disabled)" strokeLinecap="round" strokeLinejoin="round" />
-                                      </svg>
-                                      <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
-                                        {ACCOUNT_NAME[item.accountId] ?? item.accountId}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </Link>
-                              {/* Origin activity link icon — outside content Link to avoid nested anchors */}
-                              {item.originActivityId && (
-                                <Link
-                                  href={`/relationships/${item.accountId}/activity/${item.originActivityId}`}
-                                  className="flex-shrink-0 flex items-center justify-center active:opacity-60 transition-opacity"
-                                  style={{ width: 44, height: 44 }}
-                                >
-                                  <Icon name="link" size={16} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-                                </Link>
-                              )}
-                            </motion.div>
-                          );
-                        })}
-                      </AnimatePresence>
+                      {/* Task rows — shared list, open "page" variant */}
+                      <ActionItemList
+                        variant="page"
+                        showAccountName
+                        entries={group.items.map((item) => ({
+                          item: { ...item, dueDate: item.dueDate ?? new Date() },
+                          accountId: item.accountId,
+                          accountName: ACCOUNT_NAME[item.accountId] ?? item.accountId,
+                        }))}
+                        pendingId={pendingTaskId}
+                        onComplete={(id) => {
+                          const item = group.items.find((x) => x.id === id);
+                          if (!item || pendingTaskId) return;
+                          setPendingTaskId(item.id);
+                          setPendingNoteInfo({ accountId: item.accountId, itemId: item.id });
+                          timerRef.current = setTimeout(() => {
+                            updateItem(item.accountId, { ...item, status: "done" });
+                            setPendingTaskId(null);
+                            setPendingNoteInfo(null);
+                          }, 8000);
+                        }}
+                      />
                     </section>
                   ))
                 )}

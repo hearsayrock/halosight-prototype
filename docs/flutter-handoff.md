@@ -179,7 +179,7 @@ For Halosight-specific icons (chain, branch, standalone, menu), use `flutter_svg
 One widget with a `variant` enum (`owned`, `crm`, `home`). The full spec — props, layout, token paths, anti-patterns,
 changelog — lives in the component's `FLUTTER HANDOFF` comment and its `docs/component-registry.ts` entry; the live
 variants and the `CountBadge` sub-component are on `/design-system#account-list-item`. `crm` and `home` rows sit inside
-`AccountListCard` (card fill, hairline border, radius).
+`ListCard` (`components/ui/ListCard.tsx`: card fill, hairline border, radius).
 
 ### AccountTypeIcon
 **Prototype:** `app/components/accounts/AccountTypeIcon.tsx`  

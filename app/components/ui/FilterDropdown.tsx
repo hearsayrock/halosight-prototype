@@ -6,55 +6,19 @@
  * Props: options[], value, onChange callback, label (optional prefix label)
  * State: open (bool) — internal only
  * Flutter equivalent: PopupMenuButton or custom overlay (same pattern as SortMenu)
- * Tokens: dark-secondary (pill bg), dark-tertiary (menu bg), radius-full (pill), radius-xl (menu),
- *         text-primary, text-muted, brand-purple (active selection)
+ * Tokens: dark-secondary (pill bg), radius-full (pill), text-primary, text-muted;
+ *         the menu comes from Menu (components/ui/Menu.tsx), `check` variant
  * Transitions: iOS UIMenu spring — scale 0→1, origin top-left, items stagger-fade in
  */
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
+import { MenuPanel, MenuRow, menuPanelVariants, menuPanelTransition } from "@/components/ui/Menu";
 
 export interface FilterOption<T extends string = string> {
   value: T;
   label: string;
-}
-
-// Matches SortMenu spring exactly
-const menuVariants = {
-  hidden:  { opacity: 0, scale: 0.01 },
-  visible: { opacity: 1, scale: 1 },
-  exit:    { opacity: 0, scale: 0.01 },
-};
-
-const menuTransition = {
-  type: "spring" as const,
-  stiffness: 380,
-  damping: 22,
-  mass: 0.9,
-};
-
-const itemVariants = {
-  hidden:  { opacity: 0 },
-  visible: (i: number) => ({
-    opacity: 1,
-    transition: { delay: i * 0.04 + 0.06, duration: 0.15 },
-  }),
-  exit: { opacity: 0, transition: { duration: 0.05 } },
-};
-
-function CheckIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-      <path
-        d="M3 8L6.5 11.5L13 5"
-        stroke="var(--md-sys-color-text-primary)"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
 }
 
 interface Props<T extends string> {
@@ -112,50 +76,28 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
             {/* Menu — top-left corner anchored to where the pill sits */}
             <motion.div
               className="absolute left-0 top-full mt-1 z-50"
-              variants={menuVariants}
+              variants={menuPanelVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
-              transition={menuTransition}
-              style={{
-                transformOrigin: "top left",
-                background: "var(--md-sys-color-dark-tertiary)",
-                borderRadius: "var(--radius-xl)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
-                paddingTop: 8,
-                paddingBottom: 8,
-                minWidth: 148,
-              }}
+              transition={menuPanelTransition}
+              style={{ transformOrigin: "top left" }}
             >
-              {options.map((opt, i) => {
-                const isSelected = value === opt.value;
-                return (
-                  <motion.button
+              <MenuPanel minWidth={180}>
+                {options.map((opt, i) => (
+                  <MenuRow
                     key={opt.value}
-                    custom={i}
-                    variants={itemVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    onClick={() => { onChange(opt.value); setOpen(false); }}
-                    className="w-full flex items-center text-left text-sm-bold"
-                    style={{
-                      gap: 12,
-                      paddingTop: 10,
-                      paddingBottom: 10,
-                      paddingLeft: 16,
-                      paddingRight: 16,
-                      background: "transparent",
-                      color: "var(--md-sys-color-text-primary)",
+                    index={i}
+                    variant="check"
+                    item={{
+                      id: opt.value,
+                      label: opt.label,
+                      selected: value === opt.value,
+                      onSelect: () => { onChange(opt.value); setOpen(false); },
                     }}
-                  >
-                    <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
-                      {isSelected && <CheckIcon />}
-                    </span>
-                    {opt.label}
-                  </motion.button>
-                );
-              })}
+                  />
+                ))}
+              </MenuPanel>
             </motion.div>
           </>
         )}

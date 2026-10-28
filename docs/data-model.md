@@ -64,6 +64,23 @@ interface AccountDetail extends Account {
 
 ---
 
+### ActionItem
+A follow-up task on an account, usually generated from an interaction. Rendered by `ActionItemList`.
+
+```ts
+interface ActionItem {
+  id: string;
+  title: string;
+  dueDate: Date | null;            // null renders "No due date" (the home screen maps its own null to today)
+  status: "open" | "done" | "canceled";
+  note?: string;                   // optional completion note
+  description?: string;            // why it was created
+  originActivity?: string;         // name of the interaction it came from
+  originActivityId?: string;       // links to /relationships/[accountId]/activity/[id]
+  originType?: "meeting" | "spoken-note"; // kind of interaction it came from; shown on the drawer's interaction card
+}
+```
+
 ### ActivityItem
 
 A single logged interaction on an account's timeline.
@@ -74,9 +91,12 @@ interface ActivityItem {
   accountId: string;
   date: Date;
   type: "visit" | "call" | "email" | "task";
+  title: string;
   summary: string;                // AI summary or manual note
+  durationMinutes?: number;       // shown on Halosight rows ("35 mins"); none for CRM items
   hasTranscript: boolean;
-  repName: string;
+  repName: string;                // who created it — "You" for the signed-in rep, else their name
+  source?: "salesforce";          // undefined = logged in Halosight; "salesforce" = synced from the CRM (cloud icon + "From Salesforce")
 }
 ```
 
@@ -211,6 +231,18 @@ interface CrmUpdate {
 ```
 
 ---
+
+
+## Account Chat (`ChatTurn`, `ChatThread`)
+
+```ts
+type ChatRole = "user" | "assistant";
+interface ChatTurn { id: string; role: ChatRole; text: string; draft?: string }   // draft = quoted block (e.g. an email the assistant wrote)
+interface ChatThread { id: string; title: string; whenLabel: string; messageCount: number; pinned: boolean }
+```
+
+Prototype data lives in `lib/mock-data/chat.ts` (suggestions, threads, a sample conversation, keyword-matched canned replies).
+Production needs a chat repository (threads, turns, streamed replies) and, before shipping, source provenance on answers.
 
 ## Sort Options
 

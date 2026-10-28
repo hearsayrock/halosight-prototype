@@ -2,6 +2,8 @@ import PhoneFrame from "@/components/layout/PhoneFrame";
 import PageTransition from "@/components/layout/PageTransition";
 import StaticBottomNav from "@/components/layout/StaticBottomNav";
 import { ActionItemsProvider } from "@/lib/context/ActionItemsContext";
+import { ActionItemDrawerProvider } from "@/lib/context/ActionItemDrawerContext";
+import { ChatProvider } from "@/lib/context/ChatContext";
 import { CaptureProvider } from "@/lib/context/CaptureContext";
 import { FakeCallProvider } from "@/lib/context/FakeCallContext";
 import { AccountStateProvider } from "@/lib/context/AccountStateContext";
@@ -24,11 +26,15 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
         <CaptureProvider>
           <FakeCallProvider>
             <PhoneFrame>
-              <PageTransition>{children}</PageTransition>
-              <StaticBottomNav />
-              <CaptureWidget />
-              <FakeCallOverlay />
-              <DemoReset />
+              <ActionItemDrawerProvider>
+              <ChatProvider>
+                <PageTransition>{children}</PageTransition>
+                <StaticBottomNav />
+                <CaptureWidget />
+                <FakeCallOverlay />
+                <DemoReset />
+              </ChatProvider>
+              </ActionItemDrawerProvider>
             </PhoneFrame>
           </FakeCallProvider>
         </CaptureProvider>

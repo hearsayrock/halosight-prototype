@@ -202,10 +202,10 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Confirm any pain points before they grow",
     ],
     actionItems: [
-      { id: "ja-t1", title: "Send Q2 pricing update",        dueDate: daysFromNow(-3), status: "open", originActivity: "Follow-Up Call",      originActivityId: "ja-6" },
+      { id: "ja-t1", title: "Send Q2 pricing update",        dueDate: daysFromNow(-3), status: "open", originActivity: "Follow-Up Call",      originActivityId: "ja-6", originType: "meeting" },
       { id: "ja-t2", title: "On-site training for new team", dueDate: null,            status: "open", originActivity: "Client Presentation",  originActivityId: "ja-4" },
-      { id: "ja-t3", title: "Provide weekly updates",        dueDate: daysFromNow(3),  status: "open", originActivity: "Client Presentation",  originActivityId: "ja-4" },
-      { id: "ja-t4", title: "Investigate account",           dueDate: daysFromNow(8),  status: "open", originActivity: "Market Research",      originActivityId: "ja-3" },
+      { id: "ja-t3", title: "Provide weekly updates",        dueDate: daysFromNow(3),  status: "open", originActivity: "Client Presentation",  originActivityId: "ja-4", originType: "spoken-note" },
+      { id: "ja-t4", title: "Investigate account",           dueDate: daysFromNow(8),  status: "open", originActivity: "Market Research",      originActivityId: "ja-3", originType: "meeting" },
       { id: "ja-t5", title: "Send intro deck",               dueDate: daysAgo(3),    status: "done", originActivity: "Discovery Call",       originActivityId: "ja-1" },
       { id: "ja-t6", title: "Confirm meeting with Marcus",   dueDate: daysAgo(7),    status: "done", originActivity: "Discovery Call",       originActivityId: "ja-1" },
     ],
@@ -225,7 +225,7 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
           ],
         },
       },
-      { id: "ja-2", accountId: "jacks-tire-elko", date: at(9, 15, 46), type: "call",  title: "Intro call on Jack's upgrade timeline and current workflow gaps", summary: "Initial discovery with Jack's Tire and Oil to understand their platform upgrade needs and timeline.", durationMinutes: 35,  hasTranscript: true,  repName: "Jordan Mills" },
+      { id: "ja-2", accountId: "jacks-tire-elko", date: at(4, 16, 20), type: "email", source: "salesforce", title: "Re: September QBR logistics", summary: "Hi team — confirming we have the Houston room booked for the 14th, 9am to noon. Let me know if Sam should loop in anyone from their side before then.", hasTranscript: false, repName: "Dana Ruiz" },
       {
         id: "ja-3", accountId: "jacks-tire-elko", date: at(4, 11, 0), type: "visit", title: "Competitive pricing review — our turnaround time flagged as a key differentiator",
         summary: "Reviewed competitor platforms to identify feature gaps and opportunities for differentiation.",
@@ -258,7 +258,7 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Mention the Cedar City distribution hub — proximity is a differentiator",
     ],
     actionItems: [
-      { id: "wc-t1", title: "Send pricing recap",              dueDate: null,            status: "open", originActivity: "Discovery Call",      originActivityId: "wc-2" },
+      { id: "wc-t1", title: "Send pricing recap",              dueDate: null,            status: "open", originActivity: "Discovery Call",      originActivityId: "wc-2", originType: "meeting" },
       { id: "wc-t2", title: "Follow up with procurement",      dueDate: daysFromNow(1),  status: "open", originActivity: "Discovery Call",      originActivityId: "wc-2" },
       { id: "wc-t3", title: "Confirm delivery SLA in writing", dueDate: daysFromNow(6),  status: "open", originActivity: "Ops Check-In",        originActivityId: "wc-1" },
       { id: "wc-t4", title: "Schedule Q3 planning call",       dueDate: null,            status: "open", originActivity: "Ops Check-In",        originActivityId: "wc-1" },
@@ -315,9 +315,9 @@ export const mockAccountDetails: Record<string, AccountDetail> = {
       "Confirm any pain points before they grow",
     ],
     actionItems: [
-      { id: "wm-t1", title: "Send Q2 pricing update", dueDate: daysFromNow(-2), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1", description: "Dave asked for a revised pricing sheet reflecting the higher brake pad volumes they're now projecting. He wants to compare our Q2 rates against what their current supplier quoted before the back-order issues started." },
+      { id: "wm-t1", title: "Send Q2 pricing update", dueDate: daysFromNow(-2), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1", originType: "meeting", description: "Dave asked for a revised pricing sheet reflecting the higher brake pad volumes they're now projecting. He wants to compare our Q2 rates against what their current supplier quoted before the back-order issues started." },
       { id: "wm-t2", title: "Schedule executive review", dueDate: daysFromNow(7), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1", description: "Dave flagged that the ops director wants to be looped in before any vendor change is formalized. Setting up a 30-minute intro to walk through our reliability track record and distribution coverage." },
-      { id: "wm-t3", title: "Share turnaround SLA doc", dueDate: daysFromNow(5), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1", description: "Acme Co's biggest concern is lead time consistency. Dave specifically asked for a written SLA they can bring to procurement — needs to include restocking timelines and back-order escalation commitments." },
+      { id: "wm-t3", title: "Share turnaround SLA doc", dueDate: daysFromNow(5), status: "open", originActivity: "Quarterly Review", originActivityId: "wm-1", originType: "spoken-note", description: "Acme Co's biggest concern is lead time consistency. Dave specifically asked for a written SLA they can bring to procurement — needs to include restocking timelines and back-order escalation commitments." },
       { id: "wm-t4", title: "Send Q1 recap report",       dueDate: daysAgo(5),    status: "done", originActivity: "Routine Check-In", originActivityId: "wm-2" },
       { id: "wm-t5", title: "Confirm Q2 site visit",      dueDate: daysAgo(10),   status: "done", originActivity: "Routine Check-In", originActivityId: "wm-2" },
     ],

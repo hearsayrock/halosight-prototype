@@ -51,7 +51,6 @@ const DEFAULT_NAV = [
     routes: [
       { label: "Activity + AI",     path: "/relationships/jacks-tire-elko/activity/ja-1" },
       { label: "Activity (ops)",    path: "/relationships/walmart-cedar-city/activity/wc-1" },
-      { label: "Action Item",       path: "/relationships/jacks-tire-elko/action-items/ja-t1" },
     ],
   },
   {

@@ -28,8 +28,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import KebabMenu from "@/components/ui/KebabMenu";
 import InsightCard from "@/components/accounts/InsightCard";
+import { useAccountChat } from "@/lib/context/ChatContext";
 import ConvertToAccountSheet from "@/components/accounts/ConvertToAccountSheet";
-import ActionItemCard from "@/components/accounts/ActionItemCard";
+import Tabs from "@/components/ui/Tabs";
+import ActivityCard from "@/components/accounts/ActivityCard";
+import ActionItemList, { ActionItemsHeader } from "@/components/accounts/ActionItemList";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
 import NoteSheet from "@/components/ui/NoteSheet";
@@ -43,97 +46,6 @@ import { useAccountState } from "@/lib/context/AccountStateContext";
 import type { ActivityItem } from "@/lib/types";
 
 // ── Activity card ─────────────────────────────────────────────────────────────
-
-function formatActivityDate(date: Date): string {
-  return (
-    date.toLocaleDateString("en-US", { month: "short", day: "2-digit" }) +
-    ", " +
-    date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })
-  );
-}
-
-function formatDuration(minutes: number): string {
-  if (minutes < 60) return `${minutes} mins`;
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return m > 0 ? `${h}hr ${m} mins` : `${h}hr`;
-}
-
-function ActivityCard({ item, accountId, isExternal, href }: { item: ActivityItem; accountId: string; isExternal?: boolean; href?: string }) {
-  return (
-    <Link href={href ?? `/relationships/${accountId}/activity/${item.id}`}>
-    <div
-      className="flex items-start gap-3 p-4 active:opacity-70 transition-opacity"
-      style={{
-        background: isExternal ? "var(--md-sys-color-dark-primary)" : "var(--md-sys-color-dark-secondary)",
-        borderRadius: "var(--radius-md)",
-        border: isExternal ? "1px solid var(--md-sys-color-dark-secondary)" : undefined,
-      }}
-    >
-      <div className="flex-1 min-w-0">
-        <p className="text-base-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
-          {item.title}
-        </p>
-        <p
-          className="text-sm leading-relaxed mb-2"
-          style={{
-            color: "var(--md-sys-color-text-muted)",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-          }}
-        >
-          {item.summary}
-        </p>
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
-            {formatActivityDate(item.date)}
-          </span>
-          {item.durationMinutes != null && (
-            <>
-              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
-              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
-                {formatDuration(item.durationMinutes)}
-              </span>
-            </>
-          )}
-          {item.repName !== "Jordan Mills" && (
-            <>
-              <span className="text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>•</span>
-              <div
-                className="flex items-center justify-center rounded-full text-2xs-bold flex-shrink-0"
-                style={{
-                  width: 18,
-                  height: 18,
-                  background: "var(--md-sys-color-dark-tertiary)",
-                  color: "var(--md-sys-color-text-muted)",
-                }}
-                title={item.repName}
-              >
-                {item.repName.charAt(0)}
-              </div>
-            </>
-          )}
-          {isExternal && (
-            <span
-              className="text-2xs-bold px-1.5 py-0.5 rounded-full"
-              style={{
-                background: "rgba(139,146,255,0.10)",
-                color: "var(--md-sys-color-neonindigo)",
-                border: "1px solid rgba(139,146,255,0.18)",
-              }}
-            >
-              Unassigned
-            </span>
-          )}
-        </div>
-      </div>
-      <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-text-disabled)", flexShrink: 0, marginTop: 2 }} />
-    </div>
-    </Link>
-  );
-}
 
 // ── Preparing note card ───────────────────────────────────────────────────────
 
@@ -289,6 +201,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
   const { status: captureStatus, accountId: capturingId, startCapture } = useCapture();
   const { disqualify, restore, needsAttention, clearNeedsAttention, updateContact, getContactOverride } = useAccountState();
+  const { open: openChat } = useAccountChat();
 
   // Contact info for leads — form state for the Needs Attention banner
   const [contactForm, setContactForm] = useState({ name: "", title: "", phone: "" });
@@ -494,26 +407,17 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 transition: "opacity 160ms ease",
               }}
             >
-              {account.halosightType === "prospect" && !effectiveJustCreated ? (
-                <KebabMenu
-                  items={[
-                    { label: "Disqualify", onClick: () => setShowDisqualifyConfirm(true), destructive: true },
-                  ]}
-                />
-              ) : (
-                <button
-                  onClick={() => setShowInfoSheet(true)}
-                  aria-label="Account details"
-                  className="active:opacity-60 transition-opacity"
-                  style={{
-                    width: 32, height: 32,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    borderRadius: "50%", background: "transparent", border: "none",
-                  }}
-                >
-                  <Icon name="info" size={24} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-                </button>
-              )}
+              <KebabMenu
+                items={[
+                  ...(account.halosightType === "prospect" && !effectiveJustCreated
+                    ? []
+                    : [{ label: "Account details", icon: "info", onClick: () => setShowInfoSheet(true) }]),
+                  { label: "Ask", icon: "auto_awesome", onClick: () => openChat(account.name) },
+                  ...(account.halosightType === "prospect" && !effectiveJustCreated
+                    ? [{ label: "Disqualify", icon: "block", onClick: () => setShowDisqualifyConfirm(true), destructive: true }]
+                    : []),
+                ]}
+              />
             </div>
           </div>
         );
@@ -677,39 +581,17 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
         {/* Tab row — sticky only when scrolling up past Row B, otherwise travels with content */}
         {!effectiveJustCreated && (
-          <div
+          <Tabs
+            tabs={[{ id: "overview", label: "Overview" }, { id: "activity", label: "Activity" }]}
+            value={activeTab}
+            onChange={(id) => setActiveTab(id as "overview" | "activity")}
             style={{
               position: scrolledPast && scrollingUp ? "sticky" : "relative",
               top: scrolledPast && scrollingUp ? 86 : 0,
               zIndex: 5,
-              display: "flex",
-              gap: 24,
-              padding: "0 20px",
               background: "var(--md-sys-color-background)",
-              borderBottom: "1px solid var(--md-sys-color-alpha-white-10)",
             }}
-          >
-            {(["overview", "activity"] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                style={{
-                  fontSize: 16,
-                  fontWeight: 600,
-                  fontFamily: "Barlow, sans-serif",
-                  padding: "10px 0",
-                  color: activeTab === tab ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)",
-                  boxShadow: activeTab === tab ? "inset 0 -2px 0 0 var(--md-sys-color-brand-teal)" : "none",
-                  transition: "color 140ms ease",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </div>
+          />
         )}
 
         {/* Just-created empty state */}
@@ -779,25 +661,20 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
             {/* Action Items — always visible regardless of detail */}
             <section>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="heading-6" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                  Action Items
-                </h2>
-                {actionItems.length > 0 && (
-                  <button onClick={() => setShowAddSheet(true)} className="active:opacity-60 transition-opacity">
-                    <Icon name="add" size={20} style={{ color: "var(--md-sys-color-text-primary)" }} />
-                  </button>
-                )}
-              </div>
+              {actionItems.length > 0 && (
+                <div className="-mx-4">
+                  <ActionItemsHeader action={{ kind: "add", onClick: () => setShowAddSheet(true) }} />
+                </div>
+              )}
 
               {actionItems.length > 0 ? (
-                <div className="flex flex-col gap-2">
-                  {actionItems.map((item) => (
-                    <Link key={item.id} href={`/relationships/${id}/action-items/${item.id}?from=account`}>
-                      <ActionItemCard item={item} onComplete={() => handleComplete(item.id)} pending={pendingItemId === item.id} />
-                    </Link>
-                  ))}
-                </div>
+                <ActionItemList
+                  className=""
+                  entries={actionItems.map((item) => ({ item, accountId: id }))}
+                  pendingId={pendingItemId}
+                  onComplete={handleComplete}
+                  collapsedCount={3}
+                />
               ) : (
                 <button
                   onClick={() => setShowAddSheet(true)}
@@ -831,15 +708,15 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
 
         {/* Activity */}
         {!effectiveJustCreated && activeTab === "activity" && (
-          <div className="flex flex-col gap-3 px-4 pb-24">
-            {noteState === "processing" && <PreparingNoteCard />}
+          <div className="flex flex-col pb-24">
+            {noteState === "processing" && <div className="px-4 pb-3"><PreparingNoteCard /></div>}
             {(detail?.recentActivity?.length || captureJustCompleted) ? (
-              (detail?.recentActivity ?? [{ id: "new-capture", accountId: "new-capture", title: "Sandra confirmed we're the frontrunner for the contract", summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.", date: new Date(), durationMinutes: 28, hasTranscript: true, repName: "Jordan Mills", type: "visit" as const }]).map((item) => (
+              (detail?.recentActivity ?? [{ id: "new-capture", accountId: "new-capture", title: "Sandra confirmed we're the frontrunner for the contract", summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.", date: new Date(), durationMinutes: 28, hasTranscript: true, repName: "Jordan Mills", type: "visit" as const }]).map((item, i, all) => (
                 <ActivityCard
                   key={item.id}
                   item={item}
                   accountId={id}
-                  isExternal={item.id === "new-capture" ? false : isExternalAccount}
+                  isLast={i === all.length - 1}
                   href={item.id === "new-capture"
                     ? `/relationships/${id}/activity/new-capture?name=${encodeURIComponent(account.name)}`
                     : undefined}

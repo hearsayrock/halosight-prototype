@@ -2,7 +2,12 @@
 
 /**
  * FLUTTER HANDOFF: InsightCard
- * Widget: StatefulWidget (thumbs-down toggle)
+ * Widget: StatefulWidget (thumbs-down toggle, sources expander)
+ * Data: eyebrow + body (string = prose, string[] = bullets) from AccountDetail.lastVisitSummary / ideasForThisTime
+ * Flutter equivalent: account_insight_card.dart
+ * Loading: `loading` swaps the body for InsightCardLoader (sparkle + cycling status lines) and hides the footer; the real body cross-fades in.
+ * Footer: hairline, then copy + thumbs-down always. Sources and the read-aloud / ask-AI
+ *         icons are opt-in (`showSources`, `showAiActions`) and OFF for the first handoff.
  * Tokens: --md-sys-color-dark-primary, --md-sys-color-alpha-white-10,
  *         --md-sys-color-text-disabled, --md-sys-color-text-secondary,
  *         --md-sys-color-brand-teal, --md-sys-color-neonindigo,
@@ -12,6 +17,9 @@
 
 import { useState } from "react";
 import Icon from "@/components/ui/Icon";
+import ThumbsDownIcon from "@/components/ui/ThumbsDownIcon";
+import { motion } from "framer-motion";
+import InsightCardLoader from "@/components/accounts/InsightCardLoader";
 
 interface SourceBadge {
   type: "meeting" | "call" | "note";
@@ -24,6 +32,14 @@ interface InsightCardProps {
   /** String = prose paragraph. String[] = teal-bullet list. */
   body: string | string[];
   sources?: SourceBadge[];
+  /** Sources badges + expander on the footer's left. Off for the first handoff. */
+  showSources?: boolean;
+  /** Read-aloud and ask-AI icons in the footer. Off for the first handoff. */
+  showAiActions?: boolean;
+  /** While the summary is being brought in: the body is the InsightCardLoader and the footer is hidden. */
+  loading?: boolean;
+  /** Status lines the loader cycles through. */
+  loadingMessages?: string[];
 }
 
 const SOURCE_ICON: Record<SourceBadge["type"], string> = {
@@ -43,9 +59,16 @@ export default function InsightCard({
   visitedDaysAgo,
   body,
   sources = DEFAULT_SOURCES,
+  showSources = false,
+  showAiActions = false,
+  loading = false,
+  loadingMessages,
 }: InsightCardProps) {
   const [thumbsDown, setThumbsDown] = useState(false);
   const [sourcesOpen, setSourcesOpen] = useState(false);
+  // Once a card has shown its loader, the real content fades in instead of popping in.
+  const [seenLoading, setSeenLoading] = useState(loading);
+  if (loading && !seenLoading) setSeenLoading(true);
 
   const isBullets = Array.isArray(body);
   const bodyText = isBullets ? (body as string[]).join("\n") : (body as string);
@@ -67,7 +90,7 @@ export default function InsightCard({
           marginLeft: "auto",
           fontSize: 14,
           color: "var(--md-sys-color-text-disabled)",
-          fontFamily: "Barlow, sans-serif",
+          fontFamily: "var(--font-sans)",
           whiteSpace: "nowrap",
         }}
       >
@@ -82,15 +105,15 @@ export default function InsightCard({
       style={{
         background: "var(--md-sys-color-dark-primary)",
         border: "1px solid var(--md-sys-color-alpha-white-10)",
-        borderRadius: 12,
-        padding: 16,
+        borderRadius: "var(--radius-md)",
+        padding: "var(--spacing-4)",
         display: "flex",
         flexDirection: "column",
         gap: isBullets ? 10 : 8,
       }}
     >
       {/* Header row */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-2)" }}>
         <span
           style={{
             fontSize: 12,
@@ -98,7 +121,7 @@ export default function InsightCard({
             letterSpacing: "0.12em",
             textTransform: "uppercase",
             color: "var(--md-sys-color-text-disabled)",
-            fontFamily: "Barlow, sans-serif",
+            fontFamily: "var(--font-sans)",
           }}
         >
           {eyebrow}
@@ -106,6 +129,15 @@ export default function InsightCard({
         {visitedLabel}
       </div>
 
+      {loading ? (
+        <InsightCardLoader messages={loadingMessages} />
+      ) : (
+      <motion.div
+        initial={seenLoading ? { opacity: 0 } : false}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        style={{ display: "flex", flexDirection: "column", gap: isBullets ? 10 : 8 }}
+      >
       {/* Body */}
       {isBullets ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
@@ -115,10 +147,10 @@ export default function InsightCard({
                 style={{
                   width: 4,
                   height: 4,
-                  borderRadius: 999,
+                  borderRadius: "var(--radius-full)",
                   background: "var(--md-sys-color-brand-teal)",
                   flexShrink: 0,
-                  marginTop: 9,
+                  marginTop: 11,
                 }}
               />
               <span
@@ -126,7 +158,7 @@ export default function InsightCard({
                   fontSize: 17,
                   lineHeight: 1.5,
                   color: "var(--md-sys-color-text-secondary)",
-                  fontFamily: "Barlow, sans-serif",
+                  fontFamily: "var(--font-sans)",
                 }}
               >
                 {item}
@@ -141,7 +173,7 @@ export default function InsightCard({
             lineHeight: 1.5,
             margin: 0,
             color: "var(--md-sys-color-text-secondary)",
-            fontFamily: "Barlow, sans-serif",
+            fontFamily: "var(--font-sans)",
           }}
         >
           {body as string}
@@ -155,17 +187,18 @@ export default function InsightCard({
           paddingTop: 10,
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: showSources ? "space-between" : "flex-end",
         }}
       >
         {/* Sources group */}
+        {showSources && (
         <button
           onClick={() => setSourcesOpen(!sourcesOpen)}
           aria-label="Show sources"
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 4,
+            gap: "var(--spacing-1)",
             background: "none",
             border: "none",
             cursor: "pointer",
@@ -178,12 +211,12 @@ export default function InsightCard({
               fontWeight: 600,
               letterSpacing: "0.06em",
               color: "var(--md-sys-color-text-muted)",
-              fontFamily: "Barlow, sans-serif",
+              fontFamily: "var(--font-sans)",
             }}
           >
             Sources
           </span>
-          <div style={{ display: "flex", marginLeft: 4, position: "relative", height: 20 }}>
+          <div style={{ display: "flex", marginLeft: "var(--spacing-1)", position: "relative", height: 20 }}>
             {sources.map((s, i) => (
               <span
                 key={i}
@@ -220,21 +253,20 @@ export default function InsightCard({
             }}
           />
         </button>
+        )}
 
         {/* Action icons */}
         <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <button
-            aria-label="Read aloud"
-            style={iconBtnStyle}
-          >
-            <Icon name="volume_up" size={18} />
-          </button>
-          <button
-            aria-label="Ask AI about this"
-            style={iconBtnStyle}
-          >
-            <Icon name="auto_awesome" size={18} />
-          </button>
+          {showAiActions && (
+            <>
+              <button aria-label="Read aloud" style={iconBtnStyle}>
+                <Icon name="volume_up" size={18} />
+              </button>
+              <button aria-label="Ask AI about this" style={iconBtnStyle}>
+                <Icon name="auto_awesome" size={18} />
+              </button>
+            </>
+          )}
           <button
             aria-label="Copy"
             onClick={() => navigator.clipboard.writeText(bodyText).catch(() => {})}
@@ -242,7 +274,6 @@ export default function InsightCard({
           >
             <Icon name="content_copy" size={18} />
           </button>
-          {/* Thumbs down — inline SVG, no wrist cuff */}
           <button
             aria-label="Not helpful"
             aria-pressed={thumbsDown}
@@ -254,21 +285,12 @@ export default function InsightCard({
                 : "var(--md-sys-color-text-disabled)",
             }}
           >
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 15 15"
-              fill={thumbsDown ? "currentColor" : "none"}
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M4 1.5h7a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H9L7.5 13.5 6 8.5H4a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1z" />
-            </svg>
+            <ThumbsDownIcon filled={thumbsDown} />
           </button>
         </div>
       </div>
+      </motion.div>
+      )}
     </div>
   );
 }
@@ -278,7 +300,7 @@ const iconBtnStyle: React.CSSProperties = {
   border: "none",
   cursor: "pointer",
   padding: 5,
-  borderRadius: 999,
+  borderRadius: "var(--radius-full)",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
