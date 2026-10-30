@@ -38,6 +38,7 @@
   --md-sys-color-text-muted:     #8B94A8;  /* Muted text, metadata   */
   --md-sys-color-text-disabled:  #5D667A;  /* Placeholders, inactive */
   --md-sys-color-text-inverse:   #111420;  /* Text on light surfaces */
+  --md-sys-color-text-on-coral:  #FFFFFF;  /* Label on brand-coral fills (same in both themes) */
 
   /* ── Light Surfaces ─────────────────────────────────────────────────────── */
   --md-sys-color-surface-white: #FFFFFF;
@@ -152,6 +153,7 @@
   --md-sys-color-text-muted:     #5C6B80;
   --md-sys-color-text-disabled:  #8B98AA;
   --md-sys-color-text-inverse:   #F7F8FF;
+  --md-sys-color-text-on-coral:  #FFFFFF;
 
   /* ── Brand — Neon Indigo (darkened for light bg contrast) ───────────────── */
   --md-sys-color-neonindigo-light: #C5C9FF;

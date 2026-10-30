@@ -18,6 +18,7 @@
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import Icon from "@/components/ui/Icon";
+import { useIconLibrary } from "@/components/ui/iconLibrary";
 
 export type MenuVariant = "icon" | "check" | "icon-check";
 
@@ -120,6 +121,8 @@ export function MenuRow({
   variant: MenuVariant;
   index?: number;
 }) {
+  // Lucide glyphs read larger than Material at the same size, so they sit at 17px in menus.
+  const iconSize = useIconLibrary() === "lucide" ? 17 : 22;
   const showIcon = variant !== "check";
   const showCheck = variant !== "icon";
   const color = item.destructive ? "var(--md-sys-color-semantic-error)" : "var(--md-sys-color-text-primary)";
@@ -143,11 +146,11 @@ export function MenuRow({
         color,
       }}
     >
-      {showIcon && item.icon && <Icon name={item.icon} size={22} style={{ color, flexShrink: 0 }} />}
+      {showIcon && item.icon && <Icon name={item.icon} size={iconSize} style={{ color, flexShrink: 0 }} />}
       <span className="flex-1 min-w-0">{item.label}</span>
       {showCheck && (
         <span style={{ width: 20, flexShrink: 0, display: "flex", justifyContent: "flex-end" }}>
-          {item.selected && <Icon name="check" size={20} style={{ color: "var(--md-sys-color-neonindigo)" }} />}
+          {item.selected && <Icon name="check" size={iconSize === 17 ? 17 : 20} style={{ color: "var(--md-sys-color-neonindigo)" }} />}
         </span>
       )}
     </motion.button>

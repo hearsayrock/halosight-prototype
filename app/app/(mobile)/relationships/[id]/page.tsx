@@ -409,13 +409,14 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             >
               <KebabMenu
                 items={[
-                  ...(account.halosightType === "prospect" && !effectiveJustCreated
-                    ? []
-                    : [{ label: "Account details", icon: "info", onClick: () => setShowInfoSheet(true) }]),
+                  { label: "Edit", icon: "edit", onClick: () => setShowInfoSheet(true) },
                   { label: "Ask", icon: "auto_awesome", onClick: () => openChat(account.name) },
-                  ...(account.halosightType === "prospect" && !effectiveJustCreated
-                    ? [{ label: "Disqualify", icon: "block", onClick: () => setShowDisqualifyConfirm(true), destructive: true }]
-                    : []),
+                  { label: "Share", icon: "ios_share", onClick: () => {} },
+                  {
+                    label: "Delete", icon: "delete", destructive: true,
+                    // Prototype: deleting a Salesforce account isn't modelled. Prospects keep the existing disqualify flow.
+                    onClick: () => { if (account.halosightType === "prospect" && !effectiveJustCreated) setShowDisqualifyConfirm(true); },
+                  },
                 ]}
               />
             </div>
@@ -745,11 +746,11 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             className="h-11 px-6 text-sm-bold flex items-center gap-2 transition-opacity active:opacity-80"
             style={{
               background: "var(--md-sys-color-brand-coral)",
-              color: "var(--md-sys-color-text-primary)",
+              color: "var(--md-sys-color-text-on-coral)",
               borderRadius: "var(--radius-full)",
             }}
           >
-            <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
+            <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-on-coral)" }} />
             Log a Visit
           </button>
         </div>
@@ -831,7 +832,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 <button
                   onClick={() => { setShowDisqualifyConfirm(false); handleDisqualify(); }}
                   className="w-full py-3.5 rounded-full text-base font-semibold active:opacity-80 transition-opacity mb-3"
-                  style={{ background: "var(--md-sys-color-brand-coral)", color: "#fff" }}
+                  style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}
                 >
                   Yes, disqualify
                 </button>

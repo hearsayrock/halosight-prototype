@@ -15,12 +15,12 @@
  *
  * Sizes: md 48px / 15px type / 24px sides · sm 44px / 14px / 20px (text variant: 40 and 36px, 16 / 16)
  * Variants:
- *   filled   — color.brand.coral fill, color.text.inverse label
+ *   filled   — color.brand.coral-dark fill, color.text.on-coral label
  *   tonal    — color.dark.tertiary fill, color.neonindigo label
  *   outlined — 1.5px border + label: default = dark.tertiary / text.primary · indigo = neonindigo · danger = brand.coral
  *   text     — no fill, color.neonindigo label
  *
- * Tokens: color.brand.coral, color.text.inverse, color.dark.tertiary, color.neonindigo.base, color.text.primary, radius.full
+ * Tokens: color.brand.coral-dark, color.text.on-coral, color.dark.tertiary, color.neonindigo.base, color.text.primary, radius.full
  */
 
 import type { ReactNode } from "react";
@@ -55,7 +55,7 @@ export default function Button({
   const padX = isText ? 16 : size === "md" ? 24 : 20;
 
   const look =
-    variant === "filled"   ? { background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" } :
+    variant === "filled"   ? { background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" } :
     variant === "tonal"    ? { background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-neonindigo)" } :
     variant === "outlined" ? { background: "transparent", color: OUTLINE[tone].color, border: `1.5px solid ${OUTLINE[tone].border}` } :
                              { background: "transparent", color: "var(--md-sys-color-neonindigo)" };

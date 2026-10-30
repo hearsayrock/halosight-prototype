@@ -204,8 +204,8 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
             disabled={!title.trim()}
             className="w-full h-12 text-15-bold flex items-center justify-center transition-opacity"
             style={{
-              background: "var(--md-sys-color-brand-coral)",
-              color: "var(--md-sys-color-text-primary)",
+              background: "var(--md-sys-color-brand-coral-dark)",
+              color: "var(--md-sys-color-text-on-coral)",
               borderRadius: "var(--radius-full)",
               opacity: title.trim() ? 1 : 0.4,
             }}

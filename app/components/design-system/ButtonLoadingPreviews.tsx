@@ -43,7 +43,7 @@ export function LoadingRow({
 /** Standalone ThinkingDots on the surfaces they appear over. */
 export function DotsOnSurfaces() {
   const surfaces: { name: string; bg: string; fg: string }[] = [
-    { name: "on filled (coral)",    bg: "var(--md-sys-color-brand-coral)",   fg: "var(--md-sys-color-text-inverse)" },
+    { name: "on filled (coral)",    bg: "var(--md-sys-color-brand-coral-dark)",   fg: "var(--md-sys-color-text-on-coral)" },
     { name: "on tonal (tertiary)",  bg: "var(--md-sys-color-dark-tertiary)", fg: "var(--md-sys-color-neonindigo)" },
     { name: "on the page",          bg: "var(--md-sys-color-dark-primary)",  fg: "var(--md-sys-color-text-muted)" },
     { name: "on indigo",            bg: "var(--md-sys-color-neonindigo-dark)", fg: "var(--md-sys-color-text-primary)" },

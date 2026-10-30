@@ -15,7 +15,9 @@
 import React, { use, useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Icon from "@/components/ui/Icon";
-import Menu from "@/components/ui/Menu";
+import Menu, { menuPanelVariants, menuPanelTransition } from "@/components/ui/Menu";
+import { AnimatePresence, motion } from "framer-motion";
+import { useAccountChat } from "@/lib/context/ChatContext";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
 import NoteSheet from "@/components/ui/NoteSheet";
@@ -714,6 +716,8 @@ function InteractionDetailPageContent({
 
   // Interaction type picker
   const [typePickerOpen, setTypePickerOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { open: openChat } = useAccountChat();
   const [interactionTypeOverride, setInteractionTypeOverride] = useState<"inperson" | "phone" | null>(null);
 
   // Action items
@@ -911,9 +915,37 @@ function InteractionDetailPageContent({
         <button onClick={() => router.push(backHref)} aria-label="Go back" style={glassCircle(true)}>
           <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-primary)" }} />
         </button>
-        <button aria-label="More options" style={glassCircle(showKebab)}>
-          <Icon name="more_vert" size={22} style={{ color: "var(--md-sys-color-text-primary)" }} />
-        </button>
+        <div className="relative">
+          <button aria-label="More options" onClick={() => setMenuOpen((o) => !o)} style={glassCircle(showKebab)}>
+            <Icon name="more_vert" size={22} style={{ color: "var(--md-sys-color-text-primary)" }} />
+          </button>
+          <AnimatePresence>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0" style={{ zIndex: 20 }} onClick={() => setMenuOpen(false)} />
+                <motion.div
+                  className="absolute right-0 top-0"
+                  style={{ zIndex: 21, transformOrigin: "top right" }}
+                  variants={menuPanelVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  transition={menuPanelTransition}
+                >
+                  <Menu
+                    variant="icon"
+                    items={[
+                      { id: "edit", label: "Edit", icon: "edit", onSelect: () => setMenuOpen(false) },
+                      { id: "ask", label: "Ask", icon: "auto_awesome", onSelect: () => { setMenuOpen(false); openChat(account.name); } },
+                      { id: "share", label: "Share", icon: "ios_share", onSelect: () => setMenuOpen(false) },
+                      { id: "delete", label: "Delete", icon: "delete", destructive: true, onSelect: () => setMenuOpen(false) },
+                    ]}
+                  />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* ── Scroll container ─────────────────────────────────────────────────── */}

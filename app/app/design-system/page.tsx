@@ -18,6 +18,7 @@ import { DrawerHandle, DrawerBody, DrawerHeader } from "@/components/ui/Drawer";
 import Button from "@/components/ui/Button";
 import ActivityCard from "@/components/accounts/ActivityCard";
 import Menu from "@/components/ui/Menu";
+import IconLibraryToggle from "@/components/ui/IconLibraryToggle";
 import { SuggestionChip } from "@/components/chat/ChatEmptyState";
 import ChatInput from "@/components/chat/ChatInput";
 import { UserMessage, AssistantMessage, DraftBlock, ThinkingRow } from "@/components/chat/ChatMessage";
@@ -526,6 +527,7 @@ export default function DesignSystemPage() {
           </span>
         </div>
         <div className="flex items-center gap-3">
+          <IconLibraryToggle />
           {/* Theme toggle */}
           <button
             onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}
@@ -962,34 +964,34 @@ export default function DesignSystemPage() {
             <div>
               <SubHeader title="Filled Button — Primary" />
               <div className="flex items-center gap-4 flex-wrap mb-3">
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
                   Log a Visit
                 </button>
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70 flex items-center gap-2" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--md-sys-color-text-inverse)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--md-sys-color-text-inverse)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70 flex items-center gap-2" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--md-sys-color-text-on-coral)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--md-sys-color-text-on-coral)" strokeWidth="1.5" strokeLinecap="round"/></svg>
                   With Icon
                 </button>
-                <button disabled className="h-12 px-6 rounded-full font-semibold text-[15px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button disabled className="h-12 px-6 rounded-full font-semibold text-[15px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
                   Disabled
                 </button>
               </div>
-              <TokenLabel name="background: --md-sys-color-brand-coral · color: --md-sys-color-text-inverse · radius: --radius-full" value="height: 48px · padding: 0 24px · font: 600 15px" />
+              <TokenLabel name="background: --md-sys-color-brand-coral-dark · color: --md-sys-color-text-on-coral · radius: --radius-full" value="height: 48px · padding: 0 24px · font: 600 15px" />
               {/* Small */}
               <div className="flex items-center gap-3 flex-wrap mt-4 mb-3">
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
                   Log a Visit
                 </button>
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70 flex items-center gap-1.5" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
-                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--md-sys-color-text-inverse)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--md-sys-color-text-inverse)" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70 flex items-center gap-1.5" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--md-sys-color-text-on-coral)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--md-sys-color-text-on-coral)" strokeWidth="1.5" strokeLinecap="round"/></svg>
                   With Icon
                 </button>
-                <button disabled className="h-11 px-5 rounded-full font-semibold text-[14px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button disabled className="h-11 px-5 rounded-full font-semibold text-[14px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
                   Disabled
                 </button>
               </div>
               <TokenLabel name="Small" value="height: 44px · padding: 0 20px · font: 600 14px" />
               <div className="mt-6"><LoadingRow variant="filled" label="Log a Visit" loadingLabel="Logging" /></div>
-              <TokenLabel name="Loading — dots only keeps the button's exact size · dots + label for longer waits" value="ThinkingDots sm · color: currentColor (text.inverse here) · not dimmed, not tappable (aria-busy)" />
+              <TokenLabel name="Loading — dots only keeps the button's exact size · dots + label for longer waits" value="ThinkingDots sm · color: currentColor (text.on-coral here) · not dimmed, not tappable (aria-busy)" />
             </div>
 
             <div>
@@ -1084,7 +1086,7 @@ export default function DesignSystemPage() {
             <div>
               <SubHeader title="OAuth Buttons (Login Screen)" />
               <div className="flex items-center gap-4 flex-wrap">
-                <button className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center gap-3 transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)" }}>
+                <button className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center gap-3 transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
                   <span style={{ fontFamily: "serif", fontWeight: 700, fontSize: 18 }}>G</span>
                   Continue with Google
                 </button>
@@ -1099,7 +1101,7 @@ export default function DesignSystemPage() {
               </div>
               <TokenLabel name="height: 56px · radius: --radius-lg · font: 600 16px" value="Google: --md-sys-color-brand-coral bg · Microsoft/Apple: white (brand requirement)" />
               <div className="flex items-center gap-4 flex-wrap mt-6">
-                <button aria-busy className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center justify-center gap-3" style={{ background: "var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-text-inverse)", minWidth: 244, pointerEvents: "none" }}>
+                <button aria-busy className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center justify-center gap-3" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)", minWidth: 244, pointerEvents: "none" }}>
                   <ThinkingDots size="sm" label="Signing in with Google" />
                   <span>Signing in…</span>
                 </button>
@@ -1922,7 +1924,7 @@ export default function DesignSystemPage() {
                 status="default"
                 description="Actions on a record, e.g. the activity screen's more-options menu. Destructive rows use the error color."
                 notes={[
-                  "Icon 22 · 16px gap · label 16",
+                  "Icon 22 (17 when the icon library is Lucide) · 16px gap · label 16",
                   "destructive: true → semantic-error for icon and label",
                 ]}
               >

@@ -11,6 +11,7 @@
  */
 
 import { usePathname, useRouter } from "next/navigation";
+import IconLibraryToggle from "@/components/ui/IconLibraryToggle";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
 import { PLAYGROUNDS, type PlaygroundRoute } from "@/lib/playgrounds.config";
@@ -257,6 +258,16 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
       </div>
 
       {/* Divider */}
+      <div style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
+
+      {/* Icon library (exploration) */}
+      <div>
+        <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", marginBottom: 6, paddingLeft: 2 }}>
+          Icons
+        </p>
+        <IconLibraryToggle />
+      </div>
+
       <div style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
 
       {/* Device size */}

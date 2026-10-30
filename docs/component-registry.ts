@@ -611,8 +611,8 @@ drawer.open(accountId, item.id, () => handleComplete(item.id));` },
     flutterEquivalent: "HalosightButton — lib/view/_widget/halosight_button.dart (FilledButton / .tonal / OutlinedButton / TextButton)",
     tokens: {
       required: [
-        { token: "color.brand.coral",     role: "filled fill; outlined danger" },
-        { token: "color.text.inverse",    role: "filled label" },
+        { token: "color.brand.coral-dark", role: "filled fill (white label); outlined danger uses color.brand.coral" },
+        { token: "color.text.on-coral",   role: "filled label (white in both themes)" },
         { token: "color.dark.tertiary",   role: "tonal fill; outlined default border" },
         { token: "color.neonindigo.base", role: "tonal and text label; outlined indigo" },
         { token: "color.text.primary",    role: "outlined default label" },
