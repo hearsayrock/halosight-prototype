@@ -14,6 +14,7 @@
  * "Add more details" expands optional contact/address fields below the CTA.
  */
 
+import Button from "@/components/ui/Button";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
@@ -119,7 +120,7 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
                     background: "var(--md-sys-color-dark-secondary)",
                     borderRadius: "var(--radius-lg)",
                     color: "var(--md-sys-color-text-primary)",
-                    border: `1.5px solid ${focused ? "rgba(139,146,255,0.55)" : "rgba(255,255,255,0.08)"}`,
+                    border: `1.5px solid ${focused ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 55%, transparent)" : "var(--md-sys-color-alpha-white-10)"}`,
                     transition: "border-color 0.15s",
                   }}
                 />
@@ -140,21 +141,9 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
               </div>
 
               {/* Create CTA */}
-              <button
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={handleCreate}
-                disabled={!name.trim()}
-                className="w-full text-base-bold transition-opacity"
-                style={{
-                  height: 52,
-                  background: "var(--md-sys-color-neonindigo)",
-                  color: "var(--md-sys-color-text-primary)",
-                  borderRadius: "var(--radius-full)",
-                  opacity: name.trim() ? 1 : 0.4,
-                }}
-              >
+              <Button fill="indigo" size="lg" fullWidth keepFocus disabled={!name.trim()} onClick={handleCreate}>
                 Create a lead
-              </button>
+              </Button>
 
             </div>
           </DrawerPanel>

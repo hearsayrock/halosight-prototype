@@ -10,6 +10,7 @@
  * editing globals.css is the only step needed to update colors here.
  */
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import AccountListItem from "@/components/accounts/AccountListItem";
@@ -17,7 +18,16 @@ import ListCard from "@/components/ui/ListCard";
 import { DrawerHandle, DrawerBody, DrawerHeader } from "@/components/ui/Drawer";
 import Button from "@/components/ui/Button";
 import ActivityCard from "@/components/accounts/ActivityCard";
+import { EngagementsPanel } from "@/components/accounts/EngagementsDrawer";
+import { mockRecentActivities } from "@/lib/mock-data/home";
 import Menu from "@/components/ui/Menu";
+import { AlertCard } from "@/components/ui/AlertDialog";
+import SearchField from "@/components/ui/SearchField";
+import SectionHeaderRow from "@/components/ui/SectionHeader";
+import IconButton from "@/components/ui/IconButton";
+import Banner from "@/components/ui/Banner";
+import { ToastCard } from "@/components/ui/Toast";
+import { PillPreview, PillSequencePreview } from "@/components/design-system/ToastPreviews";
 import IconLibraryToggle from "@/components/ui/IconLibraryToggle";
 import { SuggestionChip } from "@/components/chat/ChatEmptyState";
 import ChatInput from "@/components/chat/ChatInput";
@@ -58,7 +68,6 @@ const SECTIONS = [
   { id: "spacing",     label: "Spacing" },
   { id: "elevation",   label: "Elevation" },
   { id: "buttons",     label: "Buttons" },
-  { id: "inputs",      label: "Inputs" },
   { id: "badges",      label: "Badges & Chips" },
   { id: "account-list-item", label: "Account List Item" },
   { id: "drawer", label: "Drawer" },
@@ -66,7 +75,14 @@ const SECTIONS = [
   { id: "action-item-drawer", label: "Action Item Drawer" },
   { id: "tabs", label: "Tabs" },
   { id: "activity-card", label: "Activity Card" },
+  { id: "engagements-drawer", label: "Engagements Drawer" },
   { id: "insight-card", label: "Insight Card" },
+  { id: "search-field", label: "Search Field" },
+  { id: "section-header", label: "Section Header" },
+  { id: "icon-button", label: "Icon Button" },
+  { id: "banner", label: "Banner" },
+  { id: "alert-dialog", label: "Alert Dialog" },
+  { id: "toast", label: "Toast" },
   { id: "account-chat", label: "Account Chat" },
   { id: "feedback-widget", label: "Feedback Widget" },
   { id: "menus",       label: "Menu" },
@@ -410,6 +426,8 @@ const sampleActionEntries: ActionItemEntry[] = [
   { item: { id: "s5", title: "Share subaccount modeling options with Priya", dueDate: daysFrom(14), status: "open" }, accountId: "demo", accountName: "ProFleet" },
 ];
 const daysAgoDate = (n: number) => { const d = new Date(); d.setDate(d.getDate() - n); return d; };
+const recentSamples = mockRecentActivities.slice(0, 6);
+
 const sampleActivities: ActivityItem[] = [
   { id: "a1", accountId: "demo", date: daysAgoDate(2), type: "visit", title: "QBR planning, product updates and launch coordination", summary: "The team aligned on an in-person QBR in Houston, reviewed Halosight product and Salesforce updates, and agreed on next steps for the pilot group.", durationMinutes: 45, hasTranscript: true, repName: "Jordan Mills" },
   { id: "a2", accountId: "demo", date: daysAgoDate(95), type: "call", title: "Pilot users request date based recap and task digest", summary: "The pilot group praised Halosight's meeting summaries and asked for date-based activity recaps and a daily digest of open tasks.", durationMinutes: 30, hasTranscript: true, repName: "Marcus Webb" },
@@ -418,7 +436,6 @@ const sampleActivities: ActivityItem[] = [
 const sampleHome = [...sampleOwned, ...mockAccounts.filter((a) => !SAMPLE_IDS.includes(a.id)).slice(0, 1)];
 
 export default function DesignSystemPage() {
-  const [inputValue, setInputValue] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [insightExtras, setInsightExtras] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -958,38 +975,29 @@ export default function DesignSystemPage() {
           <SectionHeader
             id="buttons"
             title="Buttons"
-            subtitle="M3 button variants — Filled, Filled Tonal, Outlined, Text — each with a loading state."
+            subtitle="One Button component: Filled (coral, indigo, danger), Tonal, Outlined and Text, in three heights, full width, and with a loading state."
           />
           <div className="space-y-8 mb-16">
             <div>
-              <SubHeader title="Filled Button — Primary" />
+              <SubHeader title="Filled Button" />
+              <p className="text-sm mb-4 max-w-2xl" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                The one button (<code className="font-mono">components/ui/Button.tsx</code>). Coral is the default main action, indigo is for sheet CTAs that create something, danger is for irreversible actions.
+              </p>
               <div className="flex items-center gap-4 flex-wrap mb-3">
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
-                  Log a Visit
-                </button>
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70 flex items-center gap-2" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--md-sys-color-text-on-coral)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--md-sys-color-text-on-coral)" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                  With Icon
-                </button>
-                <button disabled className="h-12 px-6 rounded-full font-semibold text-[15px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
-                  Disabled
-                </button>
+                <Button size="lg">Create a lead</Button>
+                <Button>Log a Visit</Button>
+                <Button size="sm">Log a Visit</Button>
               </div>
-              <TokenLabel name="background: --md-sys-color-brand-coral-dark · color: --md-sys-color-text-on-coral · radius: --radius-full" value="height: 48px · padding: 0 24px · font: 600 15px" />
-              {/* Small */}
-              <div className="flex items-center gap-3 flex-wrap mt-4 mb-3">
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
-                  Log a Visit
-                </button>
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70 flex items-center gap-1.5" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
-                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--md-sys-color-text-on-coral)" strokeWidth="1.5"/><path d="M8 5V8L10 10" stroke="var(--md-sys-color-text-on-coral)" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                  With Icon
-                </button>
-                <button disabled className="h-11 px-5 rounded-full font-semibold text-[14px] opacity-30 cursor-not-allowed" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
-                  Disabled
-                </button>
+              <TokenLabel name="fill=coral (default) · background: --md-sys-color-brand-coral-dark · color: --md-sys-color-text-on-coral · radius: --radius-full" value="size lg 52 (sheet CTA) · md 48 · sm 44 · padding 0 24px (sm 0 20px) · font 600 16 / 15 / 14" />
+              <div className="flex items-center gap-4 flex-wrap mt-4 mb-3">
+                <Button icon={<Icon name="schedule" size={16} style={{ color: "var(--md-sys-color-text-on-coral)" }} />}>With Icon</Button>
+                <Button disabled>Disabled</Button>
+                <Button fill="indigo">Create a lead</Button>
+                <Button fill="danger">Send deletion request</Button>
               </div>
-              <TokenLabel name="Small" value="height: 44px · padding: 0 20px · font: 600 14px" />
+              <TokenLabel name="fill=indigo · background: --md-sys-color-neonindigo · color: --md-sys-color-text-on-accent    fill=danger · background: --md-sys-color-error" value="disabled: 30% opacity, not tappable · icon: any node before the label" />
+              <div className="mt-4 max-w-xs"><Button fullWidth keepFocus>Full width</Button></div>
+              <TokenLabel name="fullWidth stretches to its container · keepFocus keeps the keyboard up when the button sits under a text field" value="" />
               <div className="mt-6"><LoadingRow variant="filled" label="Log a Visit" loadingLabel="Logging" /></div>
               <TokenLabel name="Loading — dots only keeps the button's exact size · dots + label for longer waits" value="ThinkingDots sm · color: currentColor (text.on-coral here) · not dimmed, not tappable (aria-busy)" />
             </div>
@@ -997,24 +1005,12 @@ export default function DesignSystemPage() {
             <div>
               <SubHeader title="Filled Tonal Button" />
               <div className="flex items-center gap-4 flex-wrap mb-3">
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-neonindigo)" }}>
-                  View Transcript
-                </button>
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-success)" }}>
-                  Mark Complete
-                </button>
+                <Button variant="tonal">View Transcript</Button>
+                <Button variant="tonal" tone="success">Mark Complete</Button>
+                <Button variant="tonal" size="sm">View Transcript</Button>
+                <Button variant="tonal" tone="success" size="sm">Mark Complete</Button>
               </div>
-              <TokenLabel name="background: --md-sys-color-dark-tertiary · color: --md-sys-color-neonindigo" value="height: 48px · radius: --radius-full" />
-              {/* Small */}
-              <div className="flex items-center gap-3 flex-wrap mt-4 mb-3">
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-neonindigo)" }}>
-                  View Transcript
-                </button>
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-success)" }}>
-                  Mark Complete
-                </button>
-              </div>
-              <TokenLabel name="Small" value="height: 44px · padding: 0 20px · font: 600 14px" />
+              <TokenLabel name="default · background: --md-sys-color-dark-tertiary · color: --md-sys-color-neonindigo    tone=success · background: --md-sys-color-dark-secondary · color: --md-sys-color-success" value="heights as Filled (md 48 · sm 44) · radius: --radius-full" />
               <div className="mt-6"><LoadingRow variant="tonal" label="View Transcript" loadingLabel="Opening" /></div>
               <TokenLabel name="Loading" value="dots take the label colour (neonindigo on tonal)" />
             </div>
@@ -1022,30 +1018,14 @@ export default function DesignSystemPage() {
             <div>
               <SubHeader title="Outlined Button" />
               <div className="flex items-center gap-4 flex-wrap mb-3">
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)", background: "transparent" }}>
-                  Edit
-                </button>
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-brand-coral)", background: "transparent" }}>
-                  Reject
-                </button>
-                <button className="h-12 px-6 rounded-full font-semibold text-[15px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-neonindigo)", background: "transparent" }}>
-                  Regenerate
-                </button>
+                <Button variant="outlined">Edit</Button>
+                <Button variant="outlined" tone="danger">Reject</Button>
+                <Button variant="outlined" tone="indigo">Regenerate</Button>
+                <Button variant="outlined" size="sm">Edit</Button>
+                <Button variant="outlined" tone="danger" size="sm">Reject</Button>
+                <Button variant="outlined" tone="indigo" size="sm">Regenerate</Button>
               </div>
-              <TokenLabel name="border: --md-sys-color-dark-tertiary · radius: --radius-full" value="height: 48px · background: transparent" />
-              {/* Small */}
-              <div className="flex items-center gap-3 flex-wrap mt-4 mb-3">
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)", background: "transparent" }}>
-                  Edit
-                </button>
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-brand-coral)", color: "var(--md-sys-color-brand-coral)", background: "transparent" }}>
-                  Reject
-                </button>
-                <button className="h-11 px-5 rounded-full font-semibold text-[14px] transition-opacity active:opacity-70" style={{ border: "1.5px solid var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-neonindigo)", background: "transparent" }}>
-                  Regenerate
-                </button>
-              </div>
-              <TokenLabel name="Small" value="height: 44px · padding: 0 20px · font: 600 14px" />
+              <TokenLabel name="border: 1.5px --md-sys-color-dark-tertiary (tone=danger brand-coral · tone=indigo neonindigo) · radius: --radius-full" value="heights as Filled · background: transparent" />
               <div className="mt-6 flex flex-col gap-3">
                 <LoadingRow variant="outlined" label="Edit" loadingLabel="Saving" />
                 <LoadingRow variant="outlined" tone="danger" label="Reject" loadingLabel="Rejecting" />
@@ -1057,24 +1037,12 @@ export default function DesignSystemPage() {
             <div>
               <SubHeader title="Text Button" />
               <div className="flex items-center gap-4 flex-wrap mb-3">
-                <button className="h-10 px-4 font-semibold text-[14px] transition-opacity active:opacity-70" style={{ color: "var(--md-sys-color-neonindigo)", background: "transparent" }}>
-                  Log in with Email
-                </button>
-                <button className="h-10 px-4 font-semibold text-[14px] transition-opacity active:opacity-70" style={{ color: "var(--md-sys-color-text-muted)", background: "transparent" }}>
-                  View transcript →
-                </button>
+                <Button variant="text">Log in with Email</Button>
+                <Button variant="text" tone="muted">View transcript →</Button>
+                <Button variant="text" size="sm">Log in with Email</Button>
+                <Button variant="text" tone="muted" size="sm">View transcript →</Button>
               </div>
-              <TokenLabel name="color: --md-sys-color-neonindigo · background: none" value="height: 40px · font: 600 14px" />
-              {/* Small */}
-              <div className="flex items-center gap-3 flex-wrap mt-4 mb-3">
-                <button className="h-9 px-4 font-semibold text-[14px] transition-opacity active:opacity-70" style={{ color: "var(--md-sys-color-neonindigo)", background: "transparent" }}>
-                  Log in with Email
-                </button>
-                <button className="h-9 px-4 font-semibold text-[14px] transition-opacity active:opacity-70" style={{ color: "var(--md-sys-color-text-muted)", background: "transparent" }}>
-                  View transcript →
-                </button>
-              </div>
-              <TokenLabel name="Small" value="height: 36px · font: 600 14px" />
+              <TokenLabel name="color: --md-sys-color-neonindigo (tone=muted --md-sys-color-text-muted) · background: none" value="height: 40px (sm 36) · font: 600 14px" />
               <div className="mt-6 flex items-center gap-4 flex-wrap">
                 <Button variant="text" loading>Log in with Email</Button>
                 <Button variant="text" loading loadingLabel="Signing in">Log in with Email</Button>
@@ -1084,33 +1052,20 @@ export default function DesignSystemPage() {
             </div>
 
             <div>
-              <SubHeader title="OAuth Buttons (Login Screen)" />
-              <div className="flex items-center gap-4 flex-wrap">
-                <button className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center gap-3 transition-opacity active:opacity-70" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}>
-                  <span style={{ fontFamily: "serif", fontWeight: 700, fontSize: 18 }}>G</span>
-                  Continue with Google
-                </button>
-                <button className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center gap-3 transition-opacity active:opacity-70" style={{ background: "#FFFFFF", color: "#111420" }}>
-                  <span style={{ fontSize: 16 }}>⊞</span>
-                  Continue with Microsoft
-                </button>
-                <button className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center gap-3 transition-opacity active:opacity-70" style={{ background: "#FFFFFF", color: "#111420" }}>
-                  <span style={{ fontSize: 18 }}>&#63743;</span>
-                  Sign in with Apple
-                </button>
+              <SubHeader title="Sign-in Buttons (Login Screen)" />
+              <p className="text-sm mb-4 max-w-xl" style={{ color: "var(--md-sys-color-text-muted)" }}>
+                White pills with the provider's logo and a dark label, the same for every provider. They are <code className="font-mono">Button</code> with <code className="font-mono">fill=&quot;white&quot;</code> and <code className="font-mono">size=&quot;xl&quot;</code>.
+              </p>
+              <div className="flex flex-col gap-3 max-w-sm p-6" style={{ background: "var(--gradient-login)", borderRadius: "var(--radius-lg)" }}>
+                <Button fill="white" size="xl" fullWidth icon={<Image src="/google-g.svg" alt="" width={20} height={20} />}>Continue with Google</Button>
+                <Button fill="white" size="xl" fullWidth icon={<Image src="/microsoft-logo.svg" alt="" width={20} height={20} />}>Continue with Microsoft</Button>
+                <Button fill="white" size="xl" fullWidth icon={<Image src="/apple-logo.svg" alt="" width={18} height={22} style={{ height: "auto" }} />}>Sign in with Apple</Button>
               </div>
-              <TokenLabel name="height: 56px · radius: --radius-lg · font: 600 16px" value="Google: --md-sys-color-brand-coral bg · Microsoft/Apple: white (brand requirement)" />
-              <div className="flex items-center gap-4 flex-wrap mt-6">
-                <button aria-busy className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center justify-center gap-3" style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)", minWidth: 244, pointerEvents: "none" }}>
-                  <ThinkingDots size="sm" label="Signing in with Google" />
-                  <span>Signing in…</span>
-                </button>
-                <button aria-busy className="h-14 px-6 rounded-2xl font-semibold text-[16px] flex items-center justify-center gap-3" style={{ background: "#FFFFFF", color: "#111420", minWidth: 244, pointerEvents: "none" }}>
-                  <ThinkingDots size="sm" label="Signing in with Microsoft" />
-                  <span>Signing in…</span>
-                </button>
+              <TokenLabel name="fill=white · background: --md-sys-color-surface-static-white · color: --md-sys-color-text-on-white · radius: --radius-full" value="size xl · height 56px · font 600 16px · same white in light and dark (brand requirement) · logo is the icon" />
+              <div className="flex flex-col gap-3 max-w-sm mt-6">
+                <Button fill="white" size="xl" fullWidth loading loadingLabel="Signing in…">Continue with Google</Button>
               </div>
-              <TokenLabel name="Loading — OAuth buttons keep their width and show the dots plus “Signing in…”" value="dots use the button's text colour" />
+              <TokenLabel name="Loading — the button keeps its width and shows the dots plus “Signing in…”" value="dots use the button's text colour" />
             </div>
 
             <div>
@@ -1121,35 +1076,6 @@ export default function DesignSystemPage() {
               </p>
               <DotsOnSurfaces />
               <TokenLabel name="ThinkingDots — 3 bars · 1.2s loop · 0.14s stagger · easing (0.4, 0, 0.2, 1)" value="sm 4px · 4→12 · md 5px · 5→18 · lg 6px · 6→26 · reduced motion: static at 40% height" />
-            </div>
-          </div>
-
-          {/* ── Inputs ────────────────────────────────────────────────── */}
-          <SectionHeader
-            id="inputs"
-            title="Inputs"
-            subtitle="Search bar and text field variants."
-          />
-          <div className="space-y-6 mb-16 max-w-lg">
-            <div>
-              <SubHeader title="Search Field" />
-              <div className="flex items-center gap-2 h-11 px-3 rounded-xl" style={{ background: "var(--md-sys-color-dark-secondary)" }}>
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75"/><path d="M12 12L16 16" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" strokeLinecap="round"/></svg>
-                <input
-                  type="text"
-                  placeholder="Search"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="flex-1 bg-transparent text-[15px] outline-none"
-                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
-                />
-                {inputValue && (
-                  <button onClick={() => setInputValue("")}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)"/><path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                  </button>
-                )}
-              </div>
-              <TokenLabel name="background: --md-sys-color-dark-secondary · height: 44px · radius: --radius-md" value="icon: --md-sys-color-text-muted · placeholder: --md-sys-color-text-disabled" />
             </div>
           </div>
 
@@ -1377,7 +1303,7 @@ export default function DesignSystemPage() {
               <SubComponentCard
                 name="Drawer Backdrop (scrim)"
                 source="components/ui/Drawer.tsx"
-                usedBy={["Drawer", "Delete confirmation"]}
+                usedBy={["Drawer", "Alert Dialog"]}
                 description="The dim behind a drawer or dialog. One token for every overlay, so they all dim the same amount."
                 notes={["--md-sys-color-alpha-scrim: 60% black in dark, 32% ink in light", "Fades in over 200ms"]}
               >
@@ -1540,7 +1466,7 @@ export default function DesignSystemPage() {
               <VariantCard
                 name="Delete confirmation"
                 prop="Delete action item → confirm"
-                description="A centered card over the scrim. Yes, delete is the error fill; Cancel is quiet. Delete is permanent."
+                description="The shared Alert Dialog (see its own area): Yes, delete is the error fill and Cancel is a plain text button. Delete is permanent."
                 notes={["Scrim: --md-sys-color-alpha-scrim"]}
               >
                 <DeletePreview />
@@ -1616,12 +1542,12 @@ export default function DesignSystemPage() {
             id="activity-card"
             name="Activity Card"
             kind="Library"
-            description="One row in an account's Activity tab. Open rows on the page background, separated by hairlines. Two variants: logged in Halosight, or brought in from Salesforce."
+            description="One row of an interaction list. Open rows on the page background, separated by hairlines. Activity tab: logged in Halosight, or brought in from Salesforce. Engagements drawer: recent, or recent and unread."
             source="components/accounts/ActivityCard.tsx"
             flutter="activity_card.dart"
             anatomy="title · two-line summary · meta line (relative date · duration or source · who created it)"
           >
-            <AreaGroup title="Variants" count={2}>
+            <AreaGroup title="Variants" count={4}>
               <VariantCard
                 name="Halosight"
                 prop='variant="halosight" (item.source undefined)'
@@ -1655,6 +1581,71 @@ export default function DesignSystemPage() {
                   {sampleActivities.filter((a) => a.source).map((a) => (
                     <ActivityCard key={a.id} item={a} accountId="demo" isLast />
                   ))}
+                </div>
+              </VariantCard>
+
+              <VariantCard
+                name="Recent"
+                prop='variant="recent"'
+                description="A row in the Engagements side drawer: the feed of recent interactions across every account. Company, what happened, the kind of interaction and when. Already opened."
+                notes={[
+                  "Company: 12/600 uppercase, brand-teal. Title 17/500, text-primary",
+                  "Meta: type icon + Meeting / Phone Call, then the date. Today is neonindigo; then Yesterday, a weekday, Last Friday, Oct 12",
+                  "Pressing highlights the row (dark-secondary, radius-md); the row sits 8px in from the list edge so the fill has room",
+                ]}
+              >
+                <div style={{ padding: "var(--spacing-2) 0" }}>
+                  {recentSamples.filter((r) => !r.unread).map((r, i, all) => (
+                    <ActivityCard key={r.id} recent={r} variant="recent" isLast={i === all.length - 1} />
+                  ))}
+                </div>
+              </VariantCard>
+
+              <VariantCard
+                name="Recent — unread"
+                prop='variant="recent-unread"'
+                description="Not opened yet: an indigo dot before the company, a bolder title, and a “Modified …” line that says what changed. Opening the row makes it read."
+                notes={["Dot 8px neonindigo; title 17/600; change line 14 text-muted behind a 2px text-disabled bar", "Copy is “Modified”, not “Created”"]}
+              >
+                <div style={{ padding: "var(--spacing-2) 0" }}>
+                  {recentSamples.filter((r) => r.unread).map((r, i, all) => (
+                    <ActivityCard key={r.id} recent={r} variant="recent-unread" isLast={i === all.length - 1} />
+                  ))}
+                </div>
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          {/* ── Engagements Drawer (component area) ───────────────────── */}
+          <ComponentArea
+            id="engagements-drawer"
+            name="Engagements Drawer"
+            kind="Feature"
+            description="The side drawer behind the home screen's menu button: a feed of recent interactions across every account, newest first, with unread rows marked. It loads more as you scroll."
+            source="components/accounts/EngagementsDrawer.tsx"
+            flutter="engagements_drawer.dart"
+            anatomy="logo · search button (opens a search field) · Activity Card rows (recent / recent-unread) · end-of-list loader"
+          >
+            <AreaGroup title="States" count={2}>
+              <VariantCard
+                name="Feed"
+                prop="items"
+                status="default"
+                description="Rows are Activity Card variants. The first 12 load with the drawer."
+                notes={["Panel: dark-primary, 86% of the phone wide, slides in from the left over the scrim"]}
+              >
+                <div style={{ height: 560, overflow: "hidden", background: "var(--md-sys-color-dark-primary)", borderRadius: "var(--radius-md)" }}>
+                  <EngagementsPanel items={recentSamples} isUnread={(r) => !!r.unread} />
+                </div>
+              </VariantCard>
+              <VariantCard
+                name="Loading more"
+                prop="loading"
+                description="When the end of the list scrolls into view, the next 8 rows load after a short beat. ThinkingDots show at the bottom until they arrive, and the list ends when the feed does."
+                notes={["Lazy loading: pages of 8 after the first 12. Prototype delay is simulated (700ms)"]}
+              >
+                <div style={{ height: 560, overflow: "hidden", background: "var(--md-sys-color-dark-primary)", borderRadius: "var(--radius-md)" }}>
+                  <EngagementsPanel items={recentSamples.slice(0, 3)} loading isUnread={(r) => !!r.unread} />
                 </div>
               </VariantCard>
             </AreaGroup>
@@ -1743,6 +1734,238 @@ export default function DesignSystemPage() {
             </AreaGroup>
           </ComponentArea>
 
+          {/* ── Alert Dialog (component area) ───────────────────────────── */}
+          <ComponentArea
+            id="alert-dialog"
+            name="Alert Dialog"
+            kind="Library"
+            description="A short, centered confirmation over the scrim, for decisions that can't be undone. One filled confirm button and a plain text Cancel."
+            source="components/ui/AlertDialog.tsx"
+            flutter="halosight_alert_dialog.dart"
+            anatomy="card · title · body · confirm button · text Cancel"
+          >
+            <AreaGroup title="Variants" count={2}>
+              <VariantCard
+                name="Destructive"
+                prop="destructive (default)"
+                status="default"
+                description="Deleting or discarding. The confirm button uses the error color. Used for deleting an action item or an interaction."
+                notes={["Card: dark-primary, radius-xl, 24px padding, 16px gap", "Cancel: text-secondary, no fill"]}
+              >
+                <div style={{ padding: 16 }}>
+                  <AlertCard title="Delete interaction?" body="This removes the visit and its summary. It can't be undone." confirmLabel="Yes, delete" onConfirm={() => {}} onCancel={() => {}} />
+                </div>
+              </VariantCard>
+              <VariantCard
+                name="Standard"
+                prop="destructive={false}"
+                description="A confirmation that isn't destructive. The confirm button uses the indigo action color."
+              >
+                <div style={{ padding: 16 }}>
+                  <AlertCard title="Send follow-up?" body="Dana will get the draft from your email." confirmLabel="Send" destructive={false} onConfirm={() => {}} onCancel={() => {}} />
+                </div>
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          {/* ── Toast (component area) ─────────────────────────────────── */}
+          <ComponentArea
+            id="toast"
+            name="Toast"
+            kind="Library"
+            description="A brief, non-blocking message that confirms something just happened, with at most one action. It floats above the bottom nav, dismisses itself, and never asks for a decision (that is an Alert Dialog)."
+            source="components/ui/Toast.tsx"
+            flutter="halosight_toast.dart"
+            anatomy="[leading icon or thumbnail] · title · [description] · [action] · [close] · [secondary row]"
+          >
+            <AreaGroup title="Tones" count={3}>
+              <VariantCard
+                name="Neutral"
+                prop='tone="neutral"'
+                status="default"
+                description="Information with an optional action: “Interaction deleted · Undo”. The action is indigo."
+                notes={["Surface: dark-secondary at 88% with a blur, white-18 stroke, elevation-5", "Title 15/600 on one line; the action is a plain text button"]}
+              >
+                <div style={{ padding: 16 }}>
+                  <ToastCard title="Interaction deleted" action={{ label: "Undo", onPress: () => {} }} />
+                </div>
+              </VariantCard>
+              <VariantCard
+                name="Success"
+                prop='tone="success"'
+                description="Something finished: a green check and a soft green stroke on the normal toast surface, with the action underlined in the primary text color."
+              >
+                <div style={{ padding: 16 }}>
+                  <ToastCard tone="success" title="Item removed everywhere" action={{ label: "Undo", onPress: () => {} }} />
+                </div>
+              </VariantCard>
+              <VariantCard
+                name="Error"
+                prop='tone="error"'
+                description="Something didn't go through, with the one thing to try next. Announced assertively to screen readers."
+              >
+                <div style={{ padding: 16 }}>
+                  <ToastCard tone="error" title="Couldn't sync with Salesforce" action={{ label: "Retry", onPress: () => {} }} />
+                </div>
+              </VariantCard>
+            </AreaGroup>
+
+            <AreaGroup title="Layouts" count={4}>
+              <VariantCard
+                name="With description"
+                prop="description"
+                description="A second line of muted text for context. Title and description together stay within two lines."
+              >
+                <div style={{ padding: 16 }}>
+                  <ToastCard tone="success" title="Visit saved" description="Synced to Salesforce · Acme Co" action={{ label: "View", onPress: () => {} }} />
+                </div>
+              </VariantCard>
+              <VariantCard
+                name="With thumbnail"
+                prop="leading={node}"
+                description="Any node can lead: a record thumbnail, an avatar, a logo."
+              >
+                <div style={{ padding: 16 }}>
+                  <ToastCard
+                    title="Saved to Rooms in France"
+                    leading={<div className="flex items-center justify-center" style={{ width: 40, height: 40, borderRadius: "var(--radius-sm)", background: "var(--md-sys-color-dark-tertiary)" }}><Icon name="image" size={20} style={{ color: "var(--md-sys-color-text-muted)" }} /></div>}
+                    action={{ label: "Change", onPress: () => {} }}
+                  />
+                </div>
+              </VariantCard>
+              <VariantCard
+                name="Stays until dismissed"
+                prop="duration={null}"
+                description="For messages that need to be read carefully. Shows a close button because it never times out."
+                notes={["Default timing: 5s, or 7s when there is an action; pressing or hovering pauses the timer", "Swipe down also dismisses"]}
+              >
+                <div style={{ padding: 16 }}>
+                  <ToastCard tone="error" title="You're offline" description="Visits are saved on this phone and will sync when you reconnect." showClose onClose={() => {}} />
+                </div>
+              </VariantCard>
+              <VariantCard
+                name="With secondary row"
+                prop="secondary"
+                description="Used by Item complete: Undo on the main row and a quiet “Add a note” link under it. Use sparingly; prefer one action."
+              >
+                <div style={{ padding: 16 }}>
+                  <ToastCard tone="success" title="Item complete" action={{ label: "Undo", onPress: () => {} }} secondary={{ label: "Add a note", icon: "edit", onPress: () => {} }} showClose onClose={() => {}} />
+                </div>
+              </VariantCard>
+            </AreaGroup>
+
+            <AreaGroup title="Top pill" count={4}>
+              <VariantCard
+                name="Preparing note"
+                prop='shape="pill" · leading={ToastSpinner}'
+                description="The top toast for a note in progress. Full radius, hugs its content, centered just under the status bar. A small turning ring is the right use of a spinner here: it is a short, indeterminate wait."
+                notes={["Fill neutral (dark-secondary, blurred, white-18 stroke); text 15/500 text-secondary", "Stays up until the note is ready (duration={null}); no close button"]}
+              >
+                <PillPreview state="processing" />
+              </VariantCard>
+              <VariantCard
+                name="Note ready"
+                prop='shape="pill" · leading={ToastCheck}'
+                description="The same pill, replaced in place: the ring becomes a solid green check, the text changes, a “View” label appears and the width eases. The whole pill opens the note; it dismisses itself after a few seconds."
+                notes={["Swap with useToast().show({...}, { replace: true }) so it does not queue behind the first one", "action.label is only the visible hint; the whole pill is the tap target"]}
+              >
+                <PillPreview state="ready" />
+              </VariantCard>
+              <VariantCard
+                name="Failed"
+                prop='shape="pill" · tone="error"'
+                description="The pill keeps its neutral fill; only the icon turns red. “Try again” is a label; the whole pill retries. Announced assertively."
+              >
+                <PillPreview state="failed" />
+              </VariantCard>
+              <VariantCard
+                name="Preparing → ready"
+                prop="replace"
+                description="The two states in sequence, on a loop, the way the website shows it."
+              >
+                <PillSequencePreview />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          {/* ── Shared primitives (component areas) ───────────────────── */}
+          <ComponentArea
+            id="search-field"
+            name="Search Field"
+            kind="Library"
+            description="The one search bar, used on the companies list, the action item lists and the Engagements drawer. A search icon, the field, and a clear button once there is text, in three sizes. It gets an indigo stroke while focused."
+            source="components/ui/SearchField.tsx"
+            flutter="halosight_search_field.dart"
+            anatomy="search icon · text field · [trailing tag] · [clear]"
+          >
+            <AreaGroup title="Variants" count={3}>
+              <VariantCard name="Sizes" prop='size="sm" | "md" | "lg"' status="default" description="36, 44 (default) and 48 tall, with the icon and text stepping up with them. The caret is brand coral; the stroke turns indigo on focus.">
+                <div className="flex flex-col" style={{ padding: 16, gap: 12 }}>
+                  <SearchField size="sm" value="" onChange={() => {}} placeholder="Small" />
+                  <SearchField size="md" value="" onChange={() => {}} placeholder="Medium" />
+                  <SearchField size="lg" value="" onChange={() => {}} placeholder="Large" />
+                </div>
+              </VariantCard>
+              <VariantCard name="Active" prop="active · trailing · endSlot" description="The indigo stroke and icon. It shows on focus, or all the time while searching beyond your own list, with an optional tag and a control inside the pill (the sort menu).">
+                <div style={{ padding: 16 }}><SearchField value="Acme" onChange={() => {}} placeholder="Searching all companies…" active trailing={<span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)", borderRadius: "var(--radius-xs)", padding: "2px 6px" }}>ALL</span>} /></div>
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="section-header"
+            name="Section Header"
+            kind="Library"
+            description="The small label that heads a list section, with an optional count and add button, or centered between two hairlines."
+            source="components/ui/SectionHeader.tsx"
+            flutter="section_header.dart"
+            anatomy="label · [count pill] · [add button]  |  hairline · label · hairline"
+          >
+            <AreaGroup title="Variants" count={2}>
+              <VariantCard name="Label and count" prop="count · onAdd" status="default" description="Uppercase label, a count pill and a round add button.">
+                <SectionHeaderRow label="Your Companies" count={7} onAdd={() => {}} addLabel="Add new lead" />
+              </VariantCard>
+              <VariantCard name="Divider" prop="divider" description="Separates two result groups, e.g. Company-Wide Results.">
+                <SectionHeaderRow label="Company-Wide Results" divider />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="icon-button"
+            name="Icon Button"
+            kind="Library"
+            description="A round button with one icon: profile and search buttons, and the floating back and more buttons that turn to glass once the screen scrolls."
+            source="components/ui/IconButton.tsx"
+            flutter="halosight_icon_button.dart"
+            anatomy="circle · icon"
+          >
+            <AreaGroup title="Variants" count={3}>
+              <VariantCard name="Filled" prop='variant="filled"' status="default" description="dark-secondary circle."><div className="flex" style={{ padding: 16, gap: 12 }}><IconButton icon="person" label="Profile" size={36} /><IconButton icon="search" label="Search" size={44} /></div></VariantCard>
+              <VariantCard name="Glass" prop='variant="glass" scrolled' description="Transparent at rest; a blurred translucent circle once the page has scrolled under it."><div className="flex" style={{ padding: 16, gap: 12 }}><IconButton icon="arrow_back" label="Back" variant="glass" size={36} /><IconButton icon="arrow_back" label="Back" variant="glass" size={36} scrolled /></div></VariantCard>
+              <VariantCard name="Plain" prop='variant="plain"' description="No background, for flat headers."><div style={{ padding: 16 }}><IconButton icon="arrow_back" label="Back" variant="plain" /></div></VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="banner"
+            name="Banner"
+            kind="Library"
+            description="An inline message card inside a screen, for context the rep should read once: a heads-up, not an interruption."
+            source="components/ui/Banner.tsx"
+            flutter="halosight_banner.dart"
+            anatomy="icon · message"
+          >
+            <AreaGroup title="Tones" count={2}>
+              <VariantCard name="Info" prop='tone="info"' status="default" description="Indigo. Used on another rep's account.">
+                <div style={{ padding: 16 }}><Banner>You&apos;re viewing Dana&apos;s account — notes you capture here will be visible to them.</Banner></div>
+              </VariantCard>
+              <VariantCard name="Warning" prop='tone="warning"' description="Amber, for something that may need attention.">
+                <div style={{ padding: 16 }}><Banner tone="warning">This lead is missing contact info. It will sync without it.</Banner></div>
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
           {/* ── Account Chat (component area) ──────────────────────────── */}
           <ComponentArea
             id="account-chat"
@@ -1789,21 +2012,21 @@ export default function DesignSystemPage() {
               <VariantCard
                 name="Voice — listening"
                 prop='phase="listening"'
-                description="Tapping the waveform button swaps the input for the voice dock. Blue glow rises from the bottom edge; the orb has a soft halo."
+                description="Tapping the waveform button swaps the input for the voice dock. An indigo haze rises from the bottom edge and follows the sound of the person talking: it climbs and brightens with the voice and settles in the pauses. The words they say appear above the orb one at a time, as they are heard."
               >
                 <VoicePreview phase="listening" />
               </VariantCard>
               <VariantCard
                 name="Voice — thinking"
                 prop='phase="thinking"'
-                description="What you just said appears as an italic line over the orb while the answer is prepared."
+                description="What you just said appears as an italic line over the orb while the answer is prepared. Coral and indigo flow along the bottom edge, sweeping side to side, so it feels like the screen is working."
               >
                 <VoicePreview phase="thinking" />
               </VariantCard>
               <VariantCard
                 name="Voice — speaking"
                 prop='phase="speaking"'
-                description="The glow turns coral and the controls go flat. The answer highlights word by word as it is read aloud; the rest stays muted. The close button returns to the text input."
+                description="A low coral bloom hugs the bottom edge, well below the reply text, and nothing wraps the edges. The answer highlights word by word as it is read aloud; the rest stays muted. The close button returns to the text input."
               >
                 <VoicePreview phase="speaking" />
               </VariantCard>

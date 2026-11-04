@@ -179,3 +179,22 @@ export interface ChatThread {
   messageCount: number;
   pinned: boolean;
 }
+
+// ─── Engagements (recent activity feed) ────────────────────────────────────
+
+/** One row in the Engagements side drawer: a recent interaction across all accounts. */
+export interface RecentActivity {
+  id: string;
+  /** Account the interaction belongs to. Missing = not linkable in the prototype (the row still renders). */
+  accountId?: string;
+  accountName: string;
+  /** Opens /relationships/[accountId]/activity/[activityId] when both are set, otherwise the account. */
+  activityId?: string;
+  type: "visit" | "call";
+  title: string;
+  date: Date;
+  /** Not opened yet. Unread rows show a dot and, when there is one, what changed. */
+  unread?: boolean;
+  /** What changed since you last looked, e.g. "Modified 1 action item". */
+  changeNote?: string;
+}

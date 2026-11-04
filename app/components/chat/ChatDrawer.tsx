@@ -17,7 +17,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { DrawerBackdrop, DrawerPanel, useOverlayRoot } from "@/components/ui/Drawer";
 import ChatHeader from "@/components/chat/ChatHeader";
 import ChatEmptyState from "@/components/chat/ChatEmptyState";
@@ -25,6 +25,7 @@ import ChatMessageList from "@/components/chat/ChatMessageList";
 import ChatInput from "@/components/chat/ChatInput";
 import ChatVoiceDock, { type VoicePhase } from "@/components/chat/ChatVoiceDock";
 import ChatHistoryMenu from "@/components/chat/ChatHistoryMenu";
+import VoiceAtmosphere from "@/components/chat/VoiceAtmosphere";
 import {
   CHAT_SAMPLE_TURNS, CHAT_SUGGESTIONS, CHAT_THREADS, CHAT_USER_NAME, VOICE_SAMPLE_QUESTION, chatId, replyFor,
 } from "@/lib/mock-data/chat";
@@ -46,6 +47,7 @@ export default function ChatDrawer({
   const [mode, setMode] = useState<"text" | "voice">("text");
   const [phase, setPhase] = useState<VoicePhase>("listening");
   const [transcript, setTranscript] = useState("");
+  const [heard, setHeard] = useState("");
   const [streamId, setStreamId] = useState<string | undefined>();
   const [revealed, setRevealed] = useState(0);
   const [muted, setMuted] = useState(false);
@@ -54,6 +56,7 @@ export default function ChatDrawer({
 
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const voiceIndex = useRef(0);
+  const pending = useRef<string | null>(null);
   const later = useCallback((fn: () => void, ms: number) => { timers.current.push(setTimeout(fn, ms)); }, []);
   const clearTimers = useCallback(() => { timers.current.forEach(clearTimeout); timers.current = []; }, []);
   useEffect(() => clearTimers, [clearTimers]);
@@ -75,13 +78,33 @@ export default function ChatDrawer({
   }
 
   // Voice (simulated) ---------------------------------------------------------
-  function hear() {
+  // The person "speaks": words appear in the dock one at a time (~0.2–0.35s apart), then a beat of silence, then the question is sent.
+  function listen() {
     clearTimers();
     const q = VOICE_QUESTIONS[voiceIndex.current++ % VOICE_QUESTIONS.length];
+    pending.current = q;
+    const words = q.split(" ");
+    let t = 250;
+    words.forEach((_, i) => {
+      t += 200 + Math.random() * 160;
+      later(() => setHeard(words.slice(0, i + 1).join(" ")), t);
+    });
+    later(() => commit(q), t + 750);
+  }
+
+  function commit(q: string) {
+    clearTimers();
+    pending.current = null;
+    setHeard("");
     setTranscript(q);
     setTurns((t) => [...t, { id: chatId(), role: "user", text: q }]);
     setPhase("thinking");
     later(() => speak(q), 1300);
+  }
+
+  // Tapping the orb while listening skips ahead: whatever is being said is sent right away.
+  function hear() {
+    commit(pending.current ?? VOICE_QUESTIONS[voiceIndex.current++ % VOICE_QUESTIONS.length]);
   }
 
   function speak(question: string) {
@@ -91,19 +114,21 @@ export default function ChatDrawer({
     setRevealed(0);
     setPhase("speaking");
     for (let i = 1; i <= words; i++) later(() => setRevealed(i), i * 150);
-    later(() => { setStreamId(undefined); setPhase("listening"); }, words * 150 + 600);
+    later(() => { setStreamId(undefined); setPhase("listening"); setHeard(""); later(listen, 1500); }, words * 150 + 600);
   }
 
   function startVoice() {
     clearTimers();
     setMode("voice");
     setPhase("listening");
-    later(hear, 2400);
+    setHeard("");
+    later(listen, 1600);
   }
 
   function endVoice() {
     clearTimers();
     setStreamId(undefined);
+    setHeard("");
     setMode("text");
   }
 
@@ -131,6 +156,15 @@ export default function ChatDrawer({
             style={{ height: "calc(94% - var(--keyboard-inset, 0px))" }}
           >
             <div className="relative flex flex-col flex-1 min-h-0">
+              {/* Voice haze paints behind everything else in the panel */}
+              <AnimatePresence>
+                {mode === "voice" && (
+                  <motion.div key="atmosphere" className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+                    <VoiceAtmosphere phase={phase} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div className="relative flex flex-col flex-1 min-h-0" style={{ zIndex: 1 }}>
               <ChatHeader
                 historyOpen={historyOpen}
                 onHistory={() => setHistoryOpen((o) => !o)}
@@ -152,12 +186,14 @@ export default function ChatDrawer({
                 <ChatVoiceDock
                   phase={phase}
                   transcript={transcript}
+                  liveTranscript={heard}
                   muted={muted}
                   onMicTap={phase === "listening" ? hear : undefined}
                   onToggleMute={() => setMuted((m) => !m)}
                   onClose={endVoice}
                 />
               )}
+              </div>
 
               {historyOpen && (
                 <>

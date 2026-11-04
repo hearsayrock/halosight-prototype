@@ -7,7 +7,7 @@
  * Params: { id } — account ID
  *
  * Standalone version of the post-meeting AI review.
- * Accessible from the "AI found N updates" banner on lead account pages.
+ * Not linked from anywhere right now: the "AI found N CRM updates" banner on lead account pages was removed.
  * The in-capture version of this UI is AIReviewOverlay (shown automatically
  * after capture finalizes). Both share logic from @/lib/ai-review-utils.
  *
@@ -21,6 +21,7 @@
 import { useState, useRef, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import ThinkingDots from "@/components/ui/ThinkingDots";
 import Icon from "@/components/ui/Icon";
 import ScrollAwareTopBar from "@/components/ui/ScrollAwareTopBar";
 import { mockAccounts } from "@/lib/mock-data/accounts";
@@ -94,7 +95,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
           transition={{ type: "spring", stiffness: 280, damping: 20 }}
           className="flex flex-col items-center gap-4"
         >
-          <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "rgba(107,157,176,0.12)" }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "color-mix(in srgb, var(--md-sys-color-brand-teal) 12%, transparent)" }}>
             <Icon name="cloud_done" fill size={34} style={{ color: "var(--md-sys-color-brand-teal)" }} />
           </div>
           <p className="text-[15px] font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>
@@ -144,7 +145,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
               <div className="flex items-start gap-2.5">
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid rgba(139,146,255,0.2)" }}
+                  style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)" }}
                 >
                   <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                 </div>
@@ -185,12 +186,12 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-start gap-2.5">
                   <div
                     className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid rgba(139,146,255,0.2)" }}
+                    style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)" }}
                   >
                     <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   </div>
                   <div className="px-4 py-3 rounded-2xl rounded-tl-sm" style={{ background: "var(--md-sys-color-dark-secondary)" }}>
-                    <ThinkingDots />
+                    <span style={{ color: "var(--md-sys-color-text-muted)" }}><ThinkingDots size="md" label="Thinking" /></span>
                   </div>
                 </motion.div>
               )}
@@ -206,8 +207,8 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
           <button
             className="w-full flex items-center justify-center gap-2 h-11 mb-3 font-semibold text-[14px] active:opacity-70 transition-opacity"
             style={{
-              background: "rgba(255,107,90,0.1)",
-              border: "1px solid rgba(255,107,90,0.2)",
+              background: "color-mix(in srgb, var(--md-sys-color-brand-coral) 10%, transparent)",
+              border: "1px solid color-mix(in srgb, var(--md-sys-color-brand-coral) 20%, transparent)",
               borderRadius: "var(--radius-full)",
               color: "var(--md-sys-color-brand-coral)",
             }}
@@ -282,8 +283,8 @@ function SuggestionRow({ suggestion: s, onToggle }: { suggestion: Suggestion; on
       <div
         className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl transition-colors"
         style={{
-          background: s.selected ? "rgba(107,157,176,0.1)" : isUnknown ? "transparent" : "rgba(255,255,255,0.03)",
-          border: s.selected ? "1px solid rgba(107,157,176,0.2)" : "1px solid transparent",
+          background: s.selected ? "color-mix(in srgb, var(--md-sys-color-brand-teal) 10%, transparent)" : isUnknown ? "transparent" : "rgba(255,255,255,0.03)",
+          border: s.selected ? "1px solid color-mix(in srgb, var(--md-sys-color-brand-teal) 20%, transparent)" : "1px solid transparent",
         }}
       >
         <div className="flex-shrink-0 mt-0.5">
@@ -322,7 +323,7 @@ function SuggestionRow({ suggestion: s, onToggle }: { suggestion: Suggestion; on
 function AIMessage({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-2.5">
-      <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid rgba(139,146,255,0.2)" }}>
+      <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "var(--md-sys-color-alpha-neonindigo-10)", border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)" }}>
         <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />
       </div>
       <div className="max-w-[82%] px-3.5 py-2.5 rounded-2xl rounded-tl-sm" style={{ background: "var(--md-sys-color-dark-secondary)" }}>
@@ -337,20 +338,10 @@ function AIMessage({ text }: { text: string }) {
 function RepMessage({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[78%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm" style={{ background: "rgba(139,146,255,0.12)", border: "1px solid rgba(139,146,255,0.15)" }}>
+      <div className="max-w-[78%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm" style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}>
         <p className="text-[13px] leading-relaxed" style={{ color: "var(--md-sys-color-text-primary)" }}>{text}</p>
       </div>
     </div>
   );
 }
 
-function ThinkingDots() {
-  return (
-    <div className="flex items-center gap-1 py-0.5">
-      {[0, 1, 2].map((i) => (
-        <motion.div key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--md-sys-color-text-muted)" }}
-          animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }} />
-      ))}
-    </div>
-  );
-}

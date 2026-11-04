@@ -6,6 +6,7 @@
  * Slides up from the bottom using framer-motion spring.
  */
 
+import Button from "@/components/ui/Button";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
@@ -199,19 +200,9 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
           </AnimatePresence>
 
           {/* Add button */}
-          <button
-            onClick={handleAdd}
-            disabled={!title.trim()}
-            className="w-full h-12 text-15-bold flex items-center justify-center transition-opacity"
-            style={{
-              background: "var(--md-sys-color-brand-coral-dark)",
-              color: "var(--md-sys-color-text-on-coral)",
-              borderRadius: "var(--radius-full)",
-              opacity: title.trim() ? 1 : 0.4,
-            }}
-          >
+          <Button size="md" fullWidth disabled={!title.trim()} onClick={handleAdd}>
             Add action item
-          </button>
+          </Button>
         </div>
       </DrawerPanel>
 

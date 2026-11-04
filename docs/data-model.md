@@ -244,6 +244,21 @@ interface ChatThread { id: string; title: string; whenLabel: string; messageCoun
 Prototype data lives in `lib/mock-data/chat.ts` (suggestions, threads, a sample conversation, keyword-matched canned replies).
 Production needs a chat repository (threads, turns, streamed replies) and, before shipping, source provenance on answers.
 
+
+## Engagements feed (`RecentActivity`)
+
+```ts
+interface RecentActivity {
+  id: string; accountId?: string; accountName: string; activityId?: string;
+  type: "visit" | "call"; title: string; date: Date;
+  unread?: boolean;        // not opened yet: dot, bold title, change line
+  changeNote?: string;     // "Modified 1 action item"
+}
+```
+
+Powers the home side drawer (`mockRecentActivities` in `lib/mock-data/home.ts`, 30 rows, newest first). Rows without an `accountId` render but do not link.
+Date labels come from `formatEngagementDate` (Today, Yesterday, weekday, Last Friday, Oct 12). Which rows were opened is session state in `AccountStateContext`; production needs a per-user read flag from the API and cursor paging.
+
 ## Sort Options
 
 ```ts

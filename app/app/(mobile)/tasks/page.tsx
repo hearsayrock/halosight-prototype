@@ -13,6 +13,7 @@ import { useMemo, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/ui/Icon";
 import CompletionToast from "@/components/ui/CompletionToast";
+import SearchField from "@/components/ui/SearchField";
 import NoteSheet from "@/components/ui/NoteSheet";
 import FilterDropdown from "@/components/ui/FilterDropdown";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
@@ -228,31 +229,7 @@ export default function TasksPage() {
         </div>
 
         {/* Search bar */}
-        <div
-          className="flex items-center gap-2 h-11 px-3"
-          style={{ borderRadius: 999, background: "var(--md-sys-color-dark-secondary)" }}
-        >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-            <circle cx="7.5" cy="7.5" r="6" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" />
-            <path d="M12 12L16 16" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search items…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-15 outline-none"
-            style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
-          />
-          {query && (
-            <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
-                <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-            </button>
-          )}
-        </div>
+        <SearchField value={query} onChange={setQuery} placeholder="Search items…" />
       </div>
 
       {/* List */}

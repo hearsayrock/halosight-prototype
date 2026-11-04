@@ -17,6 +17,7 @@
  *   - "Create anyway" dismisses callout and continues normally
  */
 
+import Button from "@/components/ui/Button";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
@@ -61,8 +62,8 @@ function DuplicateCallout({
       exit={{ opacity: 0, y: -6, scale: 0.98 }}
       transition={{ type: "spring", stiffness: 420, damping: 32 }}
       style={{
-        background: "rgba(245, 166, 35, 0.10)",
-        border: "1px solid rgba(245, 166, 35, 0.30)",
+        background: "color-mix(in srgb, var(--md-sys-color-warning) 10%, transparent)",
+        border: "1px solid color-mix(in srgb, var(--md-sys-color-warning) 30%, transparent)",
         borderRadius: "var(--radius-lg)",
         padding: "12px 14px",
         marginBottom: 14,
@@ -84,9 +85,9 @@ function DuplicateCallout({
             onClick={() => onViewExisting(account)}
             className="w-full text-left flex items-center justify-between px-3 py-2.5 active:opacity-70 transition-opacity"
             style={{
-              background: "rgba(245, 166, 35, 0.08)",
+              background: "color-mix(in srgb, var(--md-sys-color-warning) 8%, transparent)",
               borderRadius: "var(--radius-sm)",
-              border: "1px solid rgba(245, 166, 35, 0.18)",
+              border: "1px solid color-mix(in srgb, var(--md-sys-color-warning) 18%, transparent)",
             }}
           >
             <div className="min-w-0">
@@ -241,10 +242,10 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
                       color: "var(--md-sys-color-text-primary)",
                       border: `1.5px solid ${
                         showDupeCallout
-                          ? "rgba(245, 166, 35, 0.45)"
+                          ? "color-mix(in srgb, var(--md-sys-color-warning) 45%, transparent)"
                           : focused
-                            ? "rgba(139,146,255,0.55)"
-                            : "rgba(255,255,255,0.08)"
+                            ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 55%, transparent)"
+                            : "var(--md-sys-color-alpha-white-10)"
                       }`,
                       transition: "border-color 0.15s",
                       paddingRight: dupeState === "checking" ? 44 : undefined,
@@ -259,7 +260,7 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
                         style={{
                           width: 16, height: 16,
                           borderRadius: "50%",
-                          border: "2px solid rgba(139,146,255,0.25)",
+                          border: "2px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 25%, transparent)",
                           borderTopColor: "var(--md-sys-color-neonindigo)",
                         }}
                       />
@@ -297,21 +298,9 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
               {showDupeCallout && <div style={{ height: 5 }} />}
 
               {/* Create CTA */}
-              <button
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={handleCreate}
-                disabled={!name.trim()}
-                className="w-full font-semibold text-[16px] transition-opacity"
-                style={{
-                  height: 52,
-                  background: "var(--md-sys-color-neonindigo)",
-                  color: "var(--md-sys-color-text-primary)",
-                  borderRadius: "var(--radius-full)",
-                  opacity: name.trim() ? 1 : 0.4,
-                }}
-              >
+              <Button fill="indigo" size="lg" fullWidth keepFocus disabled={!name.trim()} onClick={handleCreate}>
                 Create a lead
-              </button>
+              </Button>
 
             </div>
           </DrawerPanel>

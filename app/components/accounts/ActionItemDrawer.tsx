@@ -25,12 +25,13 @@
  *         radius.lg, radius.xl, radius.full, spacing.1–8
  */
 
+import AlertDialog from "@/components/ui/AlertDialog";
+import { useToast } from "@/lib/context/ToastContext";
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/ui/Icon";
 import { CompanyIcon } from "@/components/ui/CustomIcons";
-import Drawer, { DrawerBackdrop, DrawerBody, DrawerHeader, useOverlayRoot } from "@/components/ui/Drawer";
+import Drawer, { DrawerBody, DrawerHeader } from "@/components/ui/Drawer";
 import MiniCalendar from "@/components/accounts/MiniCalendar";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { mockAccounts, mockAccountDetails } from "@/lib/mock-data/accounts";
@@ -297,34 +298,6 @@ export function ActionItemDrawerEdit({
 }
 
 /** The confirmation card (without the dim). */
-export function DeleteConfirmCard({ onCancel, onConfirm }: { onCancel: () => void; onConfirm: () => void }) {
-  return (
-    <div
-      className="relative w-full flex flex-col"
-      style={{ gap: "var(--spacing-4)", padding: "var(--spacing-6)", borderRadius: "var(--radius-xl)", background: "var(--md-sys-color-dark-primary)", border: "1px solid var(--md-sys-color-dark-tertiary)" }}
-    >
-      <div className="text-center">
-        <p className="heading-6" style={{ color: "var(--md-sys-color-text-primary)", marginBottom: "var(--spacing-1)" }}>Delete action item?</p>
-        <p className="text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>This is permanent and can&apos;t be undone.</p>
-      </div>
-      <button
-        onClick={onConfirm}
-        className="w-full h-12 text-15-bold active:opacity-70 transition-opacity"
-        style={{ borderRadius: "var(--radius-full)", background: "var(--md-sys-color-error)", color: "var(--md-sys-color-text-primary)" }}
-      >
-        Yes, delete
-      </button>
-      <button
-        onClick={onCancel}
-        className="w-full h-12 text-15-bold active:opacity-70 transition-opacity"
-        style={{ borderRadius: "var(--radius-full)", background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)" }}
-      >
-        Cancel
-      </button>
-    </div>
-  );
-}
-
 // ── Drawer (state + wiring) ────────────────────────────────────────────────────────────────
 
 export default function ActionItemDrawer({
@@ -350,6 +323,7 @@ export default function ActionItemDrawer({
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { show: showToast } = useToast();
   const [focus, setFocus] = useState<"title" | "description" | null>(null);
 
   // State resets because the provider remounts this component (key) each time a drawer opens.
@@ -375,6 +349,7 @@ export default function ActionItemDrawer({
     deleteItem(accountId, item.id);
     setConfirmDelete(false);
     onClose();
+    showToast({ title: "Action item deleted", bottom: 24 });
   }
 
   return (
@@ -405,24 +380,14 @@ export default function ActionItemDrawer({
         )}
       </Drawer>
 
-      <ConfirmDelete open={confirmDelete} onCancel={() => setConfirmDelete(false)} onConfirm={remove} />
+      <AlertDialog
+        open={confirmDelete}
+        title="Delete action item?"
+        body="This is permanent and can't be undone."
+        confirmLabel="Yes, delete"
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={remove}
+      />
     </>
   );
-}
-
-function ConfirmDelete({ open, onCancel, onConfirm }: { open: boolean; onCancel: () => void; onConfirm: () => void }) {
-  const root = useOverlayRoot();
-  if (!root || !open) return null;
-  return (
-    <Portal root={root}>
-      <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 80, padding: "0 var(--spacing-6)", pointerEvents: "auto" }}>
-        <DrawerBackdrop onClick={onCancel} />
-        <DeleteConfirmCard onCancel={onCancel} onConfirm={onConfirm} />
-      </div>
-    </Portal>
-  );
-}
-
-function Portal({ root, children }: { root: Element; children: React.ReactNode }) {
-  return createPortal(children, root);
 }

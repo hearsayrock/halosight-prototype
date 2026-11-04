@@ -30,8 +30,8 @@ import { FA_NAME } from "@/components/ui/faMap";
 // Font Awesome's stylesheet is imported above, so it must not inject its own.
 config.autoAddCss = false;
 
-// Icons that read better solid when the caller asks for `fill`.
-const LUCIDE_FILLABLE = new Set(["star", "grade", "favorite", "bookmark", "notifications", "keep", "bug_report", "lightbulb", "check_circle", "cancel", "error", "warning"]);
+// Icons that read better solid when the caller asks for `fill`. Circle and triangle glyphs are left out: filling them hides the mark inside.
+const LUCIDE_FILLABLE = new Set(["star", "grade", "favorite", "bookmark", "notifications", "keep"]);
 
 interface IconProps {
   /** Material Symbols icon name — use underscore_case (e.g. "arrow_back", "check_circle") */

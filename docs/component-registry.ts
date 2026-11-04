@@ -622,7 +622,7 @@ drawer.open(accountId, item.id, () => handleComplete(item.id));` },
     },
     props: [
       { name: "variant", type: '"filled" | "tonal" | "outlined" | "text"', required: false, default: '"filled"', description: "Visual style." },
-      { name: "tone", type: '"default" | "indigo" | "danger"', required: false, default: '"default"', description: "Outlined only." },
+      { name: "tone", type: '"default" | "indigo" | "danger" | "success" | "muted"', required: false, default: '"default"', description: "Outlined: default / indigo / danger. Tonal: default / success. Text: default / muted." },
       { name: "size", type: '"md" | "sm"', required: false, default: '"md"', description: "md 48px, sm 44px (text: 40 / 36)." },
       { name: "loading", type: "boolean", required: false, default: "false", description: "Shows ThinkingDots; keeps size; not tappable (aria-busy)." },
       { name: "loadingLabel", type: "string", required: false, description: "Text after the dots while loading; the button is as wide as the wider of the two." },
@@ -695,7 +695,9 @@ drawer.open(accountId, item.id, () => handleComplete(item.id));` },
     description:
       "A row in an account's Activity tab: title, two-line summary and a meta line. An open row on the page background, separated by hairlines inset 20px. " +
       "Variant `halosight` (default): meta is relative date · duration · who created it. Variant `crm` (item.source = \"salesforce\"): a blue cloud before the title and " +
-      "\"From Salesforce\" (teal) in place of the duration. Dates are never indigo. Taps through to the activity screen.",
+      "\"From Salesforce\" (teal) in place of the duration. Dates are never indigo. Taps through to the activity screen. " +
+      "Variants `recent` and `recent-unread` (prop `recent`: RecentActivity) are the Engagements drawer rows: company eyebrow, title, type icon + Meeting / Phone Call, then the date (Today in indigo here, unlike the Activity tab). " +
+      "Unread adds an indigo dot, a bolder title and a “Modified …” line. Pressing highlights the row.",
     file: "app/components/accounts/ActivityCard.tsx",
     designSystemSection: "#activity-card",
     flutterEquivalent: "ActivityCard — lib/view/_widget/activity/activity_card.dart",
@@ -979,6 +981,298 @@ import AccountTypeIcon from "@/components/accounts/AccountTypeIcon";
     },
   },
 
+  // ── AlertDialog ─────────────────────────────────────────────────────────────
+  {
+    name: "AlertDialog",
+    category: "ui-primitive",
+    type: "interactive",
+    description:
+      "A short centered confirmation over the scrim, for decisions that can't be undone. Title, optional body, a full-width filled confirm button (error color by default, indigo with destructive={false}) " +
+      "and a plain text Cancel button. AlertCard is the card alone; AlertDialog adds the portal and scrim. Used for deleting action items and interactions.",
+    file: "app/components/ui/AlertDialog.tsx",
+    designSystemSection: "#alert-dialog",
+    flutterEquivalent: "HalosightAlertDialog — lib/view/_widget/halosight_alert_dialog.dart (Dialog + AlertCard)",
+    tokens: {
+      required: [
+        { token: "color.dark.primary",    role: "card" },
+        { token: "color.dark.tertiary",   role: "card border" },
+        { token: "color.alpha.scrim",     role: "scrim (via DrawerBackdrop)" },
+        { token: "color.error",           role: "destructive confirm" },
+        { token: "color.neonindigo.dark", role: "standard confirm" },
+        { token: "color.text.secondary",  role: "Cancel" },
+        { token: "color.text.muted",      role: "body" },
+        { token: "radius.xl / full",      role: "card / buttons" },
+      ],
+    },
+    props: [
+      { name: "open", type: "boolean", required: true, description: "Visibility (AlertDialog only)." },
+      { name: "title / body", type: "string", required: true, description: "Title is required; body is optional." },
+      { name: "confirmLabel / cancelLabel", type: "string", required: true, description: "cancelLabel defaults to “Cancel”." },
+      { name: "destructive", type: "boolean", required: false, default: "true", description: "Error vs indigo confirm button." },
+      { name: "onConfirm / onCancel", type: "() => void", required: true, description: "Scrim tap calls onCancel." },
+    ],
+    usage: {
+      patterns: [{ name: "confirm delete", when: "Before an irreversible delete", code: `
+<AlertDialog open={open} title="Delete interaction?" body="This can't be undone." confirmLabel="Yes, delete" onConfirm={remove} onCancel={() => setOpen(false)} />` }],
+      antiPatterns: [{ scenario: "A bottom sheet for a yes/no confirmation", why: "Sheets are for forms and details", instead: "Use AlertDialog (the disqualify confirmation now does)" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Confirming a destructive or irreversible action"],
+      neverUseFor: ["Forms, pickers or long content — use Drawer"],
+      alwaysRemember: ["Cancel is a text button, not a filled one", "Needs #phone-overlay-root; renders null until it resolves"],
+    },
+    changelog: ["2026-11-02: new shared component, extracted from the action item delete confirmation. Cancel is now a plain text button."],
+  },
+
+  // ── Toast ───────────────────────────────────────────────────────────────────
+  {
+    name: "Toast",
+    category: "ui-primitive",
+    type: "interactive",
+    description:
+      "A brief, non-blocking confirmation that floats above the bottom nav. Tones: neutral (default), success (green check and stroke), error (assertive); the fill stays neutral on every tone. Optional description, leading icon or thumbnail, " +
+      "and at most one text action (Undo / View / Change / Retry). Auto-dismisses after 5s, or 7s with an action; pressing or hovering pauses the timer; duration null stays until dismissed and shows a close button; swipe down dismisses. " +
+      "Shape `pill` is the top variant: full radius, hugs its content, centered under the status bar, title plus an optional action label (\"View\", \"Try again\") — the whole pill is the tap target, the label only says what it does, fill always neutral with the icon carrying the state — ToastSpinner (\"Preparing note\") then ToastCheck (\"Note ready\"), swapped in place with show(..., { replace: true }). " +
+      "Announced politely (role=status; errors role=alert). ToastCard is the card alone; Toast adds the portal, timer and motion; useToast().show() queues one at a time. CompletionToast is a wrapper (success, Undo, optional Add a note).",
+    file: "app/components/ui/Toast.tsx",
+    designSystemSection: "#toast",
+    flutterEquivalent: "HalosightToast — lib/view/_widget/halosight_toast.dart (ToastCard + ToastController queue; SnackBar floating is the closest built-in)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary",     role: "surface (88% + backdrop blur)" },
+        { token: "color.alpha.white-18",     role: "neutral stroke" },
+        { token: "elevation.5",              role: "shadow" },
+        { token: "color.semantic.success",   role: "success icon and stroke" },
+        { token: "color.semantic.error",     role: "error icon and stroke" },
+        { token: "color.neonindigo.base",    role: "neutral action" },
+        { token: "color.text.primary / muted", role: "title / description, success and error actions" },
+        { token: "color.brand.teal",         role: "secondary row" },
+        { token: "radius.lg",                role: "card" },
+      ],
+    },
+    props: [
+      { name: "visible", type: "boolean", required: true, description: "Controlled by the caller (Toast only)." },
+      { name: "title / description", type: "string", required: true, description: "Title required. Two lines of text at most." },
+      { name: "tone", type: '"neutral" | "success" | "error"', required: false, default: '"neutral"', description: "Surface, icon and announcement." },
+      { name: "leading", type: "string | ReactNode", required: false, description: "Icon name or a node (thumbnail). Defaults per tone." },
+      { name: "action", type: "{ label, onPress }", required: false, description: "One text action; closes the toast unless dismissOnAction is false." },
+      { name: "duration", type: "number | null", required: false, default: "5000 (7000 with action)", description: "null = stay until dismissed." },
+      { name: "bottom", type: "number", required: false, default: "24", description: "Pass ~106 above the bottom nav." },
+      { name: "shape", type: '"card" | "pill"', required: false, default: '"card"', description: "pill = top, hugs content, full radius, title only." },
+      { name: "placement / top", type: '"top" | "bottom" / number', required: false, default: "pill → top, top 40 (level with the header back / menu buttons)", description: "Where it sits; top is the distance under the phone's top edge." },
+      { name: "onDismiss", type: "() => void", required: true, description: "Timer, close, swipe, or action." },
+    ],
+    usage: {
+      patterns: [{ name: "show from anywhere", when: "After an action completes", code: `
+const { show } = useToast();
+show({ title: "Interaction deleted", action: { label: "Undo", onPress: restore } });` }],
+      antiPatterns: [{ scenario: "A toast that asks the user to choose", why: "Toasts disappear; decisions must not", instead: "Use AlertDialog" }, { scenario: "Two or more actions on a toast", why: "Hard to hit before it goes", instead: "One action; put the rest on the screen" }],
+    },
+    aiHints: {
+      priority: "high",
+      useWhen: ["Confirming a completed action, with an optional undo"],
+      neverUseFor: ["Decisions, long messages, or anything the user must act on — use AlertDialog or an inline message"],
+      alwaysRemember: ["Any action on a toast should also be available on the screen, except Undo", "Errors that need attention should persist (duration null) with a close button"],
+    },
+    changelog: ["2026-11-02: added the `pill` shape (top, full radius) with ToastSpinner / ToastCheck and show(..., { replace: true }), matching how the website shows a note preparing then ready.", "2026-11-02: new. Replaces the old CompletionToast look (CompletionToast now wraps it). Interaction delete shows a Toast with Undo.", "2026-11-02: the pill replaced the capture widget's finalizing/ready bar states (tap Note ready to open the note), the home preview banner (?note=processing|multiprocess|failed) and the account page Preparing note card."],
+  },
+
+  // ── EngagementsDrawer ───────────────────────────────────────────────────────
+  {
+    name: "EngagementsDrawer",
+    category: "feature",
+    type: "interactive",
+    description:
+      "The home screen's side drawer: a feed of recent interactions across every account, newest first. Header with the halosight logo and a round search button (opens a search field that filters the feed). " +
+      "Under the header: Companies, Action Items and Risks links (serif, with icons) and an \"Interactions\" label; they step aside while searching. Rows are ActivityCard variants `recent` / `recent-unread`; opening a row marks it read. Lazy loads: 12 rows first, then 8 more each time the end of the list scrolls into view (ThinkingDots while loading). " +
+      "EngagementsPanel is the stateless body used by the design-system page.",
+    file: "app/components/accounts/EngagementsDrawer.tsx",
+    designSystemSection: "#engagements-drawer",
+    flutterEquivalent: "EngagementsDrawer — lib/view/_widget/engagements/engagements_drawer.dart (Drawer + ListView.builder with cursor paging)",
+    tokens: {
+      required: [
+        { token: "color.dark.primary",    role: "panel" },
+        { token: "color.dark.tertiary",   role: "panel edge" },
+        { token: "color.alpha.scrim",     role: "scrim (via DrawerBackdrop)" },
+        { token: "color.dark.secondary",  role: "search button and field" },
+        { token: "color.text.muted",      role: "empty and loading text" },
+        { token: "radius.full",           role: "search button and field" },
+      ],
+    },
+    props: [
+      { name: "open", type: "boolean", required: true, description: "Visibility." },
+      { name: "onClose", type: "() => void", required: true, description: "Scrim tap or a row opened." },
+      { name: "onNavigate", type: '(to: "companies" | "actionItems" | "risks") => void', required: false, description: "A top link was tapped (the drawer closes first). Risks has no screen yet: the home screen shows the company list limited to companies with risks." },
+    ],
+    usage: {
+      patterns: [{ name: "home menu", when: "Hamburger on the home screen", code: `<EngagementsDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />` }],
+      antiPatterns: [{ scenario: "Re-building the row inline", why: "The unread treatment must stay in sync with the Activity Card", instead: "Use <ActivityCard recent={…} variant=\"recent-unread\" />" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Showing recent activity across all accounts"],
+      neverUseFor: ["One account's history — use the Activity tab list"],
+      alwaysRemember: ["Copy is “Modified …”, never “Created …”", "Read state is in AccountState (prototype); the real feed needs a server read flag"],
+    },
+    changelog: ["2026-11-02: new. Replaces the old name-only engagements list (Today / Previous groups). ActivityCard gained the recent / recent-unread variants."],
+  },
+
+  // ── SearchField ────────────────────────────────────────────────────────────────
+  {
+    name: "SearchField",
+    category: "ui-primitive",
+    type: "interactive",
+    description:
+      "The one search bar for the whole app: a search icon, the text field and a clear button once there is text, in three sizes (sm 36, md 44, lg 48). The indigo stroke shows on focus, or always with `active` (searching beyond your own list). `trailing` takes a small tag; `endSlot` a control inside the pill (the sort menu on the companies list). Used on the companies list, the action item lists, the account picker, the chat history menu and the Engagements drawer.",
+    file: "app/components/ui/SearchField.tsx",
+    designSystemSection: "#search-field",
+    flutterEquivalent: "HalosightSearchField — lib/view/_widget/halosight_search_field.dart",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "fill" },
+        { token: "color.text.muted", role: "icon" },
+        { token: "color.text.primary", role: "text" },
+        { token: "color.text.disabled", role: "clear dot" },
+        { token: "color.neonindigo.base", role: "active outline and icon" },
+        { token: "color.brand.coral", role: "caret" },
+        { token: "radius.full", role: "pill" },
+      ],
+    },
+    props: [
+      { name: "value / onChange", type: "string / (v) => void", required: true, description: "Controlled text." },
+      { name: "placeholder", type: "string", required: false, description: "Also the accessibility label." },
+      { name: "size", type: '"sm" | "md" | "lg"', required: false, default: '"md"', description: "36 / 44 / 48 tall." },
+      { name: "active", type: "boolean", required: false, description: "Force the indigo stroke (it also shows on focus)." },
+      { name: "endSlot", type: "ReactNode", required: false, description: "A control inside the pill after the clear button." },
+      { name: "trailing", type: "ReactNode", required: false, description: "A tag before the clear button." },
+    ],
+    usage: {
+      patterns: [{ name: "default", when: "A list's search bar", code: `<SearchField value={q} onChange={setQ} placeholder="Search items…" />` }],
+      antiPatterns: [{ scenario: "Hand-built search pill", why: "Three copies had already drifted", instead: "Use <SearchField>" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Searching a list"],
+      neverUseFor: ["Free-text form fields"],
+      alwaysRemember: ["Clear button appears only with text"],
+    },
+    changelog: ["2026-11-02: new. Replaces identical hand-built search bars on the tasks and action item screens.", "2026-11-02: sizes sm / md / lg and endSlot; now also the companies list search (with the sort menu inside) and the Engagements drawer search. Indigo stroke on focus everywhere."],
+  },
+
+  // ── SectionHeader ────────────────────────────────────────────────────────────────
+  {
+    name: "SectionHeader",
+    category: "ui-primitive",
+    type: "display",
+    description:
+      "The small label above a list section: uppercase label, optional count pill and round add button; `divider` centers the label between two hairlines (e.g. Company-Wide Results).",
+    file: "app/components/ui/SectionHeader.tsx",
+    designSystemSection: "#section-header",
+    flutterEquivalent: "SectionHeader — lib/view/_widget/section_header.dart",
+    tokens: {
+      required: [
+        { token: "color.text.muted", role: "label" },
+        { token: "color.text.disabled", role: "count" },
+        { token: "color.dark.secondary", role: "count pill" },
+        { token: "color.alpha.white-10", role: "divider lines" },
+        { token: "color.neonindigo.base", role: "add button" },
+        { token: "radius.full", role: "pills" },
+      ],
+    },
+    props: [
+      { name: "label", type: "string", required: true, description: "Section name." },
+      { name: "count", type: "number", required: false, description: "Count pill." },
+      { name: "onAdd / addLabel", type: "() => void / string", required: false, description: "Round add button and its accessibility label." },
+      { name: "divider", type: "boolean", required: false, description: "Centered between hairlines." },
+    ],
+    usage: {
+      patterns: [{ name: "default", when: "Home companies list", code: `<SectionHeader label="Your Companies" count={n} onAdd={addLead} addLabel="Add new lead" />` }],
+      antiPatterns: [{ scenario: "Inline section labels", why: "Spacing and casing drift", instead: "Use <SectionHeader>" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Heading a list section"],
+      neverUseFor: ["Page titles"],
+      alwaysRemember: ["Divider variant takes no count"],
+    },
+    changelog: ["2026-11-02: new. Moved out of the home screen."],
+  },
+
+  // ── IconButton ────────────────────────────────────────────────────────────────
+  {
+    name: "IconButton",
+    category: "ui-primitive",
+    type: "interactive",
+    description:
+      "A round button with one icon. Variants: filled (dark-secondary circle), glass (transparent at rest, blurred translucent once `scrolled`; used for the floating back / more buttons) and plain.",
+    file: "app/components/ui/IconButton.tsx",
+    designSystemSection: "#icon-button",
+    flutterEquivalent: "HalosightIconButton — lib/view/_widget/halosight_icon_button.dart",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "filled circle" },
+        { token: "color.alpha.bg-glass", role: "glass circle when scrolled" },
+        { token: "color.alpha.white-10", role: "glass inset stroke" },
+        { token: "color.text.primary", role: "icon" },
+        { token: "radius.full", role: "circle" },
+      ],
+    },
+    props: [
+      { name: "icon / label", type: "string / string", required: true, description: "Material icon name and accessibility label." },
+      { name: "variant", type: '"filled" | "glass" | "plain"', required: false, description: "Default filled." },
+      { name: "size", type: "32 | 36 | 40 | 44", required: false, description: "Default 40." },
+      { name: "scrolled", type: "boolean", required: false, description: "Glass only." },
+    ],
+    usage: {
+      patterns: [{ name: "default", when: "Floating header back button", code: `<IconButton icon="arrow_back" label="Go back" variant="glass" size={36} scrolled={hasScrolled} onClick={back} />` }],
+      antiPatterns: [{ scenario: "A bare <button> with an icon and a circle", why: "Sizes and press states drift", instead: "Use <IconButton>" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Any single-icon round button"],
+      neverUseFor: ["Buttons with labels — use Button"],
+      alwaysRemember: ["Glass only shows its background when scrolled"],
+    },
+    changelog: ["2026-11-02: new. Used by the interaction page's floating buttons and the home profile button."],
+  },
+
+  // ── Banner ────────────────────────────────────────────────────────────────
+  {
+    name: "Banner",
+    category: "ui-primitive",
+    type: "display",
+    description:
+      "An inline message card inside a screen. Tones: info (indigo, default) and warning (amber). Icon at the start, message in secondary text.",
+    file: "app/components/ui/Banner.tsx",
+    designSystemSection: "#banner",
+    flutterEquivalent: "HalosightBanner — lib/view/_widget/halosight_banner.dart",
+    tokens: {
+      required: [
+        { token: "color.neonindigo.base", role: "info icon, tint and stroke" },
+        { token: "color.warning", role: "warning icon, tint and stroke" },
+        { token: "color.text.secondary", role: "message" },
+        { token: "radius.md", role: "card" },
+      ],
+    },
+    props: [
+      { name: "tone", type: '"info" | "warning"', required: false, description: "Default info." },
+      { name: "icon", type: "string", required: false, description: "Defaults per tone." },
+      { name: "children", type: "ReactNode", required: true, description: "The message." },
+    ],
+    usage: {
+      patterns: [{ name: "default", when: "Another rep's account", code: `<Banner>You\'re viewing Dana\'s account.</Banner>` }],
+      antiPatterns: [{ scenario: "A toast for context that should stay", why: "Toasts disappear", instead: "Use <Banner> inline" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Context the rep should read once"],
+      neverUseFor: ["Transient confirmations — use Toast"],
+      alwaysRemember: ["Not dismissible yet"],
+    },
+    changelog: ["2026-11-02: new. Replaces the hand-built banner on other reps' accounts."],
+  },
+
   // ── Menu ────────────────────────────────────────────────────────────────────
   {
     name: "Menu",
@@ -1059,7 +1353,7 @@ open(account.name);` }],
       neverUseFor: ["Capturing a visit — that is the capture flow"],
       alwaysRemember: ["Answers are mock; real answers need provenance (sources) before this ships", "Reuses Drawer chrome; the panel is keyboard aware"],
     },
-    changelog: ["2026-10-28: new. Entry is the Ask item in the account's more-options menu (KebabMenu with icons)."],
+    changelog: ["2026-10-28: new. Entry is the AI chat button next to the more-options dots on the account and interaction screens (Ask is no longer a menu item)."],
   },
 
   // ── ChatInput ───────────────────────────────────────────────────────────────
@@ -1133,7 +1427,7 @@ open(account.name);` }],
     category: "feature",
     type: "interactive",
     description:
-      "Bottom dock for voice mode, replacing ChatInput. Phases: listening (italic “Listening…”, blue glow, orb halo), thinking (italic transcript), speaking (coral glow, flat controls). " +
+      "Bottom dock for voice mode, replacing ChatInput. Phases: listening (italic “Listening…”, orb halo), thinking (italic transcript), speaking (flat controls). The coloured haze is VoiceAtmosphere, painted behind the whole panel. " +
       "Controls: add, mute, and a white close button that returns to the text input.",
     file: "app/components/chat/ChatVoiceDock.tsx",
     designSystemSection: "#account-chat",
@@ -1158,6 +1452,40 @@ open(account.name);` }],
     },
     aiHints: { priority: "low", useWhen: ["Hands-free chat"], neverUseFor: ["Visit capture recording — use the capture widget"], alwaysRemember: ["Light mode unchecked"] },
     changelog: ["2026-10-28: new."],
+  },
+
+  // ── VoiceAtmosphere ─────────────────────────────────────────────────────────
+  {
+    name: "VoiceAtmosphere",
+    category: "feature",
+    type: "display",
+    description:
+      "The coloured haze behind a voice conversation, painted over the whole chat panel and behind its content. listening: an indigo haze rises from the bottom and follows the sound of the person talking (height and brightness track the mic level; the prototype simulates speech bursts). " +
+      "thinking: coral and indigo blobs flow along the bottom edge, sweeping side to side (~200px tall). speaking: a low coral bloom hugging the bottom edge (~150px, breathing on a 3s cycle). Both stay at the bottom, below the reply text; nothing wraps the panel edges. Colours cross-fade between phases; reduced motion holds everything still.",
+    file: "app/components/chat/VoiceAtmosphere.tsx",
+    designSystemSection: "#account-chat",
+    flutterEquivalent: "VoiceAtmosphere — lib/view/_widget/chat/voice_atmosphere.dart (CustomPaint / ShaderMask in a Stack, ignoring pointers; level from the audio input)",
+    tokens: {
+      required: [
+        { token: "color.neonindigo / light / dark", role: "listening haze, edge glow (mixed to transparent)" },
+        { token: "color.brand.coral / coral-dark",  role: "thinking flow, speaking bloom (mixed to transparent)" },
+      ],
+    },
+    props: [
+      { name: "phase", type: '"listening" | "thinking" | "speaking"', required: true, description: "Which haze to show." },
+      { name: "level", type: "MotionValue<number>", required: false, description: "Voice level 0–1; omitted = simulated speech (useSpeechLevel)." },
+    ],
+    usage: {
+      patterns: [{ name: "behind the chat", when: "Voice mode is on", code: `<VoiceAtmosphere phase={phase} />  // first child; wrap the content in a relative z-index 1 container` }],
+      antiPatterns: [{ scenario: "Putting the haze inside the dock", why: "It has to span the panel and sit behind the messages", instead: "Render VoiceAtmosphere as a sibling behind the content" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["Hands-free chat"],
+      neverUseFor: ["Visit capture recording — that has its own widget"],
+      alwaysRemember: ["Real builds feed `level` from the microphone", "Modelled on the general shape of Claude's voice haze, not a copy"],
+    },
+    changelog: ["2026-11-02: new. Replaces the dock's drifting blobs: listening follows the voice, thinking flows along the bottom, speaking sits low."],
   },
 
   // ── ChatHistoryMenu ─────────────────────────────────────────────────────────

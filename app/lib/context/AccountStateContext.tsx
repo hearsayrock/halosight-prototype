@@ -3,7 +3,7 @@
 /**
  * FLUTTER HANDOFF: AccountStateContext
  * Tracks in-session account state overrides — disqualified leads, needs-attention
- * flags, and rep-entered contact overrides.
+ * flags, rep-entered contact overrides, deleted interactions (activity ids), and which Engagements rows were opened.
  * In production this would write to the backend; here it's ephemeral React state.
  * Flutter equivalent: account_state_provider.dart / AccountRepository
  */
@@ -25,6 +25,11 @@ interface AccountStateContextValue {
   clearNeedsAttention: (id: string) => void;
   getContactOverride: (id: string) => ContactInfo | undefined;
   updateContact: (id: string, info: ContactInfo) => void;
+  isActivityDeleted: (activityId: string) => boolean;
+  deleteActivity: (activityId: string) => void;
+  restoreActivity: (activityId: string) => void;
+  isEngagementRead: (engagementId: string) => boolean;
+  markEngagementRead: (engagementId: string) => void;
 }
 
 const AccountStateContext = createContext<AccountStateContextValue>({
@@ -36,11 +41,18 @@ const AccountStateContext = createContext<AccountStateContextValue>({
   clearNeedsAttention: () => {},
   getContactOverride: () => undefined,
   updateContact: () => {},
+  isActivityDeleted: () => false,
+  deleteActivity: () => {},
+  restoreActivity: () => {},
+  isEngagementRead: () => false,
+  markEngagementRead: () => {},
 });
 
 export function AccountStateProvider({ children }: { children: React.ReactNode }) {
   const [disqualifiedIds, setDisqualifiedIds] = useState<Set<string>>(new Set());
   const [attentionIds, setAttentionIds] = useState<Set<string>>(new Set());
+  const [deletedActivityIds, setDeletedActivityIds] = useState<Set<string>>(new Set());
+  const [readEngagementIds, setReadEngagementIds] = useState<Set<string>>(new Set());
   const [contactOverrides, setContactOverrides] = useState<Map<string, ContactInfo>>(new Map());
 
   function disqualify(id: string) {
@@ -67,6 +79,22 @@ export function AccountStateProvider({ children }: { children: React.ReactNode }
     });
   }
 
+  function deleteActivity(activityId: string) {
+    setDeletedActivityIds((prev) => new Set([...prev, activityId]));
+  }
+
+  function restoreActivity(activityId: string) {
+    setDeletedActivityIds((prev) => {
+      const next = new Set(prev);
+      next.delete(activityId);
+      return next;
+    });
+  }
+
+  function markEngagementRead(engagementId: string) {
+    setReadEngagementIds((prev) => new Set([...prev, engagementId]));
+  }
+
   function getContactOverride(id: string) {
     return contactOverrides.get(id);
   }
@@ -89,6 +117,11 @@ export function AccountStateProvider({ children }: { children: React.ReactNode }
         clearNeedsAttention,
         getContactOverride,
         updateContact,
+        isActivityDeleted: (activityId) => deletedActivityIds.has(activityId),
+        deleteActivity,
+        restoreActivity,
+        isEngagementRead: (engagementId) => readEngagementIds.has(engagementId),
+        markEngagementRead,
       }}
     >
       {children}

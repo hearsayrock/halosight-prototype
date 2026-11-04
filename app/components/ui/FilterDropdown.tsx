@@ -45,7 +45,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
           gap: isFiltered ? 4 : 2,
           background: open ? "var(--md-sys-color-neonindigo)" : isFiltered ? "var(--md-sys-color-dark-secondary)" : "var(--md-sys-color-dark-secondary)",
           borderRadius: "var(--radius-full)",
-          color: open ? "#fff" : "var(--md-sys-color-text-primary)",
+          color: open ? "var(--md-sys-color-text-on-accent)" : "var(--md-sys-color-text-primary)",
         }}
       >
         {isFiltered && !open && (

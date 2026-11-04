@@ -52,3 +52,15 @@ export function formatRelativeDate(date: Date, now: Date = new Date()): string {
   const y = Math.floor(days / 365);
   return y === 1 ? "1 year ago" : `${y} years ago`;
 }
+
+/** Date label for the Engagements list: "Today", "Yesterday", a weekday within the week ("Monday"), "Last Friday" the week before, then "Oct 12". */
+export function formatEngagementDate(date: Date, now: Date = new Date()): string {
+  const start = (d: Date) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x.getTime(); };
+  const days = Math.round((start(now) - start(date)) / 86_400_000);
+  const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
+  if (days <= 0) return "Today";
+  if (days === 1) return "Yesterday";
+  if (days < 7) return weekday;
+  if (days < 14) return `Last ${weekday}`;
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}

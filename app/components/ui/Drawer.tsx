@@ -96,9 +96,9 @@ export function DrawerPanel({
 }
 
 /** Standard content padding for a drawer: 16px sides, 12px top, 32px bottom. */
-export function DrawerBody({ children, style }: { children: ReactNode; style?: CSSProperties }) {
+export function DrawerBody({ children, style, className }: { children: ReactNode; style?: CSSProperties; className?: string }) {
   return (
-    <div style={{ padding: "var(--spacing-3) var(--spacing-4) var(--spacing-8)", ...style }}>
+    <div className={className} style={{ padding: "var(--spacing-3) var(--spacing-4) var(--spacing-8)", ...style }}>
       {children}
     </div>
   );

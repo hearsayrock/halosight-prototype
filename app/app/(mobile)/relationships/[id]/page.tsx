@@ -20,13 +20,14 @@
  *   Not implemented in web prototype.
  */
 
+import Banner from "@/components/ui/Banner";
 import { use, useState, useRef, useEffect, Suspense } from "react";
-import { createPortal } from "react-dom";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import KebabMenu from "@/components/ui/KebabMenu";
+import IconButton from "@/components/ui/IconButton";
+import { AiChatIcon } from "@/components/ui/CustomIcons";
 import InsightCard from "@/components/accounts/InsightCard";
 import { useAccountChat } from "@/lib/context/ChatContext";
 import ConvertToAccountSheet from "@/components/accounts/ConvertToAccountSheet";
@@ -35,6 +36,10 @@ import ActivityCard from "@/components/accounts/ActivityCard";
 import ActionItemList, { ActionItemsHeader } from "@/components/accounts/ActionItemList";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
+import AlertDialog from "@/components/ui/AlertDialog";
+import { ToastSpinner } from "@/components/ui/Toast";
+import { useToast } from "@/lib/context/ToastContext";
+import Toast from "@/components/ui/Toast";
 import NoteSheet from "@/components/ui/NoteSheet";
 import { AccountDetailSkeleton } from "@/components/ui/Skeleton";
 import ErrorState from "@/components/ui/ErrorState";
@@ -47,90 +52,6 @@ import type { ActivityItem } from "@/lib/types";
 
 // ── Activity card ─────────────────────────────────────────────────────────────
 
-// ── Preparing note card ───────────────────────────────────────────────────────
-
-function PreparingNoteCard() {
-  return (
-    <>
-      <style>{`
-        @keyframes pnSpin {
-          to { transform: rotate(360deg); }
-        }
-        @keyframes pnPulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.15; }
-        }
-        @keyframes pnShimmer {
-          0%   { transform: translateX(-200%); }
-          100% { transform: translateX(400%); }
-        }
-        .pn-spinner {
-          animation: pnSpin 1s linear infinite;
-          transform-origin: center;
-        }
-        .pn-dot {
-          animation: pnPulse 1.1s ease-in-out infinite;
-        }
-        .pn-shimmer {
-          animation: pnShimmer 1.6s ease-in-out infinite;
-        }
-        .pn-shimmer-2 { animation-delay: 0.35s; }
-        .pn-shimmer-3 { animation-delay: 0.7s; }
-      `}</style>
-      <motion.div
-        initial={{ opacity: 0, y: -4 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: "spring", stiffness: 400, damping: 32 }}
-        style={{
-          background: "var(--md-sys-color-dark-secondary)",
-          borderRadius: "var(--radius-md)",
-          border: "1px solid rgba(139,146,255,0.22)",
-          padding: "14px 16px",
-        }}
-      >
-        {/* Header row */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-          <div
-            className="pn-spinner"
-            style={{
-              width: 14, height: 14, flexShrink: 0,
-              borderRadius: "50%",
-              border: "2px solid rgba(139,146,255,0.18)",
-              borderTopColor: "var(--md-sys-color-neonindigo)",
-            }}
-          />
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "var(--md-sys-color-neonindigo)" }}>
-            Preparing note
-          </span>
-          <span
-            className="pn-dot"
-            style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--md-sys-color-neonindigo)", display: "block", flexShrink: 0 }}
-          />
-        </div>
-
-        {/* 3 shimmering skeleton lines */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-          {(["82%", "65%", "48%"] as const).map((w, i) => (
-            <div
-              key={w}
-              style={{ width: w, height: 11, borderRadius: "var(--radius-full)", background: "var(--md-sys-color-dark-tertiary)", overflow: "hidden" }}
-            >
-              <div
-                className={`pn-shimmer${i === 1 ? " pn-shimmer-2" : i === 2 ? " pn-shimmer-3" : ""}`}
-                style={{
-                  height: "100%",
-                  width: "50%",
-                  background: "linear-gradient(90deg, transparent 0%, rgba(139,146,255,0.28) 50%, transparent 100%)",
-                }}
-              />
-            </div>
-          ))}
-        </div>
-      </motion.div>
-    </>
-  );
-}
-
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> }) {
@@ -139,6 +60,15 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   const router = useRouter();
   const preview = searchParams.get("preview"); // "loading" | "error" | null
   const noteState = searchParams.get("note");  // "processing" | null
+  const { show: showToast, dismiss: dismissToast } = useToast();
+
+  // ?note=processing shows the "Preparing note" top pill until you leave the screen.
+  useEffect(() => {
+    if (noteState !== "processing") return;
+    showToast({ shape: "pill", title: "Preparing note", leading: <ToastSpinner />, duration: null });
+    return () => dismissToast();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [activeTab, setActiveTab] = useState<"overview" | "activity">(
     searchParams.get("tab") === "activity" || searchParams.get("note") === "processing" ? "activity" : "overview"
   );
@@ -200,7 +130,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
   }
 
   const { status: captureStatus, accountId: capturingId, startCapture } = useCapture();
-  const { disqualify, restore, needsAttention, clearNeedsAttention, updateContact, getContactOverride } = useAccountState();
+  const { disqualify, restore, needsAttention, clearNeedsAttention, updateContact, getContactOverride, isActivityDeleted } = useAccountState();
   const { open: openChat } = useAccountChat();
 
   // Contact info for leads — form state for the Needs Attention banner
@@ -369,9 +299,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 display: "flex", alignItems: "center", justifyContent: "center",
                 borderRadius: "50%",
                 border: "none",
-                background: scrolledPast ? "rgba(20, 23, 38, 0.88)" : "transparent",
+                background: scrolledPast ? "var(--md-sys-color-alpha-bg-glass)" : "transparent",
                 backdropFilter: scrolledPast ? "blur(16px) saturate(180%)" : undefined,
-                boxShadow: scrolledPast ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
+                boxShadow: scrolledPast ? "inset 0 0 0 1px var(--md-sys-color-alpha-white-10)" : "none",
                 transition: "background 180ms ease",
               }}
             >
@@ -407,10 +337,11 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                 transition: "opacity 160ms ease",
               }}
             >
+              <div className="flex items-center" style={{ gap: "var(--spacing-2)" }}>
+              <IconButton glyph={<AiChatIcon size={22} />} label="Ask about this account" onClick={() => openChat(account.name)} />
               <KebabMenu
                 items={[
                   { label: "Edit", icon: "edit", onClick: () => setShowInfoSheet(true) },
-                  { label: "Ask", icon: "auto_awesome", onClick: () => openChat(account.name) },
                   { label: "Share", icon: "ios_share", onClick: () => {} },
                   {
                     label: "Delete", icon: "delete", destructive: true,
@@ -419,6 +350,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   },
                 ]}
               />
+              </div>
             </div>
           </div>
         );
@@ -476,21 +408,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             const message = repName
               ? `You're viewing ${repName}'s account — notes you capture here will be visible to them.`
               : "This account isn't assigned to a rep — notes you capture here will be visible to your team.";
-            return (
-              <div
-                className="flex items-start gap-2.5 px-3.5 py-3 mb-3"
-                style={{
-                  background: "rgba(139, 146, 255, 0.08)",
-                  border: "1px solid rgba(139, 146, 255, 0.18)",
-                  borderRadius: "var(--radius-md)",
-                }}
-              >
-                <Icon name="info" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0, marginTop: 1 }} />
-                <span className="body-xs leading-snug" style={{ color: "var(--md-sys-color-text-secondary)" }}>
-                  {message}
-                </span>
-              </div>
-            );
+            return <Banner className="mb-3">{message}</Banner>;
           })()}
 
           {/* Needs Attention banner */}
@@ -498,8 +416,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
             <div
               className="mb-3 px-3.5 py-3"
               style={{
-                background: "rgba(245,166,35,0.06)",
-                border: "1px solid rgba(245,166,35,0.25)",
+                background: "color-mix(in srgb, var(--md-sys-color-warning) 6%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--md-sys-color-warning) 25%, transparent)",
                 borderRadius: "var(--radius-md)",
               }}
             >
@@ -559,25 +477,6 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               </div>
             </div>
           )}
-
-          {/* AI review ready banner */}
-          {account.halosightType === "prospect" && id === "innovative-tech-tucson" && !effectiveJustCreated && (
-            <button
-              onClick={() => router.push(`/relationships/${id}/review`)}
-              className="w-full flex items-center gap-2.5 px-3.5 py-3 mb-4 active:opacity-70 transition-opacity text-left"
-              style={{
-                background: "rgba(139,146,255,0.08)",
-                border: "1px solid rgba(139,146,255,0.2)",
-                borderRadius: "var(--radius-md)",
-              }}
-            >
-              <Icon name="auto_awesome" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-              <span className="flex-1 text-[13px] font-medium" style={{ color: "var(--md-sys-color-text-secondary)" }}>
-                AI found <span style={{ color: "var(--md-sys-color-neonindigo)", fontWeight: 700 }}>3 CRM updates</span> from your last visit
-              </span>
-              <Icon name="arrow_forward" size={15} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-            </button>
-          )}
         </div>
 
         {/* Tab row — sticky only when scrolling up past Row B, otherwise travels with content */}
@@ -616,9 +515,9 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
               onClick={() => startCapture(id, account.name, false, account.halosightType === "prospect")}
               className="w-full flex items-center gap-3 px-4 py-4 text-left active:opacity-70 transition-opacity"
               style={{
-                border: "1.5px dashed rgba(139,146,255,0.45)",
+                border: "1.5px dashed color-mix(in srgb, var(--md-sys-color-neonindigo) 45%, transparent)",
                 borderRadius: "var(--radius-xl)",
-                background: "rgba(139,146,255,0.04)",
+                background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 4%, transparent)",
               }}
             >
               <Icon name="auto_awesome" size={20} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
@@ -710,9 +609,8 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
         {/* Activity */}
         {!effectiveJustCreated && activeTab === "activity" && (
           <div className="flex flex-col pb-24">
-            {noteState === "processing" && <div className="px-4 pb-3"><PreparingNoteCard /></div>}
-            {(detail?.recentActivity?.length || captureJustCompleted) ? (
-              (detail?.recentActivity ?? [{ id: "new-capture", accountId: "new-capture", title: "Sandra confirmed we're the frontrunner for the contract", summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.", date: new Date(), durationMinutes: 28, hasTranscript: true, repName: "Jordan Mills", type: "visit" as const }]).map((item, i, all) => (
+                        {(detail?.recentActivity?.length || captureJustCompleted) ? (
+              ((detail?.recentActivity ?? [{ id: "new-capture", accountId: "new-capture", title: "Sandra confirmed we're the frontrunner for the contract", summary: "Strong meeting — Sandra is ready to move forward and asked for a formal proposal by end of next week.", date: new Date(), durationMinutes: 28, hasTranscript: true, repName: "Jordan Mills", type: "visit" as const }]).filter((a) => !isActivityDeleted(a.id))).map((item, i, all) => (
                 <ActivityCard
                   key={item.id}
                   item={item}
@@ -791,123 +689,25 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
       />
       <NoteSheet visible={noteSheetOpen} onDone={handleNoteDone} />
 
-      {/* Disqualify toast */}
-      {typeof document !== "undefined" && document.getElementById("phone-overlay-root") && createPortal(
-        <AnimatePresence>
-          {showDisqualifyConfirm && (
-            <>
-              {/* Scrim */}
-              <motion.div
-                key="disqualify-scrim"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                onClick={() => setShowDisqualifyConfirm(false)}
-                style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 70, pointerEvents: "auto" }}
-              />
-              {/* Sheet */}
-              <motion.div
-                key="disqualify-confirm"
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", stiffness: 340, damping: 30 }}
-                style={{
-                  position: "absolute",
-                  bottom: 0, left: 0, right: 0,
-                  zIndex: 71,
-                  pointerEvents: "auto",
-                  background: "var(--md-sys-color-dark-secondary)",
-                  borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-                  padding: "28px 24px 44px",
-                }}
-              >
-                <p style={{ fontSize: 18, fontWeight: 700, color: "var(--md-sys-color-text-primary)", marginBottom: 8 }}>
-                  Disqualify this lead?
-                </p>
-                <p style={{ fontSize: 14, lineHeight: 1.5, color: "var(--md-sys-color-text-secondary)", marginBottom: 28 }}>
-                  This lead will disappear from your list. You'll need to go into your CRM to undo this.
-                </p>
-                <button
-                  onClick={() => { setShowDisqualifyConfirm(false); handleDisqualify(); }}
-                  className="w-full py-3.5 rounded-full text-base font-semibold active:opacity-80 transition-opacity mb-3"
-                  style={{ background: "var(--md-sys-color-brand-coral-dark)", color: "var(--md-sys-color-text-on-coral)" }}
-                >
-                  Yes, disqualify
-                </button>
-                <button
-                  onClick={() => setShowDisqualifyConfirm(false)}
-                  className="w-full py-3.5 rounded-full text-base font-semibold active:opacity-80 transition-opacity"
-                  style={{ background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)" }}
-                >
-                  Cancel
-                </button>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>,
-        document.getElementById("phone-overlay-root")!
-      )}
-
-      {typeof document !== "undefined" && document.getElementById("phone-overlay-root") && createPortal(
-        <AnimatePresence>
-          {disqualifyPending && (
-            <motion.div
-              key="disqualify-toast"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 12 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-              style={{
-                position: "absolute",
-                bottom: 106,
-                left: 16,
-                right: 16,
-                zIndex: 60,
-                pointerEvents: "auto",
-              }}
-            >
-              <div
-                style={{
-                  background: "var(--md-sys-color-dark-secondary)",
-                  borderRadius: "var(--radius-xl)",
-                  border: "1px solid var(--md-sys-color-dark-tertiary)",
-                  boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.3)",
-                  padding: "12px 16px",
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
-                    style={{ background: "rgba(107, 157, 176, 0.20)" }}
-                  >
-                    <div className="w-2 h-2 rounded-full" style={{ background: "var(--md-sys-color-brand-teal)" }} />
-                  </div>
-                  <span className="flex-1 text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                    Lead disqualified
-                  </span>
-                  <button
-                    onClick={handleUndoDisqualify}
-                    className="text-sm-bold active:opacity-60 transition-opacity"
-                    style={{ color: "var(--md-sys-color-neonindigo)" }}
-                  >
-                    undo
-                  </button>
-                  <button
-                    onClick={handleConfirmDisqualify}
-                    className="ml-1 flex items-center justify-center active:opacity-60 transition-opacity"
-                    style={{ color: "var(--md-sys-color-text-muted)" }}
-                  >
-                    <Icon name="close" size={18} />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.getElementById("phone-overlay-root")!
-      )}
+      {/* Disqualify: confirm, then a toast with Undo while the 5s commit timer runs */}
+      <AlertDialog
+        open={showDisqualifyConfirm}
+        title="Disqualify this lead?"
+        body="This lead will disappear from your list. You'll need to go into your CRM to undo this."
+        confirmLabel="Yes, disqualify"
+        onCancel={() => setShowDisqualifyConfirm(false)}
+        onConfirm={() => { setShowDisqualifyConfirm(false); handleDisqualify(); }}
+      />
+      <Toast
+        visible={disqualifyPending}
+        title="Lead disqualified"
+        action={{ label: "Undo", onPress: handleUndoDisqualify }}
+        // The 5s commit timer above is the real clock; closing the toast commits right away.
+        duration={null}
+        dismissOnAction={false}
+        bottom={106}
+        onDismiss={handleConfirmDisqualify}
+      />
 
     </div>
   );

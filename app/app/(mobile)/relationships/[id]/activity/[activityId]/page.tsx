@@ -14,10 +14,16 @@
 
 import React, { use, useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
+import IconButton from "@/components/ui/IconButton";
+import { AiChatIcon } from "@/components/ui/CustomIcons";
 import Icon from "@/components/ui/Icon";
 import Menu, { menuPanelVariants, menuPanelTransition } from "@/components/ui/Menu";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAccountChat } from "@/lib/context/ChatContext";
+import { useAccountState } from "@/lib/context/AccountStateContext";
+import { useToast } from "@/lib/context/ToastContext";
+import AlertDialog from "@/components/ui/AlertDialog";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
 import NoteSheet from "@/components/ui/NoteSheet";
@@ -242,19 +248,13 @@ const DRAWER_EASING = "cubic-bezier(0.32, 0.72, 0, 1)";
 function ParticipantsDrawer({
   participants, contacts, onRename, onUnlink, onLinkContact, onAdd, onClose,
 }: ParticipantsDrawerProps) {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [editingNames, setEditingNames] = useState<Record<string, string>>(
     () => Object.fromEntries(participants.map(p => [p.id, p.name]))
   );
 
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
   function close() {
     setVisible(false);
-    setTimeout(onClose, DRAWER_DURATION);
   }
 
   function getSuggestions(id: string): Contact[] {
@@ -269,29 +269,11 @@ function ParticipantsDrawer({
   }
 
   return (
-    <>
-      <div
-        onClick={close}
-        style={{
-          position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 40,
-          opacity: visible ? 1 : 0,
-          transition: `opacity ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
-        }}
-      />
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0,
-        background: "var(--md-sys-color-dark-secondary)",
-        borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-        zIndex: 41,
-        maxHeight: "80%",
-        display: "flex", flexDirection: "column",
-        transform: visible ? "translateY(0)" : "translateY(100%)",
-        transition: `transform ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
-      }}>
-        {/* Handle */}
-        <div style={{ display: "flex", justifyContent: "center", paddingTop: 10, paddingBottom: 4, flexShrink: 0 }}>
-          <div style={{ width: 36, height: 4, borderRadius: "var(--radius-full)", background: "var(--md-sys-color-alpha-white-10)" }} />
-        </div>
+    <AnimatePresence onExitComplete={onClose}>
+      {visible && (
+        <>
+          <DrawerBackdrop onClick={close} zIndex={40} />
+          <DrawerPanel flexColumn maxHeight="80%" zIndex={41}>
         {/* Header */}
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -442,8 +424,10 @@ function ParticipantsDrawer({
             Participants are people in this interaction. Linking a name to a contact keeps your notes connected across visits.
           </p>
         </div>
-      </div>
-    </>
+          </DrawerPanel>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -468,18 +452,12 @@ function SpeakerDrawer({
 }: SpeakerDrawerProps) {
   const participant = participants.find(p => p.id === participantId);
   const [editingName, setEditingName] = useState(participant?.name ?? "");
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
+  const [visible, setVisible] = useState(true);
 
   if (!participant) return null;
 
   function close() {
     setVisible(false);
-    setTimeout(onClose, DRAWER_DURATION);
   }
 
   const otherParticipants = participants.filter(p => p.id !== participantId && !p.isYou);
@@ -491,29 +469,11 @@ function SpeakerDrawer({
   }
 
   return (
-    <>
-      <div
-        onClick={close}
-        style={{
-          position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 40,
-          opacity: visible ? 1 : 0,
-          transition: `opacity ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
-        }}
-      />
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0,
-        background: "var(--md-sys-color-dark-secondary)",
-        borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-        zIndex: 41,
-        maxHeight: "85%",
-        display: "flex", flexDirection: "column",
-        transform: visible ? "translateY(0)" : "translateY(100%)",
-        transition: `transform ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
-      }}>
-        {/* Handle */}
-        <div style={{ display: "flex", justifyContent: "center", paddingTop: 10, paddingBottom: 4, flexShrink: 0 }}>
-          <div style={{ width: 36, height: 4, borderRadius: "var(--radius-full)", background: "var(--md-sys-color-alpha-white-10)" }} />
-        </div>
+    <AnimatePresence onExitComplete={onClose}>
+      {visible && (
+        <>
+          <DrawerBackdrop onClick={close} zIndex={40} />
+          <DrawerPanel flexColumn maxHeight="85%" zIndex={41}>
 
         {/* Header */}
         <div style={{
@@ -692,8 +652,10 @@ function SpeakerDrawer({
             Reassigning affects only the mention you tapped. Linking a contact applies to every mention of this participant.
           </p>
         </div>
-      </div>
-    </>
+          </DrawerPanel>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -718,6 +680,9 @@ function InteractionDetailPageContent({
   const [typePickerOpen, setTypePickerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { open: openChat } = useAccountChat();
+  const { deleteActivity, restoreActivity } = useAccountState();
+  const { show: showToast } = useToast();
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [interactionTypeOverride, setInteractionTypeOverride] = useState<"inperson" | "phone" | null>(null);
 
   // Action items
@@ -887,22 +852,8 @@ function InteractionDetailPageContent({
   const displayKeyPoints = noteKeyPointsOverride ?? activity.aiSummary?.keyPoints ?? [];
 
   const showKebab = !hasScrolled || scrollingUp;
-  const glassCircle = (visible: boolean): React.CSSProperties => ({
-    width: 36,
-    height: 36,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "50%",
-    border: "none",
-    cursor: "pointer",
-    background: hasScrolled ? "rgba(20, 23, 38, 0.88)" : "transparent",
-    backdropFilter: hasScrolled ? "blur(16px) saturate(180%)" : undefined,
-    boxShadow: hasScrolled ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
-    transition: "background 180ms ease",
-    opacity: visible ? 1 : 0,
-    pointerEvents: visible ? "auto" : "none",
-  });
+  // Floating top-bar buttons: glass once the page has scrolled under them; the more-options one hides while scrolling down.
+  const fade = (visible: boolean): React.CSSProperties => ({ opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none" });
 
   return (
     <div style={{ position: "relative", height: "100%", background: "var(--md-sys-color-background)", overflow: "hidden" }}>
@@ -912,13 +863,11 @@ function InteractionDetailPageContent({
         paddingTop: 40, paddingBottom: 10, paddingLeft: 16, paddingRight: 16,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
-        <button onClick={() => router.push(backHref)} aria-label="Go back" style={glassCircle(true)}>
-          <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-primary)" }} />
-        </button>
+        <IconButton icon="arrow_back" label="Go back" variant="glass" size={36} iconSize={22} scrolled={hasScrolled} onClick={() => router.push(backHref)} />
+        <div className="flex items-center" style={{ gap: "var(--spacing-2)" }}>
+        <IconButton glyph={<AiChatIcon size={22} />} label="Ask about this account" variant="glass" size={36} scrolled={hasScrolled} style={fade(showKebab)} onClick={() => openChat(account.name)} />
         <div className="relative">
-          <button aria-label="More options" onClick={() => setMenuOpen((o) => !o)} style={glassCircle(showKebab)}>
-            <Icon name="more_vert" size={22} style={{ color: "var(--md-sys-color-text-primary)" }} />
-          </button>
+          <IconButton icon="more_vert" label="More options" variant="glass" size={36} iconSize={22} scrolled={hasScrolled} style={fade(showKebab)} onClick={() => setMenuOpen((o) => !o)} />
           <AnimatePresence>
             {menuOpen && (
               <>
@@ -936,9 +885,8 @@ function InteractionDetailPageContent({
                     variant="icon"
                     items={[
                       { id: "edit", label: "Edit", icon: "edit", onSelect: () => setMenuOpen(false) },
-                      { id: "ask", label: "Ask", icon: "auto_awesome", onSelect: () => { setMenuOpen(false); openChat(account.name); } },
                       { id: "share", label: "Share", icon: "ios_share", onSelect: () => setMenuOpen(false) },
-                      { id: "delete", label: "Delete", icon: "delete", destructive: true, onSelect: () => setMenuOpen(false) },
+                      { id: "delete", label: "Delete", icon: "delete", destructive: true, onSelect: () => { setMenuOpen(false); setConfirmDelete(true); } },
                     ]}
                   />
                 </motion.div>
@@ -946,7 +894,22 @@ function InteractionDetailPageContent({
             )}
           </AnimatePresence>
         </div>
+        </div>
       </div>
+
+      <AlertDialog
+        open={confirmDelete}
+        title="Delete interaction?"
+        body="This removes the visit and its summary. It can't be undone."
+        confirmLabel="Yes, delete"
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={() => {
+          setConfirmDelete(false);
+          deleteActivity(activityId);
+          showToast({ title: "Interaction deleted", tone: "neutral", action: { label: "Undo", onPress: () => restoreActivity(activityId) }, bottom: 24 });
+          router.push(backHref);
+        }}
+      />
 
       {/* ── Scroll container ─────────────────────────────────────────────────── */}
       <div

@@ -4,6 +4,7 @@ import StaticBottomNav from "@/components/layout/StaticBottomNav";
 import { ActionItemsProvider } from "@/lib/context/ActionItemsContext";
 import { ActionItemDrawerProvider } from "@/lib/context/ActionItemDrawerContext";
 import { ChatProvider } from "@/lib/context/ChatContext";
+import { ToastProvider } from "@/lib/context/ToastContext";
 import { CaptureProvider } from "@/lib/context/CaptureContext";
 import { FakeCallProvider } from "@/lib/context/FakeCallContext";
 import { AccountStateProvider } from "@/lib/context/AccountStateContext";
@@ -26,6 +27,7 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
         <CaptureProvider>
           <FakeCallProvider>
             <PhoneFrame>
+              <ToastProvider>
               <ActionItemDrawerProvider>
               <ChatProvider>
                 <PageTransition>{children}</PageTransition>
@@ -35,6 +37,7 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
                 <DemoReset />
               </ChatProvider>
               </ActionItemDrawerProvider>
+              </ToastProvider>
             </PhoneFrame>
           </FakeCallProvider>
         </CaptureProvider>

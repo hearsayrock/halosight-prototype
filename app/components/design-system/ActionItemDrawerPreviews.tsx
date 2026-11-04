@@ -7,8 +7,9 @@
  */
 
 import { useState } from "react";
+import { AlertCard } from "@/components/ui/AlertDialog";
 import { DrawerHandle } from "@/components/ui/Drawer";
-import { ActionItemDrawerView, ActionItemDrawerEdit, DeleteConfirmCard } from "@/components/accounts/ActionItemDrawer";
+import { ActionItemDrawerView, ActionItemDrawerEdit } from "@/components/accounts/ActionItemDrawer";
 import type { ActionItem } from "@/lib/types";
 
 const daysFrom = (n: number) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + n); return d; };
@@ -73,7 +74,7 @@ export function EditPreview({ focus = null, calendar = false }: { focus?: "title
 export function DeletePreview() {
   return (
     <div className="relative" style={{ background: "var(--md-sys-color-alpha-scrim)", padding: "var(--spacing-10) var(--spacing-6)" }}>
-      <DeleteConfirmCard onCancel={() => {}} onConfirm={() => {}} />
+      <AlertCard title="Delete action item?" body="This is permanent and can't be undone." confirmLabel="Yes, delete" onCancel={() => {}} onConfirm={() => {}} />
     </div>
   );
 }

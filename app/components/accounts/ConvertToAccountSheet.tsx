@@ -181,7 +181,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
             >
               <div
                 className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
-                style={{ background: "rgba(107, 157, 176, 0.15)" }}
+                style={{ background: "color-mix(in srgb, var(--md-sys-color-brand-teal) 15%, transparent)" }}
               >
                 <Icon name="check_circle" fill size={36} style={{ color: "var(--md-sys-color-brand-teal)" }} />
               </div>

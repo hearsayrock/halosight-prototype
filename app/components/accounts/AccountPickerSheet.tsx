@@ -16,6 +16,7 @@
  * responsible for rendering it inside an overlay root with AnimatePresence.
  */
 
+import SearchField from "@/components/ui/SearchField";
 import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
 import { useEffect, useRef, useState } from "react";
 import { mockAccounts } from "@/lib/mock-data/accounts";
@@ -122,29 +123,8 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
         </div>
 
         {/* Search */}
-        <div
-          className="flex items-center gap-2 mx-5 mb-3 px-3 flex-shrink-0"
-          style={{
-            height: 40,
-            background: "var(--md-sys-color-dark-secondary)",
-            borderRadius: "var(--radius-full)",
-          }}
-        >
-          <Icon name="search" size={16} style={{ color: "var(--md-sys-color-text-muted)", flexShrink: 0 }} />
-          <input
-            ref={searchRef}
-            type="text"
-            placeholder="Search accounts…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: "var(--md-sys-color-text-primary)" }}
-          />
-          {query && (
-            <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-              <Icon name="cancel" fill size={15} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-            </button>
-          )}
+        <div className="mx-5 mb-3 flex-shrink-0">
+          <SearchField inputRef={searchRef} value={query} onChange={setQuery} placeholder="Search accounts…" />
         </div>
 
         {/* List */}

@@ -5,12 +5,13 @@
  * Gradient: 3 blurred color blobs animating under a semi-transparent dark surface.
  * Colors: #FF6B5B (coral), #5C63D6 (indigo), #8C92FF (lavender).
  *
- * Account switcher: tapping the account name in recording OR ready state opens
- * a picker sheet. Selecting any account calls switchAccount() without
- * interrupting the recording session.
+ * The bar is only the recording state now. Account switcher: tapping the account name opens a picker sheet;
+ * selecting any account calls switchAccount() without interrupting the recording session.
  *
- * After finalizing, AIReviewOverlay slides up for the post-meeting AI conversation.
- * Accepting or discarding in the overlay transitions to "ready".
+ * After Finish the note is shown as the top pill Toast ("Preparing note" → "Note ready", tap to open it),
+ * not as a bar state. Prospects first get the AIReviewOverlay for the post-meeting AI conversation; the pill
+ * stays on "Preparing note" while they review, and flips to "Note ready" when they accept or discard.
+ * FLUTTER HANDOFF: capture widget = recording state only; processing/ready come from ToastController (pill shape).
  */
 
 import { useEffect, useState } from "react";
@@ -23,6 +24,8 @@ import { mockAccountDetails } from "@/lib/mock-data/accounts";
 import Icon from "@/components/ui/Icon";
 import AccountPickerSheet from "@/components/accounts/AccountPickerSheet";
 import AIReviewOverlay from "@/components/capture/AIReviewOverlay";
+import { ToastCheck, ToastSpinner } from "@/components/ui/Toast";
+import { useToast } from "@/lib/context/ToastContext";
 
 // ── Timer ─────────────────────────────────────────────────────────────────────
 
@@ -104,6 +107,7 @@ export default function CaptureWidget() {
   const { callStatus } = useFakeCall();
   const callInterrupted = callStatus !== "idle";
   const router = useRouter();
+  const { show: showToast } = useToast();
   const [elapsed, setElapsed] = useState(0);
   const [showPicker, setShowPicker] = useState(false);
 
@@ -128,7 +132,7 @@ export default function CaptureWidget() {
     if (status === "idle") setShowPicker(false);
   }, [status]);
 
-  function handleViewNote() {
+  function openNote() {
     if (!accountId) return;
     const detail = mockAccountDetails[accountId];
     const first = detail?.recentActivity?.[0];
@@ -138,8 +142,19 @@ export default function CaptureWidget() {
       const nameParam = accountName ? `?name=${encodeURIComponent(accountName)}` : "";
       router.push(`/relationships/${accountId}/activity/new-capture${nameParam}`);
     }
-    dismissCapture();
   }
+
+  // After Finish, the note shows up as a top pill: "Preparing note" while it processes (and while a prospect reviews
+  // the AI's CRM updates), then "Note ready" — tap it to open the note.
+  useEffect(() => {
+    if (status === "finalizing" || status === "reviewing") {
+      showToast({ shape: "pill", title: "Preparing note", leading: <ToastSpinner />, duration: null }, { replace: true });
+    } else if (status === "ready") {
+      showToast({ shape: "pill", title: "Note ready", leading: <ToastCheck />, duration: 6000, action: { label: "View", onPress: openNote } }, { replace: true });
+      dismissCapture();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   const overlayRoot =
     typeof document !== "undefined"
@@ -155,7 +170,7 @@ export default function CaptureWidget() {
 
       {/* ── Capture widget bar ──────────────────────────────────────────── */}
       <AnimatePresence>
-        {status !== "idle" && (
+        {status === "recording" && (
           <motion.div
             key="capture-widget"
             style={{
@@ -226,72 +241,6 @@ export default function CaptureWidget() {
                     >
                       {callInterrupted ? "Paused" : "Finish"}
                     </button>
-                  </motion.div>
-                )}
-
-                {/* ── Finalizing (AI processing) ────────────────────────── */}
-                {status === "finalizing" && (
-                  <motion.div
-                    key="finalizing"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="px-4 pt-4 pb-7"
-                  >
-                    <p className="text-sm font-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                      {isProspect ? "Analyzing your meeting…" : "Syncing to CRM…"}
-                    </p>
-                    <p className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                      {isProspect
-                        ? "I'll surface any CRM updates in just a moment."
-                        : "Sit back — notes and action items are on their way to Salesforce."}
-                    </p>
-                  </motion.div>
-                )}
-
-                {/* ── Ready (post-review) ───────────────────────────────── */}
-                {status === "ready" && (
-                  <motion.div
-                    key="ready"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="px-4 pt-4 pb-7"
-                  >
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                        {status === "ready" ? "Note is ready! 🎉" : "Finalizing your note…"}
-                      </p>
-                      <button
-                        onClick={dismissCapture}
-                        className="flex-shrink-0 w-5 h-5 flex items-center justify-center active:opacity-60 transition-opacity"
-                        style={{ color: "var(--md-sys-color-text-muted)", fontSize: 18, lineHeight: 1 }}
-                      >
-                        ×
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-3">
-                      {canSwitchAccount ? (
-                        <AccountButton name={accountName ?? ""} onPress={() => setShowPicker(true)} />
-                      ) : (
-                        <p className="text-15-bold truncate" style={{ color: "var(--md-sys-color-text-secondary)" }}>
-                          {accountName}
-                        </p>
-                      )}
-                      <motion.button
-                        initial={{ opacity: 0, scale: 0.85 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                        onClick={handleViewNote}
-                        className="flex-shrink-0 h-8 px-4 text-sm-bold rounded-full active:opacity-70 transition-opacity"
-                        style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-primary)" }}
-                      >
-                        View Note
-                      </motion.button>
-                    </div>
                   </motion.div>
                 )}
 

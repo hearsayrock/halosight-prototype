@@ -12,6 +12,7 @@
 
 import { useState } from "react";
 import Icon from "@/components/ui/Icon";
+import SearchField from "@/components/ui/SearchField";
 import { MenuPanel, MenuSectionLabel } from "@/components/ui/Menu";
 import type { ChatThread } from "@/lib/types";
 
@@ -87,26 +88,7 @@ export default function ChatHistoryMenu({
 
   return (
     <MenuPanel minWidth={0} className={className} style={{ paddingLeft: "var(--spacing-4)", paddingRight: "var(--spacing-4)", paddingTop: "var(--spacing-3)", ...style }}>
-      <div
-        className="flex items-center"
-        style={{
-          gap: "var(--spacing-3)", padding: "0 var(--spacing-4)", height: 44,
-          borderRadius: "var(--radius-full)",
-          background: "var(--md-sys-color-dark-secondary)",
-          border: "1px solid var(--md-sys-color-alpha-white-10)",
-          marginBottom: "var(--spacing-2)",
-        }}
-      >
-        <Icon name="search" size={20} style={{ color: "var(--md-sys-color-text-muted)" }} />
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search chats"
-          aria-label="Search chats"
-          className="flex-1 min-w-0 outline-none"
-          style={{ background: "transparent", fontSize: 17, color: "var(--md-sys-color-text-primary)" }}
-        />
-      </div>
+      <SearchField value={query} onChange={setQuery} placeholder="Search chats" style={{ marginBottom: "var(--spacing-2)" }} />
       {section("Pinned", pinned)}
       {section("Recent", recent)}
       {shown.length === 0 && (

@@ -27,18 +27,23 @@
  */
 
 import { useState, useMemo, useEffect, useRef, Suspense, useCallback } from "react";
-import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
 import AccountListItem from "@/components/accounts/AccountListItem";
 import ListCard from "@/components/ui/ListCard";
+import Button from "@/components/ui/Button";
+import SearchField from "@/components/ui/SearchField";
+import SectionHeader from "@/components/ui/SectionHeader";
+import IconButton from "@/components/ui/IconButton";
 import SortMenu from "@/components/accounts/SortMenu";
 import Icon from "@/components/ui/Icon";
 import { LeadStarIcon, CompanyIcon } from "@/components/ui/CustomIcons";
 import { AccountListSkeleton } from "@/components/ui/Skeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import CompletionToast from "@/components/ui/CompletionToast";
+import { ToastSpinner } from "@/components/ui/Toast";
+import { useToast } from "@/lib/context/ToastContext";
 import NoteSheet from "@/components/ui/NoteSheet";
 import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
@@ -48,8 +53,9 @@ import CreateLeadSheet from "@/components/accounts/CreateLeadSheet";
 import FeedbackWidget from "@/components/ui/FeedbackWidget";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import { mockSystemAccounts, systemAccountReps } from "@/lib/mock-data/system-accounts";
-import { mockTasks, mockActivities } from "@/lib/mock-data/home";
-import type { HomeTask, HomeActivity } from "@/lib/mock-data/home";
+import { mockTasks } from "@/lib/mock-data/home";
+import type { HomeTask } from "@/lib/mock-data/home";
+import EngagementsDrawer from "@/components/accounts/EngagementsDrawer";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
 import { useAccountState } from "@/lib/context/AccountStateContext";
@@ -74,15 +80,6 @@ function greeting(): string {
   if (h < 12) return "Good morning";
   if (h < 17) return "Good afternoon";
   return "Good evening";
-}
-
-function isToday(date: Date): boolean {
-  const now = new Date();
-  return (
-    date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth() &&
-    date.getDate() === now.getDate()
-  );
 }
 
 function sortAccounts(accounts: Account[], sort: SortOption) {
@@ -121,147 +118,6 @@ function searchAccounts(accounts: Account[], q: string) {
   );
 }
 
-// ── Engagements drawer ────────────────────────────────────────────────────────
-
-function EngagementRow({
-  activity,
-  onClose,
-}: {
-  activity: HomeActivity;
-  onClose: () => void;
-}) {
-  return (
-    <Link
-      href={`/relationships/${activity.accountId}/activity/${activity.activityId}`}
-      onClick={onClose}
-    >
-      <div
-        className="flex items-center justify-between px-5 py-2.5 active:opacity-60 transition-opacity"
-      >
-        <span className="text-15" style={{ color: "var(--md-sys-color-text-primary)" }}>
-          {activity.accountName}
-        </span>
-        {/* Dot indicator — shown when the activity has meaningful content */}
-        <span style={{ fontSize: 8, color: "var(--md-sys-color-neonindigo)", lineHeight: 1 }}>
-          ●
-        </span>
-      </div>
-    </Link>
-  );
-}
-
-function EngagementsDrawer({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
-  const todayActivities = mockActivities.filter((a) => isToday(a.date));
-  const previousActivities = mockActivities.filter((a) => !isToday(a.date));
-
-  const overlay = (
-    <AnimatePresence>
-      {open && (
-        <>
-          {/* Scrim */}
-          <motion.div
-            key="scrim"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            onClick={onClose}
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "rgba(0,0,0,0.55)",
-              zIndex: 200,
-              pointerEvents: "auto",
-            }}
-          />
-
-          {/* Drawer panel */}
-          <motion.div
-            key="drawer"
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 0.28, ease: [0.32, 0, 0.18, 1] }}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              bottom: 0,
-              width: "78%",
-              background: "var(--md-sys-color-dark-primary)",
-              borderRight: "1px solid var(--md-sys-color-dark-tertiary)",
-              zIndex: 201,
-              display: "flex",
-              flexDirection: "column",
-              overflowY: "auto",
-              pointerEvents: "auto",
-            }}
-          >
-            {/* Header */}
-            <div style={{ padding: "56px 20px 12px" }}>
-              <p className="text-13-bold" style={{
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "var(--md-sys-color-text-muted)",
-                margin: 0,
-              }}>
-                Engagements
-              </p>
-            </div>
-
-            {/* Divider */}
-            <div style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)", marginBottom: 16 }} />
-
-            {/* Today */}
-            {todayActivities.length > 0 && (
-              <div style={{ marginBottom: 8 }}>
-                <p className="text-13-bold" style={{
-                  color: "var(--md-sys-color-brand-teal)",
-                  padding: "0 20px 4px",
-                  margin: 0,
-                }}>
-                  Today
-                </p>
-                {todayActivities.map((a) => (
-                  <EngagementRow key={a.id} activity={a} onClose={onClose} />
-                ))}
-              </div>
-            )}
-
-            {/* Previous */}
-            {previousActivities.length > 0 && (
-              <div style={{ marginTop: todayActivities.length > 0 ? 12 : 0 }}>
-                <p className="text-13-bold" style={{
-                  color: "var(--md-sys-color-brand-teal)",
-                  padding: "0 20px 4px",
-                  margin: 0,
-                }}>
-                  Previous
-                </p>
-                {previousActivities.map((a) => (
-                  <EngagementRow key={a.id} activity={a} onClose={onClose} />
-                ))}
-              </div>
-            )}
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-
-  // Portal into the phone overlay root
-  if (typeof window === "undefined") return null;
-  const root = document.getElementById("phone-overlay-root");
-  if (!root) return null;
-  return createPortal(overlay, root);
-}
-
 // ── Dashboard card ────────────────────────────────────────────────────────────
 
 function DashboardGrid({
@@ -280,7 +136,7 @@ function DashboardGrid({
         style={{
           borderRadius: "var(--radius-xl)",
           background: "var(--md-sys-color-dark-primary)",
-          border: "1px solid rgba(139,146,255,0.2)",
+          border: "1px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 20%, transparent)",
           padding: "18px 18px 16px",
         }}
       >
@@ -300,7 +156,7 @@ function DashboardGrid({
           style={{
             position: "absolute", top: -50, right: -50,
             width: 180, height: 180, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(139,146,255,0.16) 0%, transparent 65%)",
+            background: "radial-gradient(circle, color-mix(in srgb, var(--md-sys-color-neonindigo) 16%, transparent) 0%, transparent 65%)",
             pointerEvents: "none",
           }}
         />
@@ -352,60 +208,11 @@ function DashboardGrid({
         </Link>
 
         {/* Row 3: CTA */}
-        <button
-          onClick={onStartVisit}
-          className="w-full flex items-center justify-center gap-2 active:opacity-85 transition-opacity"
-          style={{
-            height: 44,
-            background: "var(--md-sys-color-neonindigo)",
-            borderRadius: "var(--radius-full)",
-            color: "var(--md-sys-color-text-primary)",
-          }}
-        >
-          <Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />
-          <span className="text-sm-bold">Log a Visit</span>
-        </button>
+        <Button fill="indigo" size="sm" fullWidth onClick={onStartVisit} icon={<Icon name="border_color" size={16} style={{ color: "var(--md-sys-color-text-primary)" }} />}>
+          Log a Visit
+        </Button>
 
       </div>
-    </div>
-  );
-}
-
-// ── Section header ────────────────────────────────────────────────────────────
-
-function SectionHeader({ label, count, onAdd, divider }: { label: string; count: number; onAdd?: () => void; divider?: boolean }) {
-  if (divider) {
-    const line = { flex: 1, height: 1, background: "rgba(255,255,255,0.08)" } as const;
-    return (
-      <div className="flex items-center gap-3 px-4 py-2">
-        <div style={line} />
-        <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.05em", color: "var(--md-sys-color-text-muted)", whiteSpace: "nowrap" }}>
-          {label}
-        </span>
-        <div style={line} />
-      </div>
-    );
-  }
-  return (
-    <div className="flex items-center justify-between px-4 py-2">
-      <div className="flex items-center gap-2">
-        <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>
-          {label}
-        </span>
-        <span className="text-11-bold" style={{ color: "var(--md-sys-color-text-disabled)", background: "var(--md-sys-color-dark-secondary)", borderRadius: 10, padding: "1px 7px" }}>
-          {count}
-        </span>
-      </div>
-      {onAdd && (
-        <button
-          onClick={onAdd}
-          className="flex items-center justify-center active:opacity-60 transition-opacity"
-          style={{ width: 28, height: 28, borderRadius: "50%", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 15%, transparent)" }}
-          aria-label="Add new lead"
-        >
-          <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-        </button>
-      )}
     </div>
   );
 }
@@ -458,6 +265,8 @@ function CombinedPageContent() {
   const router = useRouter();
   const preview = searchParams.get("preview");
   const noteState = searchParams.get("note") as "processing" | "multiprocess" | "ready" | "failed" | null;
+  const risksOnly = searchParams.get("risks") === "1";
+  const { show: showToast, dismiss: dismissToast } = useToast();
 
   const { startCapture, readyCapture } = useCapture();
 
@@ -465,8 +274,8 @@ function CombinedPageContent() {
   const modeParam = searchParams.get("mode");
   const mode: PageMode = (modeParam === "accounts" || modeParam === "priorities") ? modeParam : "home";
 
-  function goToMode(m: "accounts" | "priorities") {
-    router.push(`/relationships?mode=${m}`, { scroll: false });
+  function goToMode(m: "accounts" | "priorities", extra = "") {
+    router.push(`/relationships?mode=${m}${extra}`, { scroll: false });
   }
   function goHome() {
     router.push("/relationships");
@@ -483,10 +292,6 @@ function CombinedPageContent() {
   // Filter out disqualified leads from all account computations
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const visibleAccounts = useMemo(() => allAccounts.filter((a) => !isDisqualified(a.id)), [allAccounts, isDisqualified]);
-
-  // Success toast for account creation
-  const [successToast, setSuccessToast] = useState<string | null>(null);
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function handleAccountCreated(newAccount: Account) {
     setAllAccounts((prev) => [newAccount, ...prev]);
@@ -670,6 +475,23 @@ function CombinedPageContent() {
     }
   }, [query, globalMode]);
 
+  // ?note=processing | multiprocess | failed preview URLs show the matching top pill (until you leave the screen).
+  useEffect(() => {
+    if (noteState === "processing") showToast({ shape: "pill", title: "Preparing note", leading: <ToastSpinner />, duration: null });
+    else if (noteState === "multiprocess") showToast({ shape: "pill", title: "Processing 3 notes", leading: <ToastSpinner />, duration: null });
+    else if (noteState === "failed") {
+      showToast({
+        shape: "pill", tone: "error", title: "Couldn't prepare note", leading: "error", duration: null,
+        // Try again: the same pill goes back to "Preparing note".
+        action: { label: "Try again", onPress: () => showToast({ shape: "pill", title: "Preparing note", leading: <ToastSpinner />, duration: null }, { replace: true }) },
+        dismissOnAction: false,
+      });
+    }
+    else return;
+    return () => dismissToast();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Pre-seed the CaptureWidget into "ready" state for the ?note=ready preview URL
   useEffect(() => {
     if (noteState === "ready") {
@@ -719,8 +541,9 @@ function CombinedPageContent() {
             return a.lastVisited.getTime() >= cutoff;
           });
 
-    return sortAccounts(searchAccounts(byVisited, query), sort);
-  }, [allAccounts, query, sort, typeFilter, visitedFilter, visitedFrom, visitedTo]);
+    const byRisk = risksOnly ? byVisited.filter((a) => (a.riskCount ?? 0) > 0) : byVisited;
+    return sortAccounts(searchAccounts(byRisk, query), sort);
+  }, [allAccounts, query, sort, typeFilter, visitedFilter, visitedFrom, visitedTo, risksOnly]);
   const taskGroups = useMemo(() => {
     const all = getAllItems()
       .filter(item =>
@@ -798,113 +621,13 @@ function CombinedPageContent() {
 
   // ── Profile button (reused in both header states) ──────────────────────────
   const ProfileButton = (
-    <Link href="/profile">
-      <button className="active:opacity-60 transition-opacity flex-shrink-0" aria-label="Profile">
-        <div className="w-9 h-9 rounded-full flex items-center justify-center"
-          style={{ background: "var(--md-sys-color-dark-secondary)" }}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M7.99984 8.66667C9.84079 8.66667 11.3332 7.17428 11.3332 5.33333C11.3332 3.49238 9.84079 2 7.99984 2C6.15889 2 4.6665 3.49238 4.6665 5.33333C4.6665 7.17428 6.15889 8.66667 7.99984 8.66667ZM7.99984 8.66667C9.41433 8.66667 10.7709 9.22857 11.7711 10.2288C12.7713 11.229 13.3332 12.5855 13.3332 14M7.99984 8.66667C6.58535 8.66667 5.2288 9.22857 4.2286 10.2288C3.22841 11.229 2.6665 12.5855 2.6665 14"
-              stroke="var(--md-sys-color-text-muted)" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-      </button>
+    <Link href="/profile" aria-label="Profile">
+      <IconButton icon="person" label="Profile" size={36} iconColor="var(--md-sys-color-text-muted)" iconSize={16} />
     </Link>
   );
 
   return (
     <div className="relative flex flex-col h-full" style={{ background: "var(--md-sys-color-background)" }}>
-
-      {/* ── NOTE STATUS BANNER (preview only — processing / failed) ────── */}
-      {(noteState === "processing" || noteState === "multiprocess" || noteState === "failed") && (
-        <div style={{ position: "relative", overflow: "hidden", flexShrink: 0 }}>
-          <style>{`
-            @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-            @keyframes blob1 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(60px,20px)} 66%{transform:translate(10px,-15px)} }
-            @keyframes blob2 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-50px,15px)} 66%{transform:translate(-10px,-20px)} }
-            @keyframes blob3 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(30px,-10px)} 66%{transform:translate(-35px,18px)} }
-          `}</style>
-
-          {/* Animated blobs */}
-          <div style={{ position: "absolute", inset: 0, filter: "blur(32px)", opacity: (noteState === "processing" || noteState === "multiprocess") ? 0.9 : 0.7 }}>
-            <div style={{ position: "absolute", width: 180, height: 180, borderRadius: "50%", background: noteState === "failed" ? "#D6425C" : "#5C63D6", left: "-10%", top: "-40%", animation: "blob1 8s ease-in-out infinite" }} />
-            <div style={{ position: "absolute", width: 160, height: 160, borderRadius: "50%", background: noteState === "failed" ? "#FF6B5B" : "#8C92FF", right: "-5%", top: "-30%", animation: "blob2 11s ease-in-out infinite" }} />
-            <div style={{ position: "absolute", width: 140, height: 140, borderRadius: "50%", background: noteState === "failed" ? "#FF9C6B" : "#3B82F6", left: "30%", top: "-20%", animation: "blob3 9s ease-in-out infinite" }} />
-          </div>
-
-          {/* Dark overlay so text stays readable */}
-          <div style={{ position: "absolute", inset: 0, background: "rgba(10,11,22,0.55)" }} />
-
-          {/* Content */}
-          <div style={{ position: "relative" }}>
-            {/* Mock status bar */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 20px 4px" }}>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#fff", letterSpacing: "0.01em" }}>3:36</span>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
-                  <rect x="0" y="8" width="3" height="4" rx="0.5" fill="white" />
-                  <rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="white" />
-                  <rect x="9" y="2.5" width="3" height="9.5" rx="0.5" fill="white" />
-                  <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="white" />
-                </svg>
-                <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-                  <path d="M8 9.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z" fill="white" />
-                  <path d="M4.5 7A5 5 0 0 1 11.5 7" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
-                  <path d="M1.5 4.5A8.5 8.5 0 0 1 14.5 4.5" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
-                </svg>
-                <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
-                  <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="rgba(255,255,255,0.4)" />
-                  <rect x="2" y="2" width="16" height="8" rx="1.5" fill="white" />
-                  <path d="M23 4v4" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </div>
-            </div>
-
-            {/* Banner row */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "10px 16px 14px" }}>
-              {noteState === "processing" && (
-                <>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, animation: "spin 1s linear infinite" }}>
-                    <circle cx="8" cy="8" r="6.5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.75" />
-                    <path d="M8 1.5A6.5 6.5 0 0 1 14.5 8" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
-                  </svg>
-                  <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
-                    Preparing note · 100%
-                  </span>
-                </>
-              )}
-              {noteState === "multiprocess" && (
-                <>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, animation: "spin 1s linear infinite" }}>
-                    <circle cx="8" cy="8" r="6.5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.75" />
-                    <path d="M8 1.5A6.5 6.5 0 0 1 14.5 8" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
-                  </svg>
-                  <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
-                    Processing 3 notes
-                  </span>
-                </>
-              )}
-              {noteState === "failed" && (
-                <>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-                    <circle cx="8" cy="8" r="6.5" stroke="white" strokeWidth="1.75" />
-                    <path d="M8 5v3.5" stroke="white" strokeWidth="1.75" strokeLinecap="round" />
-                    <circle cx="8" cy="11" r="0.9" fill="white" />
-                  </svg>
-                  <span style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>
-                    Note couldn't be prepared
-                  </span>
-                  <button style={{ marginLeft: 4, fontSize: 13, fontWeight: 600, color: "#fff", background: "rgba(255,255,255,0.15)", borderRadius: "var(--radius-full)", padding: "3px 11px", border: "1px solid rgba(255,255,255,0.25)" }}>
-                    Try again
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Hard bottom edge */}
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.1)" }} />
-        </div>
-      )}
 
       {/* ── HEADER ─────────────────────────────────────────────────────── */}
       <div
@@ -948,9 +671,9 @@ function CombinedPageContent() {
                 width: 36, height: 36,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 borderRadius: "50%",
-                background: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "rgba(20, 23, 38, 0.88)" : "transparent",
+                background: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "var(--md-sys-color-alpha-bg-glass)" : "transparent",
                 backdropFilter: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "blur(16px) saturate(180%)" : undefined,
-                boxShadow: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
+                boxShadow: (mode === "accounts" && acctHasScrolled) || (mode === "priorities" && priHasScrolled) ? "inset 0 0 0 1px var(--md-sys-color-alpha-white-10)" : "none",
                 transition: "background 180ms ease",
                 pointerEvents: "auto",
               }}
@@ -993,43 +716,27 @@ function CombinedPageContent() {
                   pointerEvents: acctHasScrolled && !acctScrollingUp ? "none" : "auto",
                   flex: 1,
                   transformOrigin: "top center",
-                  borderRadius: 999,
-                  background: "var(--md-sys-color-dark-secondary)",
-                  outline: showSystemSection ? "1.5px solid var(--md-sys-color-neonindigo)" : "none",
                 }}
-                className="flex items-center gap-2 h-11 px-3"
               >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-                  <circle cx="7.5" cy="7.5" r="6" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" style={{ transition: "stroke 0.2s" }} />
-                  <path d="M12 12L16 16" stroke={showSystemSection ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)"} strokeWidth="1.75" strokeLinecap="round" style={{ transition: "stroke 0.2s" }} />
-                </svg>
-                <input
-                  ref={accountsInputRef}
-                  type="text"
-                  placeholder={showSystemSection ? "Searching all companies…" : "Search companies…"}
+                <SearchField
+                  inputRef={accountsInputRef}
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-[15px] outline-none"
-                  style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
-                />
-                {showSystemSection && (
-                  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "rgba(139,146,255,0.12)", borderRadius: 6, padding: "2px 6px", flexShrink: 0 }}>
-                    ALL
-                  </span>
-                )}
-                {query && (
-                  <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
-                      <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                )}
-                <SortMenu
-                  current={sort}
-                  onChange={setSort}
-                  visitedFilter={visitedFilter}
-                  onVisitedChange={(v) => { setVisitedFilter(v); setVisitedFrom(null); setVisitedTo(null); }}
+                  onChange={setQuery}
+                  placeholder={showSystemSection ? "Searching all companies…" : risksOnly ? "Search companies with risks…" : "Search companies…"}
+                  active={showSystemSection}
+                  trailing={showSystemSection ? (
+                    <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.05em", color: "var(--md-sys-color-neonindigo)", background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)", borderRadius: "var(--radius-xs)", padding: "2px 6px", flexShrink: 0 }}>
+                      ALL
+                    </span>
+                  ) : undefined}
+                  endSlot={
+                    <SortMenu
+                      current={sort}
+                      onChange={setSort}
+                      visitedFilter={visitedFilter}
+                      onVisitedChange={(v) => { setVisitedFilter(v); setVisitedFrom(null); setVisitedTo(null); }}
+                    />
+                  }
                 />
               </motion.div>
             )}
@@ -1157,7 +864,7 @@ function CombinedPageContent() {
               {/* ── Skeleton preview: both sections loading ───────────────── */}
               {preview === "search-loading" && (
                 <>
-                  <SectionHeader label="Your Companies" count={0} onAdd={() => {}} />
+                  <SectionHeader label="Your Companies" count={0} onAdd={() => {}} addLabel="Add new lead" />
                   <AccountListSkeleton rows={3} />
                   <div style={{ marginTop: 16 }}>
                     <SectionHeader label="Company-Wide Results" count={0} divider />
@@ -1167,8 +874,8 @@ function CombinedPageContent() {
               )}
 
               {/* My accounts */}
-              {preview !== "search-loading" && showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
-              {preview !== "search-loading" && !showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} />}
+              {preview !== "search-loading" && showSystemSection && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} addLabel="Add new lead" />}
+              {preview !== "search-loading" && !showSystemSection && myFiltered.length > 0 && <SectionHeader label="Your Companies" count={myFiltered.length} onAdd={() => setShowCreateLeadSheet(true)} addLabel="Add new lead" />}
 
               {preview !== "search-loading" && (myFiltered.length > 0 ? (
                 <div className="flex flex-col">
@@ -1180,7 +887,7 @@ function CombinedPageContent() {
                 <div className="mx-4 mt-2 rounded-2xl flex flex-col items-center gap-4 px-5 py-6"
                   style={{ background: "var(--md-sys-color-dark-secondary)" }}>
                   <div className="w-11 h-11 rounded-full flex items-center justify-center"
-                    style={{ background: "rgba(139,146,255,0.12)" }}>
+                    style={{ background: "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)" }}>
                     <Icon name="search_off" size={22} style={{ color: "var(--md-sys-color-neonindigo)" }} />
                   </div>
                   <div className="text-center">
@@ -1284,32 +991,7 @@ function CombinedPageContent() {
                 </div>
 
                 {/* Search bar */}
-                <div
-                  className="flex items-center gap-2 h-11 px-3"
-                  style={{ borderRadius: 999, background: "var(--md-sys-color-dark-secondary)" }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-                    <circle cx="7.5" cy="7.5" r="6" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" />
-                    <path d="M12 12L16 16" stroke="var(--md-sys-color-text-muted)" strokeWidth="1.75" strokeLinecap="round" />
-                  </svg>
-                  <input
-                    ref={prioritiesInputRef}
-                    type="text"
-                    placeholder="Search items…"
-                    value={prioritiesQuery}
-                    onChange={(e) => setPrioritiesQuery(e.target.value)}
-                    className="flex-1 bg-transparent text-15 outline-none"
-                    style={{ color: "var(--md-sys-color-text-primary)", caretColor: "var(--md-sys-color-brand-coral)" }}
-                  />
-                  {prioritiesQuery && (
-                    <button onClick={() => setPrioritiesQuery("")} className="active:opacity-60 flex-shrink-0">
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <circle cx="8" cy="8" r="7" fill="var(--md-sys-color-text-disabled)" />
-                        <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
+                <SearchField inputRef={prioritiesInputRef} value={prioritiesQuery} onChange={setPrioritiesQuery} placeholder="Search items…" />
               </div>
 
               {/* Scrollable groups */}
@@ -1384,7 +1066,16 @@ function CombinedPageContent() {
       </div>
 
       {/* Engagements drawer */}
-      <EngagementsDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <EngagementsDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onNavigate={(to) => {
+          if (to === "companies") goToMode("accounts");
+          else if (to === "actionItems") goToMode("priorities");
+          // No Risks screen yet: the company list, limited to companies with open risks.
+          else goToMode("accounts", "&risks=1");
+        }}
+      />
 
       {/* Create account sheet (search CTA) */}
       {showCreateSheet && (
@@ -1402,38 +1093,6 @@ function CombinedPageContent() {
           onCreated={handleAccountCreated}
         />
       )}
-
-      {/* Account created success toast */}
-      <AnimatePresence>
-        {successToast && (
-          <motion.div
-            key="success-toast"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 12 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute left-4 right-4 flex items-center gap-3 px-4 py-3.5"
-            style={{
-              bottom: 40,
-              background: "var(--md-sys-color-dark-secondary)",
-              borderRadius: "var(--radius-xl)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-              border: "1px solid rgba(46, 204, 113, 0.25)",
-              zIndex: 50,
-            }}
-          >
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(46, 204, 113, 0.15)" }}
-            >
-              <Icon name="check" size={15} style={{ color: "var(--md-sys-color-semantic-success)" }} />
-            </div>
-            <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-              {successToast}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Completion toast */}
       <CompletionToast

@@ -1,17 +1,25 @@
+"use client";
+
 /**
  * FLUTTER HANDOFF: LoginScreen
  * Route: / (initial route)
  * Widget: StatelessWidget
- * State: none — auth buttons navigate to /relationships (prototype skips real auth)
- * Tokens: --gradient-login, --md-sys-color-brand-coral, --md-sys-color-surface-white,
- *         --md-sys-color-text-primary, --md-sys-color-text-inverse, --md-sys-color-neonindigo, --radius-xl
+ * State: none — the three sign-in buttons are Button (fill white, size xl, full width) with the brand logo as the icon;
+ *        they navigate to /relationships (prototype skips real auth)
+ * Tokens: --gradient-login, --md-sys-color-surface-static-white, --md-sys-color-text-on-white,
+ *         --md-sys-color-text-primary, --md-sys-color-neonindigo, --radius-full
  * Flutter equivalent: login_page.dart
  */
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Button from "@/components/ui/Button";
 
 export default function LoginPage() {
+  const router = useRouter();
+  // Prototype: every sign-in option skips real auth.
+  const signIn = () => router.push("/relationships");
   return (
     <div
       className="flex-1 flex flex-col items-center justify-center px-8 relative overflow-hidden h-full"
@@ -24,7 +32,7 @@ export default function LoginPage() {
           width: 320,
           height: 320,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(139,146,255,0.18) 0%, transparent 70%)",
+          background: "radial-gradient(circle, color-mix(in srgb, var(--md-sys-color-neonindigo) 18%, transparent) 0%, transparent 70%)",
           top: "5%",
           left: "50%",
           transform: "translateX(-50%)",
@@ -37,7 +45,7 @@ export default function LoginPage() {
           width: 180,
           height: 180,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(255,107,90,0.10) 0%, transparent 70%)",
+          background: "radial-gradient(circle, color-mix(in srgb, var(--md-sys-color-brand-coral) 10%, transparent) 0%, transparent 70%)",
           bottom: "15%",
           right: "5%",
         }}
@@ -69,47 +77,15 @@ export default function LoginPage() {
 
       {/* Auth buttons */}
       <div className="w-full flex flex-col gap-3 relative z-10">
-        <Link href="/relationships" className="block">
-          <button
-            className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
-            style={{
-              background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
-              borderRadius: "var(--radius-xl)",
-            }}
-          >
-            <Image src="/google-g.svg" alt="" width={20} height={20} />
-            Continue with Google
-          </button>
-        </Link>
-
-        <Link href="/relationships" className="block">
-          <button
-            className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
-            style={{
-              background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
-              borderRadius: "var(--radius-xl)",
-            }}
-          >
-            <Image src="/microsoft-logo.svg" alt="" width={20} height={20} />
-            Continue with Microsoft
-          </button>
-        </Link>
-
-        <Link href="/relationships" className="block">
-          <button
-            className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
-            style={{
-              background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
-              borderRadius: "var(--radius-xl)",
-            }}
-          >
-            <Image src="/apple-logo.svg" alt="" width={18} height={22} style={{ height: "auto" }} />
-            Sign in with Apple
-          </button>
-        </Link>
+        <Button fill="white" size="xl" fullWidth onClick={signIn} icon={<Image src="/google-g.svg" alt="" width={20} height={20} />}>
+          Continue with Google
+        </Button>
+        <Button fill="white" size="xl" fullWidth onClick={signIn} icon={<Image src="/microsoft-logo.svg" alt="" width={20} height={20} />}>
+          Continue with Microsoft
+        </Button>
+        <Button fill="white" size="xl" fullWidth onClick={signIn} icon={<Image src="/apple-logo.svg" alt="" width={18} height={22} style={{ height: "auto" }} />}>
+          Sign in with Apple
+        </Button>
       </div>
 
       {/* Email login — hidden for now, keeping for future use */}

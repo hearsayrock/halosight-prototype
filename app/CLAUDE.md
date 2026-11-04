@@ -17,10 +17,14 @@ Before writing any UI element, check these locations in order:
 If the component exists, **use it**. Do not re-implement inline.
 
 ## Dropdown / Menu Pattern
-- Use `FilterDropdown` (`components/ui/FilterDropdown.tsx`) for any filter or sort pill with options
-- Use `SortMenu` (`components/accounts/SortMenu.tsx`) for the accounts sort icon button
-- Both use: `var(--md-sys-color-dark-tertiary)` bg, `var(--radius-xl)` border-radius, spring scale animation (stiffness 380, damping 22), `0 8px 32px rgba(0,0,0,0.6)` shadow
-- **Never** use `var(--md-sys-color-dark-elevated)` or raw `borderRadius: 14` for menus
+- Use `Menu` (`components/ui/Menu.tsx`) for every popup list: `variant="icon" | "check" | "icon-check"`. `SortMenu`, `FilterDropdown`, `KebabMenu` and `VisitedFilterDropdown` are triggers that render through it
+- The panel is translucent `dark-secondary` with a blur, `alpha-white-18` stroke, `--radius-lg` and `--elevation-5`; spring scale-in from the trigger corner (stiffness 380, damping 22)
+- **Never** hand-build a dropdown panel, and never use `var(--md-sys-color-dark-elevated)` or raw `borderRadius: 14` for menus
+
+## Other shared pieces — use these before writing inline
+- Buttons: `Button` (filled coral/indigo/danger, tonal, outlined, text; lg/md/sm; fullWidth; loading)
+- Sheets: `Drawer` / `DrawerPanel` + `DrawerBackdrop`. Confirmations: `AlertDialog`. Feedback: `Toast` (`useToast()`), inline messages: `Banner`
+- Fields and bars: `SearchField`, `SectionHeader`, `IconButton`, `Tabs`, `ListCard`, `ThinkingDots`
 
 ## Accessibility — always enforced
 - **Body / supporting text minimum: `--md-sys-color-text-muted` (#8B94A8)** — never use `--md-sys-color-text-disabled` for readable content, only for placeholders and truly inactive controls
