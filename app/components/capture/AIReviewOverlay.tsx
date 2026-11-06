@@ -401,7 +401,7 @@ export default function AIReviewOverlay() {
                     className="text-[26px] font-bold leading-tight"
                     style={{ fontFamily: "Roboto Slab, Georgia, serif", color: "var(--md-sys-color-text-primary)" }}
                   >
-                    Here's the read on {accountName ?? "this lead"}
+                    Here&apos;s the read on {accountName ?? "this lead"}
                   </h2>
                 </motion.div>
               ) : (

@@ -330,7 +330,7 @@ function ParticipantsDrawer({
                     <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
                       {p.isYou ? (
                         <span style={{ fontFamily: "Barlow, sans-serif", fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>
-                          That's you
+                          That&apos;s you
                         </span>
                       ) : p.contactId ? (
                         <>

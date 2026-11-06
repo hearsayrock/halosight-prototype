@@ -5,6 +5,7 @@
  * Full desktop spec page — decisions, deliverables, and acceptance criteria.
  */
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import DecisionWidget from "@/components/decisions/DecisionWidget";
 
@@ -332,7 +333,7 @@ export default function Story3Page() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a href="/" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</a>
+          <Link href="/" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</Link>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
           <a href="/story-1" style={{ fontSize: 14, color: "var(--md-sys-color-text-muted)", textDecoration: "none" }}>Story 1</a>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
@@ -358,8 +359,8 @@ export default function Story3Page() {
                 Story 3: Capture Notes on Accounts the User Does Not Own
               </h1>
               <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.7, margin: "0 0 18px" }}>
-                A field rep visits a customer that's assigned to someone else. They need to capture a note
-                immediately — the account owner shouldn't be a bottleneck for fieldwork. This story defines
+                A field rep visits a customer that&apos;s assigned to someone else. They need to capture a note
+                immediately — the account owner shouldn&apos;t be a bottleneck for fieldwork. This story defines
                 what an unowned account looks like, what actions are available, how capture warnings work,
                 who sees the resulting note, and how sync and attribution are handled.
               </p>
@@ -729,7 +730,7 @@ export default function Story3Page() {
                           <strong>ProFleet Corp</strong> is assigned to Sarah Chen.
                         </p>
                         <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "0 0 10px" }}>
-                          You can still capture a note. It will appear in your history and in this account's activity, attributed to you.
+                          You can still capture a note. It will appear in your history and in this account&apos;s activity, attributed to you.
                         </p>
                         <p style={{ fontSize: 12, color: "var(--md-sys-color-text-muted)", lineHeight: 1.55, margin: 0 }}>
                           Ownership does not change. Sarah Chen will be able to see this note.
@@ -749,13 +750,13 @@ export default function Story3Page() {
                     >
                       <div style={{ padding: "14px 16px" }}>
                         <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "0 0 10px" }}>
-                          Your CRM settings don't allow notes on accounts you don't own.
+                          Your CRM settings don&apos;t allow notes on accounts you don&apos;t own.
                         </p>
                         <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "0 0 10px" }}>
                           To capture on <strong>Restricted Account Co</strong>, contact your admin or ask Sarah Chen to log the note.
                         </p>
                         <div style={{ padding: "10px 12px", borderRadius: 8, background: CORAL_BG, border: `1px solid ${CORAL_BORDER}` }}>
-                          <p style={{ fontSize: 11, color: CORAL, fontWeight: 600, margin: "0 0 3px" }}>Your data won't be lost</p>
+                          <p style={{ fontSize: 11, color: CORAL, fontWeight: 600, margin: "0 0 3px" }}>Your data won&apos;t be lost</p>
                           <p style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", margin: 0 }}>You can write a manual note and save it in your own history without attaching it to this account.</p>
                         </div>
                       </div>
@@ -928,7 +929,7 @@ export default function Story3Page() {
                     <span style={{ padding: "1px 7px", borderRadius: 20, fontSize: 10, fontWeight: 600, background: "rgba(139,146,255,0.1)", color: "#8B92FF" }}>ProFleet Corp</span>
                     <Chip label="Not yours" variant="not-yours" />
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "1px 7px", borderRadius: 20, fontSize: 10, fontWeight: 600, background: CORAL_BG, color: CORAL }}>
-                      From Marcus T.'s note
+                      From Marcus T.&apos;s note
                     </span>
                   </div>
                 </div>
@@ -973,7 +974,7 @@ export default function Story3Page() {
                     <div style={{ padding: "10px 12px", borderRadius: 8, background: "rgba(255,77,79,0.06)", border: "1px solid rgba(255,77,79,0.2)", marginBottom: 8 }}>
                       <p style={{ fontSize: 12, fontWeight: 600, color: "#FF4D4F", margin: "0 0 3px" }}>Sync rejected by CRM</p>
                       <p style={{ fontSize: 11, color: "var(--md-sys-color-text-muted)", lineHeight: 1.5, margin: "0 0 8px" }}>
-                        ProFleet Corp is owned by Sarah Chen. Your CRM doesn't allow notes from reps who aren't the account owner. Your note is saved here.
+                        ProFleet Corp is owned by Sarah Chen. Your CRM doesn&apos;t allow notes from reps who aren&apos;t the account owner. Your note is saved here.
                       </p>
                       <div style={{ display: "flex", gap: 8 }}>
                         <div style={{ flex: 1 }}>

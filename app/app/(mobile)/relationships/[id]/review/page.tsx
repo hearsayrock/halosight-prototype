@@ -134,7 +134,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
             <Icon name="auto_awesome" size={32} style={{ color: "var(--md-sys-color-neonindigo)", opacity: 0.5 }} />
             <p className="text-[15px] font-semibold" style={{ color: "var(--md-sys-color-text-primary)" }}>No review available</p>
             <p className="text-sm" style={{ color: "var(--md-sys-color-text-muted)", maxWidth: 240 }}>
-              Start a capture session during your next visit and I'll process the meeting automatically.
+              Start a capture session during your next visit and I&apos;ll process the meeting automatically.
             </p>
           </div>
         ) : (
@@ -165,7 +165,7 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
                       ))}
                     </div>
                     <p className="text-[13px] mt-4" style={{ color: "var(--md-sys-color-text-muted)", lineHeight: 1.6 }}>
-                      Anything you'd like to change or add before I sync?
+                      Anything you&apos;d like to change or add before I sync?
                     </p>
                   </div>
                 </div>

@@ -201,7 +201,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
               {createDeal && dealName.trim() && (
                 <p className="text-sm" style={{ color: "var(--md-sys-color-text-muted)", maxWidth: 280, lineHeight: 1.65 }}>
                   Deal{" "}
-                  <span style={{ color: "var(--md-sys-color-text-secondary)" }}>"{dealName}"</span>{" "}
+                  <span style={{ color: "var(--md-sys-color-text-secondary)" }}>&quot;{dealName}&quot;</span>{" "}
                   is open in your pipeline.
                 </p>
               )}

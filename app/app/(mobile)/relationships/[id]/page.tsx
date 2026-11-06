@@ -526,7 +526,7 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   Log your first visit
                 </p>
                 <p className="text-[13px]" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                  We'll fill Salesforce automatically.
+                  We&apos;ll fill Salesforce automatically.
                 </p>
               </div>
               <Icon name="chevron_right" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />

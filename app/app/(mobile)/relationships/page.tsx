@@ -245,7 +245,7 @@ function CreateAccountCTA({ query, onOpen }: { query: string; onOpen: () => void
       <Icon name="add" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
       <span className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
         Add a new lead
-        {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — "{query.trim()}"</span>}
+        {query.trim() && <span style={{ color: "var(--md-sys-color-text-muted)", fontWeight: 400 }}> — &quot;{query.trim()}&quot;</span>}
       </span>
     </button>
   );
@@ -894,7 +894,7 @@ function CombinedPageContent() {
                     {systemState === "idle" && (
                       <p className="text-sm-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>Not in your accounts</p>
                     )}
-                    <p className="text-sm leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>"{query}" didn't match anything assigned to you.</p>
+                    <p className="text-sm leading-relaxed" style={{ color: "var(--md-sys-color-text-muted)" }}>&quot;{query}&quot; didn&apos;t match anything assigned to you.</p>
                   </div>
                 </div>
               ) : null)}
