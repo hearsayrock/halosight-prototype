@@ -1,59 +1,62 @@
 /**
  * FLUTTER HANDOFF: ThinkingDots
- * Widget: StatefulWidget with one repeating AnimationController (1.2s) driving N bars
- * Props: size ("sm" | "md" | "lg"), bars (3 default), label (screen-reader text)
+ * Widget: StatefulWidget with one repeating AnimationController (2.1s) driving three capsules
+ * Props: size ("sm" | "md" | "lg"), label (screen-reader text)
  * State: none (animation only)
- * Flutter equivalent: thinking_dots.dart (Row of AnimatedBuilder bars, each reading the controller through its own Interval)
+ * Flutter equivalent: thinking_dots.dart (Row of three capsules, each an AnimatedBuilder reading the controller through a smooth x-offset curve)
  *
- * The in-progress indicator that replaces the spinning circle. Dots that stretch into rounded capsules in a staggered,
- * slightly off-beat wave, like a voice level: it echoes the product (voice debriefs) without copying a chat "thinking" animation.
- *   - Each bar animates height min → max → ~35% of the way back → min over 1.2s, easing (0.4, 0, 0.2, 1), opacity 0.5 → 1 → 0.8 → 0.5
- *   - Bars start 0.14s apart and each runs 40ms faster or slower than its neighbour, so the wave drifts instead of ticking
- *   - Colour is currentColor, so it takes the text colour of whatever it sits in (button label, status line)
- *   - Reduced motion: no animation; bars rest at 40% height, opacity 0.8
- * Sizes (bar width · min → max height): sm 4 · 4→12 (inside buttons) · md 5 · 5→18 · lg 6 · 6→26 (full-screen processing)
+ * The in-progress indicator that replaces the spinning circle ("Shuffle"). Three capsules of different heights (short, medium, tall)
+ * swap places in a loop. Heights never change, so it reads as work in progress rather than a voice level or a "recording" meter.
+ *   - Slots are one pitch apart (bar width + gap). Over the loop each capsule passes through three slots (in slot units):
+ *     short 0 → 1 → 2 → 0, medium 0 → 1 → -1 → 0, tall 0 → -2 → -1 → 0
+ *   - The motion never stops: each path is one smooth periodic curve through its three slots (Catmull-Rom / Hermite, so velocity is
+ *     continuous at every turn), 2.1s per loop. In CSS it is sampled every ~4% with linear timing. In Flutter use a TweenSequence of
+ *     CatmullRom-style segments, or a single Curve over a periodic spline, on one repeating controller
+ *   - Colour is currentColor, so it takes the text colour of whatever it sits in
+ *   - Reduced motion: no animation; capsules rest in their starting slots
+ * Sizes (capsule width · short / medium / tall height): sm 4 · 7 / 12 / 16 (inside buttons) · md 5 · 10 / 17 / 24 · lg 6 · 13 / 23 / 32 (full-screen processing)
+ * The box is three capsules wide (3 × width + 2 × gap) and the tall capsule's height, so a loading button never changes size.
  *
  * Tokens: inherits currentColor; radius.full
  */
 
 const SIZES = {
-  sm: { w: 4, min: 4,  max: 12, gap: "var(--spacing-1)" },
-  md: { w: 5, min: 5,  max: 18, gap: 5 },
-  lg: { w: 6, min: 6,  max: 26, gap: 6 },
+  sm: { w: 4, heights: [7, 12, 16],  gap: "var(--spacing-1)" },
+  md: { w: 5, heights: [10, 17, 24], gap: 5 },
+  lg: { w: 6, heights: [13, 23, 32], gap: 6 },
 } as const;
 
 export type ThinkingDotsSize = keyof typeof SIZES;
 
 export default function ThinkingDots({
-  size = "sm", bars = 3, label = "Working",
+  size = "sm", label = "Working",
 }: {
   size?: ThinkingDotsSize;
-  bars?: number;
   /** Screen-reader text. */
   label?: string;
 }) {
   const s = SIZES[size];
+  const pitch = s.w * 2;           // capsule width + gap (the gap tokens equal the capsule width)
+  const tallest = s.heights[2];
+
   return (
     <span
       role="status"
       aria-label={label}
       className="inline-flex items-center justify-center flex-shrink-0"
-      style={{ gap: s.gap, height: s.max, color: "inherit" }}
+      style={{ gap: s.gap, height: tallest, minWidth: 3 * s.w + 2 * s.w, color: "inherit" }}
     >
-      {Array.from({ length: bars }, (_, i) => (
+      {s.heights.map((h, i) => (
         <span
           key={i}
           aria-hidden
-          className="halo-bar"
+          className={`halo-shuffle-${i}`}
           style={{
             width: s.w,
+            height: h,
             borderRadius: "var(--radius-full)",
             background: "currentColor",
-            ["--halo-min" as string]: `${s.min}px`,
-            ["--halo-max" as string]: `${s.max}px`,
-            ["--halo-duration" as string]: `${1.2 + (i % 3 === 1 ? 0.04 : i % 3 === 2 ? -0.04 : 0)}s`,
-            animationDelay: `${i * 0.14}s`,
-            height: s.min,
+            ["--halo-pitch" as string]: `${pitch}px`,
           }}
         />
       ))}

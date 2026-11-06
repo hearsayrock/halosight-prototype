@@ -981,21 +981,40 @@ export default function DesignSystemPage() {
             <div>
               <SubHeader title="Filled Button" />
               <p className="text-sm mb-4 max-w-2xl" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                The one button (<code className="font-mono">components/ui/Button.tsx</code>). Coral is the default main action, indigo is for sheet CTAs that create something, danger is for irreversible actions.
+                The one button (<code className="font-mono">components/ui/Button.tsx</code>). Coral is the default main action, indigo is for sheet CTAs that create something, danger is for irreversible actions. Every fill is a full pill (<code className="font-mono">--radius-full</code>) with font weight 600.
               </p>
-              <div className="flex items-center gap-4 flex-wrap mb-3">
-                <Button size="lg">Create a lead</Button>
-                <Button>Log a Visit</Button>
-                <Button size="sm">Log a Visit</Button>
-              </div>
-              <TokenLabel name="fill=coral (default) · background: --md-sys-color-brand-coral-dark · color: --md-sys-color-text-on-coral · radius: --radius-full" value="size lg 52 (sheet CTA) · md 48 · sm 44 · padding 0 24px (sm 0 20px) · font 600 16 / 15 / 14" />
-              <div className="flex items-center gap-4 flex-wrap mt-4 mb-3">
-                <Button icon={<Icon name="schedule" size={16} style={{ color: "var(--md-sys-color-text-on-coral)" }} />}>With Icon</Button>
-                <Button disabled>Disabled</Button>
-                <Button fill="indigo">Create a lead</Button>
-                <Button fill="danger">Send deletion request</Button>
-              </div>
-              <TokenLabel name="fill=indigo · background: --md-sys-color-neonindigo · color: --md-sys-color-text-on-accent    fill=danger · background: --md-sys-color-error" value="disabled: 30% opacity, not tappable · icon: any node before the label" />
+              {/* Each button carries its own caption, so a label can never describe a neighbour. */}
+              {([
+                { title: "Fill", items: [
+                  { node: <Button>Create a lead</Button>, name: "coral (default)", spec: "bg brand-coral-dark · text on-coral" },
+                  { node: <Button fill="indigo">Create a lead</Button>, name: "indigo", spec: "bg neonindigo · text on-accent" },
+                  { node: <Button fill="danger">Send deletion request</Button>, name: "danger", spec: "bg error · irreversible only" },
+                ] },
+                { title: "Size", items: [
+                  { node: <Button size="lg">Create a lead</Button>, name: "lg · 52", spec: "sheet CTA · font 16" },
+                  { node: <Button>Log a Visit</Button>, name: "md · 48 (default)", spec: "font 15 · padding 0 24" },
+                  { node: <Button size="sm">Log a Visit</Button>, name: "sm · 44", spec: "font 14 · padding 0 20" },
+                ] },
+                { title: "State", items: [
+                  { node: <Button icon={<Icon name="schedule" size={16} style={{ color: "var(--md-sys-color-text-on-coral)" }} />}>With Icon</Button>, name: "icon", spec: "any node before the label" },
+                  { node: <Button disabled>Disabled</Button>, name: "disabled", spec: "30% opacity · not tappable" },
+                ] },
+              ] as { title: string; items: { node: React.ReactNode; name: string; spec: string }[] }[]).map((group) => (
+                <div key={group.title} className="mb-6">
+                  <p className="text-[11px] font-semibold uppercase mb-3" style={{ color: "var(--md-sys-color-text-muted)", letterSpacing: "0.08em" }}>{group.title}</p>
+                  <div className="flex items-start gap-x-6 gap-y-5 flex-wrap">
+                    {group.items.map((it) => (
+                      <div key={it.name} className="flex flex-col items-start gap-2">
+                        {it.node}
+                        <div className="pl-1">
+                          <p className="text-xs font-mono" style={{ color: "var(--md-sys-color-text-secondary)" }}>{it.name}</p>
+                          <p className="text-[11px] font-mono" style={{ color: "var(--md-sys-color-text-muted)" }}>{it.spec}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
               <div className="mt-4 max-w-xs"><Button fullWidth keepFocus>Full width</Button></div>
               <TokenLabel name="fullWidth stretches to its container · keepFocus keeps the keyboard up when the button sits under a text field" value="" />
               <div className="mt-6"><LoadingRow variant="filled" label="Log a Visit" loadingLabel="Logging" /></div>
@@ -1054,7 +1073,7 @@ export default function DesignSystemPage() {
             <div>
               <SubHeader title="Sign-in Buttons (Login Screen)" />
               <p className="text-sm mb-4 max-w-xl" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                White pills with the provider's logo and a dark label, the same for every provider. They are <code className="font-mono">Button</code> with <code className="font-mono">fill=&quot;white&quot;</code> and <code className="font-mono">size=&quot;xl&quot;</code>.
+                White pills with the provider&apos;s logo and a dark label, the same for every provider. They are <code className="font-mono">Button</code> with <code className="font-mono">fill=&quot;white&quot;</code> and <code className="font-mono">size=&quot;xl&quot;</code>.
               </p>
               <div className="flex flex-col gap-3 max-w-sm p-6" style={{ background: "var(--gradient-login)", borderRadius: "var(--radius-lg)" }}>
                 <Button fill="white" size="xl" fullWidth icon={<Image src="/google-g.svg" alt="" width={20} height={20} />}>Continue with Google</Button>
@@ -1069,13 +1088,12 @@ export default function DesignSystemPage() {
             </div>
 
             <div>
-              <SubHeader title="Loading Animation — Listening Bars" />
+              <SubHeader title="Loading Animation" />
               <p className="text-sm mb-4 max-w-xl" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                Replaces the spinning circle. Dots stretch into rounded capsules in a staggered, slightly off-beat wave, like a voice level,
-                so it echoes what Halosight does without copying a chat &ldquo;thinking&rdquo; animation. Colour is the surrounding text colour.
+                Shuffle: a short, a medium and a tall capsule swap places sideways. Heights never change, so it reads as work in progress, not a voice level. Replaces the spinning circle; colour is the surrounding text colour.
               </p>
               <DotsOnSurfaces />
-              <TokenLabel name="ThinkingDots — 3 bars · 1.2s loop · 0.14s stagger · easing (0.4, 0, 0.2, 1)" value="sm 4px · 4→12 · md 5px · 5→18 · lg 6px · 6→26 · reduced motion: static at 40% height" />
+              <TokenLabel name="ThinkingDots — Shuffle · 3 capsules · 2.1s loop · continuous easing, no stops" value="sm 4px · 7/12/16 · md 5px · 10/17/24 · lg 6px · 13/23/32 · reduced motion: static" />
             </div>
           </div>
 
@@ -1107,26 +1125,6 @@ export default function DesignSystemPage() {
                 <span className="text-[12px] font-semibold px-3 py-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-muted)" }}>No Activity</span>
               </div>
               <TokenLabel name="radius: --radius-full · font: 600 12px" value="dark-secondary / dark-tertiary bg · semantic text color per status" />
-            </div>
-            <div>
-              <SubHeader title="AI Confidence Indicator" />
-              <div className="flex items-center gap-4">
-                {[
-                  { label: "High confidence", pct: 94, token: "--md-sys-color-success" },
-                  { label: "Medium confidence", pct: 71, token: "--md-sys-color-warning" },
-                  { label: "Low confidence", pct: 38, token: "--md-sys-color-error" },
-                ].map((item) => (
-                  <div key={item.label} className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 h-1.5 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }}>
-                        <div className="h-full rounded-full" style={{ width: `${item.pct}%`, background: `var(${item.token})` }} />
-                      </div>
-                      <span className="text-[11px] font-semibold" style={{ color: `var(${item.token})` }}>{item.pct}%</span>
-                    </div>
-                    <span className="text-[11px]" style={{ color: "var(--md-sys-color-text-disabled)" }}>{item.label}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 

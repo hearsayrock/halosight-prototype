@@ -558,11 +558,11 @@ drawer.open(accountId, item.id, () => handleComplete(item.id));` },
     category: "ui-primitive",
     type: "display",
     description:
-      "The in-progress indicator that replaces the spinning circle: dots that stretch into rounded capsules in a staggered, slightly off-beat wave, " +
-      "like a voice level. Takes the surrounding text colour. Sizes sm (inside buttons), md, lg; optional 5 bars for full-screen processing.",
+      "The in-progress indicator that replaces the spinning circle (\"Shuffle\"): a short, a medium and a tall capsule swap places sideways in a loop. " +
+      "Heights never change, so it doesn't read as a voice level or a recording meter. Takes the surrounding text colour. Sizes sm (inside buttons), md, lg.",
     file: "app/components/ui/ThinkingDots.tsx",
     designSystemSection: "#buttons",
-    flutterEquivalent: "ThinkingDots — lib/view/_widget/thinking_dots.dart (one repeating AnimationController, a bar per Interval)",
+    flutterEquivalent: "ThinkingDots — lib/view/_widget/thinking_dots.dart (one repeating AnimationController, three capsules each on a TweenSequence of x offsets)",
     tokens: {
       required: [
         { token: "currentColor", role: "bar colour — inherits the label or text colour it sits in" },
@@ -571,12 +571,11 @@ drawer.open(accountId, item.id, () => handleComplete(item.id));` },
       forbidden: [
         "A spinning circle for any wait — use ThinkingDots",
         "Hard-coding a colour on the bars — let them inherit",
-        "Animating scale instead of height — it distorts the rounded ends",
+        "Animating capsule height — it brings back the voice-level look; the capsules only move sideways",
       ],
     },
     props: [
-      { name: "size", type: '"sm" | "md" | "lg"', required: false, default: '"sm"', description: "sm 4px · 4→12 (buttons), md 5px · 5→18, lg 6px · 6→26." },
-      { name: "bars", type: "number", required: false, default: "3", description: "Number of bars; 5 suits a full-screen processing state." },
+      { name: "size", type: '"sm" | "md" | "lg"', required: false, default: '"sm"', description: "Capsule width · tallest height: sm 4 · 16 (buttons), md 5 · 24, lg 6 · 32." },
       { name: "label", type: "string", required: false, default: '"Working"', description: "Screen-reader text (role=status)." },
     ],
     usage: {
@@ -591,11 +590,14 @@ drawer.open(accountId, item.id, () => handleComplete(item.id));` },
       useWhen: ["Any action or screen that takes a moment: button loading, status lines, processing states"],
       neverUseFor: ["Content placeholders — use Skeleton"],
       alwaysRemember: [
-        "1.2s loop, 0.14s stagger, each bar ±40ms so the wave drifts",
-        "Reduced motion: static bars at 40% height",
+        "Shuffle: three capsules (short, medium, tall) swap places over a 2.1s loop on smooth curves (no pauses at the turns)",
+        "Reduced motion: static, capsules rest in their starting slots",
       ],
     },
-    changelog: ["2026-10-28: new. Existing spinners (processing banner, account Preparing note card, story mocks) still use the old circle and are not migrated yet."],
+    changelog: [
+      "2026-10-28: new. Existing spinners (processing banner, account Preparing note card, story mocks) still use the old circle and are not migrated yet.",
+      "2026-11-05: replaced the rising/falling bars (read as a voice level) with Shuffle; removed the `bars` prop.",
+    ],
   },
 
   // ── Button ──────────────────────────────────────────────────────────────────

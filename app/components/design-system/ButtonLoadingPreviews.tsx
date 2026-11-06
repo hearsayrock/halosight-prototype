@@ -59,12 +59,6 @@ export function DotsOnSurfaces() {
             <span className="text-[11px] font-mono" style={{ color: "var(--md-sys-color-text-muted)" }}>{size}</span>
           </div>
         ))}
-        <div className="flex flex-col items-center gap-2" style={{ minWidth: 88 }}>
-          <div className="flex items-center justify-center" style={{ height: 56, color: "var(--md-sys-color-neonindigo)" }}>
-            <ThinkingDots size="lg" bars={5} />
-          </div>
-          <span className="text-[11px] font-mono" style={{ color: "var(--md-sys-color-text-muted)" }}>lg · bars=5</span>
-        </div>
       </div>
       <div className="flex items-center gap-3 flex-wrap">
         {surfaces.map((s) => (
