@@ -3,10 +3,10 @@
  * Route: / (initial route)
  * Widget: StatelessWidget
  * State: none — auth buttons navigate to /relationships (prototype skips real auth)
- * Tokens: --gradient-login, --md-sys-color-brand-coral, --md-sys-color-surface-white,
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-inverse,
+ * Tokens: --gradient-login, --md-sys-color-surface-static-white, --md-sys-color-text-on-white,
+ *         --md-sys-color-text-primary, --md-sys-color-text-muted,
  *         --md-sys-color-neonindigo, --md-sys-color-alpha-neonindigo-18, --md-sys-color-alpha-coral-10,
- *         --radius-xl
+ *         --radius-full
  * Flutter equivalent: login_page.dart
  */
 
@@ -73,11 +73,11 @@ export default function LoginPage() {
       <div className="w-full flex flex-col gap-3 relative z-10">
         <Link href="/relationships?preview=empty" className="block">
           <button
-            className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
+            className="w-full flex items-center justify-center gap-3 h-14 font-semibold text-base transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-brand-coral)",
-              color: "var(--md-sys-color-text-primary)",
-              borderRadius: "var(--radius-xl)",
+              background: "var(--md-sys-color-surface-static-white)",
+              color: "var(--md-sys-color-text-on-white)",
+              borderRadius: "var(--radius-full)",
             }}
           >
             <Image src="/google-g.svg" alt="" width={20} height={20} />
@@ -87,11 +87,11 @@ export default function LoginPage() {
 
         <Link href="/relationships?preview=empty" className="block">
           <button
-            className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
+            className="w-full flex items-center justify-center gap-3 h-14 font-semibold text-base transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
-              borderRadius: "var(--radius-xl)",
+              background: "var(--md-sys-color-surface-static-white)",
+              color: "var(--md-sys-color-text-on-white)",
+              borderRadius: "var(--radius-full)",
             }}
           >
             <Image src="/microsoft-logo.svg" alt="" width={20} height={20} />
@@ -101,11 +101,11 @@ export default function LoginPage() {
 
         <Link href="/relationships?preview=empty" className="block">
           <button
-            className="w-full flex items-center justify-center gap-3 h-14 text-base-bold transition-opacity active:opacity-80"
+            className="w-full flex items-center justify-center gap-3 h-14 font-semibold text-base transition-opacity active:opacity-80"
             style={{
-              background: "var(--md-sys-color-surface-white)",
-              color: "var(--md-sys-color-text-inverse)",
-              borderRadius: "var(--radius-xl)",
+              background: "var(--md-sys-color-surface-static-white)",
+              color: "var(--md-sys-color-text-on-white)",
+              borderRadius: "var(--radius-full)",
             }}
           >
             <Image src="/apple-logo.svg" alt="" width={18} height={22} style={{ height: "auto" }} />
@@ -114,8 +114,8 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      {/* Email login */}
-      <div className="mt-8 relative z-10">
+      {/* Email login — hidden for now, keeping for future use */}
+      {/* <div className="mt-8 relative z-10">
         <Link
           href="/relationships?preview=empty"
           className="text-sm font-medium"
@@ -123,7 +123,7 @@ export default function LoginPage() {
         >
           Log in with Email
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -43,6 +43,8 @@
   --md-sys-color-surface-white: #FFFFFF;
   --md-sys-color-surface-light: #F8FAFC;
   --md-sys-color-surface-gray:  #F1F5F9;
+  --md-sys-color-surface-static-white: #FFFFFF;  /* White buttons (sign-in): white in both themes, brand requirement */
+  --md-sys-color-text-on-white:  #111420;  /* Label on static-white fills (same in both themes) */
 
   /* ── Brand — Neon Indigo ─────────────────────────────────────────────────── */
   --md-sys-color-neonindigo-light: #B3B8FF;
