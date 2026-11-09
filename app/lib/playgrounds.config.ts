@@ -71,24 +71,6 @@ export const PLAYGROUNDS: Playground[] = [
     startedAt: "2026-09-09",
   },
   {
-    id: "playground/new-colors",
-    name: "New Colors",
-    description: "Color exploration",
-    url: "https://halosight-prototype-git-playg-b41d97-nate-natesdesigns-projects.vercel.app",
-    author: "Nate",
-    status: "exploring",
-    startedAt: "2026-08-26",
-  },
-  {
-    id: "playground/interaction-updates",
-    name: "Interaction Updates",
-    description: "Explore updates to interactions.",
-    url: "https://halosight-prototype-git-playg-736146-nate-natesdesigns-projects.vercel.app",
-    author: "Nate",
-    status: "exploring",
-    startedAt: "2026-08-19",
-  },
-  {
     id: "playground/halosight-lite-v1",
     name: "Halosight Lite V1",
     description: "Explore a trial version of the app with no CRM connect.",
@@ -100,18 +82,6 @@ export const PLAYGROUNDS: Playground[] = [
       { label: "Login", path: "/" },
       { label: "Home (empty)", path: "/relationships?preview=empty" },
       { label: "Home (seeded)", path: "/relationships" },
-    ],
-  },
-  {
-    id: "playground/onboarding-flow",
-    name: "Onboarding Flow",
-    description: "A 3-screen welcome slideshow walking new users through the app's most valuable features.",
-    url: "https://halosight-prototype-git-playg-2734fa-nate-natesdesigns-projects.vercel.app",
-    author: "Nate",
-    status: "exploring",
-    startedAt: "2026-06-09",
-    routes: [
-      { label: "Onboarding", path: "/onboarding" },
     ],
   },
   // Example entry — copy, fill in, and uncomment when starting a new playground:
