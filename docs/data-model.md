@@ -27,6 +27,8 @@ interface Account {
   state?: string;
   distanceMiles: number;          // From rep's current location
   lastVisited: Date;              // Most recent visit date
+  taskCount?: number;             // Open to-dos; the tasks badge is hidden when 0 or undefined
+  riskCount?: number;             // Open AI-flagged risks; the risk badge is hidden when 0 or undefined
   childCount?: number;            // Corporate accounts only
   parentId?: string;              // Branch accounts only
   contactName?: string;
@@ -62,6 +64,23 @@ interface AccountDetail extends Account {
 
 ---
 
+### ActionItem
+A follow-up task on an account, usually generated from an interaction. Rendered by `ActionItemList`.
+
+```ts
+interface ActionItem {
+  id: string;
+  title: string;
+  dueDate: Date | null;            // null renders "No due date" (the home screen maps its own null to today)
+  status: "open" | "done" | "canceled";
+  note?: string;                   // optional completion note
+  description?: string;            // why it was created
+  originActivity?: string;         // name of the interaction it came from
+  originActivityId?: string;       // links to /relationships/[accountId]/activity/[id]
+  originType?: "meeting" | "spoken-note"; // kind of interaction it came from; shown on the drawer's interaction card
+}
+```
+
 ### ActivityItem
 
 A single logged interaction on an account's timeline.
@@ -72,9 +91,12 @@ interface ActivityItem {
   accountId: string;
   date: Date;
   type: "visit" | "call" | "email" | "task";
+  title: string;
   summary: string;                // AI summary or manual note
+  durationMinutes?: number;       // shown on Halosight rows ("35 mins"); none for CRM items
   hasTranscript: boolean;
-  repName: string;
+  repName: string;                // who created it — "You" for the signed-in rep, else their name
+  source?: "salesforce";          // undefined = logged in Halosight; "salesforce" = synced from the CRM (cloud icon + "From Salesforce")
 }
 ```
 
@@ -209,6 +231,33 @@ interface CrmUpdate {
 ```
 
 ---
+
+
+## Account Chat (`ChatTurn`, `ChatThread`)
+
+```ts
+type ChatRole = "user" | "assistant";
+interface ChatTurn { id: string; role: ChatRole; text: string; draft?: string }   // draft = quoted block (e.g. an email the assistant wrote)
+interface ChatThread { id: string; title: string; whenLabel: string; messageCount: number; pinned: boolean }
+```
+
+Prototype data lives in `lib/mock-data/chat.ts` (suggestions, threads, a sample conversation, keyword-matched canned replies).
+Production needs a chat repository (threads, turns, streamed replies) and, before shipping, source provenance on answers.
+
+
+## Engagements feed (`RecentActivity`)
+
+```ts
+interface RecentActivity {
+  id: string; accountId?: string; accountName: string; activityId?: string;
+  type: "visit" | "call"; title: string; date: Date;
+  unread?: boolean;        // not opened yet: dot, bold title, change line
+  changeNote?: string;     // "Modified 1 action item"
+}
+```
+
+Powers the home side drawer (`mockRecentActivities` in `lib/mock-data/home.ts`, 30 rows, newest first). Rows without an `accountId` render but do not link.
+Date labels come from `formatEngagementDate` (Today, Yesterday, weekday, Last Friday, Oct 12). Which rows were opened is session state in `AccountStateContext`; production needs a per-user read flag from the API and cursor paging.
 
 ## Sort Options
 

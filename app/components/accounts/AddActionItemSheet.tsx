@@ -1,13 +1,31 @@
 "use client";
 
 /**
- * AddActionItemSheet — bottom sheet for creating a new action item.
- * Portals into #phone-overlay-root so it sits above PageTransition + BottomNav.
- * Slides up from the bottom using framer-motion spring.
+ * FLUTTER HANDOFF: AddActionItemSheet
+ * Widget: StatefulWidget (bottom sheet, opened with showModalBottomSheet)
+ * Props: accountId, onClose
+ * State: title, selectedDate (Date | null), showCalendar, isVisible (exit animation)
+ * Data: useActionItems().addItem(accountId, { id, title, dueDate, status: "open" }). Nothing is saved until "Add action item" is tapped.
+ * Flutter equivalent: add_action_item_sheet.dart (a DrawerPanel-style sheet; the date step uses the platform date picker, not MiniCalendar)
+ *
+ * Create an action item in one field and one tap:
+ *   - Heading "Add an item", then a TextField ("What needs to be done?"), focused ~300ms after the sheet starts to slide up
+ *   - Due date: a row of five day chips (today plus four days, 64px wide) and "Pick another date", which swaps (opacity only, 150ms)
+ *     to a MiniCalendar with "Hide calendar" and the chosen date. The date is optional
+ *   - "Add action item" (Button, md, full width) is disabled until the title has text, then closes the sheet
+ *
+ * Portals into #phone-overlay-root so it sits above the page transition. Built on DrawerBackdrop and DrawerPanel (maxHeight 88%).
+ * Known drift: the day chips are hand-built. When a chip component exists (the edit drawer has DateChips), use that one.
+ *
+ * Tokens: color.dark.secondary (title field, unselected chip), color.dark.tertiary (outlines), color.neonindigo.base (selected chip),
+ *         color.neonindigo.dark (calendar icon), color.text.primary / muted, radius.md (chips), radius.full (outline pills)
  */
 
+import TextField from "@/components/ui/TextField";
+import Button from "@/components/ui/Button";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 import MiniCalendar from "./MiniCalendar";
@@ -79,35 +97,9 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
     {isVisible && (
     <div className="absolute inset-0" style={{ pointerEvents: "auto" }}>
 
-      {/* Backdrop */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ background: "rgba(0,0,0,0.6)" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={handleClose}
-      />
-
-      {/* Sheet */}
-      <motion.div
-        className="absolute left-0 right-0 bottom-0"
-        style={{
-          background: "var(--md-sys-color-background)",
-          borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-          maxHeight: "88%",
-          overflowY: "auto",
-        }}
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 380, damping: 38 }}
-      >
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
-        </div>
+      {/* Backdrop + panel (shared drawer chrome) */}
+      <DrawerBackdrop onClick={handleClose} />
+      <DrawerPanel maxHeight="88%">
 
         <div className="px-5 pt-3 pb-8">
           {/* Heading */}
@@ -119,18 +111,12 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
           </h2>
 
           {/* Text input */}
-          <input
-            ref={inputRef}
-            type="text"
+          <TextField
+            inputRef={inputRef}
+            ariaLabel="Action item"
             placeholder="What needs to be done?"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full text-15 outline-none px-4 py-3.5"
-            style={{
-              background: "var(--md-sys-color-dark-secondary)",
-              borderRadius: "var(--radius-xl)",
-              color: "var(--md-sys-color-text-primary)",
-            }}
+            onChange={setTitle}
           />
 
           {/* Due date section */}
@@ -224,21 +210,11 @@ export default function AddActionItemSheet({ accountId, onClose }: Props) {
           </AnimatePresence>
 
           {/* Add button */}
-          <button
-            onClick={handleAdd}
-            disabled={!title.trim()}
-            className="w-full h-12 text-15-bold flex items-center justify-center transition-opacity"
-            style={{
-              background: "var(--md-sys-color-brand-coral)",
-              color: "var(--md-sys-color-text-primary)",
-              borderRadius: "var(--radius-full)",
-              opacity: title.trim() ? 1 : 0.4,
-            }}
-          >
+          <Button size="md" fullWidth disabled={!title.trim()} onClick={handleAdd}>
             Add action item
-          </button>
+          </Button>
         </div>
-      </motion.div>
+      </DrawerPanel>
 
     </div>
     )}

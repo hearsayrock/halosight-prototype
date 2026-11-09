@@ -12,12 +12,23 @@
  * Flutter equivalent: interaction_detail_page.dart
  */
 
+import TextField from "@/components/ui/TextField";
 import React, { use, useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
+import IconButton from "@/components/ui/IconButton";
+import { AiChatIcon } from "@/components/ui/CustomIcons";
 import Icon from "@/components/ui/Icon";
+import Menu, { menuPanelVariants, menuPanelTransition } from "@/components/ui/Menu";
+import { AnimatePresence, motion } from "framer-motion";
+import { useAccountChat } from "@/lib/context/ChatContext";
+import { useAccountState } from "@/lib/context/AccountStateContext";
+import { useToast } from "@/lib/context/ToastContext";
+import AlertDialog from "@/components/ui/AlertDialog";
 import AddActionItemSheet from "@/components/accounts/AddActionItemSheet";
 import CompletionToast from "@/components/ui/CompletionToast";
 import NoteSheet from "@/components/ui/NoteSheet";
+import ActionItemList, { ActionItemsHeader } from "@/components/accounts/ActionItemList";
 import { mockAccounts, mockAccountDetails } from "@/lib/mock-data/accounts";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import type { ActionItem, ActivityItem } from "@/lib/types";
@@ -112,18 +123,6 @@ function formatOccurredAt(date: Date): string {
   const d = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   const t = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   return `${d} · ${t}`;
-}
-
-function dueDateMeta(date: Date | null): { text: string; teal: boolean } {
-  if (!date) return { text: "No due date", teal: false };
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const due = new Date(date); due.setHours(0, 0, 0, 0);
-  const diff = Math.round((due.getTime() - today.getTime()) / 86_400_000);
-  if (diff < -1) return { text: `Overdue ${-diff} days`, teal: true };
-  if (diff === -1) return { text: "Due yesterday", teal: true };
-  if (diff === 0) return { text: "Due today", teal: true };
-  if (diff === 1) return { text: "Due tomorrow", teal: false };
-  return { text: `Due ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`, teal: false };
 }
 
 function replaceAllOccurrences(text: string, oldName: string, newName: string): string {
@@ -250,19 +249,13 @@ const DRAWER_EASING = "cubic-bezier(0.32, 0.72, 0, 1)";
 function ParticipantsDrawer({
   participants, contacts, onRename, onUnlink, onLinkContact, onAdd, onClose,
 }: ParticipantsDrawerProps) {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [editingNames, setEditingNames] = useState<Record<string, string>>(
     () => Object.fromEntries(participants.map(p => [p.id, p.name]))
   );
 
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
   function close() {
     setVisible(false);
-    setTimeout(onClose, DRAWER_DURATION);
   }
 
   function getSuggestions(id: string): Contact[] {
@@ -277,29 +270,11 @@ function ParticipantsDrawer({
   }
 
   return (
-    <>
-      <div
-        onClick={close}
-        style={{
-          position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 40,
-          opacity: visible ? 1 : 0,
-          transition: `opacity ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
-        }}
-      />
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0,
-        background: "var(--md-sys-color-dark-secondary)",
-        borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-        zIndex: 41,
-        maxHeight: "80%",
-        display: "flex", flexDirection: "column",
-        transform: visible ? "translateY(0)" : "translateY(100%)",
-        transition: `transform ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
-      }}>
-        {/* Handle */}
-        <div style={{ display: "flex", justifyContent: "center", paddingTop: 10, paddingBottom: 4, flexShrink: 0 }}>
-          <div style={{ width: 36, height: 4, borderRadius: "var(--radius-full)", background: "var(--md-sys-color-alpha-white-10)" }} />
-        </div>
+    <AnimatePresence onExitComplete={onClose}>
+      {visible && (
+        <>
+          <DrawerBackdrop onClick={close} zIndex={40} />
+          <DrawerPanel flexColumn maxHeight="80%" zIndex={41}>
         {/* Header */}
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -341,22 +316,19 @@ function ParticipantsDrawer({
                         You
                       </p>
                     ) : (
-                      <input
+                      <TextField
+                        variant="bare"
+                        ariaLabel={`Name for ${p.name}`}
                         value={editingNames[p.id] ?? p.name}
-                        onChange={e => setEditingNames(prev => ({ ...prev, [p.id]: e.target.value }))}
+                        onChange={(v) => setEditingNames(prev => ({ ...prev, [p.id]: v }))}
                         onBlur={() => commitRename(p.id)}
-                        style={{
-                          fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600,
-                          color: "var(--md-sys-color-text-primary)",
-                          background: "none", border: "none", outline: "none",
-                          padding: 0, width: "100%",
-                        }}
+                        inputStyle={{ fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600 }}
                       />
                     )}
                     <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
                       {p.isYou ? (
                         <span style={{ fontFamily: "Barlow, sans-serif", fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>
-                          That's you
+                          That&apos;s you
                         </span>
                       ) : p.contactId ? (
                         <>
@@ -450,8 +422,10 @@ function ParticipantsDrawer({
             Participants are people in this interaction. Linking a name to a contact keeps your notes connected across visits.
           </p>
         </div>
-      </div>
-    </>
+          </DrawerPanel>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -476,18 +450,12 @@ function SpeakerDrawer({
 }: SpeakerDrawerProps) {
   const participant = participants.find(p => p.id === participantId);
   const [editingName, setEditingName] = useState(participant?.name ?? "");
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
+  const [visible, setVisible] = useState(true);
 
   if (!participant) return null;
 
   function close() {
     setVisible(false);
-    setTimeout(onClose, DRAWER_DURATION);
   }
 
   const otherParticipants = participants.filter(p => p.id !== participantId && !p.isYou);
@@ -499,29 +467,11 @@ function SpeakerDrawer({
   }
 
   return (
-    <>
-      <div
-        onClick={close}
-        style={{
-          position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 40,
-          opacity: visible ? 1 : 0,
-          transition: `opacity ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
-        }}
-      />
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0,
-        background: "var(--md-sys-color-dark-secondary)",
-        borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-        zIndex: 41,
-        maxHeight: "85%",
-        display: "flex", flexDirection: "column",
-        transform: visible ? "translateY(0)" : "translateY(100%)",
-        transition: `transform ${DRAWER_DURATION}ms ${DRAWER_EASING}`,
-      }}>
-        {/* Handle */}
-        <div style={{ display: "flex", justifyContent: "center", paddingTop: 10, paddingBottom: 4, flexShrink: 0 }}>
-          <div style={{ width: 36, height: 4, borderRadius: "var(--radius-full)", background: "var(--md-sys-color-alpha-white-10)" }} />
-        </div>
+    <AnimatePresence onExitComplete={onClose}>
+      {visible && (
+        <>
+          <DrawerBackdrop onClick={close} zIndex={40} />
+          <DrawerPanel flexColumn maxHeight="85%" zIndex={41}>
 
         {/* Header */}
         <div style={{
@@ -531,16 +481,13 @@ function SpeakerDrawer({
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <ParticipantAvatar participant={participant} size={40} />
             <div>
-              <input
+              <TextField
+                variant="bare"
+                ariaLabel="Name"
                 value={editingName}
-                onChange={e => setEditingName(e.target.value)}
+                onChange={setEditingName}
                 onBlur={commitName}
-                style={{
-                  fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600,
-                  color: "var(--md-sys-color-text-primary)",
-                  background: "none", border: "none", outline: "none",
-                  padding: 0,
-                }}
+                inputStyle={{ fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600 }}
               />
               <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
                 {linkedContact ? (
@@ -700,8 +647,10 @@ function SpeakerDrawer({
             Reassigning affects only the mention you tapped. Linking a contact applies to every mention of this participant.
           </p>
         </div>
-      </div>
-    </>
+          </DrawerPanel>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -724,6 +673,11 @@ function InteractionDetailPageContent({
 
   // Interaction type picker
   const [typePickerOpen, setTypePickerOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { open: openChat } = useAccountChat();
+  const { deleteActivity, restoreActivity } = useAccountState();
+  const { show: showToast } = useToast();
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [interactionTypeOverride, setInteractionTypeOverride] = useState<"inperson" | "phone" | null>(null);
 
   // Action items
@@ -893,22 +847,8 @@ function InteractionDetailPageContent({
   const displayKeyPoints = noteKeyPointsOverride ?? activity.aiSummary?.keyPoints ?? [];
 
   const showKebab = !hasScrolled || scrollingUp;
-  const glassCircle = (visible: boolean): React.CSSProperties => ({
-    width: 36,
-    height: 36,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "50%",
-    border: "none",
-    cursor: "pointer",
-    background: hasScrolled ? "rgba(20, 23, 38, 0.88)" : "transparent",
-    backdropFilter: hasScrolled ? "blur(16px) saturate(180%)" : undefined,
-    boxShadow: hasScrolled ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
-    transition: "background 180ms ease",
-    opacity: visible ? 1 : 0,
-    pointerEvents: visible ? "auto" : "none",
-  });
+  // Floating top-bar buttons: glass once the page has scrolled under them; the more-options one hides while scrolling down.
+  const fade = (visible: boolean): React.CSSProperties => ({ opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none" });
 
   return (
     <div style={{ position: "relative", height: "100%", background: "var(--md-sys-color-background)", overflow: "hidden" }}>
@@ -918,13 +858,53 @@ function InteractionDetailPageContent({
         paddingTop: 40, paddingBottom: 10, paddingLeft: 16, paddingRight: 16,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
-        <button onClick={() => router.push(backHref)} aria-label="Go back" style={glassCircle(true)}>
-          <Icon name="arrow_back" size={22} style={{ color: "var(--md-sys-color-text-primary)" }} />
-        </button>
-        <button aria-label="More options" style={glassCircle(showKebab)}>
-          <Icon name="more_vert" size={22} style={{ color: "var(--md-sys-color-text-primary)" }} />
-        </button>
+        <IconButton icon="arrow_back" label="Go back" variant="glass" size={36} iconSize={22} scrolled={hasScrolled} onClick={() => router.push(backHref)} />
+        <div className="flex items-center" style={{ gap: "var(--spacing-2)" }}>
+        <IconButton glyph={<AiChatIcon size={22} />} label="Ask about this account" variant="glass" size={36} scrolled={hasScrolled} style={fade(showKebab)} onClick={() => openChat(account.name)} />
+        <div className="relative">
+          <IconButton icon="more_vert" label="More options" variant="glass" size={36} iconSize={22} scrolled={hasScrolled} style={fade(showKebab)} onClick={() => setMenuOpen((o) => !o)} />
+          <AnimatePresence>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0" style={{ zIndex: 20 }} onClick={() => setMenuOpen(false)} />
+                <motion.div
+                  className="absolute right-0 top-0"
+                  style={{ zIndex: 21, transformOrigin: "top right" }}
+                  variants={menuPanelVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  transition={menuPanelTransition}
+                >
+                  <Menu
+                    variant="icon"
+                    items={[
+                      { id: "edit", label: "Edit", icon: "edit", onSelect: () => setMenuOpen(false) },
+                      { id: "share", label: "Share", icon: "ios_share", onSelect: () => setMenuOpen(false) },
+                      { id: "delete", label: "Delete", icon: "delete", destructive: true, onSelect: () => { setMenuOpen(false); setConfirmDelete(true); } },
+                    ]}
+                  />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </div>
+        </div>
       </div>
+
+      <AlertDialog
+        open={confirmDelete}
+        title="Delete interaction?"
+        body="This removes the visit and its summary. It can't be undone."
+        confirmLabel="Yes, delete"
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={() => {
+          setConfirmDelete(false);
+          deleteActivity(activityId);
+          showToast({ title: "Interaction deleted", tone: "neutral", action: { label: "Undo", onPress: () => restoreActivity(activityId) }, bottom: 24 });
+          router.push(backHref);
+        }}
+      />
 
       {/* ── Scroll container ─────────────────────────────────────────────────── */}
       <div
@@ -957,61 +937,17 @@ function InteractionDetailPageContent({
             {/* Interaction type picker */}
             <div style={{ position: "relative" }}>
               {typePickerOpen && (
-                <div className="fixed inset-0" style={{ zIndex: 20 }} onClick={() => setTypePickerOpen(false)} />
-              )}
-              <button
-                onClick={() => setTypePickerOpen((o) => !o)}
-                style={{
-                  display: "flex", alignItems: "center", gap: 2,
-                  background: "none", border: "none", cursor: "pointer",
-                  padding: 0, position: "relative", zIndex: 21,
-                }}
-              >
-                <span style={{
-                  fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600,
-                  color: "var(--md-sys-color-neonindigo)",
-                }}>
-                  {interactionLabel}
-                </span>
-                <Icon name="unfold_more" size={16} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-              </button>
-
-              {typePickerOpen && (
-                <div style={{
-                  position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 21,
-                  minWidth: 180,
-                  background: "var(--md-sys-color-dark-primary)",
-                  borderRadius: "var(--radius-md)",
-                  border: "1px solid var(--md-sys-color-alpha-white-10)",
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
-                  overflow: "hidden",
-                }}>
-                  {(["inperson", "phone"] as const).map((type) => {
-                    const label = type === "phone" ? "Phone call" : "In-person";
-                    const selected = interactionType === type;
-                    return (
-                      <button
-                        key={type}
-                        onClick={() => { setInteractionTypeOverride(type); setTypePickerOpen(false); }}
-                        style={{
-                          width: "100%", display: "flex", alignItems: "center",
-                          justifyContent: "space-between", padding: "10px 18px",
-                          background: "none", border: "none", cursor: "pointer", textAlign: "left",
-                        }}
-                      >
-                        <span style={{
-                          fontFamily: "Barlow, sans-serif", fontSize: 16, fontWeight: 500,
-                          color: "var(--md-sys-color-text-primary)",
-                        }}>
-                          {label}
-                        </span>
-                        {selected && (
-                          <Icon name="check" size={18} style={{ color: "var(--md-sys-color-neonindigo)", flexShrink: 0 }} />
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+                <Menu
+                  variant="check"
+                  minWidth={180}
+                  style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 21 }}
+                  items={(["inperson", "phone"] as const).map((type) => ({
+                    id: type,
+                    label: type === "phone" ? "Phone call" : "In-person",
+                    selected: interactionType === type,
+                    onSelect: () => { setInteractionTypeOverride(type); setTypePickerOpen(false); },
+                  }))}
+                />
               )}
             </div>
           </div>
@@ -1129,77 +1065,20 @@ function InteractionDetailPageContent({
 
         {/* Action Items */}
         <div style={{ padding: "28px 20px 48px" }}>
-          <div style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
-          }}>
-            <span style={{
-              fontFamily: "Barlow, sans-serif", fontSize: 11, fontWeight: 600,
-              letterSpacing: "0.12em", textTransform: "uppercase",
-              color: "var(--md-sys-color-text-muted)",
-            }}>
-              Action Items
-            </span>
-            <button
-              onClick={() => setShowAddSheet(true)}
-              aria-label="Add action item"
-              style={{
-                width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center",
-                background: "none", border: "none", cursor: "pointer",
-                color: "var(--md-sys-color-text-primary)", marginRight: -4,
-              }}
-            >
-              <Icon name="add" size={20} />
-            </button>
-          </div>
+          {activityActionItems.length > 0 && (
+            <div className="-mx-4">
+              <ActionItemsHeader action={{ kind: "add", onClick: () => setShowAddSheet(true) }} />
+            </div>
+          )}
 
           {activityActionItems.length > 0 ? (
-            <div style={{
-              borderRadius: "var(--radius-xl)", overflow: "hidden",
-              border: "1px solid var(--md-sys-color-alpha-white-10)",
-            }}>
-              {activityActionItems.map((item, i) => {
-                const due = dueDateMeta(item.dueDate);
-                const isPending = pendingItemId === item.id;
-                return (
-                  <div
-                    key={item.id}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 14, padding: "14px 16px",
-                      borderTop: i > 0 ? "1px solid var(--md-sys-color-alpha-white-10)" : "none",
-                    }}
-                  >
-                    <button
-                      onClick={() => handleComplete(item.id)}
-                      aria-label="Mark complete"
-                      style={{
-                        width: 24, height: 24, borderRadius: "50%", flexShrink: 0,
-                        border: isPending ? "none" : "1.5px solid var(--md-sys-color-text-disabled)",
-                        background: isPending ? "var(--md-sys-color-success)" : "transparent",
-                        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                        transition: "all 180ms ease",
-                      }}
-                    >
-                      {isPending && <Icon name="check" size={12} style={{ color: "#fff" }} />}
-                    </button>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{
-                        fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600,
-                        lineHeight: "22px", color: "var(--md-sys-color-text-primary)",
-                      }}>
-                        {item.title}
-                      </p>
-                      <p style={{
-                        fontFamily: "Barlow, sans-serif", fontSize: 13, lineHeight: "18px",
-                        marginTop: 2,
-                        color: due.teal ? "var(--md-sys-color-brand-teal)" : "var(--md-sys-color-text-muted)",
-                      }}>
-                        {due.text}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <ActionItemList
+              className=""
+              entries={activityActionItems.map((item) => ({ item, accountId: id }))}
+              pendingId={pendingItemId}
+              onComplete={handleComplete}
+              collapsedCount={3}
+            />
           ) : (
             <button
               onClick={() => setShowAddSheet(true)}

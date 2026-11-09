@@ -8,14 +8,6 @@
       "cwd": "app",
       "port": 3000,
       "autoPort": false
-    },
-    {
-      "name": "halosight-expo",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "web"],
-      "cwd": "expo",
-      "port": 3000,
-      "autoPort": false
     }
   ]
 }

@@ -3,17 +3,27 @@
 /**
  * FLUTTER HANDOFF: VisitedFilterDropdown
  * Widget: StatefulWidget
- * Props: value, customFrom, customTo, onChange
- * State: open (bool), showCustom (bool), draftFrom/draftTo (string)
- * Tokens: --md-sys-color-dark-secondary (pill bg), --md-sys-color-dark-tertiary (menu bg),
- *         --md-sys-color-radius-full (pill), --radius-xl (menu), --radius-md (inputs),
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-neonindigo
- * Transitions: same spring as FilterDropdown (stiffness 380, damping 22)
+ * Props: value ("all" | "7d" | "14d" | "30d" | "90d" | "custom"), customFrom, customTo, onChange(value, from?, to?)
+ * State: open, showCustom, draftFrom / draftTo (strings; synced from the applied range each time it opens)
+ * Flutter equivalent: visited_filter_dropdown.dart (the pill plus a menu; the custom range uses showDateRangePicker instead of two date fields)
+ *
+ * The "Last Visited" filter on the companies list. A 32px pill in the same three looks as FilterDropdown (default, filtered with an indigo check,
+ * open). The label reads "Last Visited" until something is chosen, then the choice ("Last 7 days", "Custom"). The menu is Menu (`check`, min width 176):
+ *   - All time, Last 7 days, Last 2 weeks, Last 30 days, Last 90 days apply immediately and close the menu
+ *   - a divider, then "Custom range", which expands (opacity and height, 180ms) to two date TextFields (From, To; md) and an indigo Apply button
+ * Apply sends the typed dates as the range. Reopening restores the applied dates into the fields.
+ * Known drift: the open-state arrow is a raw white at 70% (no token yet).
+ *
+ * Tokens: color.dark.secondary (pill), color.neonindigo.base (open fill, check), color.text.on-accent, color.text.primary / muted, radius.full;
+ *         the menu uses Menu's tokens; the date fields are TextField
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
+import Button from "@/components/ui/Button";
+import { MenuPanel, MenuRow, MenuDivider, menuPanelVariants, menuPanelTransition } from "@/components/ui/Menu";
 
 export type VisitedFilter = "all" | "7d" | "14d" | "30d" | "90d" | "custom";
 
@@ -42,26 +52,6 @@ function fromInputVal(s: string): Date | null {
   const d = new Date(s + "T00:00:00");
   return isNaN(d.getTime()) ? null : d;
 }
-
-function CheckIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-      <path d="M3 8L6.5 11.5L13 5" stroke="var(--md-sys-color-text-primary)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-const menuVariants = {
-  hidden:  { opacity: 0, scale: 0.01 },
-  visible: { opacity: 1, scale: 1 },
-  exit:    { opacity: 0, scale: 0.01 },
-};
-const menuTransition = { type: "spring" as const, stiffness: 380, damping: 22, mass: 0.9 };
-const itemVariants = {
-  hidden:  { opacity: 0 },
-  visible: (i: number) => ({ opacity: 1, transition: { delay: i * 0.04 + 0.06, duration: 0.15 } }),
-  exit:    { opacity: 0, transition: { duration: 0.05 } },
-};
 
 export default function VisitedFilterDropdown({ value, customFrom, customTo, onChange }: Props) {
   const [open, setOpen]             = useState(false);
@@ -108,7 +98,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
           gap: isFiltered ? 4 : 2,
           background: open ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
           borderRadius: "var(--radius-full)",
-          color: open ? "#fff" : "var(--md-sys-color-text-primary)",
+          color: open ? "var(--md-sys-color-text-on-accent)" : "var(--md-sys-color-text-primary)",
         }}
       >
         {isFiltered && !open && (
@@ -120,7 +110,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
         <Icon
           name={open ? "keyboard_arrow_up" : "keyboard_arrow_down"}
           size={18}
-          style={{ color: open ? "rgba(255,255,255,0.7)" : "var(--md-sys-color-text-muted)" }}
+          style={{ color: open ? "color-mix(in srgb, var(--md-sys-color-text-on-accent) 70%, transparent)" : "var(--md-sys-color-text-muted)" }}
         />
       </button>
 
@@ -133,67 +123,28 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
             {/* Menu */}
             <motion.div
               className="absolute left-0 top-full mt-1 z-50"
-              variants={menuVariants}
+              variants={menuPanelVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
-              transition={menuTransition}
-              style={{
-                transformOrigin: "top left",
-                background: "var(--md-sys-color-dark-tertiary)",
-                borderRadius: "var(--radius-xl)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)",
-                paddingTop: 8,
-                paddingBottom: 8,
-                minWidth: 176,
-              }}
+              transition={menuPanelTransition}
+              style={{ transformOrigin: "top left" }}
             >
-              {/* Preset rows */}
+              <MenuPanel minWidth={176}>
               {PRESETS.map((opt, i) => (
-                <motion.button
+                <MenuRow
                   key={opt.value}
-                  custom={i}
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  onClick={() => handlePreset(opt.value)}
-                  className="w-full flex items-center text-left text-sm-bold"
-                  style={{ gap: 12, padding: "10px 16px", background: "transparent", color: "var(--md-sys-color-text-primary)" }}
-                >
-                  <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
-                    {value === opt.value && !showCustom && <CheckIcon />}
-                  </span>
-                  {opt.label}
-                </motion.button>
+                  index={i}
+                  variant="check"
+                  item={{ id: opt.value, label: opt.label, selected: value === opt.value && !showCustom, onSelect: () => handlePreset(opt.value) }}
+                />
               ))}
-
-              {/* Divider */}
-              <motion.div
-                custom={PRESETS.length}
-                variants={itemVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "4px 12px" }}
+              <MenuDivider />
+              <MenuRow
+                index={PRESETS.length + 1}
+                variant="check"
+                item={{ id: "custom", label: "Custom range", selected: value === "custom", onSelect: () => handlePreset("custom") }}
               />
-
-              {/* Custom range row */}
-              <motion.button
-                custom={PRESETS.length + 1}
-                variants={itemVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                onClick={() => handlePreset("custom")}
-                className="w-full flex items-center text-left text-sm-bold"
-                style={{ gap: 12, padding: "10px 16px", background: "transparent", color: "var(--md-sys-color-text-primary)" }}
-              >
-                <span style={{ width: 16, flexShrink: 0, display: "flex", alignItems: "center" }}>
-                  {value === "custom" && <CheckIcon />}
-                </span>
-                Custom range
-              </motion.button>
 
               {/* Custom date pickers — expands when custom is selected */}
               <AnimatePresence>
@@ -207,57 +158,16 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                   >
                     <div style={{ padding: "6px 12px 4px", display: "flex", flexDirection: "column", gap: 8 }}>
                       {/* From */}
-                      <div>
-                        <p className="text-xs-bold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>From</p>
-                        <input
-                          type="date"
-                          value={draftFrom}
-                          onChange={e => setDraftFrom(e.target.value)}
-                          className="w-full text-sm outline-none px-3 py-2"
-                          style={{
-                            background: "var(--md-sys-color-dark-secondary)",
-                            borderRadius: "var(--radius-md)",
-                            color: "var(--md-sys-color-text-primary)",
-                            border: "none",
-                            colorScheme: "dark",
-                          }}
-                        />
-                      </div>
+                      <TextField size="md" label="From" type="date" value={draftFrom} onChange={setDraftFrom} />
                       {/* To */}
-                      <div>
-                        <p className="text-xs-bold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>To</p>
-                        <input
-                          type="date"
-                          value={draftTo}
-                          onChange={e => setDraftTo(e.target.value)}
-                          className="w-full text-sm outline-none px-3 py-2"
-                          style={{
-                            background: "var(--md-sys-color-dark-secondary)",
-                            borderRadius: "var(--radius-md)",
-                            color: "var(--md-sys-color-text-primary)",
-                            border: "none",
-                            colorScheme: "dark",
-                          }}
-                        />
-                      </div>
+                      <TextField size="md" label="To" type="date" value={draftTo} onChange={setDraftTo} />
                       {/* Apply */}
-                      <button
-                        onClick={applyCustom}
-                        className="w-full text-sm-bold py-2 active:opacity-80 transition-opacity"
-                        style={{
-                          background: "var(--md-sys-color-neonindigo)",
-                          borderRadius: "var(--radius-full)",
-                          color: "#fff",
-                          marginTop: 2,
-                          marginBottom: 4,
-                        }}
-                      >
-                        Apply
-                      </button>
+                      <Button fill="indigo" size="sm" fullWidth onClick={applyCustom}>Apply</Button>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
+              </MenuPanel>
             </motion.div>
           </>
         )}

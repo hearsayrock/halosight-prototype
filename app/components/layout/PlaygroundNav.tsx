@@ -100,7 +100,7 @@ const STEPS = [
       <>
         <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
           In your Claude chat, run the <strong style={{ color: "var(--md-sys-color-text-primary)" }}>/new-playground</strong> skill.
-          Give it a name, a one-line description, and who's working on it.
+          Give it a name, a one-line description, and who&apos;s working on it.
           Claude will add it to the registry and give you the exact commands to run in step 2.
         </p>
         <SkillCall command="new-playground" args='"Map View" "Explore adding a map to the accounts tab" Nate' />
@@ -113,7 +113,7 @@ const STEPS = [
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          Claude will give you the exact two commands to copy-paste. They'll look like this
+          Claude will give you the exact two commands to copy-paste. They&apos;ll look like this
           (using whatever slug it derived from your name):
         </p>
         <Code>{`git checkout -b playground/map-view\ngit push -u origin playground/map-view`}</Code>
@@ -133,8 +133,8 @@ const STEPS = [
           <strong style={{ color: "var(--md-sys-color-text-primary)" }}>halosight-prototype</strong> project, and
           click <strong style={{ color: "var(--md-sys-color-text-primary)" }}>Deployments</strong> in the left sidebar.
           Find your branch in the list and wait for the status dot to turn green.
-          Once it's green, click <strong style={{ color: "var(--md-sys-color-text-primary)" }}>Visit</strong> and
-          copy the URL from your browser's address bar.
+          Once it&apos;s green, click <strong style={{ color: "var(--md-sys-color-text-primary)" }}>Visit</strong> and
+          copy the URL from your browser&apos;s address bar.
         </p>
       </>
     ),
@@ -159,8 +159,8 @@ const STEPS = [
     body: (
       <>
         <p style={{ fontSize: 13, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, margin: "6px 0" }}>
-          You're live on a completely separate branch — nothing on the main app is affected. Build with Claude as usual.
-          When you're finished, use <strong style={{ color: "var(--md-sys-color-text-primary)" }}>/playground-status</strong> to update
+          You&apos;re live on a completely separate branch — nothing on the main app is affected. Build with Claude as usual.
+          When you&apos;re finished, use <strong style={{ color: "var(--md-sys-color-text-primary)" }}>/playground-status</strong> to update
           the badge in this sidebar:
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 4 }}>

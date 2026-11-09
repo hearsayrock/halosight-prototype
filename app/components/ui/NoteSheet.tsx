@@ -7,14 +7,16 @@
  * The user can type a note and tap Done, or dismiss without adding one.
  * Either path commits the completion — this sheet has no undo.
  *
- * Tokens: --md-sys-color-dark-secondary (sheet bg), --md-sys-color-dark-tertiary (input bg),
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-brand-teal,
- *         --radius-xl, --radius-lg, --radius-full
+ * Fields: one multi-line TextField (3 rows, auto-focused) for the note.
+ * Known drift: Done is a hand-built teal button; the shared Button has no teal fill yet.
+ * Tokens: color.dark.secondary (the field, via TextField), color.brand.teal (Done), color.text.primary / muted, radius.full, spacing.3
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { DrawerBackdrop, DrawerPanel, DrawerBody } from "@/components/ui/Drawer";
+import { AnimatePresence } from "framer-motion";
 import Icon from "./Icon";
 
 interface Props {
@@ -46,41 +48,10 @@ export default function NoteSheet({ visible, onDone }: Props) {
       {visible && (
         <>
           {/* Backdrop — tap to complete without a note */}
-          <motion.div
-            key="note-sheet-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => onDone("")}
-            style={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 70,
-              background: "rgba(0,0,0,0.48)",
-              pointerEvents: "auto",
-            }}
-          />
+          <DrawerBackdrop onClick={() => onDone("")} zIndex={70} />
 
-          {/* Sheet */}
-          <motion.div
-            key="note-sheet"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 380, damping: 38 }}
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              zIndex: 71,
-              pointerEvents: "auto",
-              background: "var(--md-sys-color-dark-secondary)",
-              borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-              padding: "20px 16px 36px",
-            }}
-          >
+          <DrawerPanel zIndex={71} maxHeight="100%">
+          <DrawerBody>
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
               <span
@@ -98,22 +69,14 @@ export default function NoteSheet({ visible, onDone }: Props) {
             </div>
 
             {/* Textarea */}
-            <textarea
-              // eslint-disable-next-line jsx-a11y/no-autofocus
+            <TextField
+              multiline
+              rows={3}
               autoFocus
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={setNote}
               placeholder="Anything worth remembering for next time…"
-              rows={3}
-              className="w-full resize-none outline-none text-sm px-3 py-2.5 mb-3"
-              style={{
-                background: "var(--md-sys-color-dark-tertiary)",
-                borderRadius: "var(--radius-lg)",
-                color: "var(--md-sys-color-text-primary)",
-                lineHeight: "1.6",
-                caretColor: "var(--md-sys-color-brand-teal)",
-                display: "block",
-              }}
+              style={{ marginBottom: "var(--spacing-3)" }}
             />
 
             {/* Done / Save note button */}
@@ -123,12 +86,13 @@ export default function NoteSheet({ visible, onDone }: Props) {
               style={{
                 background: "var(--md-sys-color-brand-teal)",
                 borderRadius: "var(--radius-full)",
-                color: "#fff",
+                color: "var(--md-sys-color-text-on-teal)",
               }}
             >
               {hasNote ? "Save note" : "Done"}
             </button>
-          </motion.div>
+          </DrawerBody>
+          </DrawerPanel>
         </>
       )}
     </AnimatePresence>,

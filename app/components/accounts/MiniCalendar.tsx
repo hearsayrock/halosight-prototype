@@ -1,11 +1,21 @@
 "use client";
 
 /**
- * MiniCalendar — inline date picker used in AddActionItemSheet and the edit page.
- * - Month/year label on left with dropdown chevron (opens month picker)
- * - "Today" button + prev/next chevrons grouped on the right
- * - Past days greyed out and not selectable
- * - Can't navigate backwards past the current month
+ * FLUTTER HANDOFF: MiniCalendar
+ * Widget: StatefulWidget (month shown, month-picker open)
+ * Props: selected (Date | null), onSelect(Date)
+ * State: viewDate (first of the month being shown), showMonthPicker
+ * Flutter equivalent: not built. Use the platform date picker (showDatePicker) with firstDate = today. This inline calendar is a prototype
+ *   stand-in used by AddActionItemSheet and the action item edit drawer.
+ *
+ * An inline month grid for choosing a due date:
+ *   - Month and year on the left with a dropdown arrow (opens a list of the next 18 months); "Today" and prev / next chevrons on the right
+ *   - Past days are dimmed (35%) and not tappable; the back chevron is disabled on the current month
+ *   - The selected day is a neonindigo circle; today is a dark.tertiary circle
+ *   - 34px day cells, 14 / 600 text, S M T W T F S headers
+ *
+ * Tokens: color.dark.secondary (card), color.dark.tertiary (today, outlines), color.neonindigo.base (selected day, current month),
+ *         color.text.primary, color.text.disabled (day headers), radius.md (card), radius.full (Today pill)
  */
 
 import { useState } from "react";

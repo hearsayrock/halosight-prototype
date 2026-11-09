@@ -1,16 +1,25 @@
 "use client";
 
 /**
- * CaptureWidget — persistent capture bar anchored to the bottom edge.
- * Gradient: 3 blurred color blobs animating under a semi-transparent dark surface.
- * Colors: #FF6B5B (coral), #5C63D6 (indigo), #8C92FF (lavender).
+ * FLUTTER HANDOFF: CaptureWidget
+ * Widget: StatefulWidget (a persistent overlay mounted once in the mobile layout, above the phone/app content)
+ * Props: none. Everything comes from CaptureContext (status, accountId, accountName, canSwitchAccount, isProspect) and FakeCallContext (callStatus)
+ * State: elapsed seconds (ticks only while recording and no call interrupts), showPicker. The capture status machine lives in CaptureContext:
+ *        idle → recording → finalizing → (reviewing, prospects only) → ready → idle
+ * Flutter equivalent: capture_widget.dart (bar) + capture_view_model.dart (status machine; use cases StartCapture, FinishCapture, SwitchCaptureAccount)
  *
- * Account switcher: tapping the account name in recording OR ready state opens
- * a picker sheet. Selecting any account calls switchAccount() without
- * interrupting the recording session.
+ * The bar is the RECORDING state only. It slides up from the bottom edge (spring 380/38) over three blurred, drifting color blobs.
+ *   - Recording: red dot + timer, "Taking notes" with the account name (a tappable AccountButton opens AccountPickerSheet when the
+ *     rep may switch accounts; switching never interrupts the recording), and a coral Finish button.
+ *   - Call interrupted (an incoming phone call): the title becomes "Incoming call", the timer pauses, the blobs settle (dimmer, slower)
+ *     and Finish becomes a disabled "Paused" pill.
+ *   - Finish: the bar leaves. Processing and "Note ready" are NOT bar states: they show as the top pill Toast ("Preparing note" with a
+ *     spinner, then "Note ready" with a View action). Prospects get AIReviewOverlay between the two; the pill stays on "Preparing note".
+ * Surface: dark.primary at 82% over the blobs, a 4px backdrop blur, top corners 20px. Blobs are 160-200px circles blurred 28px.
  *
- * After finalizing, AIReviewOverlay slides up for the post-meeting AI conversation.
- * Accepting or discarding in the overlay transitions to "ready".
+ * Tokens: color.brand.coral + color.neonindigo.dark + color.neonindigo (blobs), color.semantic.error (recording dot), color.dark.primary (surface),
+ *         color.text.primary / secondary (timer, title, account), color.brand.coral.dark + color.text.on-coral (Finish),
+ *         color.alpha.white.10 + color.text.muted (Paused), radius.full
  */
 
 import { useEffect, useState } from "react";
@@ -23,6 +32,8 @@ import { mockAccountDetails } from "@/lib/mock-data/accounts";
 import Icon from "@/components/ui/Icon";
 import AccountPickerSheet from "@/components/accounts/AccountPickerSheet";
 import AIReviewOverlay from "@/components/capture/AIReviewOverlay";
+import { ToastCheck, ToastSpinner } from "@/components/ui/Toast";
+import { useToast } from "@/lib/context/ToastContext";
 
 // ── Timer ─────────────────────────────────────────────────────────────────────
 
@@ -56,17 +67,17 @@ function BlobBackground({ active, paused }: { active: boolean; paused: boolean }
       }}
     >
       <motion.div
-        style={{ position: "absolute", width: 200, height: 200, borderRadius: "50%", background: "#FF6B5B", left: "0%", top: "0%" }}
+        style={{ position: "absolute", width: 200, height: 200, borderRadius: "50%", background: "var(--md-sys-color-brand-coral)", left: "0%", top: "0%" }}
         animate={paused ? { x: 0, y: 0 } : { x: [0, 50, 10, 70, 0], y: [0, 15, -10, 5, 0] }}
         transition={paused ? { duration: 0.6, ease: "easeOut" } : { duration: 7 * speed, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        style={{ position: "absolute", width: 180, height: 180, borderRadius: "50%", background: "#5C63D6", right: "0%", top: "0%" }}
+        style={{ position: "absolute", width: 180, height: 180, borderRadius: "50%", background: "var(--md-sys-color-neonindigo-dark)", right: "0%", top: "0%" }}
         animate={paused ? { x: 0, y: 0 } : { x: [0, -40, -5, -60, 0], y: [0, 10, -15, 5, 0] }}
         transition={paused ? { duration: 0.6, ease: "easeOut" } : { duration: 9 * speed, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
       <motion.div
-        style={{ position: "absolute", width: 160, height: 160, borderRadius: "50%", background: "#8C92FF", left: "30%", top: "5%" }}
+        style={{ position: "absolute", width: 160, height: 160, borderRadius: "50%", background: "var(--md-sys-color-neonindigo)", left: "30%", top: "5%" }}
         animate={paused ? { x: 0, y: 0 } : { x: [0, 25, -30, 15, 0], y: [0, -10, 20, -5, 0] }}
         transition={paused ? { duration: 0.6, ease: "easeOut" } : { duration: 6 * speed, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
@@ -104,6 +115,7 @@ export default function CaptureWidget() {
   const { callStatus } = useFakeCall();
   const callInterrupted = callStatus !== "idle";
   const router = useRouter();
+  const { show: showToast } = useToast();
   const [elapsed, setElapsed] = useState(0);
   const [showPicker, setShowPicker] = useState(false);
 
@@ -128,7 +140,7 @@ export default function CaptureWidget() {
     if (status === "idle") setShowPicker(false);
   }, [status]);
 
-  function handleViewNote() {
+  function openNote() {
     if (!accountId) return;
     const detail = mockAccountDetails[accountId];
     const first = detail?.recentActivity?.[0];
@@ -138,8 +150,19 @@ export default function CaptureWidget() {
       const nameParam = accountName ? `?name=${encodeURIComponent(accountName)}` : "";
       router.push(`/relationships/${accountId}/activity/new-capture${nameParam}`);
     }
-    dismissCapture();
   }
+
+  // After Finish, the note shows up as a top pill: "Preparing note" while it processes (and while a prospect reviews
+  // the AI's CRM updates), then "Note ready" — tap it to open the note.
+  useEffect(() => {
+    if (status === "finalizing" || status === "reviewing") {
+      showToast({ shape: "pill", title: "Preparing note", leading: <ToastSpinner />, duration: null }, { replace: true });
+    } else if (status === "ready") {
+      showToast({ shape: "pill", title: "Note ready", leading: <ToastCheck />, duration: 6000, action: { label: "View", onPress: openNote } }, { replace: true });
+      dismissCapture();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   const overlayRoot =
     typeof document !== "undefined"
@@ -155,7 +178,7 @@ export default function CaptureWidget() {
 
       {/* ── Capture widget bar ──────────────────────────────────────────── */}
       <AnimatePresence>
-        {status !== "idle" && (
+        {status === "recording" && (
           <motion.div
             key="capture-widget"
             style={{
@@ -193,7 +216,7 @@ export default function CaptureWidget() {
                     className="flex items-center gap-3 px-4 pt-4 pb-7"
                   >
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className="w-2 h-2 rounded-full" style={{ background: "#ff4444" }} />
+                      <span className="w-2 h-2 rounded-full" style={{ background: "var(--md-sys-color-semantic-error)" }} />
                       <span
                         className="text-sm-bold tabular-nums"
                         style={{ color: "var(--md-sys-color-text-primary)", minWidth: 44 }}
@@ -219,79 +242,13 @@ export default function CaptureWidget() {
                       onClick={callInterrupted ? undefined : finishCapture}
                       className="flex-shrink-0 h-9 px-4 text-sm-bold rounded-full transition-opacity"
                       style={{
-                        background: callInterrupted ? "rgba(255,255,255,0.12)" : "var(--md-sys-color-brand-coral)",
-                        color: callInterrupted ? "rgba(255,255,255,0.4)" : "var(--md-sys-color-text-primary)",
+                        background: callInterrupted ? "var(--md-sys-color-alpha-white-10)" : "var(--md-sys-color-brand-coral-dark)",
+                        color: callInterrupted ? "var(--md-sys-color-text-muted)" : "var(--md-sys-color-text-on-coral)",
                         cursor: callInterrupted ? "default" : undefined,
                       }}
                     >
                       {callInterrupted ? "Paused" : "Finish"}
                     </button>
-                  </motion.div>
-                )}
-
-                {/* ── Finalizing (AI processing) ────────────────────────── */}
-                {status === "finalizing" && (
-                  <motion.div
-                    key="finalizing"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="px-4 pt-4 pb-7"
-                  >
-                    <p className="text-sm font-bold mb-1" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                      {isProspect ? "Analyzing your meeting…" : "Syncing to CRM…"}
-                    </p>
-                    <p className="text-xs" style={{ color: "var(--md-sys-color-text-muted)" }}>
-                      {isProspect
-                        ? "I'll surface any CRM updates in just a moment."
-                        : "Sit back — notes and action items are on their way to Salesforce."}
-                    </p>
-                  </motion.div>
-                )}
-
-                {/* ── Ready (post-review) ───────────────────────────────── */}
-                {status === "ready" && (
-                  <motion.div
-                    key="ready"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="px-4 pt-4 pb-7"
-                  >
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <p className="text-sm-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>
-                        {status === "ready" ? "Note is ready! 🎉" : "Finalizing your note…"}
-                      </p>
-                      <button
-                        onClick={dismissCapture}
-                        className="flex-shrink-0 w-5 h-5 flex items-center justify-center active:opacity-60 transition-opacity"
-                        style={{ color: "var(--md-sys-color-text-muted)", fontSize: 18, lineHeight: 1 }}
-                      >
-                        ×
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-3">
-                      {canSwitchAccount ? (
-                        <AccountButton name={accountName ?? ""} onPress={() => setShowPicker(true)} />
-                      ) : (
-                        <p className="text-15-bold truncate" style={{ color: "var(--md-sys-color-text-secondary)" }}>
-                          {accountName}
-                        </p>
-                      )}
-                      <motion.button
-                        initial={{ opacity: 0, scale: 0.85 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                        onClick={handleViewNote}
-                        className="flex-shrink-0 h-8 px-4 text-sm-bold rounded-full active:opacity-70 transition-opacity"
-                        style={{ background: "var(--md-sys-color-neonindigo)", color: "var(--md-sys-color-text-primary)" }}
-                      >
-                        View Note
-                      </motion.button>
-                    </div>
                   </motion.div>
                 )}
 

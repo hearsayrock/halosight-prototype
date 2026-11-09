@@ -4,11 +4,10 @@
  * FLUTTER HANDOFF: ConvertToAccountSheet
  * Widget: StatefulWidget (step: "form" | "success")
  * Props: accountId, accountName, initialContact, onClose, onConverted
- * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
- *         --md-sys-color-text-secondary, --md-sys-color-neonindigo, --md-sys-color-brand-teal,
- *         --radius-xl, --radius-md, --radius-sm, --radius-full
- *
+ * Fields: TextField (md) for contact name, title, phone, deal name and estimated value (numeric keypad). Account type is a 3-up chip row.
+ * Known drift: "Convert to Account" is a hand-built teal button and the success step uses teal; the shared Button has no teal fill yet.
+ * Tokens: color.dark.secondary, color.dark.tertiary, color.neonindigo.base / dark, color.brand.teal, color.text.primary / secondary / muted / disabled,
+ *         radius.xl (deal toggle row), radius.md (type chips), radius.full *
  * Covers the standard CRM lead-conversion flow:
  *   1. Account type (customer / fleet / distributor)
  *   2. Primary contact confirmation (pre-filled from captured data)
@@ -16,8 +15,10 @@
  * On success, displays a confirmation state then calls onConverted.
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
 
@@ -64,35 +65,9 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
     {isVisible && (
     <div className="absolute inset-0" style={{ pointerEvents: "auto" }}>
 
-      {/* Backdrop — only dismissible on form step */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ background: "rgba(0,0,0,0.6)" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={step === "form" ? () => setIsVisible(false) : undefined}
-      />
-
-      {/* Sheet */}
-      <motion.div
-        className="absolute left-0 right-0 bottom-0"
-        style={{
-          background: "var(--md-sys-color-background)",
-          borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-          maxHeight: "92%",
-          overflowY: "auto",
-        }}
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 380, damping: 38 }}
-      >
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
-        </div>
+      {/* Backdrop + panel (shared drawer chrome) */}
+      <DrawerBackdrop onClick={step === "form" ? () => setIsVisible(false) : undefined} />
+      <DrawerPanel maxHeight="92%">
 
         <AnimatePresence mode="wait" initial={false}>
 
@@ -131,7 +106,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                       <span className="text-[13px] font-semibold leading-tight" style={{ color: "var(--md-sys-color-text-primary)" }}>
                         {t.label}
                       </span>
-                      <span className="text-[10px] mt-1" style={{ color: sel ? "rgba(255,255,255,0.6)" : "var(--md-sys-color-text-disabled)" }}>
+                      <span className="text-[10px] mt-1" style={{ color: sel ? "color-mix(in srgb, var(--md-sys-color-text-on-accent) 70%, transparent)" : "var(--md-sys-color-text-disabled)" }}>
                         {t.sub}
                       </span>
                     </button>
@@ -185,7 +160,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center mt-7"
                 style={{
                   background: "var(--md-sys-color-brand-teal)",
-                  color: "var(--md-sys-color-text-primary)",
+                  color: "var(--md-sys-color-text-on-teal)",
                   borderRadius: "var(--radius-full)",
                 }}
               >
@@ -206,7 +181,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
             >
               <div
                 className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
-                style={{ background: "rgba(107, 157, 176, 0.15)" }}
+                style={{ background: "color-mix(in srgb, var(--md-sys-color-brand-teal) 15%, transparent)" }}
               >
                 <Icon name="check_circle" fill size={36} style={{ color: "var(--md-sys-color-brand-teal)" }} />
               </div>
@@ -226,7 +201,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
               {createDeal && dealName.trim() && (
                 <p className="text-sm" style={{ color: "var(--md-sys-color-text-muted)", maxWidth: 280, lineHeight: 1.65 }}>
                   Deal{" "}
-                  <span style={{ color: "var(--md-sys-color-text-secondary)" }}>"{dealName}"</span>{" "}
+                  <span style={{ color: "var(--md-sys-color-text-secondary)" }}>&quot;{dealName}&quot;</span>{" "}
                   is open in your pipeline.
                 </p>
               )}
@@ -236,7 +211,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center mt-8"
                 style={{
                   background: "var(--md-sys-color-brand-teal)",
-                  color: "var(--md-sys-color-text-primary)",
+                  color: "var(--md-sys-color-text-on-teal)",
                   borderRadius: "var(--radius-full)",
                 }}
               >
@@ -246,7 +221,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
           )}
 
         </AnimatePresence>
-      </motion.div>
+      </DrawerPanel>
     </div>
     )}
     </AnimatePresence>,
@@ -270,34 +245,24 @@ function SectionHeader({ icon, label }: { icon: string; label: string }) {
   );
 }
 
+/** A labelled field. `numeric` brings up the number pad without making the field type=number. */
 function Field({ label, value, onChange, placeholder, type = "text" }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder: string;
-  type?: string;
+  type?: "text" | "tel" | "numeric";
 }) {
   return (
-    <div>
-      <p
-        className="text-[10px] font-semibold mb-1"
-        style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}
-      >
-        {label}
-      </p>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full text-[14px] outline-none px-3 py-2.5"
-        style={{
-          background: "var(--md-sys-color-dark-secondary)",
-          borderRadius: "var(--radius-sm)",
-          color: "var(--md-sys-color-text-primary)",
-        }}
-      />
-    </div>
+    <TextField
+      size="md"
+      label={label}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      type={type === "tel" ? "tel" : "text"}
+      inputMode={type === "numeric" ? "numeric" : undefined}
+    />
   );
 }
 

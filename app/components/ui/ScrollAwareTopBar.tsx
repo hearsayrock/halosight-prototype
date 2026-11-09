@@ -2,22 +2,19 @@
 
 /**
  * FLUTTER HANDOFF: ScrollAwareTopBar
- * Widget: StatefulWidget (scroll subscription via ref)
- * Tokens: --md-sys-color-text-primary, --md-sys-color-alpha-white-10
- * Flutter equivalent: scroll_aware_top_bar.dart
+ * Widget: StatefulWidget (a scroll listener on the page's ScrollController)
+ * Props: onBack, rightSlot? (ReactNode), scrollRef (the scrolling container)
+ * State: hasScrolled (scrolled more than 10px), scrollingUp
+ * Flutter equivalent: scroll_aware_top_bar.dart (a Stack overlay driven by the ScrollController: SliverAppBar-style, but floating over the content)
  *
- * Floating back-button bar that responds to scroll:
- *   - Glass circle appears behind the back arrow once scrolled > 10px
- *   - rightSlot fades out on scroll-down, returns on scroll-up
+ * A back button floating over the top of a scrolling page, with an optional control on the right (for example "Edit" or "Send"):
+ *   - at the top of the page the back arrow has no background; after 10px of scroll a 36px glass circle (color.alpha.bg-glass, 16px blur, hairline
+ *     color.alpha.white-10 ring) appears behind it, 180ms
+ *   - the right control fades out while scrolling down and returns when scrolling up (160ms)
+ *   - the bar sits 40px from the top (below the status bar), 16px side padding, and passes taps through everywhere except its controls
+ * The page content needs about 86px of top padding so it starts below the bar.
  *
- * Usage:
- *   const scrollRef = useRef<HTMLDivElement>(null);
- *   <div style={{ position: "relative", height: "100%", overflow: "hidden" }}>
- *     <ScrollAwareTopBar onBack={...} rightSlot={<.../>} scrollRef={scrollRef} />
- *     <div ref={scrollRef} style={{ position: "absolute", inset: 0, overflowY: "auto" }}>
- *       <div style={{ paddingTop: 86 }}>...content...</div>
- *     </div>
- *   </div>
+ * Tokens: color.text.primary (arrow), color.alpha.bg-glass (scrolled circle), color.alpha.white-10 (circle ring)
  */
 
 import React, { useRef, useState, useEffect } from "react";
@@ -77,9 +74,9 @@ export default function ScrollAwareTopBar({ onBack, rightSlot, scrollRef }: Scro
           borderRadius: "50%",
           border: "none",
           cursor: "pointer",
-          background: hasScrolled ? "rgba(20, 23, 38, 0.88)" : "transparent",
+          background: hasScrolled ? "var(--md-sys-color-alpha-bg-glass)" : "transparent",
           backdropFilter: hasScrolled ? "blur(16px) saturate(180%)" : undefined,
-          boxShadow: hasScrolled ? "inset 0 0 0 1px rgba(255,255,255,0.08)" : "none",
+          boxShadow: hasScrolled ? "inset 0 0 0 1px var(--md-sys-color-alpha-white-10)" : "none",
           transition: "background 180ms ease",
           flexShrink: 0,
           pointerEvents: "auto",

@@ -21,10 +21,9 @@ app/
 │
 ├── components/                   # Reusable UI components
 │   ├── layout/                   # App-level structural components
-│   │   ├── PhoneFrame.tsx        # Web-only phone viewport simulator
-│   │   └── BottomNav.tsx         # Floating glass pill bottom navigation
+│   │   └── PhoneFrame.tsx        # Web-only phone viewport simulator
 │   ├── accounts/                 # Account-specific components
-│   │   ├── AccountListItem.tsx   # Single account card (dark-secondary bg, alpha-white-10 border)
+│   │   ├── AccountListItem.tsx   # One widget, three variants (owned / crm / home) (card wrapper is ui/ListCard)
 │   │   ├── AccountTypeIcon.tsx   # Corporate/branch/standalone SVG icon
 │   │   └── SortMenu.tsx          # Sort dropdown overlay
 │   ├── capture/                  # Capture meeting flow components
@@ -57,7 +56,6 @@ PhoneFrame (web wrapper — no Flutter equivalent)
     ├── Content Area (scrollable)
     │   └── Feature Components
     │       └── UI Primitives
-    └── BottomNav (floating, outside scroll area)
 ```
 
 ---
@@ -70,14 +68,14 @@ Structural, app-level. One instance per screen. Not domain-specific.
 | Component | Description | Flutter equivalent |
 |---|---|---|
 | `PhoneFrame` | Web-only 390×844 viewport simulator | No equivalent |
-| `BottomNav` | Floating glass pill nav (Home / Accounts) | Custom `NavigationBar` |
 
 ### Feature Components (`components/accounts/`, `components/capture/`)
 Domain-specific. Tied to a feature area. Reusable across screens within that feature.
 
 | Component | Description | Flutter equivalent |
 |---|---|---|
-| `AccountListItem` | Account card — icon, name, distance, last visited, city/state | `AccountsViewAccountListItem` |
+| `AccountListItem` | Account row with `owned`, `crm` and `home` variants; card wrapper is `ui/ListCard` | `AccountsViewAccountListItem` |
+| `CountBadge` | Icon + number pill (risk / tasks), hides at 0 | `AccountCountBadge` |
 | `AccountTypeIcon` | SVG icon for corporate / branch / standalone account types | `CustomPainter` |
 | `SortMenu` | Sort dropdown with checkmark selection | `PopupMenuButton` or custom overlay |
 
@@ -143,7 +141,7 @@ The Flutter handoff comment block is **required** on every component. It makes t
 1. **Never use raw hex values** in components — always `var(--md-sys-color-*)`.
 2. **Never use raw px values for radius** — always `var(--radius-*)`.
 3. Alpha/glass effects use `--md-sys-color-alpha-*` tokens + `backdropFilter`.
-4. If a color doesn't have a token, add it to `globals.css` and the design system page first.
+4. If a color doesn't have a token, add it to `app/tokens/colors.css` and the design system page first.
 
 ---
 
@@ -151,7 +149,7 @@ The Flutter handoff comment block is **required** on every component. It makes t
 
 > **Any change to a component's visual tokens must be reflected in the design system page** (`/design-system`) before it is considered done.
 
-The design system page imports live components directly (no mocks). Changes to `BottomNav`, `AccountListItem`, `SortMenu`, `Icon`, `MenuIcon` automatically appear on the design system page — no extra step needed for those. For new token additions, add the swatch to the appropriate color section manually.
+The design system page imports live components directly (no mocks). Changes to `AccountListItem`, `SortMenu`, `Icon`, `MenuIcon` automatically appear on the design system page — no extra step needed for those. For new token additions, add the swatch to the appropriate color section manually.
 
 ---
 
@@ -172,9 +170,8 @@ No Redux, no Zustand, no global state libraries. Keep it simple — the Flutter 
 
 1. Create `app/app/[route]/page.tsx`
 2. Wrap in `<PhoneFrame>` if it's a mobile screen
-3. Include `<BottomNav>` if it's a main app tab
-4. Add Flutter handoff comment at top of file
-5. Pull data from `lib/mock-data/` or define new mock data
+3. Add Flutter handoff comment at top of file
+4. Pull data from `lib/mock-data/` or define new mock data
 6. Use existing components before creating new ones
 
 ## How to Add a New Component
@@ -189,7 +186,7 @@ No Redux, no Zustand, no global state libraries. Keep it simple — the Flutter 
 
 ## How to Add a New Color Token
 
-1. Add to `@theme inline` in `globals.css`
+1. Add to the `@theme` block in `app/tokens/colors.css`
 2. Add the corresponding `ColorSwatch` or `AlphaSwatch` to the design system page
 3. Update `docs/design-system.md` token table
 4. If it maps to a Flutter color role, update `docs/flutter-handoff.md`

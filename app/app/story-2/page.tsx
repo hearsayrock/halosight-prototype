@@ -5,6 +5,7 @@
  * Full desktop spec page — decisions, deliverables, and acceptance criteria.
  */
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import DecisionWidget from "@/components/decisions/DecisionWidget";
 
@@ -336,7 +337,7 @@ export default function Story2Page() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a href="/handoff" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</a>
+          <Link href="/" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</Link>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
           <a href="/story-1" style={{ fontSize: 14, color: "var(--md-sys-color-text-muted)", textDecoration: "none" }}>Story 1</a>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
@@ -362,7 +363,7 @@ export default function Story2Page() {
                 Story 2: Create a New Lead and Handle Missing CRM Details
               </h1>
               <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.7, margin: "0 0 18px" }}>
-                A field rep discovers a prospect that doesn't exist in their account list. They need to create a record on the spot —
+                A field rep discovers a prospect that doesn&apos;t exist in their account list. They need to create a record on the spot —
                 without leaving the field — and capture their interaction immediately. This story covers the full creation flow, sync state
                 communication, missing required field recovery, lightweight duplicate prevention, and contact scope decisions.
               </p>
@@ -735,7 +736,7 @@ export default function Story2Page() {
           <Section id="sync" title="Sync States">
             <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 20 }}>
               A newly created lead can be in any of four sync states. Each state needs a distinct chip (from the Story 1 chip spec)
-              and a detail-page treatment so the rep knows what's happening and what, if anything, they need to do.
+              and a detail-page treatment so the rep knows what&apos;s happening and what, if anything, they need to do.
             </p>
 
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start", marginBottom: 32 }}>

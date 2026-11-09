@@ -23,8 +23,8 @@ export interface Account {
   type: AccountType;
   halosightType?: HalosightAccountType; // Set at creation — prospect vs established account
   crmAccountType?: CrmAccountType;      // CRM classification shown on card badge
-  assignedInitial?: string;             // team member initial shown on card (e.g. "A")
   taskCount?: number;              // open to-dos for this account
+  riskCount?: number;              // open AI-flagged risks for this account (hidden when 0/undefined)
   city?: string;
   state?: string;
   distanceMiles: number;
@@ -51,7 +51,11 @@ export interface ActionItem {
   description?: string;   // why this action item was created
   originActivity?: string; // name of the visit/call this item was generated from
   originActivityId?: string; // links to /relationships/[accountId]/activity/[originActivityId]
+  originType?: ActionItemOriginType; // kind of interaction it came from; shown on the drawer's interaction card
 }
+
+/** Where an action item came from. Items with no origin type show no icon. */
+export type ActionItemOriginType = "meeting" | "spoken-note";
 
 export interface AccountDetail extends Account {
   lastVisitSummary: string;
@@ -79,6 +83,8 @@ export interface ActivityItem {
   repName: string;
   aiSummary?: ActivityAISummary;
   interactionType?: "inperson" | "phone";
+  /** Where the activity came from. Undefined = logged in Halosight. */
+  source?: "salesforce";
 }
 
 export interface Interaction {
@@ -151,3 +157,44 @@ export interface CrmUpdate {
 }
 
 export type SortOption = "alphabetical" | "distance" | "lastVisited" | "company";
+
+// ─── Account chat ──────────────────────────────────────────────────────────
+
+export type ChatRole = "user" | "assistant";
+
+/** One message in an account chat. `draft` is a quoted block (e.g. an email the assistant wrote) shown under the text. */
+export interface ChatTurn {
+  id: string;
+  role: ChatRole;
+  text: string;
+  draft?: string;
+}
+
+/** A saved chat shown in the history menu. */
+export interface ChatThread {
+  id: string;
+  title: string;
+  /** "Today", "Yesterday", "Tuesday" */
+  whenLabel: string;
+  messageCount: number;
+  pinned: boolean;
+}
+
+// ─── Engagements (recent activity feed) ────────────────────────────────────
+
+/** One row in the Engagements side drawer: a recent interaction across all accounts. */
+export interface RecentActivity {
+  id: string;
+  /** Account the interaction belongs to. Missing = not linkable in the prototype (the row still renders). */
+  accountId?: string;
+  accountName: string;
+  /** Opens /relationships/[accountId]/activity/[activityId] when both are set, otherwise the account. */
+  activityId?: string;
+  type: "visit" | "call";
+  title: string;
+  date: Date;
+  /** Not opened yet. Unread rows show a dot and, when there is one, what changed. */
+  unread?: boolean;
+  /** What changed since you last looked, e.g. "Modified 1 action item". */
+  changeNote?: string;
+}

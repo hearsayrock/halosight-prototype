@@ -2,22 +2,30 @@
 
 /**
  * FLUTTER HANDOFF: AccountPickerSheet
- * Widget: StatefulWidget
+ * Widget: StatefulWidget (bottom sheet, opened with showModalBottomSheet)
+ * Props: currentId (String?), onSelect(id, name), onClose, autoFocus (default true)
  * State: query
- * Tokens: --md-sys-color-dark-primary, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
- *         --md-sys-color-neonindigo, --radius-xl, --radius-full
+ * Data: the account list (prototype: mockAccounts), sorted A to Z
  * Flutter equivalent: account_picker_sheet.dart
  *
- * Slides up from the bottom. Shows the current account pinned at top,
- * then the rest alphabetically. A search bar filters the full list.
+ * "Switch account": a sheet for moving the capture flow to a different company. Header with a close button, a SearchField ("Search accounts…",
+ * focused ~320ms after the sheet slides up), then the list:
+ *   - not searching: the current account is pinned at the top in neonindigo with a check, a hairline, then every other account A to Z
+ *   - searching: one filtered list (name, city or state contains the text), the current account marked in place; no match shows
+ *     "No accounts match ..." in muted text
+ *   - each row is the name (15, bold, truncates) with "City, ST" under it (12, muted); tapping a row selects it and closes the sheet
+ * Max height 72% of the screen; the list scrolls. Built on DrawerBackdrop and DrawerPanel (flex column), z-index 60 / 61 so it sits above the
+ * capture sheet.
+ * This component does not portal itself: the parent renders it inside an overlay root with AnimatePresence (CaptureWidget does).
+ * Known drift: the close button is a hand-built 28px icon button, not IconButton.
  *
- * NOTE: This component does NOT handle its own portal. The parent is
- * responsible for rendering it inside an overlay root with AnimatePresence.
+ * Tokens: color.dark.primary (sheet, via Drawer), color.dark.tertiary (row hairlines), color.neonindigo.base (current account, check),
+ *         color.text.primary / muted, radius.xl (sheet top corners, via Drawer); the field is SearchField
  */
 
+import SearchField from "@/components/ui/SearchField";
+import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import { mockAccounts } from "@/lib/mock-data/accounts";
 import Icon from "@/components/ui/Icon";
 
@@ -25,6 +33,8 @@ interface Props {
   currentId: string | null;
   onSelect: (id: string, name: string) => void;
   onClose: () => void;
+  /** Focus the search field once the sheet has slid up. Off in the design-system preview so it does not pull the page. Default true. */
+  autoFocus?: boolean;
 }
 
 function AccountRow({
@@ -74,14 +84,15 @@ function AccountRow({
   );
 }
 
-export default function AccountPickerSheet({ currentId, onSelect, onClose }: Props) {
+export default function AccountPickerSheet({ currentId, onSelect, onClose, autoFocus = true }: Props) {
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (!autoFocus) return;
     const t = setTimeout(() => searchRef.current?.focus(), 320);
     return () => clearTimeout(t);
-  }, []);
+  }, [autoFocus]);
 
   const currentAccount = mockAccounts.find((a) => a.id === currentId) ?? null;
   const q = query.toLowerCase().trim();
@@ -99,37 +110,9 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
 
   return (
     <>
-      {/* Backdrop */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ background: "rgba(0,0,0,0.55)", zIndex: 60 }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={onClose}
-      />
-
-      {/* Sheet */}
-      <motion.div
-        className="absolute left-0 right-0 bottom-0"
-        style={{
-          zIndex: 61,
-          background: "var(--md-sys-color-dark-primary)",
-          borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-          maxHeight: "72%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 380, damping: 38 }}
-      >
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
-        </div>
+      {/* Backdrop + panel (shared drawer chrome) */}
+      <DrawerBackdrop onClick={onClose} zIndex={60} />
+      <DrawerPanel zIndex={61} maxHeight="72%" flexColumn>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-2 pb-3 flex-shrink-0">
@@ -150,29 +133,8 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
         </div>
 
         {/* Search */}
-        <div
-          className="flex items-center gap-2 mx-5 mb-3 px-3 flex-shrink-0"
-          style={{
-            height: 40,
-            background: "var(--md-sys-color-dark-secondary)",
-            borderRadius: "var(--radius-full)",
-          }}
-        >
-          <Icon name="search" size={16} style={{ color: "var(--md-sys-color-text-muted)", flexShrink: 0 }} />
-          <input
-            ref={searchRef}
-            type="text"
-            placeholder="Search accounts…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: "var(--md-sys-color-text-primary)" }}
-          />
-          {query && (
-            <button onClick={() => setQuery("")} className="active:opacity-60 flex-shrink-0">
-              <Icon name="cancel" fill size={15} style={{ color: "var(--md-sys-color-text-disabled)" }} />
-            </button>
-          )}
+        <div className="mx-5 mb-3 flex-shrink-0">
+          <SearchField inputRef={searchRef} value={query} onChange={setQuery} placeholder="Search accounts…" />
         </div>
 
         {/* List */}
@@ -211,12 +173,12 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
           ))}
 
           {filteredList.length === 0 && isSearching && (
-            <p className="text-sm text-center py-8" style={{ color: "var(--md-sys-color-text-disabled)" }}>
+            <p className="text-sm text-center py-8" style={{ color: "var(--md-sys-color-text-muted)" }}>
               No accounts match &ldquo;{query}&rdquo;
             </p>
           )}
         </div>
-      </motion.div>
+      </DrawerPanel>
     </>
   );
 }

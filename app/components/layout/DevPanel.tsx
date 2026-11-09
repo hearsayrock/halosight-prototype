@@ -11,6 +11,7 @@
  */
 
 import { usePathname, useRouter } from "next/navigation";
+import IconLibraryToggle from "@/components/ui/IconLibraryToggle";
 import { useActionItems } from "@/lib/context/ActionItemsContext";
 import { useCapture } from "@/lib/context/CaptureContext";
 import { PLAYGROUNDS, type PlaygroundRoute } from "@/lib/playgrounds.config";
@@ -51,7 +52,6 @@ const DEFAULT_NAV = [
     routes: [
       { label: "Activity + AI",     path: "/relationships/jacks-tire-elko/activity/ja-1" },
       { label: "Activity (ops)",    path: "/relationships/walmart-cedar-city/activity/wc-1" },
-      { label: "Action Item",       path: "/relationships/jacks-tire-elko/action-items/ja-t1" },
     ],
   },
   {
@@ -260,6 +260,16 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
       {/* Divider */}
       <div style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
 
+      {/* Icon library (exploration) */}
+      <div>
+        <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)", marginBottom: 6, paddingLeft: 2 }}>
+          Icons
+        </p>
+        <IconLibraryToggle />
+      </div>
+
+      <div style={{ height: 1, background: "var(--md-sys-color-dark-tertiary)" }} />
+
       {/* Device size */}
       <div>
         <p
@@ -302,9 +312,9 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
         </div>
       </div>
 
-      {/* Handoff */}
+      {/* Design system */}
       <a
-        href="/handoff"
+        href="/design-system"
         target="_blank"
         rel="noopener noreferrer"
         style={{
@@ -324,7 +334,7 @@ export default function DevPanel({ deviceSize, onDeviceSize, collapsed, onToggle
         onMouseEnter={e => (e.currentTarget.style.opacity = "0.75")}
         onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
       >
-        Flutter handoff ↗
+        Design system ↗
       </a>
 
       {/* Reset */}

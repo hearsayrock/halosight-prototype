@@ -5,6 +5,7 @@
  * Full desktop spec page — deliverables, options, and acceptance criteria.
  */
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import DecisionWidget from "@/components/decisions/DecisionWidget";
 
@@ -217,7 +218,7 @@ function MockGlobalSearchButton({ unavailable = false }: { unavailable?: boolean
       </div>
       {unavailable && (
         <p style={{ fontSize: 10, color: "var(--md-sys-color-text-disabled)", textAlign: "center", margin: "6px 0 0" }}>
-          Can't reach your CRM right now. You can still create a new record.
+          Can&apos;t reach your CRM right now. You can still create a new record.
         </p>
       )}
     </div>
@@ -386,7 +387,7 @@ export default function Story1Page() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a href="/handoff" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</a>
+          <Link href="/" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</Link>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
           <span style={{ fontSize: 14, fontWeight: 600, color: "var(--md-sys-color-text-primary)" }}>Story 1</span>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
@@ -414,7 +415,7 @@ export default function Story1Page() {
                 Story 1: Support Accounts + Leads in the Customer List and Search
               </h1>
               <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.7, margin: "0 0 18px" }}>
-                A field rep needs one place to find the right customer record — whether it's an existing account or a new lead —
+                A field rep needs one place to find the right customer record — whether it&apos;s an existing account or a new lead —
                 so they can quickly start a capture without thinking in CRM object terms.
                 This story defines the combined customer list, the search experience, all result card states,
                 and how to visually communicate record type, ownership, and sync status at a glance.
@@ -483,7 +484,7 @@ export default function Story1Page() {
               <div style={{ marginBottom: 12 }}>
                 <DeliverableHeading name="1. What is the umbrella label?" status="decision" />
                 <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, margin: 0 }}>
-                  The nav tab, page title, and search bar placeholder all need a word for "the combined list of accounts and leads."
+                  The nav tab, page title, and search bar placeholder all need a word for &quot;the combined list of accounts and leads.&quot;
                   This is a brand-level decision — pick one and use it everywhere.
                 </p>
               </div>
@@ -586,8 +587,8 @@ export default function Story1Page() {
               <div style={{ marginBottom: 12 }}>
                 <DeliverableHeading name="3. Is global search on by default?" status="decision" />
                 <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, margin: 0 }}>
-                  Global search queries all records in the company's CRM, not just the rep's assigned accounts.
-                  It's useful for finding leads or unowned accounts, but requires an API call and may surface records the rep can't act on.
+                  Global search queries all records in the company&apos;s CRM, not just the rep&apos;s assigned accounts.
+                  It&apos;s useful for finding leads or unowned accounts, but requires an API call and may surface records the rep can&apos;t act on.
                 </p>
               </div>
               <div style={{ display: "flex", gap: 10 }}>
@@ -611,7 +612,7 @@ export default function Story1Page() {
               <div style={{ marginBottom: 12 }}>
                 <DeliverableHeading name="4. What happens when global search is unavailable?" status="decision" />
                 <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, margin: 0 }}>
-                  If the CRM is unreachable or offline, global search can't be performed. The rep should still be able to create a new record.
+                  If the CRM is unreachable or offline, global search can&apos;t be performed. The rep should still be able to create a new record.
                 </p>
               </div>
               <div style={{ display: "flex", gap: 10 }}>
@@ -649,7 +650,7 @@ export default function Story1Page() {
               <div style={{ marginBottom: 12 }}>
                 <DeliverableHeading name="5. What happens when a result is permission-restricted?" status="decision" />
                 <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, margin: 0 }}>
-                  A record may appear in global search results that the rep doesn't have write access to.
+                  A record may appear in global search results that the rep doesn&apos;t have write access to.
                   They can see it exists, but can they open it or capture against it?
                 </p>
               </div>
@@ -763,7 +764,7 @@ export default function Story1Page() {
               <DeliverableHeading name="Lead card" status="design" />
               <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 14 }}>
                 Visually similar to the account card. Key differences: amber Lead chip instead of purple Account chip,
-                no "Last visited" (leads haven't been visited), and may be unowned.
+                no &quot;Last visited&quot; (leads haven&apos;t been visited), and may be unowned.
               </p>
               <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
                 <MockScreen label="Lead — yours, waiting to sync">
@@ -791,7 +792,7 @@ export default function Story1Page() {
             <div>
               <DeliverableHeading name="Unowned account search result" status="design" />
               <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 14 }}>
-                Appears in global search results when the record is a real CRM account but isn't assigned to the current rep.
+                Appears in global search results when the record is a real CRM account but isn&apos;t assigned to the current rep.
                 Still tappable — rep can view the account and capture against it, but ownership is clearly flagged.
               </p>
               <MockScreen label="Account — assigned to another rep" width={380}>
@@ -803,7 +804,7 @@ export default function Story1Page() {
           {/* ── SEARCH STATES ─────────────────────────────────────────────── */}
           <Section id="search" title="Search States">
             <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 20 }}>
-              These are the states for the primary (assigned) search — the rep's own accounts and leads.
+              These are the states for the primary (assigned) search — the rep&apos;s own accounts and leads.
             </p>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
 
@@ -853,7 +854,7 @@ export default function Story1Page() {
           {/* ── GLOBAL SEARCH ─────────────────────────────────────────────── */}
           <Section id="global" title="Global Search States">
             <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 20 }}>
-              Global search queries all records in the organization's CRM — not just the rep's assigned customers.
+              Global search queries all records in the organization&apos;s CRM — not just the rep&apos;s assigned customers.
               It appears as a secondary action after assigned search, and its results are visually distinguished.
             </p>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
@@ -907,7 +908,7 @@ export default function Story1Page() {
             <div style={{ marginBottom: 32 }}>
               <DeliverableHeading name="Permission-restricted search result" status="design" />
               <p style={{ fontSize: 13, color: "var(--md-sys-color-text-muted)", lineHeight: 1.6, marginBottom: 14 }}>
-                A record the rep can see in global search but doesn't have write access to.
+                A record the rep can see in global search but doesn&apos;t have write access to.
                 Recommendation: show the result with a lock icon and a one-line explanation.
                 The rep can tap to view read-only detail but cannot start a capture.
               </p>

@@ -13,7 +13,7 @@ You maintain the integrity of the Halosight design system. You ensure that new c
 ## Context You Carry
 
 The design system is defined in:
-- **Tokens:** `app/app/globals.css` (`@theme inline` block)
+- **Tokens:** `app/tokens/colors.css` (`@theme` block) and the other files in `app/tokens/`
 - **Live viewer:** `localhost:3000/design-system`
 - **Documentation:** `docs/design-system.md`
 

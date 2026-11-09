@@ -1,127 +1,43 @@
 "use client";
 
 /**
- * CompletionToast — portaled "Item complete" banner with undo + optional note CTA.
- * Fades in when visible, fades + slides down on exit.
- * Portals into #phone-overlay-root so it sits above everything.
+ * FLUTTER HANDOFF: CompletionToast
+ * Widget: none. In Flutter this is a call, not a widget: ToastController.show(tone: success, title: "Item complete", action: Undo,
+ *   secondary: "Add a note" (optional)), with no auto-dismiss.
  *
- * Tokens: --md-sys-color-dark-secondary (bg), --md-sys-color-dark-tertiary (border),
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-neonindigo,
- *         --md-sys-color-brand-teal, --radius-xl
+ * A thin wrapper over Toast for the "pending complete" window after an action item is checked off: a success toast saying "Item complete" with one
+ * Undo action and, when onAddNote is given, an "Add a note" row (edit icon) under it. The screens time the pending window themselves, so this toast
+ * never dismisses on its own (duration null) and pressing Undo does not close it (dismissOnAction false); the screen hides it. `bottom` lifts it
+ * above a floating control (default 24).
+ *
+ * Tokens: see Toast
  */
 
-import { createPortal } from "react-dom";
-import { AnimatePresence, motion } from "framer-motion";
-import Icon from "./Icon";
+import Toast from "@/components/ui/Toast";
 
 interface Props {
   visible: boolean;
-  /** Distance from bottom of phone frame in px. Default: 24 (no nav). Pass ~106 when bottom nav is present. */
+  /** Distance from bottom of phone frame in px. Default: 24. */
   bottom?: number;
   onUndo: () => void;
   onDismiss: () => void;
-  /** If provided, an "Add a note" row appears below the main row. */
+  /** If provided, an "Add a note" row appears under the message. */
   onAddNote?: () => void;
 }
 
-export default function CompletionToast({
-  visible,
-  bottom = 24,
-  onUndo,
-  onDismiss,
-  onAddNote,
-}: Props) {
-  const overlayRoot =
-    typeof document !== "undefined"
-      ? document.getElementById("phone-overlay-root")
-      : null;
-
-  if (!overlayRoot) return null;
-
-  return createPortal(
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          key="completion-toast"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 12 }}
-          transition={{ duration: 0.22, ease: "easeOut" }}
-          style={{
-            position: "absolute",
-            bottom,
-            left: 16,
-            right: 16,
-            zIndex: 60,
-            pointerEvents: "auto",
-          }}
-        >
-          <div
-            style={{
-              background: "var(--md-sys-color-dark-secondary)",
-              borderRadius: "var(--radius-xl)",
-              border: "1px solid var(--md-sys-color-dark-tertiary)",
-              boxShadow: "0 12px 40px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.3)",
-              padding: "12px 16px",
-            }}
-          >
-            {/* Row 1: check icon + label + undo + dismiss */}
-            <div className="flex items-center gap-3">
-              {/* Green check circle */}
-              <div
-                className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
-                style={{ background: "#2ECC71" }}
-              >
-                <Icon name="check" size={14} style={{ color: "#fff" }} />
-              </div>
-
-              {/* Label */}
-              <span
-                className="flex-1 text-sm-bold"
-                style={{ color: "var(--md-sys-color-text-primary)" }}
-              >
-                Item complete
-              </span>
-
-              {/* Undo */}
-              <button
-                onClick={onUndo}
-                className="text-sm-bold active:opacity-60 transition-opacity"
-                style={{ color: "var(--md-sys-color-neonindigo)" }}
-              >
-                undo
-              </button>
-
-              {/* Dismiss */}
-              <button
-                onClick={onDismiss}
-                className="ml-1 flex items-center justify-center active:opacity-60 transition-opacity"
-                style={{ color: "var(--md-sys-color-text-muted)" }}
-              >
-                <Icon name="close" size={18} />
-              </button>
-            </div>
-
-            {/* Row 2: Add a note CTA */}
-            {onAddNote && (
-              <button
-                onClick={onAddNote}
-                className="flex items-center gap-1.5 mt-2.5 active:opacity-60 transition-opacity"
-                style={{ paddingLeft: 36 }}
-              >
-                <Icon name="edit" size={13} style={{ color: "var(--md-sys-color-brand-teal)" }} />
-                <span
-                  className="text-xs-bold"
-                  style={{ color: "var(--md-sys-color-brand-teal)" }}
-                >
-                  Add a note
-                </span>
-              </button>
-            )}
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
-    overlayRoot
+export default function CompletionToast({ visible, bottom = 24, onUndo, onDismiss, onAddNote }: Props) {
+  return (
+    <Toast
+      visible={visible}
+      tone="success"
+      title="Item complete"
+      action={{ label: "Undo", onPress: onUndo }}
+      secondary={onAddNote ? { label: "Add a note", icon: "edit", onPress: onAddNote } : undefined}
+      // The screens already time the "pending complete" window themselves, so this toast doesn't dismiss on its own.
+      duration={null}
+      dismissOnAction={false}
+      bottom={bottom}
+      onDismiss={onDismiss}
+    />
   );
 }

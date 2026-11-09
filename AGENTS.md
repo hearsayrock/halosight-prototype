@@ -99,7 +99,6 @@ Keep these comments useful and current. They should describe behavior and transl
 Current important components include:
 
 - `app/components/layout/PhoneFrame.tsx` for the browser phone viewport.
-- `app/components/layout/BottomNav.tsx` for mobile navigation.
 - `app/components/accounts/AccountListItem.tsx` for account rows.
 - `app/components/accounts/AccountTypeIcon.tsx` for account hierarchy icons.
 - `app/components/accounts/SortMenu.tsx` for account sorting.
@@ -108,7 +107,7 @@ When adding a reusable component, update `docs/component-architecture.md` if it 
 
 ## Design System
 
-- Use the design tokens in `app/app/globals.css`.
+- Use the design tokens in `app/tokens/` (imported by `app/app/globals.css`).
 - Preserve the dark operational visual language unless the user explicitly asks for a new direction.
 - Primary action color is coral. Secondary/info accent is blue.
 - Use Barlow as the primary UI typeface.

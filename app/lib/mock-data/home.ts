@@ -4,6 +4,8 @@
  * Activities: recently logged meetings/calls/visits.
  */
 
+import type { RecentActivity } from "@/lib/types";
+
 export interface HomeTask {
   id: string;
   /** Links to /relationships/[accountId]/action-items/[itemId] */
@@ -211,3 +213,54 @@ export const mockActivities: HomeActivity[] = [
     durationMinutes: 90,
   },
 ];
+
+
+// ── Engagements feed (side drawer) ───────────────────────────────────────────
+
+type Seed = [daysAgo: number, hour: number, account: string, accountId: string | undefined, kind: "visit" | "call", title: string, unread?: string | true, activityId?: string];
+
+// Newest first. Mix of read and unread; unread rows may carry a "Modified …" note.
+const SEEDS: Seed[] = [
+  [0, 15, "Reladyne", undefined, "call", "Check in with James", "Modified 1 action item"],
+  [0, 11, "Acme Co", "walmart-corp", "visit", "Brake pad supply gaps discussed — Dave flagged expanded order potential", true, "wm-1"],
+  [1, 14, "O'Reilly Auto Parts", undefined, "visit", "Figure out authentication issues"],
+  [1, 10, "Reladyne", undefined, "call", "Pricing follow-up before renewal"],
+  [2, 16, "Jack's Tire & Oil", "jacks-tire-elko", "visit", "Quarterly stock review at branch", "Modified 2 contacts, 1 opportunity", "ja-4"],
+  [2, 9, "Milwaukee Tools", undefined, "call", "Check in with James"],
+  [3, 15, "Western Governor's University", undefined, "visit", "Renewal and possible expansion"],
+  [3, 11, "ProFleet Maintenance", "profleet-corp", "call", "Volume discount sheet walkthrough", "Modified 1 action item", "pf-1"],
+  [4, 14, "Advance Auto Parts", undefined, "visit", "Walkthrough of new order portal"],
+  [5, 10, "Innovative Tech", "innovative-tech-tucson", "visit", "Confirm delivery windows", undefined, "it-1"],
+  [6, 13, "Acme Co", "walmart-corp", "call", "Left voicemail on open quote"],
+  [7, 9, "Southwestern Consolidated", "southwestern-consolidated", "visit", "Intro meeting with new buyer"],
+  [8, 15, "Reladyne", undefined, "call", "Pricing follow-up before renewal"],
+  [9, 11, "Desert Star Automotive", "desert-star-auto", "visit", "Shelf-life and returns policy", "Modified 1 contact"],
+  [10, 14, "Mountain West Fleet Supply", "mountain-west-fleet", "call", "Reorder timing for winter fleet"],
+  [11, 10, "O'Reilly Auto Parts", undefined, "visit", "Authentication issues, part two"],
+  [12, 16, "Glendale Truck & Trailer", "glendale-truck-trailer", "visit", "Trailer brake line pricing", undefined, "pg-1"],
+  [13, 9, "Jack's Tire & Oil", "jacks-tire-elko", "call", "Budget confirmation", "Modified 1 opportunity", "ja-6"],
+  [14, 13, "Sunbelt Fleet Solutions", "sunbelt-fleet-solutions", "visit", "Onboarding checklist review"],
+  [15, 10, "Milwaukee Tools", undefined, "visit", "Demo of the new cordless line"],
+  [16, 15, "Saddleback Fleet Services", "saddleback-fleet", "call", "Intro call with fleet manager"],
+  [17, 11, "Riverbend Collision", "riverbend-collision", "visit", "Paint supplier switch"],
+  [19, 14, "Advance Auto Parts", undefined, "call", "Order portal access"],
+  [20, 9, "Western Governor's University", undefined, "visit", "Campus fleet audit"],
+  [22, 13, "Acme Co", "walmart-corp", "visit", "Quarterly review prep", undefined, "wm-2"],
+  [24, 10, "Reladyne", undefined, "visit", "Contract renewal terms"],
+  [26, 15, "ProFleet Maintenance", "profleet-corp", "call", "Invoice discrepancy", undefined, "pf-2"],
+  [28, 11, "Innovative Tech", "innovative-tech-tucson", "call", "Pilot kickoff scheduling", undefined, "it-2"],
+  [31, 14, "O'Reilly Auto Parts", undefined, "visit", "Territory overlap with the Phoenix branch"],
+  [34, 10, "Milwaukee Tools", undefined, "call", "Warranty claim follow-up"],
+];
+
+export const mockRecentActivities: RecentActivity[] = SEEDS.map(([daysAgo, hour, accountName, accountId, type, title, unread, activityId], i) => ({
+  id: `eng-${i + 1}`,
+  accountId,
+  accountName,
+  activityId,
+  type,
+  title,
+  date: at(daysAgo, hour, 0),
+  unread: unread !== undefined,
+  changeNote: typeof unread === "string" ? unread : undefined,
+}));

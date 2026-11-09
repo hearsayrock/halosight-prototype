@@ -38,6 +38,11 @@
   --md-sys-color-text-muted:     #8B94A8;  /* Muted text, metadata   */
   --md-sys-color-text-disabled:  #5D667A;  /* Placeholders, inactive */
   --md-sys-color-text-inverse:   #111420;  /* Text on light surfaces */
+  --md-sys-color-text-on-coral:  #FFFFFF;  /* Label on brand-coral fills (same in both themes) */
+  --md-sys-color-text-on-accent: #FFFFFF;  /* Label or icon on neonindigo fills (same in both themes) */
+  --md-sys-color-text-on-teal:   #FFFFFF;  /* Label on brand-teal fills (same in both themes) */
+  --md-sys-color-surface-static-white: #FFFFFF;  /* White buttons (sign-in): white in both themes, brand requirement */
+  --md-sys-color-text-on-white:  #111420;  /* Label on static-white fills (same in both themes) */
 
   /* ── Light Surfaces ─────────────────────────────────────────────────────── */
   --md-sys-color-surface-white: #FFFFFF;
@@ -84,6 +89,21 @@
   --md-sys-color-info:       #4DA3FF;
   --md-sys-color-info-dark:  #1D6FBF;
 
+  /* Published names (color.semantic.* → --md-sys-color-semantic-*). Aliases of the short names above
+     until the token generator (DELIVERY-1475) replaces them; same values, so no visual change. */
+  --md-sys-color-semantic-success-light: var(--md-sys-color-success-light);
+  --md-sys-color-semantic-success: var(--md-sys-color-success);
+  --md-sys-color-semantic-success-dark: var(--md-sys-color-success-dark);
+  --md-sys-color-semantic-warning-light: var(--md-sys-color-warning-light);
+  --md-sys-color-semantic-warning: var(--md-sys-color-warning);
+  --md-sys-color-semantic-warning-dark: var(--md-sys-color-warning-dark);
+  --md-sys-color-semantic-error-light: var(--md-sys-color-error-light);
+  --md-sys-color-semantic-error: var(--md-sys-color-error);
+  --md-sys-color-semantic-error-dark: var(--md-sys-color-error-dark);
+  --md-sys-color-semantic-info-light: var(--md-sys-color-info-light);
+  --md-sys-color-semantic-info: var(--md-sys-color-info);
+  --md-sys-color-semantic-info-dark: var(--md-sys-color-info-dark);
+
   /* ── Data Visualization ──────────────────────────────────────────────────── */
   --md-sys-color-data-account:  #6B9DB0;
   --md-sys-color-data-recency:  #8B92FF;
@@ -97,6 +117,7 @@
   --md-sys-color-alpha-neonindigo-glass: rgba(179, 184, 255, 0.10);
   --md-sys-color-alpha-dark-glass:   rgba(255, 255, 255, 0.18);
   --md-sys-color-alpha-bg-glass:     rgba(17, 20, 32, 0.82);  /* scrolled header backdrop */
+  --md-sys-color-alpha-scrim:        rgba(0, 0, 0, 0.60);     /* dim behind drawers and dialogs */
 
   /* ── Extended Palette ────────────────────────────────────────────────────── */
   --md-ref-palette-ext-cyan:   #5BBFCC;
@@ -136,6 +157,11 @@
   --md-sys-color-text-muted:     #5C6B80;
   --md-sys-color-text-disabled:  #8B98AA;
   --md-sys-color-text-inverse:   #F7F8FF;
+  --md-sys-color-text-on-coral:  #FFFFFF;
+  --md-sys-color-text-on-accent: #FFFFFF;
+  --md-sys-color-text-on-teal:   #FFFFFF;
+  --md-sys-color-surface-static-white: #FFFFFF;
+  --md-sys-color-text-on-white:  #111420;
 
   /* ── Brand — Neon Indigo (darkened for light bg contrast) ───────────────── */
   --md-sys-color-neonindigo-light: #C5C9FF;
@@ -176,6 +202,21 @@
   --md-sys-color-info:       #1D6FBF;
   --md-sys-color-info-dark:  #155899;
 
+  /* Published names (color.semantic.* → --md-sys-color-semantic-*). Aliases of the short names above
+     until the token generator (DELIVERY-1475) replaces them; same values, so no visual change. */
+  --md-sys-color-semantic-success-light: var(--md-sys-color-success-light);
+  --md-sys-color-semantic-success: var(--md-sys-color-success);
+  --md-sys-color-semantic-success-dark: var(--md-sys-color-success-dark);
+  --md-sys-color-semantic-warning-light: var(--md-sys-color-warning-light);
+  --md-sys-color-semantic-warning: var(--md-sys-color-warning);
+  --md-sys-color-semantic-warning-dark: var(--md-sys-color-warning-dark);
+  --md-sys-color-semantic-error-light: var(--md-sys-color-error-light);
+  --md-sys-color-semantic-error: var(--md-sys-color-error);
+  --md-sys-color-semantic-error-dark: var(--md-sys-color-error-dark);
+  --md-sys-color-semantic-info-light: var(--md-sys-color-info-light);
+  --md-sys-color-semantic-info: var(--md-sys-color-info);
+  --md-sys-color-semantic-info-dark: var(--md-sys-color-info-dark);
+
   /* ── Data Visualization (adjusted for light bg) ──────────────────────────── */
   --md-sys-color-data-account:  #4A7D93;
   --md-sys-color-data-recency:  #5058D4;
@@ -189,5 +230,6 @@
   --md-sys-color-alpha-neonindigo-glass:   rgba(80, 88, 212, 0.08);
   --md-sys-color-alpha-dark-glass:         rgba(0, 0, 0, 0.09);
   --md-sys-color-alpha-bg-glass:           rgba(245, 247, 250, 0.88);
+  --md-sys-color-alpha-scrim:              rgba(17, 20, 32, 0.32);
 
 }

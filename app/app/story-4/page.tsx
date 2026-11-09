@@ -5,6 +5,7 @@
  * Full desktop spec page — decisions, deliverables, and acceptance criteria.
  */
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import DecisionWidget from "@/components/decisions/DecisionWidget";
 
@@ -341,7 +342,7 @@ export default function Story4Page() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <a href="/handoff" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</a>
+          <Link href="/" style={{ fontSize: 14, fontWeight: 700, color: "var(--md-sys-color-text-primary)", textDecoration: "none" }}>Halosight</Link>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
           <a href="/story-1" style={{ fontSize: 14, color: "var(--md-sys-color-text-muted)", textDecoration: "none" }}>Story 1</a>
           <span style={{ color: "var(--md-sys-color-dark-tertiary)" }}>/</span>
@@ -370,8 +371,8 @@ export default function Story4Page() {
                 Recommended Customers + Action Items
               </h2>
               <p style={{ fontSize: 14, color: "var(--md-sys-color-text-secondary)", lineHeight: 1.7, margin: "0 0 18px" }}>
-                The home screen is the rep's daily starting point. It needs to answer two questions at a glance:
-                "Who should I visit next?" and "What do I need to do today?" This story defines the ranking model
+                The home screen is the rep&apos;s daily starting point. It needs to answer two questions at a glance:
+                &quot;Who should I visit next?&quot; and &quot;What do I need to do today?&quot; This story defines the ranking model
                 for recommended customers, how leads fit into that model, all fallback and empty states,
                 and the deterministic sort order for action items.
               </p>

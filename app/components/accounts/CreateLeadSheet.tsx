@@ -3,12 +3,11 @@
 /**
  * FLUTTER HANDOFF: CreateLeadSheet
  * Widget: StatefulWidget (bottom sheet)
- * State: name, focused, isVisible, duplicates, dupeState, dismissed
- * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
- *         --md-sys-color-neonindigo, --md-sys-color-warning, --md-sys-color-warning-surface,
- *         --md-sys-color-brand-coral, --radius-xl, --radius-full, --radius-lg
- *
+ * State: name, isVisible, duplicates, dupeState, dismissed
+ * Props: onClose, onCreated(Account)
+ * Fields: one TextField ("Company"); the warning stroke shows while a possible duplicate is on screen. The checking spinner is its trailing slot.
+ * Tokens: color.dark.secondary (field, via TextField), color.neonindigo.base (active stroke, AI hint), color.alpha.neonindigo-10 (AI hint fill),
+ *         color.semantic.warning * (duplicate callout and field stroke), color.text.primary / muted, radius.lg, radius.sm *
  * Portals into #phone-overlay-root.
  * Extends CreateAccountSheet with debounced duplicate detection:
  *   - 400ms after typing stops, fuzzy-matches against all accounts
@@ -17,8 +16,11 @@
  *   - "Create anyway" dismisses callout and continues normally
  */
 
+import TextField from "@/components/ui/TextField";
+import Button from "@/components/ui/Button";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/ui/Icon";
@@ -60,8 +62,8 @@ function DuplicateCallout({
       exit={{ opacity: 0, y: -6, scale: 0.98 }}
       transition={{ type: "spring", stiffness: 420, damping: 32 }}
       style={{
-        background: "rgba(245, 166, 35, 0.10)",
-        border: "1px solid rgba(245, 166, 35, 0.30)",
+        background: "color-mix(in srgb, var(--md-sys-color-warning) 10%, transparent)",
+        border: "1px solid color-mix(in srgb, var(--md-sys-color-warning) 30%, transparent)",
         borderRadius: "var(--radius-lg)",
         padding: "12px 14px",
         marginBottom: 14,
@@ -83,9 +85,9 @@ function DuplicateCallout({
             onClick={() => onViewExisting(account)}
             className="w-full text-left flex items-center justify-between px-3 py-2.5 active:opacity-70 transition-opacity"
             style={{
-              background: "rgba(245, 166, 35, 0.08)",
+              background: "color-mix(in srgb, var(--md-sys-color-warning) 8%, transparent)",
               borderRadius: "var(--radius-sm)",
-              border: "1px solid rgba(245, 166, 35, 0.18)",
+              border: "1px solid color-mix(in srgb, var(--md-sys-color-warning) 18%, transparent)",
             }}
           >
             <div className="min-w-0">
@@ -130,7 +132,6 @@ function DuplicateCallout({
 export default function CreateLeadSheet({ onClose, onCreated }: Props) {
   const router = useRouter();
   const [name,       setName]       = useState("");
-  const [focused,    setFocused]    = useState(false);
   const [isVisible,  setIsVisible]  = useState(true);
   const [dupeState,  setDupeState]  = useState<DupeState>("idle");
   const [duplicates, setDuplicates] = useState<Account[]>([]);
@@ -201,37 +202,9 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
       {isVisible && (
         <div className="absolute inset-0" style={{ pointerEvents: "auto" }}>
 
-          {/* Backdrop */}
-          <motion.div
-            className="absolute inset-0"
-            style={{ background: "rgba(0,0,0,0.6)" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => setIsVisible(false)}
-          />
-
-          {/* Sheet */}
-          <motion.div
-            className="absolute left-0 right-0"
-            style={{
-              bottom: "var(--keyboard-inset, 0px)",
-              transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
-              background: "var(--md-sys-color-background)",
-              borderRadius: "var(--radius-xl) var(--radius-xl) 0 0",
-              maxHeight: "88%",
-              overflowY: "auto",
-            }}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 380, damping: 38 }}
-          >
-            {/* Handle */}
-            <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
-            </div>
+          {/* Backdrop + panel (shared drawer chrome) */}
+      <DrawerBackdrop onClick={() => setIsVisible(false)} />
+      <DrawerPanel maxHeight="88%" keyboardAware>
 
             <div className="px-5 pt-4 pb-10">
 
@@ -245,54 +218,27 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
 
               {/* Company field */}
               <div className="mb-3">
-                <p
-                  className="text-[11px] font-semibold mb-2"
-                  style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
-                >
-                  Company
-                </p>
-                <div className="relative">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="e.g. Saddleback Fleet Services"
-                    value={name}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
-                    onKeyDown={(e) => { if (e.key === "Enter" && name.trim() && !showDupeCallout) handleCreate(); }}
-                    className="w-full text-[17px] font-medium outline-none px-4 py-4"
-                    style={{
-                      background: "var(--md-sys-color-dark-secondary)",
-                      borderRadius: "var(--radius-lg)",
-                      color: "var(--md-sys-color-text-primary)",
-                      border: `1.5px solid ${
-                        showDupeCallout
-                          ? "rgba(245, 166, 35, 0.45)"
-                          : focused
-                            ? "rgba(139,146,255,0.55)"
-                            : "rgba(255,255,255,0.08)"
-                      }`,
-                      transition: "border-color 0.15s",
-                      paddingRight: dupeState === "checking" ? 44 : undefined,
-                    }}
-                  />
-                  {/* Checking spinner */}
-                  {dupeState === "checking" && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                        style={{
-                          width: 16, height: 16,
-                          borderRadius: "50%",
-                          border: "2px solid rgba(139,146,255,0.25)",
-                          borderTopColor: "var(--md-sys-color-neonindigo)",
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
+                <TextField
+                  inputRef={inputRef}
+                  label="Company"
+                  placeholder="e.g. Saddleback Fleet Services"
+                  value={name}
+                  onChange={handleNameChange}
+                  onSubmit={() => { if (name.trim() && !showDupeCallout) handleCreate(); }}
+                  status={showDupeCallout ? "warning" : undefined}
+                  trailing={dupeState === "checking" ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                      style={{
+                        width: 16, height: 16,
+                        borderRadius: "50%",
+                        border: "2px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 25%, transparent)",
+                        borderTopColor: "var(--md-sys-color-neonindigo)",
+                      }}
+                    />
+                  ) : undefined}
+                />
               </div>
 
               {/* Duplicate callout */}
@@ -324,24 +270,12 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
               {showDupeCallout && <div style={{ height: 5 }} />}
 
               {/* Create CTA */}
-              <button
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={handleCreate}
-                disabled={!name.trim()}
-                className="w-full font-semibold text-[16px] transition-opacity"
-                style={{
-                  height: 52,
-                  background: "var(--md-sys-color-neonindigo)",
-                  color: "var(--md-sys-color-text-primary)",
-                  borderRadius: "var(--radius-full)",
-                  opacity: name.trim() ? 1 : 0.4,
-                }}
-              >
+              <Button fill="indigo" size="lg" fullWidth keepFocus disabled={!name.trim()} onClick={handleCreate}>
                 Create a lead
-              </button>
+              </Button>
 
             </div>
-          </motion.div>
+          </DrawerPanel>
 
         </div>
       )}

@@ -10,6 +10,7 @@
  *        Real-time sync between sessions via Supabase Realtime.
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState, useEffect, useRef } from "react";
 import { getSupabase } from "@/lib/supabase/client";
 
@@ -92,10 +93,10 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
     if (chosen !== null) save(chosen, note, by);
   }
 
-  function handleNote(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    setNote(e.target.value);
+  function handleNote(value: string) {
+    setNote(value);
     if (noteTimer.current) clearTimeout(noteTimer.current);
-    noteTimer.current = setTimeout(() => save(chosen, e.target.value, decidedBy), 800);
+    noteTimer.current = setTimeout(() => save(chosen, value, decidedBy), 800);
   }
 
   if (!loaded) return null;
@@ -106,8 +107,8 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
     <div style={{
       marginTop: 10,
       padding: "10px 14px",
-      background: decided ? "rgba(245,166,35,0.05)" : "var(--md-sys-color-dark-secondary)",
-      border: `1px solid ${decided ? "rgba(245,166,35,0.28)" : "var(--md-sys-color-dark-tertiary)"}`,
+      background: decided ? "color-mix(in srgb, var(--md-sys-color-warning) 5%, transparent)" : "var(--md-sys-color-dark-secondary)",
+      border: `1px solid ${decided ? "color-mix(in srgb, var(--md-sys-color-warning) 28%, transparent)" : "var(--md-sys-color-dark-tertiary)"}`,
       borderRadius: "var(--radius-sm)",
       transition: "border-color 0.15s, background 0.15s",
     }}>
@@ -127,9 +128,9 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
             style={{
               padding: "3px 11px", borderRadius: "var(--radius-full)", fontSize: 12,
               fontWeight: chosen === opt ? 700 : 400,
-              background: chosen === opt ? "rgba(245,166,35,0.14)" : "transparent",
+              background: chosen === opt ? "color-mix(in srgb, var(--md-sys-color-warning) 14%, transparent)" : "transparent",
               color: chosen === opt ? "var(--md-sys-color-warning)" : "var(--md-sys-color-text-muted)",
-              border: `1px solid ${chosen === opt ? "rgba(245,166,35,0.4)" : "var(--md-sys-color-dark-tertiary)"}`,
+              border: `1px solid ${chosen === opt ? "color-mix(in srgb, var(--md-sys-color-warning) 40%, transparent)" : "var(--md-sys-color-dark-tertiary)"}`,
               cursor: "pointer", transition: "all 0.1s",
             }}
           >
@@ -146,9 +147,9 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
                 style={{
                   padding: "2px 9px", borderRadius: "var(--radius-full)", fontSize: 11,
                   fontWeight: decidedBy === name ? 600 : 400,
-                  background: decidedBy === name ? "rgba(139,146,255,0.12)" : "transparent",
+                  background: decidedBy === name ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 12%, transparent)" : "transparent",
                   color: decidedBy === name ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)",
-                  border: `1px solid ${decidedBy === name ? "rgba(139,146,255,0.3)" : "transparent"}`,
+                  border: `1px solid ${decidedBy === name ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 30%, transparent)" : "transparent"}`,
                   cursor: "pointer",
                 }}
               >
@@ -166,21 +167,13 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
       </div>
 
       {decided && (
-        <textarea
+        <TextField
+          multiline
+          rows={2}
           value={note}
           onChange={handleNote}
           placeholder="Add reasoning or notes… (auto-saves)"
-          className="body-xs"
-          style={{
-            display: "block", width: "100%", boxSizing: "border-box", marginTop: 8,
-            background: "var(--md-sys-color-background)",
-            border: "1px solid var(--md-sys-color-dark-tertiary)",
-            borderRadius: "var(--radius-sm)",
-            padding: "7px 10px",
-            color: "var(--md-sys-color-text-secondary)",
-            lineHeight: 1.55, resize: "vertical", minHeight: 52,
-            fontFamily: "inherit", outline: "none",
-          }}
+          style={{ marginTop: 8 }}
         />
       )}
     </div>

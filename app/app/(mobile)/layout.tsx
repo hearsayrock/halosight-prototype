@@ -1,7 +1,9 @@
 import PhoneFrame from "@/components/layout/PhoneFrame";
 import PageTransition from "@/components/layout/PageTransition";
-import StaticBottomNav from "@/components/layout/StaticBottomNav";
 import { ActionItemsProvider } from "@/lib/context/ActionItemsContext";
+import { ActionItemDrawerProvider } from "@/lib/context/ActionItemDrawerContext";
+import { ChatProvider } from "@/lib/context/ChatContext";
+import { ToastProvider } from "@/lib/context/ToastContext";
 import { CaptureProvider } from "@/lib/context/CaptureContext";
 import { FakeCallProvider } from "@/lib/context/FakeCallContext";
 import { AccountStateProvider } from "@/lib/context/AccountStateContext";
@@ -15,7 +17,6 @@ import DemoReset from "@/components/layout/DemoReset";
  *
  * Structure inside phone-screen:
  *   PageTransition   ← absolute, inset-0, slides with each route change
- *   StaticBottomNav  ← absolute, bottom-0, z-50, never animates
  */
 export default function MobileLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -24,11 +25,16 @@ export default function MobileLayout({ children }: { children: React.ReactNode }
         <CaptureProvider>
           <FakeCallProvider>
             <PhoneFrame>
-              <PageTransition>{children}</PageTransition>
-              <StaticBottomNav />
-              <CaptureWidget />
-              <FakeCallOverlay />
-              <DemoReset />
+              <ToastProvider>
+              <ActionItemDrawerProvider>
+              <ChatProvider>
+                <PageTransition>{children}</PageTransition>
+                <CaptureWidget />
+                <FakeCallOverlay />
+                <DemoReset />
+              </ChatProvider>
+              </ActionItemDrawerProvider>
+              </ToastProvider>
             </PhoneFrame>
           </FakeCallProvider>
         </CaptureProvider>

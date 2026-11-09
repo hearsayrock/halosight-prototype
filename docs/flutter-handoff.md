@@ -23,7 +23,7 @@ The prototype uses Next.js with a structure that intentionally mirrors Flutter's
 
 ## Design Token Mapping
 
-Every CSS token in `globals.css` maps to Flutter `ThemeData`. The token naming in the prototype is intentionally aligned with M3 ColorScheme roles wherever possible.
+Every CSS token in `app/tokens/` maps to Flutter `ThemeData`. The token naming in the prototype is intentionally aligned with M3 ColorScheme roles wherever possible.
 
 ```dart
 // lib/theme/halosight_theme.dart
@@ -166,7 +166,6 @@ For Halosight-specific icons (chain, branch, standalone, menu), use `flutter_svg
 |---|---|
 | `AccountTypeIcon` | `CustomPainter` — 3 variants (corporate/branch/standalone) |
 | `MenuIcon` | `CustomPainter` or `flutter_svg` — 2 pill bars |
-| BottomNav home/accounts icons | Inline `Path` in `CustomPaint` |
 
 ---
 
@@ -176,28 +175,10 @@ For Halosight-specific icons (chain, branch, standalone, menu), use `flutter_svg
 **Prototype:** `app/components/accounts/AccountListItem.tsx`  
 **Flutter equivalent:** `lib/view/_widget/account_list/accounts_view_account_list_item.dart`
 
-```
-Widget type: StatelessWidget
-Props:
-  - account: Account
-  - onTap: VoidCallback
-Layout:
-  Row: [AccountTypeIcon | Column(name, Row(distance · lastVisited)) | city/state?]
-  items-start alignment — icon offset 3px top, city/state offset 2px top
-  Padding: 16px horizontal, 12px vertical
-  Background: --md-sys-color-dark-secondary
-  Border: 1px --md-sys-color-alpha-white-10
-  Radius: --radius-sm
-State: none — purely presentational
-Tokens:
-  bg: dark-secondary
-  border: alpha-white-10
-  radius: radius-sm
-  name: text-primary, heading-6
-  distance/meta: text-muted, text-sm (14px)
-  lastVisited today: brand-coral
-  city/state: text-muted, text-sm (14px)
-```
+One widget with a `variant` enum (`owned`, `crm`, `home`). The full spec — props, layout, token paths, anti-patterns,
+changelog — lives in the component's `FLUTTER HANDOFF` comment and its `docs/component-registry.ts` entry; the live
+variants and the `CountBadge` sub-component are on `/design-system#account-list-item`. `crm` and `home` rows sit inside
+`ListCard` (`components/ui/ListCard.tsx`: card fill, hairline border, radius).
 
 ### AccountTypeIcon
 **Prototype:** `app/components/accounts/AccountTypeIcon.tsx`  
@@ -241,30 +222,6 @@ Animation (iOS UIMenu style):
   Close: scale 1→0.01 + opacity 1→0, no bounce (quick snap ~150ms)
   Flutter: AnimationController + CurvedAnimation(curve: spring) + ScaleTransition,
            transformAlignment: Alignment.topRight
-```
-
-### BottomNav
-**Prototype:** `app/components/layout/BottomNav.tsx`  
-**Flutter equivalent:** Custom `BottomNavigationBar` or `NavigationBar`
-
-```
-Widget type: StatefulWidget (or driven by router)
-Props: activeTab (home | accounts)
-Layout:
-  Floating pill — 32px margin bottom and sides
-  Height: 66px, radius: full (9999px)
-  Background: --md-sys-color-alpha-neonindigo-glass
-  Border: 1px --md-sys-color-alpha-white-10
-  Backdrop filter: blur(20px) saturate(180%) — liquid glass
-  Shadow: 0 8px 32px rgba(0,0,0,0.35)
-Active pill:
-  Background: --md-sys-color-alpha-dark-glass (rgba(255,255,255,0.18))
-  Inset: 6px top/bottom/outer-edge
-  Animated: left + right CSS transition 200ms ease
-Tab labels: .label-serif (Roboto Slab 10px)
-Active: --md-sys-color-text-primary icon + label
-Inactive: --md-sys-color-text-muted icon + label
-Icons: filled SVG paths, 22×22 rendered
 ```
 
 ### Icon

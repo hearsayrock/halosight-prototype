@@ -10,10 +10,13 @@
  * Flutter equivalent: profile_page.dart
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
+import Button from "@/components/ui/Button";
+import { DrawerBackdrop, DrawerBody, DrawerPanel, useOverlayRoot } from "@/components/ui/Drawer";
 import Icon from "@/components/ui/Icon";
 import ScrollAwareTopBar from "@/components/ui/ScrollAwareTopBar";
 
@@ -21,11 +24,7 @@ function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: 
   const [note, setNote] = useState("");
   const [sending, setSending] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const root = typeof document !== "undefined" ? document.getElementById("phone-overlay-root") : null;
-
-  function handleClose() {
-    setIsVisible(false);
-  }
+  const root = useOverlayRoot();
 
   function handleSend() {
     setSending(true);
@@ -38,103 +37,29 @@ function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: 
     <AnimatePresence onExitComplete={onClose}>
       {isVisible && (
         <div className="absolute inset-0" style={{ pointerEvents: "auto" }}>
-          <motion.div
-            className="absolute inset-0"
-            style={{ background: "rgba(0,0,0,0.55)" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={handleClose}
-          />
-          <motion.div
-            className="absolute left-0 right-0 flex flex-col"
-            style={{
-              bottom: "calc(var(--keyboard-inset, 0px) + max(0px, calc(876px - 100vh)))",
-              transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
-              background: "var(--md-sys-color-dark-primary)",
-              borderRadius: "20px 20px 0 0",
-              padding: "22px 20px 32px",
-              maxHeight: "85%",
-              overflowY: "auto",
-            }}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 380, damping: 32 }}
-            onClick={(e: React.MouseEvent) => e.stopPropagation()}
-          >
-            <h2
-              style={{
-                fontSize: 20,
-                fontWeight: 700,
-                color: "var(--md-sys-color-text-primary)",
-                textAlign: "center",
-                marginBottom: 10,
-                fontFamily: "Roboto Slab, Georgia, serif",
-              }}
-            >
-              Request data deletion
-            </h2>
-
-            <p
-              style={{
-                fontSize: 14.5,
-                color: "var(--md-sys-color-text-secondary)",
-                textAlign: "center",
-                lineHeight: 1.6,
-                marginBottom: 22,
-              }}
-            >
-              Data deletion is managed by your team admin. Send them a request and they'll take care of it — usually within one business day.
-            </p>
-
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Add a note for your admin (optional)"
-              rows={3}
-              style={{
-                width: "100%",
-                background: "var(--md-sys-color-dark-secondary)",
-                border: "1px solid var(--md-sys-color-alpha-white-10)",
-                borderRadius: "var(--radius-md)",
-                padding: "12px 14px",
-                fontSize: 14,
-                color: "var(--md-sys-color-text-primary)",
-                resize: "none",
-                outline: "none",
-                marginBottom: 14,
-                fontFamily: "inherit",
-                lineHeight: 1.5,
-              }}
-            />
-
-            <button
-              onClick={handleSend}
-              disabled={sending}
-              className="w-full flex items-center justify-center active:opacity-80 transition-opacity"
-              style={{
-                height: 50,
-                borderRadius: "var(--radius-full)",
-                background: "var(--md-sys-color-error)",
-                color: "#fff",
-                fontSize: 16,
-                fontWeight: 600,
-                marginBottom: 12,
-                opacity: sending ? 0.7 : 1,
-              }}
-            >
-              {sending ? "Sending…" : "Send deletion request"}
-            </button>
-
-            <button
-              onClick={handleClose}
-              className="w-full flex items-center justify-center active:opacity-60 transition-opacity"
-              style={{ height: 44, fontSize: 15, color: "var(--md-sys-color-text-muted)" }}
-            >
-              Cancel
-            </button>
-          </motion.div>
+          <DrawerBackdrop onClick={() => setIsVisible(false)} />
+          <DrawerPanel keyboardAware maxHeight="85%">
+            <DrawerBody style={{ paddingTop: "var(--spacing-4)", paddingLeft: "var(--spacing-5)", paddingRight: "var(--spacing-5)" }}>
+              <h2 className="heading-5 text-center" style={{ color: "var(--md-sys-color-text-primary)", marginBottom: "var(--spacing-3)" }}>
+                Request data deletion
+              </h2>
+              <p className="text-sm text-center" style={{ color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, marginBottom: "var(--spacing-5)" }}>
+                Data deletion is managed by your team admin. Send them a request and they&apos;ll take care of it — usually within one business day.
+              </p>
+              <TextField
+                multiline
+                rows={3}
+                value={note}
+                onChange={setNote}
+                placeholder="Add a note for your admin (optional)"
+                style={{ marginBottom: "var(--spacing-4)" }}
+              />
+              <div className="flex flex-col" style={{ gap: "var(--spacing-2)" }}>
+                <Button fill="danger" fullWidth loading={sending} loadingLabel="Sending" onClick={handleSend}>Send deletion request</Button>
+                <Button variant="text" fullWidth onClick={() => setIsVisible(false)}>Cancel</Button>
+              </div>
+            </DrawerBody>
+          </DrawerPanel>
         </div>
       )}
     </AnimatePresence>,
@@ -144,7 +69,7 @@ function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: 
 
 function RequestSentSheet({ onClose }: { onClose: () => void }) {
   const [isVisible, setIsVisible] = useState(true);
-  const root = typeof document !== "undefined" ? document.getElementById("phone-overlay-root") : null;
+  const root = useOverlayRoot();
 
   if (!root) return null;
 
@@ -152,83 +77,26 @@ function RequestSentSheet({ onClose }: { onClose: () => void }) {
     <AnimatePresence onExitComplete={onClose}>
       {isVisible && (
         <div className="absolute inset-0" style={{ pointerEvents: "auto" }}>
-          <motion.div
-            className="absolute inset-0"
-            style={{ background: "rgba(0,0,0,0.55)" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsVisible(false)}
-          />
-          <motion.div
-            className="absolute left-0 right-0 flex flex-col items-center"
-            style={{
-              bottom: "calc(var(--keyboard-inset, 0px) + max(0px, calc(876px - 100vh)))",
-              transition: "bottom 0.28s cubic-bezier(0.32, 0.72, 0, 1)",
-              background: "var(--md-sys-color-dark-primary)",
-              borderRadius: "20px 20px 0 0",
-              padding: "36px 20px 44px",
-            }}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 380, damping: 32 }}
-            onClick={(e: React.MouseEvent) => e.stopPropagation()}
-          >
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: "50%",
-                background: "rgba(46,204,113,0.12)",
-                border: "1px solid rgba(46,204,113,0.25)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 18,
-              }}
-            >
-              <Icon name="check" size={26} style={{ color: "var(--md-sys-color-success)" }} />
-            </div>
-            <h2
-              style={{
-                fontSize: 20,
-                fontWeight: 700,
-                color: "var(--md-sys-color-text-primary)",
-                marginBottom: 10,
-                fontFamily: "Roboto Slab, Georgia, serif",
-              }}
-            >
-              Request sent
-            </h2>
-            <p
-              style={{
-                fontSize: 14.5,
-                color: "var(--md-sys-color-text-secondary)",
-                textAlign: "center",
-                lineHeight: 1.6,
-                marginBottom: 28,
-                maxWidth: 280,
-              }}
-            >
-              Your admin has been notified and will process your deletion request.
-            </p>
-            <button
-              onClick={() => setIsVisible(false)}
-              className="w-full flex items-center justify-center active:opacity-80 transition-opacity"
-              style={{
-                height: 50,
-                borderRadius: "var(--radius-full)",
-                background: "var(--md-sys-color-dark-secondary)",
-                border: "1px solid var(--md-sys-color-alpha-white-10)",
-                color: "var(--md-sys-color-text-primary)",
-                fontSize: 16,
-                fontWeight: 600,
-              }}
-            >
-              Done
-            </button>
-          </motion.div>
+          <DrawerBackdrop onClick={() => setIsVisible(false)} />
+          <DrawerPanel>
+            <DrawerBody className="flex flex-col items-center" style={{ paddingTop: "var(--spacing-6)", paddingLeft: "var(--spacing-5)", paddingRight: "var(--spacing-5)", paddingBottom: "var(--spacing-10)" }}>
+              <div
+                className="flex items-center justify-center"
+                style={{
+                  width: 56, height: 56, borderRadius: "var(--radius-full)", marginBottom: "var(--spacing-4)",
+                  background: "color-mix(in srgb, var(--md-sys-color-semantic-success) 12%, transparent)",
+                  border: "1px solid color-mix(in srgb, var(--md-sys-color-semantic-success) 25%, transparent)",
+                }}
+              >
+                <Icon name="check" size={26} style={{ color: "var(--md-sys-color-semantic-success)" }} />
+              </div>
+              <h2 className="heading-5" style={{ color: "var(--md-sys-color-text-primary)", marginBottom: "var(--spacing-3)" }}>Request sent</h2>
+              <p className="text-sm text-center" style={{ color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, marginBottom: "var(--spacing-6)", maxWidth: 280 }}>
+                Your admin has been notified and will process your deletion request.
+              </p>
+              <Button variant="outlined" fullWidth onClick={() => setIsVisible(false)}>Done</Button>
+            </DrawerBody>
+          </DrawerPanel>
         </div>
       )}
     </AnimatePresence>,
