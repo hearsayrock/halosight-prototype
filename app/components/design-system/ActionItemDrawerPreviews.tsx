@@ -49,12 +49,11 @@ export function ViewPreview({ item }: { item: ActionItem }) {
   );
 }
 
-export function EditPreview({ focus = null, calendar = false }: { focus?: "title" | "description" | null; calendar?: boolean }) {
+export function EditPreview({ calendar = false }: { calendar?: boolean }) {
   const [title, setTitle] = useState(SAMPLE_FULL.title);
   const [description, setDescription] = useState(SAMPLE_FULL.description ?? "");
   const [dueDate, setDueDate] = useState<Date | null>(daysFrom(2));
   const [showCalendar, setShowCalendar] = useState(calendar);
-  const [f, setF] = useState<"title" | "description" | null>(focus);
   return (
     <DrawerFrame>
       <ActionItemDrawerEdit
@@ -64,7 +63,6 @@ export function EditPreview({ focus = null, calendar = false }: { focus?: "title
         description={description} onDescription={setDescription}
         dueDate={dueDate} onDueDate={setDueDate}
         showCalendar={showCalendar} onToggleCalendar={() => setShowCalendar((v) => !v)}
-        focus={f} onFocus={setF}
         onCancel={() => {}} onSave={() => {}} onOpenInteraction={() => {}} onDelete={() => {}}
       />
     </DrawerFrame>

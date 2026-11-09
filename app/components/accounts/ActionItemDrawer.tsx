@@ -25,6 +25,7 @@
  *         radius.lg, radius.xl, radius.full, spacing.1–8
  */
 
+import TextField from "@/components/ui/TextField";
 import AlertDialog from "@/components/ui/AlertDialog";
 import { useToast } from "@/lib/context/ToastContext";
 import { useEffect, useRef, useState } from "react";
@@ -203,7 +204,7 @@ export function ActionItemDrawerView({
 
 export function ActionItemDrawerEdit({
   item, interactionDate, title, onTitle, description, onDescription, dueDate, onDueDate,
-  showCalendar, onToggleCalendar, focus, onFocus, onCancel, onSave, onOpenInteraction, onDelete,
+  showCalendar, onToggleCalendar, onCancel, onSave, onOpenInteraction, onDelete,
 }: {
   item: ActionItem;
   interactionDate?: Date;
@@ -211,14 +212,8 @@ export function ActionItemDrawerEdit({
   description: string; onDescription: (v: string) => void;
   dueDate: Date | null; onDueDate: (d: Date) => void;
   showCalendar: boolean; onToggleCalendar: () => void;
-  focus: "title" | "description" | null; onFocus: (f: "title" | "description" | null) => void;
   onCancel: () => void; onSave: () => void; onOpenInteraction: () => void; onDelete: () => void;
 }) {
-  const field = (focused: boolean) => ({
-    background: "var(--md-sys-color-dark-base)",
-    border: `1.5px solid ${focused ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-tertiary)"}`,
-    color: "var(--md-sys-color-text-primary)",
-  });
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 1, background: "var(--md-sys-color-dark-primary)" }}>
@@ -226,31 +221,10 @@ export function ActionItemDrawerEdit({
       </div>
       <div style={{ padding: "var(--spacing-5) var(--spacing-4) var(--spacing-8)" }}>
         {/* Title */}
-        <p style={{ ...eyebrow, marginBottom: "var(--spacing-2)" }}>Title</p>
-        <input
-          value={title}
-          maxLength={TITLE_MAX}
-          onChange={(e) => onTitle(e.target.value)}
-          onFocus={() => onFocus("title")}
-          onBlur={() => onFocus(null)}
-          className="w-full outline-none"
-          style={{ height: 50, padding: "0 var(--spacing-5)", borderRadius: "var(--radius-full)", fontSize: 17, ...field(focus === "title") }}
-        />
-        <p className="text-right" style={{ marginTop: "var(--spacing-1)", fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>{title.length}/{TITLE_MAX}</p>
+        <TextField label="Title" value={title} onChange={onTitle} maxLength={TITLE_MAX} showCount />
 
         {/* Description */}
-        <p style={{ ...eyebrow, marginTop: "var(--spacing-6)", marginBottom: "var(--spacing-2)" }}>Description</p>
-        <textarea
-          value={description}
-          maxLength={DESCRIPTION_MAX}
-          rows={5}
-          onChange={(e) => onDescription(e.target.value)}
-          onFocus={() => onFocus("description")}
-          onBlur={() => onFocus(null)}
-          className="w-full outline-none resize-none block"
-          style={{ padding: "var(--spacing-4) var(--spacing-5)", borderRadius: "var(--radius-xl)", fontSize: 16, lineHeight: "23px", ...field(focus === "description") }}
-        />
-        <p className="text-right" style={{ marginTop: "var(--spacing-1)", fontSize: 13, color: "var(--md-sys-color-text-muted)" }}>{description.length}/{DESCRIPTION_MAX}</p>
+        <TextField label="Description" multiline rows={5} value={description} onChange={onDescription} maxLength={DESCRIPTION_MAX} showCount style={{ marginTop: "var(--spacing-6)" }} />
 
         {item.originActivity && (
           <div style={{ marginTop: "var(--spacing-6)" }}>
@@ -324,7 +298,6 @@ export default function ActionItemDrawer({
   const [showCalendar, setShowCalendar] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const { show: showToast } = useToast();
-  const [focus, setFocus] = useState<"title" | "description" | null>(null);
 
   // State resets because the provider remounts this component (key) each time a drawer opens.
 
@@ -372,8 +345,7 @@ export default function ActionItemDrawer({
             description={description} onDescription={setDescription}
             dueDate={dueDate} onDueDate={setDueDate}
             showCalendar={showCalendar} onToggleCalendar={() => setShowCalendar((v) => !v)}
-            focus={focus} onFocus={setFocus}
-            onCancel={() => setMode("view")} onSave={save}
+                        onCancel={() => setMode("view")} onSave={save}
             onOpenInteraction={openInteraction}
             onDelete={() => setConfirmDelete(true)}
           />

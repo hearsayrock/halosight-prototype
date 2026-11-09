@@ -2,13 +2,22 @@
 
 /**
  * FLUTTER HANDOFF: FilterDropdown
- * Widget: StatefulWidget
- * Props: options[], value, onChange callback, label (optional prefix label)
- * State: open (bool) — internal only
- * Flutter equivalent: PopupMenuButton or custom overlay (same pattern as SortMenu)
- * Tokens: dark-secondary (pill bg), radius-full (pill), text-primary, text-muted;
- *         the menu comes from Menu (components/ui/Menu.tsx), `check` variant
- * Transitions: iOS UIMenu spring — scale 0→1, origin top-left, items stagger-fade in
+ * Widget: StatefulWidget (open/close only; the selected value lives in the parent)
+ * Props: options ({ value, label }[]), value, onChange(value), defaultValue? (the value that means "no filter", default the first option)
+ * State: open (bool)
+ * Flutter equivalent: filter_dropdown.dart (a pill that opens a PopupMenuButton / showMenu with HalosightMenu `check` rows)
+ *
+ * A 32px pill that shows the current choice and opens a check menu. Three looks:
+ *   - default: color.dark.secondary fill, color.text.primary label, a muted down arrow
+ *   - filtered (value is not the default): a small neonindigo check before the label
+ *   - open: neonindigo fill, color.text.on-accent label, an up arrow
+ * The menu is Menu (variant `check`, min width 180), anchored top-left under the pill; a tap outside dismisses it.
+ * Used for the Open / Done and Due Date / Company pills on the items list and the companies screen's items section.
+ * Known drift: the open-state arrow is a raw white at 70%; there is no token for it yet (flagged, not invented).
+ *
+ * Tokens: color.dark.secondary (pill), color.neonindigo.base (open fill, filtered check), color.text.on-accent (open label),
+ *         color.text.primary / muted, radius.full; the menu uses Menu's tokens
+ * Transitions: Menu's spring (scale 0 to 1 from the top-left corner, rows fade in one after another)
  */
 
 import { useState } from "react";
@@ -43,7 +52,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
         className="flex items-center h-8 px-3 text-sm-bold active:opacity-70 transition-opacity"
         style={{
           gap: isFiltered ? 4 : 2,
-          background: open ? "var(--md-sys-color-neonindigo)" : isFiltered ? "var(--md-sys-color-dark-secondary)" : "var(--md-sys-color-dark-secondary)",
+          background: open ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
           borderRadius: "var(--radius-full)",
           color: open ? "var(--md-sys-color-text-on-accent)" : "var(--md-sys-color-text-primary)",
         }}
@@ -63,7 +72,7 @@ export default function FilterDropdown<T extends string>({ options, value, onCha
         <Icon
           name={open ? "keyboard_arrow_up" : "keyboard_arrow_down"}
           size={18}
-          style={{ color: open ? "rgba(255,255,255,0.7)" : "var(--md-sys-color-text-muted)" }}
+          style={{ color: open ? "color-mix(in srgb, var(--md-sys-color-text-on-accent) 70%, transparent)" : "var(--md-sys-color-text-muted)" }}
         />
       </button>
 

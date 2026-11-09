@@ -10,6 +10,7 @@
  * Flutter equivalent: profile_page.dart
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
@@ -45,17 +46,13 @@ function RequestDeleteSheet({ onClose, onSent }: { onClose: () => void; onSent: 
               <p className="text-sm text-center" style={{ color: "var(--md-sys-color-text-secondary)", lineHeight: 1.6, marginBottom: "var(--spacing-5)" }}>
                 Data deletion is managed by your team admin. Send them a request and they&apos;ll take care of it — usually within one business day.
               </p>
-              <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Add a note for your admin (optional)"
+              <TextField
+                multiline
                 rows={3}
-                className="text-sm"
-                style={{
-                  width: "100%", background: "var(--md-sys-color-dark-secondary)", border: "1px solid var(--md-sys-color-alpha-white-10)",
-                  borderRadius: "var(--radius-md)", padding: "var(--spacing-3) var(--spacing-4)", color: "var(--md-sys-color-text-primary)",
-                  resize: "none", outline: "none", marginBottom: "var(--spacing-4)", fontFamily: "inherit", lineHeight: 1.5,
-                }}
+                value={note}
+                onChange={setNote}
+                placeholder="Add a note for your admin (optional)"
+                style={{ marginBottom: "var(--spacing-4)" }}
               />
               <div className="flex flex-col" style={{ gap: "var(--spacing-2)" }}>
                 <Button fill="danger" fullWidth loading={sending} loadingLabel="Sending" onClick={handleSend}>Send deletion request</Button>

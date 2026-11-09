@@ -30,25 +30,29 @@ function ThreadRow({
         <p className="truncate" style={{ fontSize: 17, lineHeight: "22px", color: "var(--md-sys-color-text-primary)" }}>{thread.title}</p>
         <p style={{ fontSize: 14, color: "var(--md-sys-color-text-muted)" }}>{thread.whenLabel} · {thread.messageCount} messages</p>
       </button>
-      <button
-        type="button"
-        aria-label={thread.pinned ? "Unpin chat" : "Pin chat"}
-        aria-pressed={thread.pinned}
-        onClick={onTogglePin}
-        className="flex items-center justify-center active:opacity-60 transition-opacity"
-        style={{ width: 36, height: 36, color: thread.pinned ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)" }}
-      >
-        <Icon name="keep" fill={thread.pinned} size={20} />
-      </button>
-      <button
-        type="button"
-        aria-label="Delete chat"
-        onClick={onDelete}
-        className="flex items-center justify-center active:opacity-60 transition-opacity"
-        style={{ width: 36, height: 36, color: "var(--md-sys-color-text-muted)" }}
-      >
-        <Icon name="delete" size={20} />
-      </button>
+      {/* Pin and delete sit tight together at the right; the delete icon lines up with the end of the divider below (the 6px pulls
+          it back over the button's own padding). */}
+      <div className="flex items-center flex-shrink-0" style={{ marginRight: -6 }}>
+        <button
+          type="button"
+          aria-label={thread.pinned ? "Unpin chat" : "Pin chat"}
+          aria-pressed={thread.pinned}
+          onClick={onTogglePin}
+          className="flex items-center justify-center active:opacity-60 transition-opacity"
+          style={{ width: 32, height: 36, color: thread.pinned ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-text-muted)" }}
+        >
+          <Icon name="keep" fill={thread.pinned} size={20} />
+        </button>
+        <button
+          type="button"
+          aria-label="Delete chat"
+          onClick={onDelete}
+          className="flex items-center justify-center active:opacity-60 transition-opacity"
+          style={{ width: 32, height: 36, color: "var(--md-sys-color-text-muted)" }}
+        >
+          <Icon name="delete" size={20} />
+        </button>
+      </div>
     </div>
   );
 }

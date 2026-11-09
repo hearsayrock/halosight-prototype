@@ -2,11 +2,16 @@
 
 /**
  * FLUTTER HANDOFF: KebabMenu
- * Widget: StatefulWidget (manages open/close)
+ * Widget: StatefulWidget (open/close)
  * Props: items ({ label, icon?, onClick, destructive? }[])
- * Tokens: --md-sys-color-dark-secondary (trigger bg), --md-sys-color-text-muted (trigger icon);
- *         the panel and rows come from Menu (see components/ui/Menu.tsx), `icon` variant.
- * Animation: springs in from top-right anchor, matching SortMenu pattern.
+ * State: open (bool)
+ * Flutter equivalent: kebab_menu.dart (an IconButton opening a PopupMenuButton with HalosightMenu `icon` rows)
+ *
+ * The "more options" button (three vertical dots, 40x40, rounded square on color.dark.secondary). Tapping it fades the button out (120ms) while the
+ * menu springs in from the top-right corner, on top of where the button was. The menu is Menu (variant `icon`): each row has a Material Symbols
+ * icon and a label; `destructive` rows use the error color. A tap outside dismisses it. Used on the account page (Edit, Share, Delete).
+ *
+ * Tokens: color.dark.secondary (button), color.text.muted (dots); the panel and rows come from Menu
  */
 
 import { useState } from "react";

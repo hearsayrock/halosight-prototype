@@ -1,7 +1,9 @@
 /**
  * FLUTTER HANDOFF: ThumbsDownIcon
- * Widget: StatelessWidget (CustomPaint or an SVG asset — Material's thumb_down has a wrist cuff we don't want)
- * Props: filled (bool) — fills with currentColor when the feedback is active
+ * Widget: StatelessWidget (CustomPaint or an SVG asset; Material's thumb_down has a wrist cuff we don't want)
+ * Props: filled (bool, default false), size (default 15)
+ * The "not helpful" mark on AI answers (insight card and chat message). Outline by default; filled (currentColor) once the feedback is given.
+ * 15x15 on a 1.6 stroke with round caps and joins; the path is a speech-bubble-style thumb, not Material's.
  * Tokens: inherits currentColor
  */
 export default function ThumbsDownIcon({ filled = false, size = 15 }: { filled?: boolean; size?: number }) {

@@ -2,18 +2,25 @@
 
 /**
  * FLUTTER HANDOFF: AccountPickerSheet
- * Widget: StatefulWidget
+ * Widget: StatefulWidget (bottom sheet, opened with showModalBottomSheet)
+ * Props: currentId (String?), onSelect(id, name), onClose, autoFocus (default true)
  * State: query
- * Tokens: --md-sys-color-dark-primary, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
- *         --md-sys-color-neonindigo, --radius-xl, --radius-full
+ * Data: the account list (prototype: mockAccounts), sorted A to Z
  * Flutter equivalent: account_picker_sheet.dart
  *
- * Slides up from the bottom. Shows the current account pinned at top,
- * then the rest alphabetically. A search bar filters the full list.
+ * "Switch account": a sheet for moving the capture flow to a different company. Header with a close button, a SearchField ("Search accounts…",
+ * focused ~320ms after the sheet slides up), then the list:
+ *   - not searching: the current account is pinned at the top in neonindigo with a check, a hairline, then every other account A to Z
+ *   - searching: one filtered list (name, city or state contains the text), the current account marked in place; no match shows
+ *     "No accounts match ..." in muted text
+ *   - each row is the name (15, bold, truncates) with "City, ST" under it (12, muted); tapping a row selects it and closes the sheet
+ * Max height 72% of the screen; the list scrolls. Built on DrawerBackdrop and DrawerPanel (flex column), z-index 60 / 61 so it sits above the
+ * capture sheet.
+ * This component does not portal itself: the parent renders it inside an overlay root with AnimatePresence (CaptureWidget does).
+ * Known drift: the close button is a hand-built 28px icon button, not IconButton.
  *
- * NOTE: This component does NOT handle its own portal. The parent is
- * responsible for rendering it inside an overlay root with AnimatePresence.
+ * Tokens: color.dark.primary (sheet, via Drawer), color.dark.tertiary (row hairlines), color.neonindigo.base (current account, check),
+ *         color.text.primary / muted, radius.xl (sheet top corners, via Drawer); the field is SearchField
  */
 
 import SearchField from "@/components/ui/SearchField";
@@ -26,6 +33,8 @@ interface Props {
   currentId: string | null;
   onSelect: (id: string, name: string) => void;
   onClose: () => void;
+  /** Focus the search field once the sheet has slid up. Off in the design-system preview so it does not pull the page. Default true. */
+  autoFocus?: boolean;
 }
 
 function AccountRow({
@@ -75,14 +84,15 @@ function AccountRow({
   );
 }
 
-export default function AccountPickerSheet({ currentId, onSelect, onClose }: Props) {
+export default function AccountPickerSheet({ currentId, onSelect, onClose, autoFocus = true }: Props) {
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (!autoFocus) return;
     const t = setTimeout(() => searchRef.current?.focus(), 320);
     return () => clearTimeout(t);
-  }, []);
+  }, [autoFocus]);
 
   const currentAccount = mockAccounts.find((a) => a.id === currentId) ?? null;
   const q = query.toLowerCase().trim();
@@ -163,7 +173,7 @@ export default function AccountPickerSheet({ currentId, onSelect, onClose }: Pro
           ))}
 
           {filteredList.length === 0 && isSearching && (
-            <p className="text-sm text-center py-8" style={{ color: "var(--md-sys-color-text-disabled)" }}>
+            <p className="text-sm text-center py-8" style={{ color: "var(--md-sys-color-text-muted)" }}>
               No accounts match &ldquo;{query}&rdquo;
             </p>
           )}

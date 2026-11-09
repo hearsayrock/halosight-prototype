@@ -1,12 +1,18 @@
 /**
- * FLUTTER HANDOFF: Skeleton / shimmer loading states
- * Flutter equivalent: shimmer package (pub.dev/packages/shimmer)
- * Use Shimmer.fromColors wrapping placeholder Container widgets
- * that match the exact dimensions of the real content.
+ * FLUTTER HANDOFF: Skeleton (Bone, AccountListSkeleton, AccountDetailSkeleton)
+ * Widget: StatelessWidget
+ * Flutter equivalent: skeleton.dart on the shimmer package (Shimmer.fromColors around placeholder Containers that match the real content's size)
  *
- * Bone       — single shimmer rectangle, composable primitive
- * AccountListSkeleton  — matches AccountListItem × N rows
- * AccountDetailSkeleton — matches AccountDetailPage header + content
+ * Grey shapes that stand in for content while it loads, so the screen keeps its layout.
+ *   - Bone: one rounded rectangle (width, height, radius). Fill is a left-to-right sweep from color.dark.secondary through color.dark.tertiary
+ *     and back, 800px wide, repeating every 1.4s (the `shimmer` keyframes). Everything else is built from Bones
+ *   - AccountListSkeleton (rows, default 6): rows shaped like AccountListItem: a three-line text stack on the left (62%, 44%, 32% wide) and a
+ *     pill and a count badge on the right, with a hairline between rows
+ *   - AccountDetailSkeleton: the account page's header (close button, centered name, two-tab selector) and three content blocks (text lines, bulleted
+ *     lines, two 56px cards) on color.background
+ * Use a skeleton only for whole-screen or whole-list loads. A short wait inside a button or beside text is ThinkingDots.
+ *
+ * Tokens: color.dark.secondary and color.dark.tertiary (the sweep and the row hairline), color.background (account page)
  */
 
 // ── Primitive ─────────────────────────────────────────────────────────────────

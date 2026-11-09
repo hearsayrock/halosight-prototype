@@ -8,7 +8,7 @@
  *        action? { label, onPress }, secondary? { label, icon?, onPress }, duration (ms | null), dismissible, bottom, onDismiss
  * State: none beyond the dismiss timer; the caller owns `visible`
  * Flutter equivalent: halosight_toast.dart (ToastCard + ToastController queue, one toast at a time)
- * Portals into #phone-overlay-root, so it sits above sheets and the bottom nav; pass `bottom` to clear a nav or floating button.
+ * Portals into #phone-overlay-root, so it sits above sheets; pass `bottom` to clear a floating button.
  *
  * Shapes: "card" (default, bottom, full width) and "pill" (top, hugs its content, full radius). The pill is how a note shows
  *   "Preparing note" (neutral spinner) then "Note ready" (green check): same pill, the icon and text swap and the width eases.
@@ -219,7 +219,7 @@ export interface ToastProps extends Omit<ToastCardProps, "showClose" | "onClose"
   dismissible?: boolean;
   /** Close the toast after its action is pressed. Default true. */
   dismissOnAction?: boolean;
-  /** Distance from the bottom of the phone frame. 24 with no nav, about 106 above the bottom nav. */
+  /** Distance from the bottom of the phone frame. 24 by default; raise it to clear a floating button. */
   bottom?: number;
   /** "top" puts the toast under the status bar instead of at the bottom; the pill shape defaults to it. */
   placement?: "top" | "bottom";

@@ -18,6 +18,7 @@
  *         --md-sys-color-alpha-neonindigo-10, --radius-xl, --radius-md, --radius-sm, --radius-full
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState, useRef, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -217,29 +218,28 @@ export default function PostMeetingReviewPage({ params }: { params: Promise<{ id
             Tell Me More
           </button>
 
-          <div
-            className="flex items-center gap-2 mb-3 px-3 py-2"
-            style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-full)" }}
-          >
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Add a correction or note…"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleSend(); }}
-              className="flex-1 text-[14px] outline-none bg-transparent"
-              style={{ color: "var(--md-sys-color-text-primary)" }}
-            />
-            <button
-              onClick={handleSend}
-              disabled={!inputText.trim() || isThinking}
-              className="transition-opacity"
-              style={{ opacity: inputText.trim() && !isThinking ? 1 : 0.3 }}
-            >
-              <Icon name="arrow_upward" size={20} style={{ color: "var(--md-sys-color-neonindigo)" }} />
-            </button>
-          </div>
+          <TextField
+            inputRef={inputRef}
+            size="md"
+            placeholder="Add a correction or note…"
+            value={inputText}
+            onChange={setInputText}
+            onSubmit={handleSend}
+            enterKeyHint="send"
+            style={{ marginBottom: "var(--spacing-3)" }}
+            trailing={
+              <button
+                type="button"
+                aria-label="Send"
+                onClick={handleSend}
+                disabled={!inputText.trim() || isThinking}
+                className="transition-opacity flex items-center"
+                style={{ opacity: inputText.trim() && !isThinking ? 1 : 0.3 }}
+              >
+                <Icon name="arrow_upward" size={20} style={{ color: "var(--md-sys-color-neonindigo)" }} />
+              </button>
+            }
+          />
 
           <div className="flex gap-2">
             <button

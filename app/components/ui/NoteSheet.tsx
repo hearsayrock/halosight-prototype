@@ -7,11 +7,12 @@
  * The user can type a note and tap Done, or dismiss without adding one.
  * Either path commits the completion — this sheet has no undo.
  *
- * Tokens: --md-sys-color-dark-secondary (sheet bg), --md-sys-color-dark-tertiary (input bg),
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-brand-teal,
- *         --radius-xl, --radius-lg, --radius-full
+ * Fields: one multi-line TextField (3 rows, auto-focused) for the note.
+ * Known drift: Done is a hand-built teal button; the shared Button has no teal fill yet.
+ * Tokens: color.dark.secondary (the field, via TextField), color.brand.teal (Done), color.text.primary / muted, radius.full, spacing.3
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { DrawerBackdrop, DrawerPanel, DrawerBody } from "@/components/ui/Drawer";
@@ -68,22 +69,14 @@ export default function NoteSheet({ visible, onDone }: Props) {
             </div>
 
             {/* Textarea */}
-            <textarea
-              // eslint-disable-next-line jsx-a11y/no-autofocus
+            <TextField
+              multiline
+              rows={3}
               autoFocus
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={setNote}
               placeholder="Anything worth remembering for next time…"
-              rows={3}
-              className="w-full resize-none outline-none text-sm px-3 py-2.5 mb-3"
-              style={{
-                background: "var(--md-sys-color-dark-tertiary)",
-                borderRadius: "var(--radius-lg)",
-                color: "var(--md-sys-color-text-primary)",
-                lineHeight: "1.6",
-                caretColor: "var(--md-sys-color-brand-teal)",
-                display: "block",
-              }}
+              style={{ marginBottom: "var(--spacing-3)" }}
             />
 
             {/* Done / Save note button */}
@@ -93,7 +86,7 @@ export default function NoteSheet({ visible, onDone }: Props) {
               style={{
                 background: "var(--md-sys-color-brand-teal)",
                 borderRadius: "var(--radius-full)",
-                color: "#fff",
+                color: "var(--md-sys-color-text-on-teal)",
               }}
             >
               {hasNote ? "Save note" : "Done"}

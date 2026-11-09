@@ -3,17 +3,17 @@
 /**
  * FLUTTER HANDOFF: CreateAccountSheet
  * Widget: StatefulWidget (bottom sheet)
- * State: name, contactName, phone, address, city, state, showDetails
- * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
- *         --md-sys-color-neonindigo, --md-sys-color-brand-coral,
- *         --radius-xl, --radius-full, --radius-sm
- *
+ * Props: initialName?, onClose, onCreated(Account)
+ * State: name, isVisible (the contact, address and state fields are reserved for "Add more details" and not shown yet)
+ * Tokens: color.dark.secondary (field, via TextField), color.neonindigo.base (active stroke, AI hint, CTA), color.alpha.neonindigo-10 (AI hint fill),
+ *         color.text.primary, radius.lg *
  * Portals into #phone-overlay-root.
- * Design: company name only upfront; AI pill hint; purple CTA.
- * "Add more details" expands optional contact/address fields below the CTA.
+ * Design: company name only upfront (TextField), an "AI fills the rest" hint, and an indigo Button.
+ * Overlaps with CreateLeadSheet: the same sheet without duplicate detection, reached from the search "create" prompt. Flutter should build
+ * one sheet and treat duplicate detection as a flag.
  */
 
+import TextField from "@/components/ui/TextField";
 import Button from "@/components/ui/Button";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
@@ -45,7 +45,6 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
   const [stateVal,    setStateVal]    = useState("");
   const [showDetails, setShowDetails] = useState(false);
   const [isVisible,   setIsVisible]   = useState(true);
-  const [focused,     setFocused]     = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -100,29 +99,13 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
 
               {/* Company field */}
               <div className="mb-3">
-                <p
-                  className="text-11-bold mb-2"
-                  style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
-                >
-                  Company
-                </p>
-                <input
-                  ref={inputRef}
-                  type="text"
+                <TextField
+                  inputRef={inputRef}
+                  label="Company"
                   placeholder="e.g. Saddleback Fleet Services"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  onFocus={() => setFocused(true)}
-                  onBlur={() => setFocused(false)}
-                  onKeyDown={(e) => { if (e.key === "Enter" && name.trim()) handleCreate(); }}
-                  className="w-full text-17 outline-none px-4 py-4"
-                  style={{
-                    background: "var(--md-sys-color-dark-secondary)",
-                    borderRadius: "var(--radius-lg)",
-                    color: "var(--md-sys-color-text-primary)",
-                    border: `1.5px solid ${focused ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 55%, transparent)" : "var(--md-sys-color-alpha-white-10)"}`,
-                    transition: "border-color 0.15s",
-                  }}
+                  onChange={setName}
+                  onSubmit={() => { if (name.trim()) handleCreate(); }}
                 />
               </div>
 
@@ -152,25 +135,5 @@ export default function CreateAccountSheet({ initialName = "", onClose, onCreate
       )}
     </AnimatePresence>,
     overlayRoot
-  );
-}
-
-function OptionalField({ label, placeholder, value, onChange, type = "text" }: {
-  label: string; placeholder: string; value: string; onChange: (v: string) => void; type?: string;
-}) {
-  return (
-    <div>
-      <p className="text-[10px] font-semibold mb-1.5" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-        {label}
-      </p>
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full text-[14px] outline-none px-3 py-2.5"
-        style={{ background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-sm)", color: "var(--md-sys-color-text-primary)" }}
-      />
-    </div>
   );
 }

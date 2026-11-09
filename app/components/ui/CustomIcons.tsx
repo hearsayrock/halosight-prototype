@@ -1,11 +1,15 @@
 "use client";
 
 /**
- * FLUTTER HANDOFF: CustomIcons
- * Widget: StatelessWidget (icon)
- * Custom SVG icons that supplement Material Symbols.
- * All icons use `currentColor` — set color via style or className.
- * Size prop sets width + height in px.
+ * FLUTTER HANDOFF: CustomIcons (LeadStarIcon, CompanyIcon, AiChatIcon)
+ * Widget: StatelessWidget (CustomPaint or an SVG asset)
+ * Props: size (px, sets width and height), style?, className?
+ * Icons Material Symbols doesn't have, drawn as filled SVGs on a 24px grid. Every one uses currentColor, so colour comes from the parent.
+ *   - LeadStarIcon (default 18): a four-pointed star that marks a lead
+ *   - CompanyIcon (default 18): a building that marks a company
+ *   - AiChatIcon (default 24): a speech bubble with a sparkle, the "Ask" button on the account page
+ * In Flutter ship them as SVG assets (flutter_svg) so they follow the icon colour.
+ * Tokens: inherits currentColor
  */
 
 interface IconProps {

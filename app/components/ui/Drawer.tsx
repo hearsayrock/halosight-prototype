@@ -9,7 +9,7 @@
  * Flutter equivalent: halosight_drawer.dart (a themed wrapper around showModalBottomSheet)
  *
  * The one bottom drawer. Every sheet in the app uses this chrome so they look and move the same:
- *   - Portals into #phone-overlay-root (above page transitions and the bottom nav)
+ *   - Portals into #phone-overlay-root (above page transitions)
  *   - Scrim behind: color.alpha.scrim, fades in 200ms, tap to close
  *   - Panel: color.dark.primary fill, radius.xl on the top corners, slides up on a spring (stiffness 380, damping 38)
  *   - 40×4 handle (color.dark.tertiary), 12px from the top

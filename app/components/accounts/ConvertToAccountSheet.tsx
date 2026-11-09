@@ -4,11 +4,10 @@
  * FLUTTER HANDOFF: ConvertToAccountSheet
  * Widget: StatefulWidget (step: "form" | "success")
  * Props: accountId, accountName, initialContact, onClose, onConverted
- * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
- *         --md-sys-color-text-secondary, --md-sys-color-neonindigo, --md-sys-color-brand-teal,
- *         --radius-xl, --radius-md, --radius-sm, --radius-full
- *
+ * Fields: TextField (md) for contact name, title, phone, deal name and estimated value (numeric keypad). Account type is a 3-up chip row.
+ * Known drift: "Convert to Account" is a hand-built teal button and the success step uses teal; the shared Button has no teal fill yet.
+ * Tokens: color.dark.secondary, color.dark.tertiary, color.neonindigo.base / dark, color.brand.teal, color.text.primary / secondary / muted / disabled,
+ *         radius.xl (deal toggle row), radius.md (type chips), radius.full *
  * Covers the standard CRM lead-conversion flow:
  *   1. Account type (customer / fleet / distributor)
  *   2. Primary contact confirmation (pre-filled from captured data)
@@ -16,6 +15,7 @@
  * On success, displays a confirmation state then calls onConverted.
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
@@ -106,7 +106,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                       <span className="text-[13px] font-semibold leading-tight" style={{ color: "var(--md-sys-color-text-primary)" }}>
                         {t.label}
                       </span>
-                      <span className="text-[10px] mt-1" style={{ color: sel ? "rgba(255,255,255,0.6)" : "var(--md-sys-color-text-disabled)" }}>
+                      <span className="text-[10px] mt-1" style={{ color: sel ? "color-mix(in srgb, var(--md-sys-color-text-on-accent) 70%, transparent)" : "var(--md-sys-color-text-disabled)" }}>
                         {t.sub}
                       </span>
                     </button>
@@ -160,7 +160,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center mt-7"
                 style={{
                   background: "var(--md-sys-color-brand-teal)",
-                  color: "var(--md-sys-color-text-primary)",
+                  color: "var(--md-sys-color-text-on-teal)",
                   borderRadius: "var(--radius-full)",
                 }}
               >
@@ -211,7 +211,7 @@ export default function ConvertToAccountSheet({ accountName, initialContact, onC
                 className="w-full h-12 font-semibold text-[15px] flex items-center justify-center mt-8"
                 style={{
                   background: "var(--md-sys-color-brand-teal)",
-                  color: "var(--md-sys-color-text-primary)",
+                  color: "var(--md-sys-color-text-on-teal)",
                   borderRadius: "var(--radius-full)",
                 }}
               >
@@ -245,34 +245,24 @@ function SectionHeader({ icon, label }: { icon: string; label: string }) {
   );
 }
 
+/** A labelled field. `numeric` brings up the number pad without making the field type=number. */
 function Field({ label, value, onChange, placeholder, type = "text" }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder: string;
-  type?: string;
+  type?: "text" | "tel" | "numeric";
 }) {
   return (
-    <div>
-      <p
-        className="text-[10px] font-semibold mb-1"
-        style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}
-      >
-        {label}
-      </p>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full text-[14px] outline-none px-3 py-2.5"
-        style={{
-          background: "var(--md-sys-color-dark-secondary)",
-          borderRadius: "var(--radius-sm)",
-          color: "var(--md-sys-color-text-primary)",
-        }}
-      />
-    </div>
+    <TextField
+      size="md"
+      label={label}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      type={type === "tel" ? "tel" : "text"}
+      inputMode={type === "numeric" ? "numeric" : undefined}
+    />
   );
 }
 

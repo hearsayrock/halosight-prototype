@@ -12,6 +12,7 @@
  * Flutter equivalent: interaction_detail_page.dart
  */
 
+import TextField from "@/components/ui/TextField";
 import React, { use, useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { DrawerBackdrop, DrawerPanel } from "@/components/ui/Drawer";
@@ -315,16 +316,13 @@ function ParticipantsDrawer({
                         You
                       </p>
                     ) : (
-                      <input
+                      <TextField
+                        variant="bare"
+                        ariaLabel={`Name for ${p.name}`}
                         value={editingNames[p.id] ?? p.name}
-                        onChange={e => setEditingNames(prev => ({ ...prev, [p.id]: e.target.value }))}
+                        onChange={(v) => setEditingNames(prev => ({ ...prev, [p.id]: v }))}
                         onBlur={() => commitRename(p.id)}
-                        style={{
-                          fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600,
-                          color: "var(--md-sys-color-text-primary)",
-                          background: "none", border: "none", outline: "none",
-                          padding: 0, width: "100%",
-                        }}
+                        inputStyle={{ fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600 }}
                       />
                     )}
                     <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
@@ -483,16 +481,13 @@ function SpeakerDrawer({
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <ParticipantAvatar participant={participant} size={40} />
             <div>
-              <input
+              <TextField
+                variant="bare"
+                ariaLabel="Name"
                 value={editingName}
-                onChange={e => setEditingName(e.target.value)}
+                onChange={setEditingName}
                 onBlur={commitName}
-                style={{
-                  fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600,
-                  color: "var(--md-sys-color-text-primary)",
-                  background: "none", border: "none", outline: "none",
-                  padding: 0,
-                }}
+                inputStyle={{ fontFamily: "Barlow, sans-serif", fontSize: 15, fontWeight: 600 }}
               />
               <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
                 {linkedContact ? (

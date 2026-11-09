@@ -1,9 +1,20 @@
 /**
  * FLUTTER HANDOFF: ErrorState
- * Flutter equivalent: a centered Column with an Icon, Text, and TextButton.
- * Wire the onRetry callback to re-trigger the data fetch (e.g. re-call the
- * ViewModel's load() method or invalidate the FutureProvider).
+ * Widget: StatelessWidget
+ * Props: title (default "Something went wrong"), message (default "We couldn't load this content. Check your connection and try again."), onRetry?
+ * Flutter equivalent: error_state.dart (a centered Column: icon circle, title, message, retry button). Wire onRetry to re-run the load
+ *   (the ViewModel's load() or invalidating the FutureProvider).
+ *
+ * What a list or screen shows when its data fails to load. Centered in the space it fills, 32px side padding:
+ *   - a 52px circle on color.dark.secondary holding a 24px warning triangle in color.brand.coral
+ *   - the title (base, bold, color.text.primary), then the message (small, color.text.muted, max 260px wide)
+ *   - "Try again": a Button (tonal, sm), shown only when onRetry is given
+ * Use it for a failed load. A failed action (a save that did not go through) is a Toast or a Banner, not this.
+ *
+ * Tokens: color.dark.secondary (icon circle), color.brand.coral (triangle), color.text.primary / muted; the button is Button (tonal)
  */
+
+import Button from "@/components/ui/Button";
 
 interface Props {
   title?: string;
@@ -59,20 +70,7 @@ export default function ErrorState({
       </p>
 
       {/* Retry */}
-      {onRetry && (
-        <button
-          onClick={onRetry}
-          className="px-5 py-2.5 text-sm-bold transition-opacity active:opacity-70"
-          style={{
-            background: "var(--md-sys-color-dark-secondary)",
-            color: "var(--md-sys-color-text-primary)",
-            borderRadius: "var(--radius-full)",
-            border: "1px solid var(--md-sys-color-dark-tertiary)",
-          }}
-        >
-          Try again
-        </button>
-      )}
+      {onRetry && <Button variant="tonal" size="sm" onClick={onRetry}>Try again</Button>}
     </div>
   );
 }

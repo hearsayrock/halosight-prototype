@@ -20,6 +20,7 @@
  *   Not implemented in web prototype.
  */
 
+import TextField from "@/components/ui/TextField";
 import Banner from "@/components/ui/Banner";
 import { use, useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -438,21 +439,15 @@ function AccountDetailPageContent({ params }: { params: Promise<{ id: string }> 
                   { key: "title", placeholder: "Job title", label: "Title" },
                   { key: "phone", placeholder: "Phone number", label: "Phone" },
                 ].map(({ key, placeholder, label }) => (
-                  <div key={key}>
-                    <p className="text-[10px] font-semibold mb-1" style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.05em", textTransform: "uppercase" }}>{label}</p>
-                    <input
-                      type={key === "phone" ? "tel" : "text"}
-                      placeholder={placeholder}
-                      value={contactForm[key as keyof typeof contactForm]}
-                      onChange={(e) => setContactForm((f) => ({ ...f, [key]: e.target.value }))}
-                      className="w-full text-[14px] outline-none px-3 py-2"
-                      style={{
-                        background: "var(--md-sys-color-dark-secondary)",
-                        borderRadius: "var(--radius-sm)",
-                        color: "var(--md-sys-color-text-primary)",
-                      }}
-                    />
-                  </div>
+                  <TextField
+                    key={key}
+                    size="md"
+                    label={label}
+                    type={key === "phone" ? "tel" : "text"}
+                    placeholder={placeholder}
+                    value={contactForm[key as keyof typeof contactForm]}
+                    onChange={(v) => setContactForm((f) => ({ ...f, [key]: v }))}
+                  />
                 ))}
               </div>
               <div className="flex items-center justify-between mt-3">

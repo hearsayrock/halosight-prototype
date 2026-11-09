@@ -23,6 +23,12 @@ import { mockRecentActivities } from "@/lib/mock-data/home";
 import Menu from "@/components/ui/Menu";
 import { AlertCard } from "@/components/ui/AlertDialog";
 import SearchField from "@/components/ui/SearchField";
+import { FilterDropdownPreview, SortFilterPreview, VisitedFilterPreview, KebabMenuPreview } from "@/components/design-system/MenuTriggerPreviews";
+import { FieldCardsPreview, ListeningHeaderPreview, SideButtonsPreview } from "@/components/design-system/AIReviewPreviews";
+import { AccountPickerPreview } from "@/components/design-system/AccountPickerPreview";
+import { ErrorStatePreview, ScrollTopBarPreview, CustomIconsPreview } from "@/components/design-system/UtilityPreviews";
+import { Bone, AccountListSkeleton, AccountDetailSkeleton } from "@/components/ui/Skeleton";
+import { StatesPreview, SizesPreview, MultilinePreview, SlotsPreview, BarePreview } from "@/components/design-system/TextFieldPreviews";
 import SectionHeaderRow from "@/components/ui/SectionHeader";
 import IconButton from "@/components/ui/IconButton";
 import Banner from "@/components/ui/Banner";
@@ -46,7 +52,6 @@ import { ViewPreview, EditPreview, DeletePreview, SAMPLE_FULL, SAMPLE_MINIMAL, S
 import CountBadge from "@/components/accounts/CountBadge";
 import { ComponentArea, AreaGroup, VariantCard, SubComponentCard, StateSample } from "@/components/design-system/ComponentArea";
 import ActionItemList, { ActionItemsHeader, type ActionItemEntry } from "@/components/accounts/ActionItemList";
-import BottomNav from "@/components/layout/BottomNav";
 import Icon from "@/components/ui/Icon";
 import AccountTypeIcon from "@/components/accounts/AccountTypeIcon";
 import MenuIcon from "@/components/ui/MenuIcon";
@@ -77,6 +82,15 @@ const SECTIONS = [
   { id: "activity-card", label: "Activity Card" },
   { id: "engagements-drawer", label: "Engagements Drawer" },
   { id: "insight-card", label: "Insight Card" },
+  { id: "text-field", label: "Text Field" },
+  { id: "filter-pill", label: "Filter Pill" },
+  { id: "kebab-menu", label: "More Menu" },
+  { id: "skeleton", label: "Skeleton" },
+  { id: "ai-review", label: "AI Review" },
+  { id: "account-picker", label: "Account Picker" },
+  { id: "error-state", label: "Error State" },
+  { id: "scroll-top-bar", label: "Scroll Top Bar" },
+  { id: "custom-icons", label: "Custom Icons" },
   { id: "search-field", label: "Search Field" },
   { id: "section-header", label: "Section Header" },
   { id: "icon-button", label: "Icon Button" },
@@ -87,7 +101,6 @@ const SECTIONS = [
   { id: "feedback-widget", label: "Feedback Widget" },
   { id: "menus",       label: "Menu" },
   { id: "icons",       label: "Icons" },
-  { id: "navigation",  label: "Navigation" },
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -1435,7 +1448,7 @@ export default function DesignSystemPage() {
               </VariantCard>
             </AreaGroup>
 
-            <AreaGroup title="Edit" count={3}>
+            <AreaGroup title="Edit" count={2}>
               <VariantCard
                 name="Edit"
                 prop="mode: edit"
@@ -1443,13 +1456,6 @@ export default function DesignSystemPage() {
                 notes={["Fields are inset: dark-base fill, tertiary border", "Counters: title 200, description 2000", "Date chips scroll sideways; the selected one is neonindigo", "Flutter uses the platform date picker in place of Show calendar"]}
               >
                 <EditPreview />
-              </VariantCard>
-              <VariantCard
-                name="Edit, field focused"
-                prop="focus: title | description"
-                description="The focused field gets a 1.5px neonindigo border."
-              >
-                <EditPreview focus="title" />
               </VariantCard>
               <VariantCard
                 name="Edit, calendar open"
@@ -1888,10 +1894,197 @@ export default function DesignSystemPage() {
 
           {/* ── Shared primitives (component areas) ───────────────────── */}
           <ComponentArea
+            id="text-field"
+            name="Text Field"
+            kind="Library"
+            description="The one text entry. Every field in the app is this widget: the sheets that create a lead or an action item, the contact and deal forms, notes, feedback, the chat composer and the date filter. Search Field is this with a search icon. Single-line is a full pill; multi-line is a rounded box. It goes default, active, then filled, so a field you have filled in reads as done."
+            source="components/ui/TextField.tsx"
+            flutter="halosight_text_field.dart"
+            anatomy="[label] · field ([leading] · text · [trailing] · [clear] · [actions]) · [helper] · [n/max]"
+          >
+            <AreaGroup title="States" count={6}>
+              <VariantCard name="Default, active, filled" prop="value · focus · status · disabled" status="default" description="Empty fields have no stroke. Focus draws a 1.5px neonindigo stroke; once there is text and focus has left, a hairline stroke marks it filled. Warning is for a soft problem (a possible duplicate), error for a blocking one. The caret is brand coral. These fields are live: type in them.">
+                <StatesPreview />
+              </VariantCard>
+            </AreaGroup>
+            <AreaGroup title="Variants" count={4}>
+              <VariantCard name="Sizes" prop='size="sm" | "md" | "lg" | "xl"' description="36, 44, 48 (default for forms) and 56 tall. Text and icon step up with them; xl is the chat composer.">
+                <SizesPreview />
+              </VariantCard>
+              <VariantCard name="Multi-line" prop="multiline · rows · maxLength · showCount" description="A rounded box that grows with rows, with an optional n/max counter under it.">
+                <MultilinePreview />
+              </VariantCard>
+              <VariantCard name="Slots" prop="leading · trailing · clearable · endSlot · actions" description="An icon before the text, a tag or button after it, a clear dot, and round action buttons flush right (the chat composer).">
+                <SlotsPreview />
+              </VariantCard>
+              <VariantCard name="Bare" prop='variant="bare"' description="Just the input, no fill or stroke, for text that edits in place inside a card or row that owns the surface (renaming a participant, an AI-extracted field).">
+                <BarePreview />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="filter-pill"
+            name="Filter Pill"
+            kind="Library"
+            description="A small pill that shows the current choice and opens a check menu: Open / Done and Due Date / Company on the items list, and Last Visited on the companies list. It has three looks: resting, filtered (an indigo check before the label) and open (indigo fill). The menu is the shared Menu. These are live: tap them."
+            source="components/ui/FilterDropdown.tsx · components/ui/VisitedFilterDropdown.tsx"
+            flutter="filter_dropdown.dart · visited_filter_dropdown.dart"
+            anatomy="pill ([filtered check] · label · arrow) · Menu (check rows) · [custom range: From · To · Apply]"
+          >
+            <AreaGroup title="Variants" count={3}>
+              <VariantCard name="Filter" prop="FilterDropdown · options · value · defaultValue" status="default" description="A value picker. The first option is the unfiltered default; choosing anything else adds the indigo check to the pill. Open turns the pill indigo.">
+                <FilterDropdownPreview />
+              </VariantCard>
+              <VariantCard name="Sort" prop="FilterDropdown" description="The same widget used to pick a sort order (Due Date, Company). Nothing marks it filtered because the first option is the default.">
+                <SortFilterPreview />
+              </VariantCard>
+              <VariantCard name="Last visited (with a custom range)" prop="VisitedFilterDropdown · value · customFrom · customTo" description="Five presets that apply at once, then a divider and Custom range, which opens two date fields and an Apply button. The pill reads Last Visited until a choice is made.">
+                <VisitedFilterPreview />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="kebab-menu"
+            name="More Menu"
+            kind="Library"
+            description="The three-dot button for a record's actions (Edit, Share, Delete on the account page). The button fades out as the menu springs in over it from the top-right; destructive rows use the error color. The menu itself is the shared Menu. Tap it."
+            source="components/ui/KebabMenu.tsx"
+            flutter="kebab_menu.dart"
+            anatomy="40px button (more_vert) · Menu (icon rows, [destructive])"
+          >
+            <AreaGroup title="Variants" count={1}>
+              <VariantCard name="Record actions" prop="items: { label, icon?, onClick, destructive? }[]" status="default" description="Each row has an icon and a label. A destructive row is drawn in the error color.">
+                <KebabMenuPreview />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="skeleton"
+            name="Skeleton"
+            kind="Library"
+            description="Grey shapes that hold a screen's layout while its content loads. One Bone primitive (a rounded rectangle with a left-to-right sweep) builds the rest: a companies list and the account page. Use it for whole-screen or whole-list loads; a short wait in a button or beside text is Thinking Dots."
+            source="components/ui/Skeleton.tsx"
+            flutter="skeleton.dart (shimmer package)"
+            anatomy="Bone · AccountListSkeleton (rows) · AccountDetailSkeleton"
+          >
+            <AreaGroup title="Variants" count={3}>
+              <VariantCard name="Bone" prop="width · height · radius" status="default" description="The primitive. 1.4s sweep from dark.secondary through dark.tertiary and back.">
+                <div className="flex flex-col" style={{ padding: 16, gap: 10 }}>
+                  <Bone width="70%" height={16} />
+                  <Bone width="45%" height={13} />
+                  <Bone width={68} height={20} radius={20} />
+                </div>
+              </VariantCard>
+              <VariantCard name="Account list" prop="AccountListSkeleton · rows" description="Rows shaped like a company row: three lines of text on the left, a pill and a badge on the right.">
+                <div style={{ background: "var(--md-sys-color-dark-primary)", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
+                  <AccountListSkeleton rows={3} />
+                </div>
+              </VariantCard>
+              <VariantCard name="Account page" prop="AccountDetailSkeleton" description="The account page header (close, name, two tabs) and three content blocks.">
+                <div style={{ height: 460, overflow: "hidden", borderRadius: "var(--radius-lg)" }}>
+                  <AccountDetailSkeleton />
+                </div>
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="ai-review"
+            name="AI Review"
+            kind="Feature"
+            description="The screen after a capture where the rep checks what the AI pulled out of the visit before it goes to Salesforce. Each field is a card that shows how sure the AI was: confident (indigo, sparkle), uncertain (dashed outline) or confirmed (green, once the rep edits it or says it). Tap a card to edit; hold the mic to correct by voice. The full overlay is driven by the capture flow, so its parts are shown here on their own."
+            source="components/capture/AIReviewOverlay.tsx"
+            flutter="ai_review_overlay.dart · field_card.dart"
+            anatomy="header (eyebrow · title | waveform · live caption) · field cards · bottom bar (Use defaults · hold-to-talk mic · Save)"
+          >
+            <AreaGroup title="Field card" count={3}>
+              <VariantCard name="Confidence states" prop="conf: high | uncertain | confirmed" status="default" description="Title is confident, Phone is uncertain and empty, Lead status is confirmed, Address is confident and multi-line. Tap one to edit it: it takes an indigo stroke, and leaving it saves the text and marks it confirmed. Live.">
+                <FieldCardsPreview />
+              </VariantCard>
+              <VariantCard name="Listening header" prop="listening" description="While the mic is held: the waveform, the live caption (words fade in one at a time) and the next-step eyebrow.">
+                <ListeningHeaderPreview />
+              </VariantCard>
+              <VariantCard name="Bottom bar buttons" prop="SideButton: neutral | purple" description="Use defaults (neutral) and Save (indigo). Hand-built round buttons for now.">
+                <SideButtonsPreview />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="account-picker"
+            name="Account Picker"
+            kind="Feature"
+            description="'Switch account': the sheet that moves the capture flow to a different company. A search field, then the accounts A to Z with the current one pinned at the top (indigo, with a check). Searching filters by name, city or state. Tapping a row selects it and closes the sheet. Live: search and tap."
+            source="components/accounts/AccountPickerSheet.tsx"
+            flutter="account_picker_sheet.dart"
+            anatomy="header (title · close) · Search Field · current account (pinned) · hairline · account rows (name · city, state)"
+          >
+            <AreaGroup title="Variants" count={1}>
+              <VariantCard name="Switch account" prop="currentId · onSelect · onClose" status="default" description="The real sheet inside a phone-height box. Nothing is saved; picking a row just moves the indigo check.">
+                <AccountPickerPreview />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="error-state"
+            name="Error State"
+            kind="Library"
+            description="What a list or screen shows when its data fails to load: a warning mark, a title, a short message and a Try again button. Centered in the space it fills. A failed action (a save that did not go through) is a Toast or a Banner, not this."
+            source="components/ui/ErrorState.tsx"
+            flutter="error_state.dart"
+            anatomy="icon circle (warning) · title · message · [Try again]"
+          >
+            <AreaGroup title="Variants" count={2}>
+              <VariantCard name="Default" prop="onRetry" status="default" description="The default title and message, with a Try again button (a tonal Button). Without onRetry the button is left out.">
+                <ErrorStatePreview />
+              </VariantCard>
+              <VariantCard name="Custom text" prop="title · message" description="Say what failed. The companies list uses 'Couldn't load accounts'.">
+                <ErrorStatePreview custom />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="scroll-top-bar"
+            name="Scroll Top Bar"
+            kind="Library"
+            description="A back button that floats over the top of a scrolling page, with an optional control on the right. At the top the arrow has no background; once you scroll a glass circle appears behind it. The right control fades out as you scroll down and returns when you scroll up. Scroll inside the preview."
+            source="components/ui/ScrollAwareTopBar.tsx"
+            flutter="scroll_aware_top_bar.dart"
+            anatomy="back button ([glass circle after 10px]) · [right control]"
+          >
+            <AreaGroup title="Variants" count={1}>
+              <VariantCard name="Back with a right control" prop="onBack · rightSlot · scrollRef" status="default" description="The page content needs about 86px of top padding so it starts below the bar.">
+                <ScrollTopBarPreview />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
+            id="custom-icons"
+            name="Custom Icons"
+            kind="Library"
+            description="Icons Material Symbols does not have, drawn as SVG on currentColor so they take the colour of whatever they sit in: the lead star, the company building, the Ask (AI chat) bubble, and the thumbs-down mark on AI answers (outline, then filled once feedback is given)."
+            source="components/ui/CustomIcons.tsx · components/ui/ThumbsDownIcon.tsx"
+            flutter="SVG assets via flutter_svg"
+            anatomy="LeadStarIcon · CompanyIcon · AiChatIcon · ThumbsDownIcon"
+          >
+            <AreaGroup title="Icons" count={4}>
+              <VariantCard name="All custom icons" prop="size · [filled]" status="default" description="Set the size in px; colour comes from the parent.">
+                <CustomIconsPreview />
+              </VariantCard>
+            </AreaGroup>
+          </ComponentArea>
+
+          <ComponentArea
             id="search-field"
             name="Search Field"
             kind="Library"
-            description="The one search bar, used on the companies list, the action item lists and the Engagements drawer. A search icon, the field, and a clear button once there is text, in three sizes. It gets an indigo stroke while focused."
+            description="The one search bar (a Text Field with a search icon), used on the companies list, the action item lists and the Engagements drawer. A search icon, the field, and a clear button once there is text, in three sizes. It gets an indigo stroke while focused."
             source="components/ui/SearchField.tsx"
             flutter="halosight_search_field.dart"
             anatomy="search icon · text field · [trailing tag] · [clear]"
@@ -2344,19 +2537,6 @@ export default function DesignSystemPage() {
             value="Component: <Icon name='home' fill size={24} weight={400} /> · Figma: Material Symbols community library (names identical)"
           />
           <div className="mb-16" />
-
-          {/* ── Navigation ────────────────────────────────────────────── */}
-          <SectionHeader
-            id="navigation"
-            title="Navigation"
-            subtitle="Bottom navigation bar — Home and Accounts tabs."
-          />
-          <div className="max-w-xs mb-16">
-            <div style={{ background: "var(--md-sys-color-background)", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
-              <BottomNav />
-            </div>
-            <TokenLabel name="BottomNav — live component · background: --md-sys-color-alpha-neonindigo-glass · active pill: --md-sys-color-alpha-dark-glass" value="height: 66px · 32px padding sides & bottom · pill: --radius-full · active inset: 6px" />
-          </div>
 
           {/* Footer */}
           <div className="pt-8" style={{ borderTop: "1px solid var(--md-sys-color-dark-tertiary)" }}>

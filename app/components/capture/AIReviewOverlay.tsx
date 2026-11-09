@@ -2,19 +2,35 @@
 
 /**
  * FLUTTER HANDOFF: AIReviewOverlay
- * Widget: StatefulWidget (full-screen overlay, portaled)
- * Trigger: CaptureStatus === "reviewing"
- * Props: none — reads from CaptureContext
+ * Widget: StatefulWidget (a full-screen route or overlay sliding up from the bottom)
+ * Trigger: CaptureStatus == reviewing (CaptureContext). Props: none; the account name and status come from CaptureContext
+ * State: fields (CRMField list), listening, transcript, showExtra (a secret demo toggle: tap "What we learned" to show five extra fields)
+ * Data: prototype fields are fixed (first and last name, title, segment, address, phone, lead status, plus demo fields); production gets them
+ *   from the AI extraction use case, each with a confidence
+ * Flutter equivalent: ai_review_overlay.dart (FieldCard is its own widget, field_card.dart)
  *
- * Shows AI-extracted CRM fields after capture. Rep can hold mic to speak
- * corrections in real time. Field cards update live (green on confirm).
- * "Looks good" / "Use defaults" → readyCapture().
+ * The rep checks what the AI pulled out of the visit before it goes to Salesforce, and fixes anything by hand or by voice. Slides up (spring) over
+ * everything. Top to bottom:
+ *   - Header (does not scroll): "What we learned" eyebrow and "Here's the read on <account>" in the serif. While holding the mic it becomes a
+ *     5-bar waveform, a live caption (words fade in one at a time) or "Listening…", and an "After you speak" eyebrow
+ *   - Field list (scrolls): one FieldCard per field, 10px apart, with a 132px spacer so the last card clears the bottom bar
+ *   - Bottom bar: a glass blur over the list with "Use defaults" (left), the hold-to-talk mic (centre, 80px, rings pulse while listening) and
+ *     "Save" (right); "Use defaults" and "Save" both finish the review
+ * FieldCard states, which carry the AI's confidence so the rep can see what to trust:
+ *   - high: indigo value and a sparkle; a soft indigo outline
+ *   - uncertain: a dashed indigo outline and a muted value ("Add…" when empty)
+ *   - confirmed (the rep edited it, or the voice answer filled it): a green outline and tint, a check, primary-colour value
+ *   - focused: tap a card and it becomes a text field with a 1.5px indigo stroke. Leaving it saves the text and marks it confirmed; empty text is ignored
+ * The demo "hold to talk" plays a scripted sequence: the phone and lead status fields fill in by voice and turn confirmed.
+ * Text editing is TextField (bare): the card owns the outline and tint.
  *
- * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-text-primary,
- *         --md-sys-color-text-muted, --md-sys-color-text-disabled, --md-sys-color-neonindigo,
- *         --md-sys-color-semantic-success, --radius-lg, --radius-full
+ * Tokens: color.background (screen), color.dark.secondary (cards), color.neonindigo.base (high outline, sparkle, mic, active text),
+ *         color.semantic.success (confirmed outline, tint, check), color.alpha.neonindigo-10 (Save button), color.alpha.white-10,
+ *         color.text.primary / muted / on-accent, radius.lg (cards), radius.full
+ * Known drift: Save and Use defaults are hand-built round buttons (SideButton), not the shared Button or IconButton.
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -23,9 +39,9 @@ import Icon from "@/components/ui/Icon";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type FieldConf = "high" | "uncertain" | "confirmed";
+export type FieldConf = "high" | "uncertain" | "confirmed";
 
-interface CRMField {
+export interface CRMField {
   id: string;
   label: string;
   value: string;
@@ -55,7 +71,7 @@ const LISTEN_STEPS: Array<{
 //    physically recenters on each addition; layout-prop FLIP slides existing
 //    words left as new ones materialise on the right. ────────────────────────
 
-function LiveCaption({ text }: { text: string }) {
+export function LiveCaption({ text }: { text: string }) {
   const words = text.trim().split(/\s+/).filter(Boolean);
   const sentenceKey = words[0] ?? "";
 
@@ -123,7 +139,7 @@ function LiveCaption({ text }: { text: string }) {
 
 // ── Waveform ──────────────────────────────────────────────────────────────────
 
-function WaveformBars() {
+export function WaveformBars() {
   const scales = [0.45, 0.8, 1, 0.7, 0.38];
   return (
     <div className="flex items-end justify-center gap-[5px]" style={{ height: 52 }}>
@@ -146,7 +162,7 @@ interface FieldCardProps {
   onSave: (id: string, value: string) => void;
 }
 
-function FieldCard({ field, onSave }: FieldCardProps) {
+export function FieldCard({ field, onSave }: FieldCardProps) {
   const isHigh      = field.conf === "high";
   const isUncertain = field.conf === "uncertain";
   const isConfirmed = field.conf === "confirmed";
@@ -204,23 +220,24 @@ function FieldCard({ field, onSave }: FieldCardProps) {
             {isHigh && !focused && <Icon name="auto_awesome" size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />}
             {isConfirmed && !focused && <span className="text-[15px] font-bold" style={{ color: "var(--md-sys-color-semantic-success)" }}>✓</span>}
           </div>
-          <input
-            ref={inputRef}
-            type="text"
-            value={inputVal}
-            placeholder={`Enter ${field.label.toLowerCase()}…`}
-            onChange={(e) => setInputVal(e.target.value)}
-            onFocus={() => setFocused(true)}
-            onBlur={handleBlur}
-            onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full text-[15px] outline-none bg-transparent"
-            style={{
-              color: focused ? "var(--md-sys-color-text-primary)" : idleValueColor,
-              fontWeight: focused ? 400 : 600,
-              transition: "color 0.15s",
-            }}
-          />
+          <div onClick={(e) => e.stopPropagation()}>
+            <TextField
+              variant="bare"
+              inputRef={inputRef}
+              value={inputVal}
+              placeholder={`Enter ${field.label.toLowerCase()}…`}
+              onChange={setInputVal}
+              onFocus={() => setFocused(true)}
+              onBlur={handleBlur}
+              onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+              inputStyle={{
+                fontSize: 15,
+                color: focused ? "var(--md-sys-color-text-primary)" : idleValueColor,
+                fontWeight: focused ? 400 : 600,
+                transition: "color 0.15s",
+              }}
+            />
+          </div>
         </>
       ) : (
         <motion.div layout="position" className={`flex items-center gap-3 ${focused ? "justify-start" : "justify-between"}`}>
@@ -255,19 +272,19 @@ function FieldCard({ field, onSave }: FieldCardProps) {
               )}
             </AnimatePresence>
             {focused ? (
-              <motion.input
-                layout
-                ref={inputRef}
-                type={field.id === "phone" ? "tel" : "text"}
-                value={inputVal}
-                placeholder=""
-                onChange={(e) => setInputVal(e.target.value)}
-                onBlur={handleBlur}
-                onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
-                onClick={(e) => e.stopPropagation()}
-                className="outline-none bg-transparent min-w-0 w-full"
-                style={{ fontSize: 15, fontWeight: 400, color: "var(--md-sys-color-text-primary)", textAlign: "left" }}
-              />
+              <motion.div layout className="min-w-0 w-full" onClick={(e) => e.stopPropagation()}>
+                <TextField
+                  variant="bare"
+                  inputRef={inputRef}
+                  type={field.id === "phone" ? "tel" : "text"}
+                  ariaLabel={field.label}
+                  value={inputVal}
+                  onChange={setInputVal}
+                  onBlur={handleBlur}
+                  onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+                  inputStyle={{ fontSize: 15, fontWeight: 400, textAlign: "left" }}
+                />
+              </motion.div>
             ) : (
               <motion.span
                 layout
@@ -393,7 +410,7 @@ export default function AIReviewOverlay() {
                     onClick={() => setShowExtra((v) => !v)}
                     whileTap={{ scale: 0.94 }}
                     className="text-[11px] font-semibold mb-1 w-fit"
-                    style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
+                    style={{ color: "var(--md-sys-color-text-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}
                   >
                     What we learned
                   </motion.p>
@@ -436,7 +453,7 @@ export default function AIReviewOverlay() {
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           className="text-center text-[13px] w-full"
-                          style={{ color: "var(--md-sys-color-text-disabled)" }}
+                          style={{ color: "var(--md-sys-color-text-muted)" }}
                         >
                           Listening…
                         </motion.p>
@@ -446,7 +463,7 @@ export default function AIReviewOverlay() {
 
                   <p
                     className="text-[11px] font-semibold mb-3"
-                    style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
+                    style={{ color: "var(--md-sys-color-text-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}
                   >
                     After you speak
                   </p>
@@ -562,7 +579,7 @@ export default function AIReviewOverlay() {
 
 // ── Side button ───────────────────────────────────────────────────────────────
 
-function SideButton({
+export function SideButton({
   icon,
   label,
   onPress,

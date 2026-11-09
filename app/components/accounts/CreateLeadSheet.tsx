@@ -3,12 +3,11 @@
 /**
  * FLUTTER HANDOFF: CreateLeadSheet
  * Widget: StatefulWidget (bottom sheet)
- * State: name, focused, isVisible, duplicates, dupeState, dismissed
- * Tokens: --md-sys-color-background, --md-sys-color-dark-secondary, --md-sys-color-dark-tertiary,
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-text-disabled,
- *         --md-sys-color-neonindigo, --md-sys-color-warning, --md-sys-color-warning-surface,
- *         --md-sys-color-brand-coral, --radius-xl, --radius-full, --radius-lg
- *
+ * State: name, isVisible, duplicates, dupeState, dismissed
+ * Props: onClose, onCreated(Account)
+ * Fields: one TextField ("Company"); the warning stroke shows while a possible duplicate is on screen. The checking spinner is its trailing slot.
+ * Tokens: color.dark.secondary (field, via TextField), color.neonindigo.base (active stroke, AI hint), color.alpha.neonindigo-10 (AI hint fill),
+ *         color.semantic.warning * (duplicate callout and field stroke), color.text.primary / muted, radius.lg, radius.sm *
  * Portals into #phone-overlay-root.
  * Extends CreateAccountSheet with debounced duplicate detection:
  *   - 400ms after typing stops, fuzzy-matches against all accounts
@@ -17,6 +16,7 @@
  *   - "Create anyway" dismisses callout and continues normally
  */
 
+import TextField from "@/components/ui/TextField";
 import Button from "@/components/ui/Button";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
@@ -132,7 +132,6 @@ function DuplicateCallout({
 export default function CreateLeadSheet({ onClose, onCreated }: Props) {
   const router = useRouter();
   const [name,       setName]       = useState("");
-  const [focused,    setFocused]    = useState(false);
   const [isVisible,  setIsVisible]  = useState(true);
   const [dupeState,  setDupeState]  = useState<DupeState>("idle");
   const [duplicates, setDuplicates] = useState<Account[]>([]);
@@ -219,54 +218,27 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
 
               {/* Company field */}
               <div className="mb-3">
-                <p
-                  className="text-[11px] font-semibold mb-2"
-                  style={{ color: "var(--md-sys-color-text-disabled)", letterSpacing: "0.08em", textTransform: "uppercase" }}
-                >
-                  Company
-                </p>
-                <div className="relative">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="e.g. Saddleback Fleet Services"
-                    value={name}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
-                    onKeyDown={(e) => { if (e.key === "Enter" && name.trim() && !showDupeCallout) handleCreate(); }}
-                    className="w-full text-[17px] font-medium outline-none px-4 py-4"
-                    style={{
-                      background: "var(--md-sys-color-dark-secondary)",
-                      borderRadius: "var(--radius-lg)",
-                      color: "var(--md-sys-color-text-primary)",
-                      border: `1.5px solid ${
-                        showDupeCallout
-                          ? "color-mix(in srgb, var(--md-sys-color-warning) 45%, transparent)"
-                          : focused
-                            ? "color-mix(in srgb, var(--md-sys-color-neonindigo) 55%, transparent)"
-                            : "var(--md-sys-color-alpha-white-10)"
-                      }`,
-                      transition: "border-color 0.15s",
-                      paddingRight: dupeState === "checking" ? 44 : undefined,
-                    }}
-                  />
-                  {/* Checking spinner */}
-                  {dupeState === "checking" && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                        style={{
-                          width: 16, height: 16,
-                          borderRadius: "50%",
-                          border: "2px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 25%, transparent)",
-                          borderTopColor: "var(--md-sys-color-neonindigo)",
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
+                <TextField
+                  inputRef={inputRef}
+                  label="Company"
+                  placeholder="e.g. Saddleback Fleet Services"
+                  value={name}
+                  onChange={handleNameChange}
+                  onSubmit={() => { if (name.trim() && !showDupeCallout) handleCreate(); }}
+                  status={showDupeCallout ? "warning" : undefined}
+                  trailing={dupeState === "checking" ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                      style={{
+                        width: 16, height: 16,
+                        borderRadius: "50%",
+                        border: "2px solid color-mix(in srgb, var(--md-sys-color-neonindigo) 25%, transparent)",
+                        borderTopColor: "var(--md-sys-color-neonindigo)",
+                      }}
+                    />
+                  ) : undefined}
+                />
               </div>
 
               {/* Duplicate callout */}

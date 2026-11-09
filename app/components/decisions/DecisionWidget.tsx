@@ -10,6 +10,7 @@
  *        Real-time sync between sessions via Supabase Realtime.
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState, useEffect, useRef } from "react";
 import { getSupabase } from "@/lib/supabase/client";
 
@@ -92,10 +93,10 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
     if (chosen !== null) save(chosen, note, by);
   }
 
-  function handleNote(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    setNote(e.target.value);
+  function handleNote(value: string) {
+    setNote(value);
     if (noteTimer.current) clearTimeout(noteTimer.current);
-    noteTimer.current = setTimeout(() => save(chosen, e.target.value, decidedBy), 800);
+    noteTimer.current = setTimeout(() => save(chosen, value, decidedBy), 800);
   }
 
   if (!loaded) return null;
@@ -166,21 +167,13 @@ export default function DecisionWidget({ storyId, decisionKey, options }: Props)
       </div>
 
       {decided && (
-        <textarea
+        <TextField
+          multiline
+          rows={2}
           value={note}
           onChange={handleNote}
           placeholder="Add reasoning or notes… (auto-saves)"
-          className="body-xs"
-          style={{
-            display: "block", width: "100%", boxSizing: "border-box", marginTop: 8,
-            background: "var(--md-sys-color-background)",
-            border: "1px solid var(--md-sys-color-dark-tertiary)",
-            borderRadius: "var(--radius-sm)",
-            padding: "7px 10px",
-            color: "var(--md-sys-color-text-secondary)",
-            lineHeight: 1.55, resize: "vertical", minHeight: 52,
-            fontFamily: "inherit", outline: "none",
-          }}
+          style={{ marginTop: 8 }}
         />
       )}
     </div>

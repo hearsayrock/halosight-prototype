@@ -27,6 +27,9 @@
   .halo-shuffle-0, .halo-shuffle-1, .halo-shuffle-2 { animation: none; }
 }
 
+/* TextField placeholder: muted text, never the browser default grey. */
+.text-field-input::placeholder { color: var(--md-sys-color-text-muted); opacity: 1; }
+
 .skeleton-bone {
   border-radius: 6px;
   background: linear-gradient(

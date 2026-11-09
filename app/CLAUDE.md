@@ -12,7 +12,7 @@
 Before writing any UI element, check these locations in order:
 1. `components/ui/` — generic primitives (Icon, MenuIcon, Skeleton, FilterDropdown, CompletionToast, ErrorState)
 2. `components/accounts/` — account feature components (AccountListItem — `owned`, `crm` and `home` variants + `AccountListCard`, CountBadge, SortMenu)
-3. `components/layout/` — structural layout (StaticBottomNav, PlaygroundNav, etc.)
+3. `components/layout/` — structural layout (PhoneFrame, PlaygroundNav, etc.)
 
 If the component exists, **use it**. Do not re-implement inline.
 
@@ -24,7 +24,7 @@ If the component exists, **use it**. Do not re-implement inline.
 ## Other shared pieces — use these before writing inline
 - Buttons: `Button` (filled coral/indigo/danger, tonal, outlined, text; lg/md/sm; fullWidth; loading)
 - Sheets: `Drawer` / `DrawerPanel` + `DrawerBackdrop`. Confirmations: `AlertDialog`. Feedback: `Toast` (`useToast()`), inline messages: `Banner`
-- Fields and bars: `SearchField`, `SectionHeader`, `IconButton`, `Tabs`, `ListCard`, `ThinkingDots`
+- Text entry: `TextField` (every input and textarea; states default / active / filled; never a raw `<input>` or `<textarea>`). Fields and bars: `SearchField` (a TextField with a search icon), `SectionHeader`, `IconButton`, `Tabs`, `ListCard`, `ThinkingDots`
 
 ## Accessibility — always enforced
 - **Body / supporting text minimum: `--md-sys-color-text-muted` (#8B94A8)** — never use `--md-sys-color-text-disabled` for readable content, only for placeholders and truly inactive controls

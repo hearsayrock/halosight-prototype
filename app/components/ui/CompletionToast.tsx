@@ -1,17 +1,23 @@
 "use client";
 
 /**
- * CompletionToast — "Item complete" with Undo and an optional "Add a note" row.
- * Now a thin wrapper over Toast (components/ui/Toast.tsx): success tone, one Undo action, caller-controlled timing.
- * FLUTTER HANDOFF: use ToastController.show(tone: success, title: "Item complete", action: Undo) — no separate widget.
- * Tokens: see Toast.
+ * FLUTTER HANDOFF: CompletionToast
+ * Widget: none. In Flutter this is a call, not a widget: ToastController.show(tone: success, title: "Item complete", action: Undo,
+ *   secondary: "Add a note" (optional)), with no auto-dismiss.
+ *
+ * A thin wrapper over Toast for the "pending complete" window after an action item is checked off: a success toast saying "Item complete" with one
+ * Undo action and, when onAddNote is given, an "Add a note" row (edit icon) under it. The screens time the pending window themselves, so this toast
+ * never dismisses on its own (duration null) and pressing Undo does not close it (dismissOnAction false); the screen hides it. `bottom` lifts it
+ * above a floating control (default 24).
+ *
+ * Tokens: see Toast
  */
 
 import Toast from "@/components/ui/Toast";
 
 interface Props {
   visible: boolean;
-  /** Distance from bottom of phone frame in px. Default: 24 (no nav). Pass ~106 when bottom nav is present. */
+  /** Distance from bottom of phone frame in px. Default: 24. */
   bottom?: number;
   onUndo: () => void;
   onDismiss: () => void;

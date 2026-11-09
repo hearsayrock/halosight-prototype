@@ -3,14 +3,22 @@
 /**
  * FLUTTER HANDOFF: VisitedFilterDropdown
  * Widget: StatefulWidget
- * Props: value, customFrom, customTo, onChange
- * State: open (bool), showCustom (bool), draftFrom/draftTo (string)
- * Tokens: --md-sys-color-dark-secondary (pill bg), --md-sys-color-dark-tertiary (menu bg),
- *         --md-sys-color-radius-full (pill), --radius-xl (menu), --radius-md (inputs),
- *         --md-sys-color-text-primary, --md-sys-color-text-muted, --md-sys-color-neonindigo
- * Transitions: same spring as FilterDropdown (stiffness 380, damping 22)
+ * Props: value ("all" | "7d" | "14d" | "30d" | "90d" | "custom"), customFrom, customTo, onChange(value, from?, to?)
+ * State: open, showCustom, draftFrom / draftTo (strings; synced from the applied range each time it opens)
+ * Flutter equivalent: visited_filter_dropdown.dart (the pill plus a menu; the custom range uses showDateRangePicker instead of two date fields)
+ *
+ * The "Last Visited" filter on the companies list. A 32px pill in the same three looks as FilterDropdown (default, filtered with an indigo check,
+ * open). The label reads "Last Visited" until something is chosen, then the choice ("Last 7 days", "Custom"). The menu is Menu (`check`, min width 176):
+ *   - All time, Last 7 days, Last 2 weeks, Last 30 days, Last 90 days apply immediately and close the menu
+ *   - a divider, then "Custom range", which expands (opacity and height, 180ms) to two date TextFields (From, To; md) and an indigo Apply button
+ * Apply sends the typed dates as the range. Reopening restores the applied dates into the fields.
+ * Known drift: the open-state arrow is a raw white at 70% (no token yet).
+ *
+ * Tokens: color.dark.secondary (pill), color.neonindigo.base (open fill, check), color.text.on-accent, color.text.primary / muted, radius.full;
+ *         the menu uses Menu's tokens; the date fields are TextField
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
@@ -102,7 +110,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
         <Icon
           name={open ? "keyboard_arrow_up" : "keyboard_arrow_down"}
           size={18}
-          style={{ color: open ? "rgba(255,255,255,0.7)" : "var(--md-sys-color-text-muted)" }}
+          style={{ color: open ? "color-mix(in srgb, var(--md-sys-color-text-on-accent) 70%, transparent)" : "var(--md-sys-color-text-muted)" }}
         />
       </button>
 
@@ -150,39 +158,9 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                   >
                     <div style={{ padding: "6px 12px 4px", display: "flex", flexDirection: "column", gap: 8 }}>
                       {/* From */}
-                      <div>
-                        <p className="text-xs-bold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>From</p>
-                        <input
-                          type="date"
-                          value={draftFrom}
-                          onChange={e => setDraftFrom(e.target.value)}
-                          className="w-full text-sm outline-none px-3 py-2"
-                          style={{
-                            background: "var(--md-sys-color-dark-secondary)",
-                            borderRadius: "var(--radius-md)",
-                            color: "var(--md-sys-color-text-primary)",
-                            border: "none",
-                            colorScheme: "dark",
-                          }}
-                        />
-                      </div>
+                      <TextField size="md" label="From" type="date" value={draftFrom} onChange={setDraftFrom} />
                       {/* To */}
-                      <div>
-                        <p className="text-xs-bold mb-1" style={{ color: "var(--md-sys-color-text-muted)", paddingLeft: 2 }}>To</p>
-                        <input
-                          type="date"
-                          value={draftTo}
-                          onChange={e => setDraftTo(e.target.value)}
-                          className="w-full text-sm outline-none px-3 py-2"
-                          style={{
-                            background: "var(--md-sys-color-dark-secondary)",
-                            borderRadius: "var(--radius-md)",
-                            color: "var(--md-sys-color-text-primary)",
-                            border: "none",
-                            colorScheme: "dark",
-                          }}
-                        />
-                      </div>
+                      <TextField size="md" label="To" type="date" value={draftTo} onChange={setDraftTo} />
                       {/* Apply */}
                       <Button fill="indigo" size="sm" fullWidth onClick={applyCustom}>Apply</Button>
                     </div>

@@ -22,6 +22,7 @@
  *         color.neonindigo.base, color.brand.teal, color.semantic.success, color.alpha.white-10, radius.md, radius.full
  */
 
+import TextField from "@/components/ui/TextField";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence } from "framer-motion";
@@ -107,22 +108,13 @@ export function FeedbackForm({
       </div>
 
       {/* Textarea */}
-      <textarea
+      <TextField
+        multiline
+        rows={4}
         placeholder={currentType.placeholder}
         value={text}
-        onChange={(e) => onText(e.target.value)}
-        rows={4}
-        className="w-full text-[15px] resize-none outline-none"
-        style={{
-          background: "var(--md-sys-color-dark-secondary)",
-          borderRadius: "var(--radius-md)",
-          padding: "14px 16px",
-          color: "var(--md-sys-color-text-primary)",
-          caretColor: "var(--md-sys-color-brand-coral)",
-          border: "none",
-          marginBottom: "var(--spacing-4)",
-          display: "block",
-        }}
+        onChange={onText}
+        style={{ marginBottom: "var(--spacing-4)" }}
       />
 
       {/* Send button */}
