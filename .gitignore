@@ -18,3 +18,7 @@ app/build/
 
 # TypeScript
 *.tsbuildinfo
+
+# Local Claude files
+.claude/settings.local.json
+.claude/worktrees/
