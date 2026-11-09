@@ -306,8 +306,6 @@ SVG icons used in specific components. Not part of the Material Symbols set.
 | Chain (Corporate) | `AccountTypeIcon` | Corporate account type |
 | Branch | `AccountTypeIcon` | Branch account type |
 | Standalone | `AccountTypeIcon` | Standalone account type |
-| Home | `BottomNav` | Home tab |
-| Accounts | `BottomNav` | Accounts tab |
 | Sort | `SortMenu` | Sort trigger |
 | Menu | `MenuIcon` (`components/ui/MenuIcon.tsx`) | Top nav drawer trigger |
 
@@ -384,7 +382,6 @@ Quick reference for Flutter engineers — maps components to their token roles:
 | `AccountTypeIcon` | Custom SVG · `text-muted` stroke · `text-disabled` fill |
 | `SortMenu` trigger | `dark-secondary` bg · `text-muted` icon |
 | `SortMenu` dropdown | `dark-tertiary` bg · `text-primary` labels · `radius-xl` · `elevation-3` shadow |
-| `BottomNav` | `alpha-neonindigo-glass` bg · `alpha-white-10` border · `alpha-dark-glass` active pill · `text-primary` active · `text-muted` inactive · `radius-full` |
 | `Icon` | Material Symbols Rounded font · `currentColor` |
 | `MenuIcon` | Custom SVG · `text-muted` default fill |
 | Top bar | `background` bg · `dark-tertiary` border |

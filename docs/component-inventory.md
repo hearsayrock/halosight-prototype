@@ -1,81 +1,107 @@
 # Component inventory
 
-> Generated from the code on `main` (via `playground/component-updates`). Facts come from the source files; **the labels and descriptions are proposals — mark the "Your call" column**. Once labels are final, this becomes the registry and Reed's conversion list.
+> Refreshed 2026-11-09 from the code on `playground/component-updates`. The handoff, registry and hard-coded-color columns are recomputed from the files. Facts come from the source files; **the labels and descriptions are proposals — mark the "Your call" column**. Once labels are final, this becomes the registry and Reed's conversion list.
 
 ## Decisions so far (2026-10-27)
 
 - **SortMenu, VisitedFilterDropdown, InsightCard:** Library.
 - **Sheets → one Drawer:** the six bottom sheets were rebuilt on the shared `Drawer` pieces (2026-10-28). Fill is now `color.dark.primary` everywhere; the dim behind is the new `color.alpha.scrim` token. The action item detail page was replaced by `ActionItemDrawer`.
 - **SystemAccountListItem:** merged into AccountListItem as the `crm` variant (done 2026-10-27; the file is deleted). Reed builds one widget.
-- **BottomNav:** Furniture. It is not part of the product, so it gets no handoff. It still has a registry entry and a section on the design-system page, which are now stale.
+- **BottomNav and StaticBottomNav:** deleted (2026-11-09). Not in use; a future bottom nav will be redesigned from scratch.
+- **2026-11-09 refresh:** rows that were added later had landed under Furniture, so every row is now in its proposed section (Library 34, Feature 17, Furniture 11). Added the missing rows (ListCard, VoiceAtmosphere, IconLibraryToggle, the design-system previews). The handoff, registry and color columns were recomputed. The Library and Feature moves are proposals (☐) until you confirm them.
 - Everything not marked ☑ below is my proposal and stands unless changed.
 
 ## How to use this
 
 - **Your call:** `☑` = decided. `☐` = my proposal, not yet confirmed. Reply in chat to change a label or add a note; nothing in this file is clickable.
 - **Handoff comment:** whether the file has the `FLUTTER HANDOFF` header. **In registry:** whether it's in `docs/component-registry.ts`.
-- **Hard-coded colors:** raw hex / `rgba()` values in the file (approximate; includes colors mentioned in comments). Handoff-ready components should use tokens only.
+- **Hard-coded colors:** raw hex / `rgba()` values in the file (counted in code only; comments are ignored). Handoff-ready components should use tokens only.
 - Token paths (appendix) follow the design-system rule: `color.semantic.success`, not `--md-sys-color-success`. A `*` means the prototype's CSS name differs from the rule and will be renamed when the generator is built (DELIVERY-1475).
 
 ## Labels
 
 | Label | Meaning | Count |
 |---|---|---|
-| **Library** | Reusable widgets. These become the shared Flutter component library. | 18 |
-| **Feature** | Built for one flow. These become Flutter feature widgets, not shared library components. | 8 |
+| **Library** | Reusable widgets. These become the shared Flutter component library. | 34 |
+| **Feature** | Built for one flow. These become Flutter feature widgets, not shared library components. | 17 |
 | **Furniture** | Prototype scaffolding. Never converted to Flutter. | 11 |
 
 ## Caveats
 
-- **This is `main`.** Newer versions of several components live on unmerged branches: `playground/add-company-test` (redesigned company rows, FAB, `CreateEntrySheet`, `FilterSheet`, new feedback card), and `playground/interaction-updates`. `playground/new-colors` is tabled. Decide where each component's source of truth should come from before handing it off.
-- **Handoff comments missing on product components:** MiniCalendar, CompletionToast, CaptureWidget, AddActionItemSheet.
-- **Registry covers only 7 components:** AccountListItem, CountBadge, AccountTypeIcon, SortMenu, BottomNav, Icon, MenuIcon (all Library).
+- **Source of truth:** Claude Design plus this branch (`playground/component-updates`). Other playground branches are not reconciled; each component is rebuilt from its Claude Design version (see the handoff workflow).
+- **Missing the handoff comment (product components):** none.
+- **Not in the registry yet (product components):** none.
 - **Out of scope for components:** screens (`app/(mobile)/**/page.tsx`) are not listed here.
 
 ## Findings worth fixing
 
 - **Undefined token referenced (`†`) — fixed 2026-10-27.** `--md-sys-color-semantic-success` is used in `FeedbackWidget`, `AIReviewOverlay` and the companies page, but only the short name `--md-sys-color-success` was defined, so those checkmarks had no color. `tokens/colors.css` now defines `--md-sys-color-semantic-{success,warning,error,info}` (and `-light` / `-dark`) as aliases of the short names, in both themes, same values. The generator (DELIVERY-1475) replaces the aliases later.
-- **Hard-coded colors** remain in most feature components (see the column). They should become tokens before a component is documented as handoff-ready.
+- **Hard-coded colors — fixed 2026-11-09.** CaptureWidget (blobs, recording dot, Paused button), FilterDropdown / VisitedFilterDropdown (open arrow), ConvertToAccountSheet (selected chip sub-label, teal button labels) and NoteSheet (Done label) now use tokens. New token `--md-sys-color-text-on-teal` (#FFFFFF in both themes) for labels on brand-teal fills. Dev tooling (FakeCallOverlay, DevModeOverlay, DevPanel, MobileKeyboard, PhoneFrame, PlaygroundNav) keeps its own colors.
 
-## Library (18)
+## Library (34)
 
 _Reusable widgets. These become the shared Flutter component library._
 
 | # | Component | What it is | Used by | Handoff comment | In registry | Hard-coded colors | Flag / question | Your call |
 |---|---|---|---|---|---|---|---|---|
-| 1 | **AccountListItem**<br>`accounts/AccountListItem.tsx` | Row in the companies list: name, distance and location, last visited, risk and task badges. Has owned, crm ("Owner: name") and home variants, using the shared ListCard. | Companies / home / items, design-system page | ✓ | ✓ | 5 | Updated 2026-10-27: risk badge, zero-count badges hidden, SystemAccountListItem merged in as `variant="crm"`, and the home row added as `variant="home"` (inline CompactAccountRow removed). Has its own area on /design-system. Handoff comment and registry entry are current (first component done to the new standard). | ☐ |
+| 1 | **AccountListItem**<br>`accounts/AccountListItem.tsx` | Row in the companies list: name, distance and location, last visited, risk and task badges. Has owned, crm ("Owner: name") and home variants, using the shared ListCard. | Companies / home / items, design-system page | ✓ | ✓ | 0 | Updated 2026-10-27: risk badge, zero-count badges hidden, SystemAccountListItem merged in as `variant="crm"`, and the home row added as `variant="home"` (inline CompactAccountRow removed). Has its own area on /design-system. Handoff comment and registry entry are current (first component done to the new standard). | ☐ |
 | 2 | **AccountTypeIcon**<br>`accounts/AccountTypeIcon.tsx` | 18px icon for corporate, branch or standalone accounts. | design-system page | ✓ | ✓ | 0 | Only used on the design-system page today (hidden in the list). | ☐ |
-| 3 | **ActionItemList**<br>`accounts/ActionItemList.tsx` | Card of action item rows (check circle, title, due text, account name) plus the section header. Replaces ActionItemCard, the home task strip, the interaction page rows and the full-page task rows (variant="page"). | Home, account detail, interaction, /tasks, priorities view, design-system page | ✓ | ✓ | 3 | New 2026-10-28. Props pick the screen: home = showAccountName + limit; account/interaction = collapsedCount. Handoff comment and registry entry written. | ☐ |
+| 3 | **ActionItemList**<br>`accounts/ActionItemList.tsx` | Card of action item rows (check circle, title, due text, account name) plus the section header. Replaces ActionItemCard, the home task strip, the interaction page rows and the full-page task rows (variant="page"). | Home, account detail, interaction, /tasks, priorities view, design-system page | ✓ | ✓ | 0 | New 2026-10-28. Props pick the screen: home = showAccountName + limit; account/interaction = collapsedCount. Handoff comment and registry entry written. | ☐ |
 | 4 | **CountBadge**<br>`accounts/CountBadge.tsx` | Icon + number pill for risk and task counts on account rows. Hides itself at 0. | AccountListItem, Companies / home / items, design-system page | ✓ | ✓ | 0 | New 2026-10-27, extracted from AccountListItem. Handoff comment and registry entry written. | ☐ |
-| 5 | **InsightCard**<br>`accounts/InsightCard.tsx` | AI card ("Last time" / "Ideas for next time") with a hairline footer: copy + thumbs-down always; sources and read-aloud/ask-AI optional (off for first handoff); `loading` shows the InsightCardLoader (sparkle + cycling status lines). | Account detail | ✓ | — | 0 | Now in the design-system page (Insight Card area, with a toggle for the optional footer items). Treated as a reusable AI-output pattern. | ☑ Library |
-| 6 | **MiniCalendar**<br>`accounts/MiniCalendar.tsx` | Inline month calendar date picker. | Action item, AddActionItemSheet | **missing** | — | 0 | No handoff comment. | ☐ |
-| 7 | **SortMenu**<br>`accounts/SortMenu.tsx` | Sort and filter menu opened from the list header (iOS menu-style spring). | Companies / home / items, design-system page | ✓ | ✓ | 3 | Embeds VisitedFilterDropdown. | ☑ Library |
-| 8 | **CompletionToast**<br>`ui/CompletionToast.tsx` | "Item complete" banner with undo and an optional add-note action. | Account detail, Companies / home / items, Interaction detail, Tasks | **missing** | — | 4 | No handoff comment. | ☐ |
-| 9 | **CustomIcons**<br>`ui/CustomIcons.tsx` | Custom SVG icons that supplement Material Symbols. | AccountListItem, Action item, Companies / home / items | ✓ | — | 0 |  | ☐ |
-| 10 | **ErrorState**<br>`ui/ErrorState.tsx` | Error message with a retry action, for failed loads. | Account detail, Companies / home / items | ✓ | — | 0 |  | ☐ |
-| 11 | **FilterDropdown**<br>`ui/FilterDropdown.tsx` | Pill dropdown with a list of options (iOS menu-style spring). | Companies / home / items, Tasks | ✓ | — | 4 |  | ☐ |
+| 5 | **InsightCard**<br>`accounts/InsightCard.tsx` | AI card ("Last time" / "Ideas for next time") with a hairline footer: copy + thumbs-down always; sources and read-aloud/ask-AI optional (off for first handoff); `loading` shows the InsightCardLoader (sparkle + cycling status lines). | Account detail | ✓ | ✓ | 0 | Now in the design-system page (Insight Card area, with a toggle for the optional footer items). Treated as a reusable AI-output pattern. | ☑ Library |
+| 6 | **MiniCalendar**<br>`accounts/MiniCalendar.tsx` | Inline month calendar date picker. | Action item, AddActionItemSheet | ✓ | ✓ | 0 | Prototype stand-in: Flutter uses the platform date picker. Registry entry and handoff comment added 2026-11-09. | ☐ |
+| 7 | **SortMenu**<br>`accounts/SortMenu.tsx` | Sort and filter menu opened from the list header (iOS menu-style spring). | Companies / home / items, design-system page | ✓ | ✓ | 0 | Embeds VisitedFilterDropdown. | ☑ Library |
+| 8 | **CompletionToast**<br>`ui/CompletionToast.tsx` | "Item complete" banner with undo and an optional add-note action. | Account detail, Companies / home / items, Interaction detail, Tasks | ✓ | ✓ | 0 | Registry entry added 2026-11-09. A wrapper over Toast; no separate Flutter widget. | ☐ |
+| 9 | **CustomIcons**<br>`ui/CustomIcons.tsx` | Custom SVG icons that supplement Material Symbols. | AccountListItem, Action item, Companies / home / items | ✓ | ✓ | 0 | Registry entry and design-system area (Custom Icons) added 2026-11-09. | ☐ |
+| 10 | **ErrorState**<br>`ui/ErrorState.tsx` | Error message with a retry action, for failed loads. | Account detail, Companies / home / items | ✓ | ✓ | 0 | Registry entry and design-system area (Error State) added 2026-11-09. Try again is now the shared Button (tonal). | ☐ |
+| 11 | **FilterDropdown**<br>`ui/FilterDropdown.tsx` | Pill dropdown with a list of options (iOS menu-style spring). | Companies / home / items, Tasks | ✓ | ✓ | 1 | Registry entry and design-system area (Filter Pill) added 2026-11-09. Open-state arrow is a raw white at 70% (no token). | ☐ |
 | 12 | **Icon**<br>`ui/Icon.tsx` | Material Symbols wrapper (fill, size, weight, grade). | 27 files (nearly everywhere) | ✓ | ✓ | 0 | Used in 26 files. | ☐ |
-| 13 | **KebabMenu**<br>`ui/KebabMenu.tsx` | Overflow menu with an optional destructive item. | Account detail | ✓ | — | 2 |  | ☐ |
+| 13 | **KebabMenu**<br>`ui/KebabMenu.tsx` | Overflow menu with an optional destructive item. | Account detail | ✓ | ✓ | 0 | Registry entry and design-system area (More Menu) added 2026-11-09. | ☐ |
 | 14 | **MenuIcon**<br>`ui/MenuIcon.tsx` | Two-bar menu glyph that opens the drawer. | Companies / home / items, design-system page | ✓ | ✓ | 0 |  | ☐ |
-| 15 | **NoteSheet**<br>`ui/NoteSheet.tsx` | Bottom sheet to add an optional note after completing an item. | Account detail, Companies / home / items, Interaction detail, Tasks | ✓ | — | 2 |  | ☐ |
-| 16 | **ScrollAwareTopBar**<br>`ui/ScrollAwareTopBar.tsx` | Floating back bar: glass circle once scrolled, right-hand slot hides on scroll. | Action item, Profile, Review | ✓ | — | 2 |  | ☐ |
-| 17 | **Skeleton**<br>`ui/Skeleton.tsx` | Shimmer loading placeholders (single bone and composed skeletons). | Account detail, Companies / home / items | ✓ | — | 0 |  | ☐ |
-| 18 | **VisitedFilterDropdown**<br>`ui/VisitedFilterDropdown.tsx` | "Last visited" filter with presets and a custom date range. | Companies / home / items, SortMenu | ✓ | — | 6 | Used inside SortMenu and directly on the list. | ☑ Library |
+| 15 | **NoteSheet**<br>`ui/NoteSheet.tsx` | Bottom sheet to add an optional note after completing an item. | Account detail, Companies / home / items, Interaction detail, Tasks | ✓ | ✓ | 1 | Registry entry added 2026-11-09. The Done button is hand-built teal (no teal Button fill). | ☐ |
+| 16 | **ScrollAwareTopBar**<br>`ui/ScrollAwareTopBar.tsx` | Floating back bar: glass circle once scrolled, right-hand slot hides on scroll. | Action item, Profile, Review | ✓ | ✓ | 0 | Registry entry and design-system area (Scroll Top Bar) added 2026-11-09. Handoff comment tokens corrected. | ☐ |
+| 17 | **Skeleton**<br>`ui/Skeleton.tsx` | Shimmer loading placeholders (single bone and composed skeletons). | Account detail, Companies / home / items | ✓ | ✓ | 0 | Registry entry and design-system area (Skeleton) added 2026-11-09. Bone radius is a number in px. | ☐ |
+| 18 | **VisitedFilterDropdown**<br>`ui/VisitedFilterDropdown.tsx` | "Last visited" filter with presets and a custom date range. | Companies / home / items, SortMenu | ✓ | ✓ | 1 | Registry entry added 2026-11-09 (shares the Filter Pill area). Open-state arrow is a raw white at 70% (no token). | ☑ Library |
+| 38 | **Drawer**<br>`ui/Drawer.tsx` | The one bottom drawer: scrim, dark-primary panel, handle, motion, plus DrawerBody and DrawerHeader. | NoteSheet, AddActionItemSheet, CreateLeadSheet, CreateAccountSheet, ConvertToAccountSheet, AccountPickerSheet, ActionItemDrawer, design-system page | ✓ | ✓ | 0 | New 2026-10-28. The six sheets now share its chrome (fill unified to dark-primary, scrim on `color.alpha.scrim`). | ☐ |
+| 40 | **ThinkingDots**<br>`ui/ThinkingDots.tsx` | In-progress indicator ("Shuffle": three capsules swapping places) that replaces the spinning circle. | Button, design-system page | ✓ | ✓ | 0 | New 2026-10-28. Existing spinners (processing banner, "Preparing note" card, story mocks) not migrated yet. | ☐ |
+| 41 | **Button**<br>`ui/Button.tsx` | Filled / tonal / outlined / text buttons with a loading state. | design-system page | ✓ | ✓ | 0 | New 2026-10-28. Screens still use inline button styles; migrate as touched. | ☐ |
+| 42 | **Tabs**<br>`ui/Tabs.tsx` | Tab bar with underline (default) and segmented (sub-variant) styles. | Account detail, design-system page | ✓ | ✓ | 0 | New 2026-10-28, extracted from the account screen's inline tabs. | ☐ |
+| 43 | **ActivityCard**<br>`accounts/ActivityCard.tsx` | Activity tab row: title, summary, meta (relative date · duration or From Salesforce · creator). Halosight and CRM variants. | Account detail, design-system page | ✓ | ✓ | 0 | New 2026-10-28, extracted from the inline boxed card. | ☐ |
+| 44 | **Menu**<br>`ui/Menu.tsx` | The popup panel behind every dropdown. Variants: icon, check (right-aligned), icon + check. | SortMenu, FilterDropdown, KebabMenu, interaction-type picker | ✓ | ✓ | 0 | New 2026-10-28. Replaces four hand-built panels. Panel is translucent dark-secondary (88%, blurred) with a white-18 stroke at 80%. | ☑ Library |
+| 51 | **ThumbsDownIcon**<br>`ui/ThumbsDownIcon.tsx` | Thumbs-down glyph without the wrist cuff. | InsightCard, ChatMessage | ✓ | ✓ | 0 | Registry entry added 2026-11-09 (shares the Custom Icons area). | ☐ |
+| 52 | **InsightCardLoader**<br>`accounts/InsightCardLoader.tsx` | Sparkle + cycling status lines shown in the Insight Card while the summary loads. | InsightCard (`loading`) | ✓ | ✓ | 0 | Registry entry added 2026-11-09 (shown inside the Insight Card area). | ☐ |
+| 53 | **AlertDialog**<br>`ui/AlertDialog.tsx` | Centered confirmation: filled confirm button + plain text Cancel. Destructive or standard. | ActionItemDrawer (delete), interaction page (delete), account page (disqualify) | ✓ | ✓ | 0 | New 2026-11-02. Extracted from the action item delete card; replaced the disqualify bottom sheet. | ☐ |
+| 54 | **Toast**<br>`ui/Toast.tsx` + `context/ToastContext.tsx` | Floating confirmation with tones (neutral / success / error), optional description or thumbnail, one text action, auto-dismiss with pause, swipe to dismiss, queue via useToast(). | Interaction delete, action item delete, disqualify; CompletionToast wraps it (home, tasks, account, interaction) | ✓ | ✓ | 0 | New 2026-11-02, replaces the old toast look; now also a top pill shape (Preparing note → Note ready). The unused account-created toast on home was removed. The pill now replaces the capture widget's finalizing/ready states, the home screen's preview banner and the account page's "Preparing note" card. | ☐ |
+| 56 | **SearchField**<br>`ui/SearchField.tsx` | Search bar: a TextField with a search icon and clear button; active outline and trailing tag. | Tasks, action item list screen | ✓ | ✓ | 0 | New 2026-11-02. Sizes sm / md / lg; the single search bar for companies, action items, the account picker, the chat history menu and the Engagements drawer. | ☐ |
+| 57 | **SectionHeader**<br>`ui/SectionHeader.tsx` | List section label with count pill, add button, or divider form. | Home | ✓ | ✓ | 0 | New 2026-11-02, moved out of the home screen. | ☐ |
+| 58 | **IconButton**<br>`ui/IconButton.tsx` | Round icon button: filled, glass (scroll-aware), plain. | Home profile button, interaction page floating buttons | ✓ | ✓ | 0 | New 2026-11-02. | ☐ |
+| 59 | **Banner**<br>`ui/Banner.tsx` | Inline info / warning message card. | Account page (other rep's account) | ✓ | ✓ | 0 | New 2026-11-02. | ☐ |
+| 60 | **TextField**<br>`ui/TextField.tsx` | The one text entry: pill or multi-line box; default, active and filled states; label, helper, counter, status; bare variant. | Every sheet and form, SearchField, ChatInput | ✓ | ✓ | 0 | New 2026-11-09. Replaced every hand-built input and textarea. | ☐ |
+| 61 | **ListCard**<br>`ui/ListCard.tsx` | The filled card that holds a column of rows (dark fill, hairline border, rounded, rows clipped to the corners). | ActionItemList, AccountListItem (crm and home) | ✓ | ✓ | 0 | Added to the inventory 2026-11-09 (the file already existed). | ☐ |
 
-## Feature (8)
+## Feature (17)
 
 _Built for one flow. These become Flutter feature widgets, not shared library components._
 
 | # | Component | What it is | Used by | Handoff comment | In registry | Hard-coded colors | Flag / question | Your call |
 |---|---|---|---|---|---|---|---|---|
-| 19 | **AccountPickerSheet**<br>`accounts/AccountPickerSheet.tsx` | Sheet to choose which account a capture belongs to. | CaptureWidget | ✓ | — | 1 | Only used by CaptureWidget. | ☐ |
-| 20 | **AddActionItemSheet**<br>`accounts/AddActionItemSheet.tsx` | Create-action-item sheet (title plus MiniCalendar). | Account detail, Interaction detail | **missing** | — | 1 | No handoff comment. | ☐ |
-| 21 | **ConvertToAccountSheet**<br>`accounts/ConvertToAccountSheet.tsx` | Multi-step sheet to convert a lead to an account, with an optional deal. | Account detail | ✓ | — | 3 |  | ☐ |
-| 22 | **CreateAccountSheet**<br>`accounts/CreateAccountSheet.tsx` | "Add new account" form sheet. | Companies / home / items | ✓ | — | 3 | Replaced on `playground/add-company-test` by a one-field CreateEntrySheet. | ☐ |
-| 23 | **CreateLeadSheet**<br>`accounts/CreateLeadSheet.tsx` | "Add new lead" form sheet with duplicate detection. | Companies / home / items | ✓ | — | 9 | Replaced on `playground/add-company-test` by CreateEntrySheet. | ☐ |
-| 24 | **AIReviewOverlay**<br>`capture/AIReviewOverlay.tsx` | Post-visit "Here's the read" screen: AI-extracted CRM fields, edit by voice or text. | CaptureWidget | ✓ | — | 10 | Largest component (about 600 lines). Reads CaptureContext. | ☐ |
-| 25 | **CaptureWidget**<br>`capture/CaptureWidget.tsx` | Persistent capture bar: recording, finishing and ready states, with account switching. | mobile layout | **missing** | — | 9 | No handoff comment. Many hard-coded colors (animated blobs). | ☐ |
-| 26 | **FeedbackWidget**<br>`ui/FeedbackWidget.tsx` | Home feedback card (3 full-width options) plus the feedback drawer (Bug / Idea / Other). Exports FeedbackEntryCard and FeedbackForm. | Companies / home / items, design-system page | ✓ | ✓ | 4 | Brought in from `playground/add-company-test` 2026-10-28 and moved onto the shared Drawer; raw rgba tints replaced with token mixes. Has its own area on /design-system. | ☐ |
+| 19 | **AccountPickerSheet**<br>`accounts/AccountPickerSheet.tsx` | Sheet to choose which account a capture belongs to. | CaptureWidget | ✓ | ✓ | 0 | Registry entry and design-system area (Account Picker) added 2026-11-09. Close button is hand-built, not IconButton. | ☐ |
+| 20 | **AddActionItemSheet**<br>`accounts/AddActionItemSheet.tsx` | Create-action-item sheet (title plus MiniCalendar). | Account detail, Interaction detail | ✓ | ✓ | 0 | Handoff comment and registry entry added 2026-11-09. Day chips are hand-built; the edit drawer has its own DateChips. | ☐ |
+| 21 | **ConvertToAccountSheet**<br>`accounts/ConvertToAccountSheet.tsx` | Multi-step sheet to convert a lead to an account, with an optional deal. | Account detail | ✓ | ✓ | 1 | Registry entry added 2026-11-09. The Convert button and success step are hand-built teal. | ☐ |
+| 22 | **CreateAccountSheet**<br>`accounts/CreateAccountSheet.tsx` | "Add new account" form sheet. | Companies / home / items | ✓ | ✓ | 0 | Registry entry added 2026-11-09. Same sheet as CreateLeadSheet without duplicate detection: merge for Flutter. | ☐ |
+| 23 | **CreateLeadSheet**<br>`accounts/CreateLeadSheet.tsx` | "Add new lead" form sheet with duplicate detection. | Companies / home / items | ✓ | ✓ | 0 | Registry entry added 2026-11-09. Company is a TextField (warning stroke on duplicates). | ☐ |
+| 24 | **AIReviewOverlay**<br>`capture/AIReviewOverlay.tsx` | Post-visit "Here's the read" screen: AI-extracted CRM fields, edit by voice or text. | CaptureWidget | ✓ | ✓ | 0 | Registry entry and design-system area (AI Review) added 2026-11-09. Raw input in the focused field moved to TextField (bare). Save and Use defaults are hand-built round buttons. | ☐ |
+| 25 | **CaptureWidget**<br>`capture/CaptureWidget.tsx` | Persistent capture bar: recording, finishing and ready states, with account switching. | mobile layout | ✓ | ✓ | 0 | Registry entry and handoff comment added 2026-11-09; raw colors moved to tokens. No design-system area (needs capture context). | ☐ |
+| 26 | **FeedbackWidget**<br>`ui/FeedbackWidget.tsx` | Home feedback card (3 full-width options) plus the feedback drawer (Bug / Idea / Other). Exports FeedbackEntryCard and FeedbackForm. | Companies / home / items, design-system page | ✓ | ✓ | 0 | Brought in from `playground/add-company-test` 2026-10-28 and moved onto the shared Drawer; raw rgba tints replaced with token mixes. Has its own area on /design-system. | ☐ |
+| 39 | **ActionItemDrawer**<br>`accounts/ActionItemDrawer.tsx` | View and edit an action item in a drawer; Mark complete, edit fields, delete with confirmation. Replaces the old detail page. | Every ActionItemList row (home, account, interaction, full-page lists) | ✓ | ✓ | 0 | New 2026-10-28. Has its own area on /design-system with every state (view ×3, edit ×3, delete dialog) rendered from the real bodies. | ☐ |
+| 45 | **ChatDrawer**<br>`chat/ChatDrawer.tsx` | The account chat drawer (typing + simulated voice). Composes the parts below. | Account screen, Ask in the more-options menu | ✓ | ✓ | 0 | New 2026-10-28. Canned replies. Area on /design-system with every state. | ☐ |
+| 46 | **ChatInput**<br>`chat/ChatInput.tsx` | Pill input; trailing button is voice mode or Send. | ChatDrawer | ✓ | ✓ | 0 | New. | ☐ |
+| 47 | **ChatMessage**<br>`chat/ChatMessage.tsx` | User bubble, assistant text + actions, draft block, thinking row. | ChatMessageList | ✓ | ✓ | 0 | New. | ☐ |
+| 48 | **ChatVoiceDock**<br>`chat/ChatVoiceDock.tsx` | Voice-mode dock: listening / thinking / speaking. | ChatDrawer | ✓ | ✓ | 0 | New. Light mode unchecked. | ☐ |
+| 49 | **ChatHistoryMenu**<br>`chat/ChatHistoryMenu.tsx` | Search + pinned/recent chat list popover. | ChatDrawer | ✓ | ✓ | 0 | New. Uses Menu chrome. | ☐ |
+| 50 | **ChatHeader / ChatEmptyState / ChatMessageList**<br>`chat/…` | Header icons, greeting + suggestion chips, scrolling message list. | ChatDrawer | ✓ | ✓ | 0 | Each has its own registry entry as of 2026-11-09 (shown in the Account Chat area). | ☐ |
+| 55 | **EngagementsDrawer**<br>`accounts/EngagementsDrawer.tsx` | Home side drawer: feed of recent interactions across accounts, unread marking, search, lazy loading. | Home screen menu button | ✓ | ✓ | 0 | New 2026-11-02. Rows are ActivityCard `recent` / `recent-unread`. Mock data in home.ts (mockRecentActivities). | ☐ |
+| 62 | **VoiceAtmosphere**<br>`chat/VoiceAtmosphere.tsx` | The coloured haze behind a voice conversation: listening, thinking and speaking states. | ChatDrawer | ✓ | ✓ | 0 | Added to the inventory 2026-11-09 (the file already existed). | ☐ |
 
 ## Furniture (11)
 
@@ -84,42 +110,20 @@ _Prototype scaffolding. Never converted to Flutter._
 | # | Component | What it is | Used by | Handoff comment | In registry | Hard-coded colors | Flag / question | Your call |
 |---|---|---|---|---|---|---|---|---|
 | 27 | **FakeCallOverlay**<br>`capture/FakeCallOverlay.tsx` | Prototype-only incoming-call simulation. | mobile layout | **missing** | — | 22 |  | ☐ |
-| 28 | **DecisionWidget**<br>`decisions/DecisionWidget.tsx` | Supabase-backed decision recorder used on the story pages. | story-1, story-2, story-3, story-4 | ✓ | — | 6 | Review tool, not product UI. | ☐ |
-| 29 | **BottomNav**<br>`layout/BottomNav.tsx` | Floating glass pill navigation bar (66px). | StaticBottomNav, design-system page | ✓ | ✓ | 2 | Decided: not part of the product. Still has a registry entry and appears on the design-system page. | ☑ Furniture |
+| 28 | **DecisionWidget**<br>`decisions/DecisionWidget.tsx` | Supabase-backed decision recorder used on the story pages. | story-1, story-2, story-3, story-4 | ✓ | — | 0 | Review tool, not product UI. | ☐ |
 | 30 | **DemoReset**<br>`layout/DemoReset.tsx` | Resets demo state for walkthroughs. | mobile layout | **missing** | — | 0 |  | ☐ |
-| 31 | **DevModeOverlay**<br>`layout/DevModeOverlay.tsx` | Hover inspector that shows fill, text color, radius, font and spacing. | PhoneFrame | ✓ | — | 39 |  | ☐ |
+| 31 | **DevModeOverlay**<br>`layout/DevModeOverlay.tsx` | Hover inspector that shows fill, text color, radius, font and spacing. | PhoneFrame | ✓ | — | 37 |  | ☐ |
 | 32 | **DevPanel**<br>`layout/DevPanel.tsx` | Right-hand playground sidebar: screen jump, device size, demo reset. | PhoneFrame | **missing** | — | 2 |  | ☐ |
 | 33 | **MobileKeyboard**<br>`layout/MobileKeyboard.tsx` | Simulated iOS keyboard that slides up when a field is focused. | PhoneFrame | ✓ | — | 5 |  | ☐ |
 | 34 | **PageTransition**<br>`layout/PageTransition.tsx` | Web route slide transition. | mobile layout | ✓ | — | 0 | Flutter's Navigator handles this natively. | ☐ |
 | 35 | **PhoneFrame**<br>`layout/PhoneFrame.tsx` | Desktop phone-frame wrapper around the app. | mobile layout | ✓ | — | 2 | Web-only. Remove in production. | ☐ |
 | 36 | **PlaygroundNav**<br>`layout/PlaygroundNav.tsx` | Left sidebar listing playgrounds and git branches. | PhoneFrame | **missing** | — | 8 |  | ☐ |
-| 37 | **StaticBottomNav**<br>`layout/StaticBottomNav.tsx` | Placement wrapper that anchors BottomNav outside the page transition. | mobile layout | **missing** | — | 0 | The real component is BottomNav. | ☐ |
-| 38 | **Drawer**<br>`ui/Drawer.tsx` | The one bottom drawer: scrim, dark-primary panel, handle, motion, plus DrawerBody and DrawerHeader. | NoteSheet, AddActionItemSheet, CreateLeadSheet, CreateAccountSheet, ConvertToAccountSheet, AccountPickerSheet, ActionItemDrawer, design-system page | ✓ | ✓ | 1 | New 2026-10-28. The six sheets now share its chrome (fill unified to dark-primary, scrim on `color.alpha.scrim`). | ☐ |
-| 39 | **ActionItemDrawer**<br>`accounts/ActionItemDrawer.tsx` | View and edit an action item in a drawer; Mark complete, edit fields, delete with confirmation. Replaces the old detail page. | Every ActionItemList row (home, account, interaction, full-page lists) | ✓ | ✓ | 5 | New 2026-10-28. Has its own area on /design-system with every state (view ×3, edit ×3, delete dialog) rendered from the real bodies. | ☐ |
-| 40 | **ThinkingDots**<br>`ui/ThinkingDots.tsx` | In-progress indicator ("Shuffle": three capsules swapping places) that replaces the spinning circle. | Button, design-system page | ✓ | ✓ | 0 | New 2026-10-28. Existing spinners (processing banner, "Preparing note" card, story mocks) not migrated yet. | ☐ |
-| 41 | **Button**<br>`ui/Button.tsx` | Filled / tonal / outlined / text buttons with a loading state. | design-system page | ✓ | ✓ | 0 | New 2026-10-28. Screens still use inline button styles; migrate as touched. | ☐ |
-| 42 | **Tabs**<br>`ui/Tabs.tsx` | Tab bar with underline (default) and segmented (sub-variant) styles. | Account detail, design-system page | ✓ | ✓ | 1 | New 2026-10-28, extracted from the account screen's inline tabs. | ☐ |
-| 43 | **ActivityCard**<br>`accounts/ActivityCard.tsx` | Activity tab row: title, summary, meta (relative date · duration or From Salesforce · creator). Halosight and CRM variants. | Account detail, design-system page | ✓ | ✓ | 1 | New 2026-10-28, extracted from the inline boxed card. | ☐ |
-| 44 | **Menu**<br>`ui/Menu.tsx` | The popup panel behind every dropdown. Variants: icon, check (right-aligned), icon + check. | SortMenu, FilterDropdown, KebabMenu, interaction-type picker | ✓ | ✓ | 4 | New 2026-10-28. Replaces four hand-built panels. Panel is translucent dark-secondary (88%, blurred) with a white-18 stroke at 80%. | ☑ Library |
-| 45 | **ChatDrawer**<br>`chat/ChatDrawer.tsx` | The account chat drawer (typing + simulated voice). Composes the parts below. | Account screen, Ask in the more-options menu | ✓ | ✓ | 12 | New 2026-10-28. Canned replies. Area on /design-system with every state. | ☐ |
-| 46 | **ChatInput**<br>`chat/ChatInput.tsx` | Pill input; trailing button is voice mode or Send. | ChatDrawer | ✓ | ✓ | 5 | New. | ☐ |
-| 47 | **ChatMessage**<br>`chat/ChatMessage.tsx` | User bubble, assistant text + actions, draft block, thinking row. | ChatMessageList | ✓ | ✓ | 6 | New. | ☐ |
-| 48 | **ChatVoiceDock**<br>`chat/ChatVoiceDock.tsx` | Voice-mode dock: listening / thinking / speaking. | ChatDrawer | ✓ | ✓ | 7 | New. Light mode unchecked. | ☐ |
-| 49 | **ChatHistoryMenu**<br>`chat/ChatHistoryMenu.tsx` | Search + pinned/recent chat list popover. | ChatDrawer | ✓ | ✓ | 6 | New. Uses Menu chrome. | ☐ |
-| 50 | **ChatHeader / ChatEmptyState / ChatMessageList**<br>`chat/…` | Header icons, greeting + suggestion chips, scrolling message list. | ChatDrawer | ✓ | ✓ | 5 | New; small parts of the chat. | ☐ |
-| 51 | **ThumbsDownIcon**<br>`ui/ThumbsDownIcon.tsx` | Thumbs-down glyph without the wrist cuff. | InsightCard, ChatMessage | — | — | 1 | Extracted from InsightCard. | ☐ |
-| 52 | **InsightCardLoader**<br>`accounts/InsightCardLoader.tsx` | Sparkle + cycling status lines shown in the Insight Card while the summary loads. | InsightCard (`loading`) | ✓ | ✓ | 2 | New 2026-10-28. Not yet wired to the real account load. | ☐ |
-| 53 | **AlertDialog**<br>`ui/AlertDialog.tsx` | Centered confirmation: filled confirm button + plain text Cancel. Destructive or standard. | ActionItemDrawer (delete), interaction page (delete), account page (disqualify) | ✓ | ✓ | 7 | New 2026-11-02. Extracted from the action item delete card; replaced the disqualify bottom sheet. | ☐ |
-| 54 | **Toast**<br>`ui/Toast.tsx` + `context/ToastContext.tsx` | Floating confirmation with tones (neutral / success / error), optional description or thumbnail, one text action, auto-dismiss with pause, swipe to dismiss, queue via useToast(). | Interaction delete, action item delete, disqualify; CompletionToast wraps it (home, tasks, account, interaction) | ✓ | ✓ | 9 | New 2026-11-02, replaces the old toast look; now also a top pill shape (Preparing note → Note ready). The unused account-created toast on home was removed. The pill now replaces the capture widget's finalizing/ready states, the home screen's preview banner and the account page's "Preparing note" card. | ☐ |
-| 55 | **EngagementsDrawer**<br>`accounts/EngagementsDrawer.tsx` | Home side drawer: feed of recent interactions across accounts, unread marking, search, lazy loading. | Home screen menu button | ✓ | ✓ | 9 | New 2026-11-02. Rows are ActivityCard `recent` / `recent-unread`. Mock data in home.ts (mockRecentActivities). | ☐ |
-| 56 | **SearchField**<br>`ui/SearchField.tsx` | Pill search input with clear button; active outline and trailing tag. | Tasks, action item list screen | ✓ | ✓ | 3 | New 2026-11-02. Sizes sm / md / lg; the single search bar for companies, action items, the account picker, the chat history menu and the Engagements drawer. | ☐ |
-| 57 | **SectionHeader**<br>`ui/SectionHeader.tsx` | List section label with count pill, add button, or divider form. | Home | ✓ | ✓ | 6 | New 2026-11-02, moved out of the home screen. | ☐ |
-| 58 | **IconButton**<br>`ui/IconButton.tsx` | Round icon button: filled, glass (scroll-aware), plain. | Home profile button, interaction page floating buttons | ✓ | ✓ | 3 | New 2026-11-02. | ☐ |
-| 59 | **Banner**<br>`ui/Banner.tsx` | Inline info / warning message card. | Account page (other rep's account) | ✓ | ✓ | 4 | New 2026-11-02. | ☐ |
+| 63 | **IconLibraryToggle**<br>`ui/IconLibraryToggle.tsx` | Icon-set exploration switch (Material, Lucide, Font Awesome). Not part of the product UX. | Design-system header, DevPanel | **missing** | — | 0 | Added to the inventory 2026-11-09 (the file already existed). | ☐ |
+| 64 | **Design-system previews**<br>`design-system/*Previews.tsx`, `ComponentArea.tsx`, `InsightLoadingPreview.tsx` | Live demo and layout helpers for the /design-system page (button loading, chat, action item drawer, toast, feedback, tabs and text field previews, the component-area layout). | design-system page | — | — | 0 | Prototype tooling only. Added to the inventory 2026-11-09. | ☐ |
 
 ## Appendix: tokens used, by component
 
-Read from the code (`var(--…)` references), mapped to design-system token paths. `*` = prototype CSS name differs from the rule. `(… no token)` = a name with no token in the design-system repo. `†` = the code references a CSS variable the prototype never defines, so it renders unstyled.
+Generated 2026-10-27, so it does not cover components added since (see each component's registry entry for its tokens). Read from the code (`var(--…)` references), mapped to design-system token paths. `*` = prototype CSS name differs from the rule. `(… no token)` = a name with no token in the design-system repo. `†` = the code references a CSS variable the prototype never defines, so it renders unstyled.
 
 ### Library
 

@@ -21,8 +21,7 @@ app/
 │
 ├── components/                   # Reusable UI components
 │   ├── layout/                   # App-level structural components
-│   │   ├── PhoneFrame.tsx        # Web-only phone viewport simulator
-│   │   └── BottomNav.tsx         # Floating glass pill bottom navigation
+│   │   └── PhoneFrame.tsx        # Web-only phone viewport simulator
 │   ├── accounts/                 # Account-specific components
 │   │   ├── AccountListItem.tsx   # One widget, three variants (owned / crm / home) (card wrapper is ui/ListCard)
 │   │   ├── AccountTypeIcon.tsx   # Corporate/branch/standalone SVG icon
@@ -57,7 +56,6 @@ PhoneFrame (web wrapper — no Flutter equivalent)
     ├── Content Area (scrollable)
     │   └── Feature Components
     │       └── UI Primitives
-    └── BottomNav (floating, outside scroll area)
 ```
 
 ---
@@ -70,7 +68,6 @@ Structural, app-level. One instance per screen. Not domain-specific.
 | Component | Description | Flutter equivalent |
 |---|---|---|
 | `PhoneFrame` | Web-only 390×844 viewport simulator | No equivalent |
-| `BottomNav` | Floating glass pill nav (Home / Accounts) | Custom `NavigationBar` |
 
 ### Feature Components (`components/accounts/`, `components/capture/`)
 Domain-specific. Tied to a feature area. Reusable across screens within that feature.
@@ -152,7 +149,7 @@ The Flutter handoff comment block is **required** on every component. It makes t
 
 > **Any change to a component's visual tokens must be reflected in the design system page** (`/design-system`) before it is considered done.
 
-The design system page imports live components directly (no mocks). Changes to `BottomNav`, `AccountListItem`, `SortMenu`, `Icon`, `MenuIcon` automatically appear on the design system page — no extra step needed for those. For new token additions, add the swatch to the appropriate color section manually.
+The design system page imports live components directly (no mocks). Changes to `AccountListItem`, `SortMenu`, `Icon`, `MenuIcon` automatically appear on the design system page — no extra step needed for those. For new token additions, add the swatch to the appropriate color section manually.
 
 ---
 
@@ -173,9 +170,8 @@ No Redux, no Zustand, no global state libraries. Keep it simple — the Flutter 
 
 1. Create `app/app/[route]/page.tsx`
 2. Wrap in `<PhoneFrame>` if it's a mobile screen
-3. Include `<BottomNav>` if it's a main app tab
-4. Add Flutter handoff comment at top of file
-5. Pull data from `lib/mock-data/` or define new mock data
+3. Add Flutter handoff comment at top of file
+4. Pull data from `lib/mock-data/` or define new mock data
 6. Use existing components before creating new ones
 
 ## How to Add a New Component

@@ -99,7 +99,6 @@ Keep these comments useful and current. They should describe behavior and transl
 Current important components include:
 
 - `app/components/layout/PhoneFrame.tsx` for the browser phone viewport.
-- `app/components/layout/BottomNav.tsx` for mobile navigation.
 - `app/components/accounts/AccountListItem.tsx` for account rows.
 - `app/components/accounts/AccountTypeIcon.tsx` for account hierarchy icons.
 - `app/components/accounts/SortMenu.tsx` for account sorting.

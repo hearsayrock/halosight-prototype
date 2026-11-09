@@ -49,7 +49,8 @@ interface ComponentMeta {
   type: "interactive" | "display" | "navigation" | "input";
   description: string;
   file: string;
-  designSystemSection: string; // anchor on localhost:3000/design-system
+  /** Anchor on localhost:3000/design-system. Omitted for flows that have no area of their own (the sheets), which are built from areas that do. */
+  designSystemSection?: string;
   flutterEquivalent: string;
   tokens: {
     required: TokenRef[];
@@ -77,87 +78,6 @@ interface ComponentMeta {
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 export const registry: ComponentMeta[] = [
-
-  // ── BottomNav ───────────────────────────────────────────────────────────────
-  {
-    name: "BottomNav",
-    category: "layout",
-    type: "navigation",
-    description:
-      "Floating glass pill navigation bar with Home and Accounts tabs. " +
-      "Sits outside the scroll area at the bottom of every main app screen. " +
-      "Active tab indicated by a sliding dark pill with 6px inset.",
-    file: "app/components/layout/BottomNav.tsx",
-    designSystemSection: "#navigation",
-    flutterEquivalent: "Custom NavigationBar — see flutter-handoff.md BottomNav section",
-    tokens: {
-      required: [
-        { token: "--md-sys-color-alpha-neonindigo-glass", role: "nav background" },
-        { token: "--md-sys-color-alpha-white-10",     role: "nav border" },
-        { token: "--md-sys-color-alpha-dark-glass",   role: "active pill fill" },
-        { token: "--md-sys-color-text-primary",       role: "active icon + label color" },
-        { token: "--md-sys-color-text-muted",         role: "inactive icon + label color" },
-        { token: "--radius-full",              role: "nav pill shape" },
-      ],
-      forbidden: [
-        "Any raw hex for background — must be alpha token for glass effect",
-        "--md-sys-color-dark-secondary (not transparent enough for glass)",
-        "--md-sys-color-neonindigo (wrong role — that's for interactive elements)",
-      ],
-    },
-    props: [],
-    usage: {
-      patterns: [
-        {
-          name: "standard",
-          when: "Every main app screen (Home, Accounts)",
-          code: `
-import BottomNav from "@/components/layout/BottomNav";
-
-// Place outside the scrollable content area, at bottom of flex column
-<div className="flex flex-col h-full">
-  <div className="flex-1 overflow-y-auto">
-    {/* screen content */}
-  </div>
-  <BottomNav />
-</div>`,
-        },
-      ],
-      antiPatterns: [
-        {
-          scenario: "Placing BottomNav inside a scrollable container",
-          why: "It floats fixed above the viewport — it must sit in the flex column outside the scroll area",
-          instead: "Wrap screen content in a flex column; BottomNav is the last sibling, flex-shrink-0",
-        },
-        {
-          scenario: "Recreating nav tabs with plain divs or buttons",
-          why: "BottomNav handles active state, glass effect, sliding pill, and label-serif typography",
-          instead: "Use <BottomNav /> — it reads the current pathname automatically",
-        },
-        {
-          scenario: "Adding a third tab to BottomNav without updating the active pill logic",
-          why: "The pill uses left/right CSS transitions calculated for exactly 2 tabs",
-          instead: "Redesign pill logic when adding tabs — document in flutter-handoff.md",
-        },
-      ],
-    },
-    aiHints: {
-      priority: "high",
-      useWhen: [
-        "Building any main app screen that is a top-level tab destination",
-        "Speccing the persistent navigation layer for Flutter handoff",
-      ],
-      neverUseFor: [
-        "Modal screens, detail screens, or flows nested within a tab",
-        "The /design-system page (it's a browser tool, not a mobile screen)",
-      ],
-      alwaysRemember: [
-        "BottomNav reads usePathname() — no activeTab prop needed",
-        "The 32px padding (px-8 pb-8) is part of the component — do not add extra margin",
-        "label-serif (.label-serif) is the correct class for tab labels — not text-xs or font-medium",
-      ],
-    },
-  },
 
   // ── AccountListItem ─────────────────────────────────────────────────────────
   {
@@ -466,20 +386,21 @@ import AccountListItem from "@/components/accounts/AccountListItem";
     flutterEquivalent: "ActionItemDrawer — lib/view/_widget/action_items/action_item_drawer.dart",
     tokens: {
       required: [
-        { token: "color.dark.base",              role: "inset fields: title, description, interaction card, date chips" },
+        { token: "color.dark.base",              role: "interaction card and date chips (the title and description fields are TextField, which fills with color.dark.secondary)" },
         { token: "color.dark.secondary",         role: "view-mode chips" },
-        { token: "color.dark.tertiary",          role: "field and chip borders" },
-        { token: "color.neonindigo.base",        role: "focus ring, edit button, selected date chip, interaction chevron" },
+        { token: "color.dark.tertiary",          role: "chip borders" },
+        { token: "color.neonindigo.base",        role: "edit button, selected date chip, interaction chevron (the focus stroke comes from TextField)" },
         { token: "color.neonindigo.dark",        role: "Mark complete fill" },
         { token: "color.semantic.error",         role: "Delete outline (40%) and Yes, delete fill" },
         { token: "color.semantic.error-light",   role: "Delete action item text and icon" },
         { token: "color.text.primary / secondary / muted", role: "title / description and chips / labels and counters" },
-        { token: "radius.full / lg / xl",        role: "pills and title field / chips and cards / description field" },
+        { token: "radius.full / lg / xl",        role: "pills / chips and cards / TextField radii (pill for the title, xl for the description)" },
         { token: "spacing.1–8",                  role: "all gaps: 16 title→chips, 20 between blocks, 24 before the button and between edit fields, 32 before Delete" },
       ],
       forbidden: [
         "A status control (open / done / canceled) in edit — completion is Mark complete only",
         "Raw hex or pixel gaps — use the spacing tokens",
+        "A hand-built input or textarea — the title and description are TextField",
         "Navigating to a detail page — the drawer replaces it",
       ],
     },
@@ -1120,13 +1041,927 @@ show({ title: "Interaction deleted", action: { label: "Undo", onPress: restore }
     changelog: ["2026-11-02: new. Replaces the old name-only engagements list (Today / Previous groups). ActivityCard gained the recent / recent-unread variants."],
   },
 
+  // ── TextField ───────────────────────────────────────────────────────────────
+  {
+    name: "TextField",
+    category: "ui-primitive",
+    type: "interactive",
+    description:
+      "The one text entry for the whole app. Single-line is a full pill, multi-line a rounded box (radius.xl). Three states: default (empty, no stroke), active (focused: 1.5px neonindigo stroke) and filled (has text: hairline stroke), plus warning and error (a status stroke and helper line) and disabled. Sizes sm 36, md 44, lg 48 (default), xl 56 (the chat composer). Optional label (uppercase eyebrow), helper, n/max counter, leading icon, trailing tag, clear dot, endSlot and flush-right actions. variant=\"bare\" is the input alone for text that edits in place inside a card or row that owns the surface. SearchField and ChatInput are built on it. Used by the lead and action item sheets, the contact and deal forms, notes, feedback, the data-deletion request, the date filter and the AI review fields.",
+    file: "app/components/ui/TextField.tsx",
+    designSystemSection: "#text-field",
+    flutterEquivalent: "HalosightTextField — lib/view/_widget/halosight_text_field.dart (one widget; size is an enum; multiline swaps maxLines; bare is a flag)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "fill" },
+        { token: "color.text.primary", role: "text" },
+        { token: "color.text.muted", role: "placeholder, label, leading icon, helper, counter" },
+        { token: "color.text.disabled", role: "clear dot" },
+        { token: "color.neonindigo.base", role: "active stroke, active leading icon" },
+        { token: "color.alpha.white.10", role: "filled stroke" },
+        { token: "color.error / color.warning", role: "status stroke and helper" },
+        { token: "color.brand.coral", role: "caret" },
+        { token: "radius.full / radius.xl", role: "single-line pill / multi-line box" },
+      ],
+      forbidden: [
+        "A raw <input> or <textarea> in a screen or sheet — use TextField",
+        "Hand-drawing a focus border with onFocus state — TextField owns default, active and filled",
+        "A different fill, radius or text size per sheet — pick a size instead",
+        "text.disabled for a label — labels are text.muted",
+      ],
+    },
+    props: [
+      { name: "value / onChange", type: "string / (v: string) => void", required: true, description: "Controlled text. onChange gets the string, not the event." },
+      { name: "label", type: "string", required: false, description: "Uppercase eyebrow above the field. Without it, pass ariaLabel or a placeholder." },
+      { name: "placeholder", type: "string", required: false, description: "Muted hint. Also the accessible name when there is no label." },
+      { name: "size", type: '"sm" | "md" | "lg" | "xl"', required: false, default: '"lg"', description: "36 / 44 / 48 / 56 tall. Use md for compact forms, xl for the chat composer." },
+      { name: "multiline / rows", type: "boolean / number", required: false, default: "false / 3", description: "A textarea in a radius.xl box." },
+      { name: "status / helper", type: '"error" | "warning" / string', required: false, description: "Status stroke and a helper line in the same colour. Warning is for soft problems (possible duplicate)." },
+      { name: "maxLength / showCount", type: "number / boolean", required: false, description: "Limits input; showCount adds n/max under the field." },
+      { name: "leading / trailing / endSlot / actions", type: "ReactNode", required: false, description: "Icon before; tag or spinner after; control after the clear dot; round buttons flush right." },
+      { name: "clearable", type: "boolean", required: false, description: "A clear dot once there is text." },
+      { name: "active", type: "boolean", required: false, description: "Show the active stroke without focus." },
+      { name: "variant", type: '"field" | "bare"', required: false, default: '"field"', description: "bare = input only; pass inputStyle for type." },
+      { name: "onSubmit", type: "() => void", required: false, description: "Enter on a single-line field." },
+      { name: "inputRef / autoFocus / type / inputMode / enterKeyHint / disabled", type: "—", required: false, description: "Passed to the input." },
+    ],
+    usage: {
+      patterns: [
+        { name: "labelled form field", when: "A field in a sheet or form", code: `<TextField label="Company" placeholder="e.g. Saddleback Fleet Services" value={name} onChange={setName} onSubmit={handleCreate} />` },
+        { name: "multi-line with counter", when: "Notes and descriptions", code: `<TextField label="Description" multiline rows={5} maxLength={280} showCount value={d} onChange={setD} />` },
+        { name: "soft problem", when: "A possible duplicate", code: `<TextField label="Company" value={name} onChange={setName} status="warning" helper="Possible duplicate" />` },
+      ],
+      antiPatterns: [{ scenario: "Adding a raw <input> with inline styles", why: "Every sheet had drifted: radius, fill, text size, focus colour", instead: "Use <TextField> and pick a size" }],
+    },
+    aiHints: {
+      priority: "high",
+      useWhen: ["Any place the user types text: forms, sheets, notes, feedback, chat, filters"],
+      neverUseFor: ["Pickers and toggles", "A search bar — use SearchField (it is a TextField with a search icon)"],
+      alwaysRemember: [
+        "States: default (empty), active (focused), filled (has text); status overrides them",
+        "Single-line is a pill; multi-line is radius.xl",
+        "onChange receives the string",
+      ],
+    },
+    changelog: ["2026-11-09: new. Replaces every hand-built input and textarea (sheets, forms, notes, feedback, chat, date filter, AI review fields); SearchField and ChatInput now render through it."],
+  },
+
+  // ── AddActionItemSheet ──────────────────────────────────────────────────────
+  {
+    name: "AddActionItemSheet",
+    category: "feature",
+    type: "interactive",
+    description:
+      "The bottom sheet for creating an action item: a TextField (\"What needs to be done?\"), an optional due date and an \"Add action item\" button. " +
+      "The date is a row of five day chips (today plus four days) with \"Pick another date\", which swaps to a MiniCalendar. The button stays disabled until the title has text. " +
+      "Opened from the account page and the interaction (activity) page.",
+    file: "app/components/accounts/AddActionItemSheet.tsx",
+    flutterEquivalent: "AddActionItemSheet — lib/view/_widget/action_items/add_action_item_sheet.dart (platform date picker instead of MiniCalendar)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "title field (via TextField) and unselected day chips" },
+        { token: "color.dark.tertiary", role: "outline of Pick another date / Hide calendar" },
+        { token: "color.neonindigo.base", role: "selected day chip" },
+        { token: "color.text.primary / muted", role: "chip text / secondary labels" },
+        { token: "radius.md / full", role: "day chips / outline pills" },
+      ],
+      forbidden: [
+        "A raw <input> for the title — use TextField",
+        "A due date that is required — it is optional",
+        "Saving before the button is tapped",
+      ],
+    },
+    props: [
+      { name: "accountId", type: "string", required: true, description: "The account the new item belongs to." },
+      { name: "onClose", type: "() => void", required: true, description: "Called after the exit animation finishes." },
+    ],
+    usage: {
+      patterns: [{ name: "open from the add button", when: "A + / Add action item control", code: `{showAdd && <AddActionItemSheet accountId={id} onClose={() => setShowAdd(false)} />}` }],
+      antiPatterns: [{ scenario: "A second hand-built create form for items", why: "The title rule and the date chips live here", instead: "Reuse this sheet" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Creating a new action item on an account"],
+      neverUseFor: ["Editing an item — that is ActionItemDrawer"],
+      alwaysRemember: [
+        "Title is required, date is optional",
+        "Day chips are hand-built here; the edit drawer has its own DateChips (merge them when a chip component exists)",
+      ],
+    },
+    changelog: ["2026-11-09: registry entry added; the title field is now a TextField."],
+  },
+
+  // ── MiniCalendar ────────────────────────────────────────────────────────────
+  {
+    name: "MiniCalendar",
+    category: "ui-primitive",
+    type: "input",
+    description:
+      "An inline month grid for choosing a due date: month and year with a dropdown arrow (the next 18 months), a Today button and prev / next chevrons. " +
+      "Past days are dimmed and not tappable, and you can't go back before the current month. The selected day is a neonindigo circle. " +
+      "Prototype stand-in: Flutter uses the platform date picker.",
+    file: "app/components/accounts/MiniCalendar.tsx",
+    flutterEquivalent: "Not built — use showDatePicker(firstDate: today) in lib/view/_widget/",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "card fill" },
+        { token: "color.dark.tertiary", role: "today circle, Today pill outline" },
+        { token: "color.neonindigo.base", role: "selected day, current month in the picker" },
+        { token: "color.text.primary / disabled", role: "days, month label / day-of-week headers" },
+        { token: "radius.md / full", role: "card / Today pill" },
+      ],
+    },
+    props: [
+      { name: "selected", type: "Date | null", required: true, description: "The chosen day." },
+      { name: "onSelect", type: "(d: Date) => void", required: true, description: "Called when an enabled day is tapped." },
+    ],
+    usage: {
+      patterns: [{ name: "inline date", when: "Inside a sheet or drawer", code: `<MiniCalendar selected={date} onSelect={setDate} />` }],
+      antiPatterns: [{ scenario: "Building the Flutter version of this grid", why: "The platform date picker does the job and handles locale", instead: "showDatePicker with firstDate set to today" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["An inline due-date picker inside AddActionItemSheet or ActionItemDrawer"],
+      neverUseFor: ["Date filters — those use TextField type=date"],
+      alwaysRemember: ["Past days are disabled", "No design-system area of its own; it appears inside the add and edit flows"],
+    },
+    changelog: ["2026-11-09: registry entry and handoff comment added."],
+  },
+
+  // ── CreateLeadSheet ─────────────────────────────────────────────────────────
+  {
+    name: "CreateLeadSheet",
+    category: "feature",
+    type: "interactive",
+    description:
+      "\"New Lead\": the sheet behind the + on the companies list. One TextField (Company), an \"AI fills the rest\" hint and a Create a lead button. " +
+      "400ms after typing stops it fuzzy-matches the name against existing accounts; a spinner shows while it checks, then an amber callout lists up to two matches " +
+      "(with \"+N more\"), the field takes the warning stroke, and the person can View an existing account or Create anyway. Creating adds a prospect to the list.",
+    file: "app/components/accounts/CreateLeadSheet.tsx",
+    flutterEquivalent: "CreateLeadSheet — lib/view/_widget/accounts/create_lead_sheet.dart (use case: CheckDuplicateAccounts, debounced 400ms)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "Company field (via TextField)" },
+        { token: "color.neonindigo.base", role: "active stroke, spinner, AI hint text, CTA" },
+        { token: "color.alpha.neonindigo-10", role: "AI hint fill" },
+        { token: "color.semantic.warning", role: "duplicate callout and the field's warning stroke" },
+        { token: "color.text.primary / muted", role: "text / secondary" },
+        { token: "radius.lg", role: "callout and hint" },
+      ],
+      forbidden: [
+        "Blocking creation when duplicates are found — it warns, and Create anyway always works",
+        "A raw <input> — use TextField (status=\"warning\" for the duplicate state)",
+      ],
+    },
+    props: [
+      { name: "onClose", type: "() => void", required: true, description: "Called after the exit animation." },
+      { name: "onCreated", type: "(account: Account) => void", required: true, description: "Receives the new prospect (type standalone, halosightType prospect)." },
+    ],
+    usage: {
+      patterns: [{ name: "from the add button", when: "Adding a lead from the companies list", code: `{open && <CreateLeadSheet onClose={() => setOpen(false)} onCreated={handleCreated} />}` }],
+      antiPatterns: [{ scenario: "Building a second create-account sheet", why: "CreateAccountSheet already drifted from this one", instead: "Use this sheet; a search entry point passes the query in as the name" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Adding a company or lead by name"],
+      neverUseFor: ["Converting a lead to an account — that is ConvertToAccountSheet"],
+      alwaysRemember: [
+        "Duplicate check is a warning, not a block; the field takes the warning stroke while the callout shows",
+        "Matches are name-contains in the prototype; production should match on a server",
+        "CreateAccountSheet is the same sheet without duplicate detection; merge them for Flutter",
+      ],
+    },
+    changelog: ["2026-11-09: registry entry added; the Company field is now a TextField with status=warning for the duplicate state."],
+  },
+
+  // ── CreateAccountSheet ──────────────────────────────────────────────────────
+  {
+    name: "CreateAccountSheet",
+    category: "feature",
+    type: "interactive",
+    description:
+      "\"New Lead\" opened from the \"create\" prompt under a company search: the same sheet as CreateLeadSheet without duplicate detection, " +
+      "pre-filled with the search text. One TextField (Company), an \"AI fills the rest\" hint and an indigo Create a lead button. " +
+      "Contact and address fields are reserved for an \"Add more details\" step that is not built.",
+    file: "app/components/accounts/CreateAccountSheet.tsx",
+    flutterEquivalent: "Merge into CreateLeadSheet (initialName parameter; duplicate check on)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "Company field (via TextField)" },
+        { token: "color.neonindigo.base", role: "active stroke, AI hint, CTA" },
+        { token: "color.alpha.neonindigo-10", role: "AI hint fill" },
+        { token: "color.text.primary", role: "title" },
+        { token: "radius.lg", role: "AI hint" },
+      ],
+    },
+    props: [
+      { name: "initialName", type: "string", required: false, default: '""', description: "Search text to start from." },
+      { name: "onClose", type: "() => void", required: true, description: "Called after the exit animation." },
+      { name: "onCreated", type: "(account: Account) => void", required: true, description: "Receives the new prospect." },
+    ],
+    usage: {
+      patterns: [{ name: "from a search prompt", when: "No result matches the search", code: `{open && <CreateAccountSheet initialName={query} onClose={close} onCreated={handleCreated} />}` }],
+      antiPatterns: [{ scenario: "Keeping both lead sheets in Flutter", why: "They differ only by duplicate detection", instead: "One sheet with an initial name" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["Creating a company from a search that found nothing"],
+      neverUseFor: ["The + on the companies list — that is CreateLeadSheet"],
+      alwaysRemember: ["Flagged for merge into CreateLeadSheet", "showDetails state exists but the extra fields are not rendered"],
+    },
+    changelog: ["2026-11-09: registry entry added; Company is a TextField, the unused optional-field helper was removed."],
+  },
+
+  // ── ConvertToAccountSheet ───────────────────────────────────────────────────
+  {
+    name: "ConvertToAccountSheet",
+    category: "feature",
+    type: "interactive",
+    description:
+      "Turns a lead into a Salesforce account in one sheet. Pick the account type (Customer, Fleet Account or Distributor), confirm the primary contact " +
+      "(name, title and phone, pre-filled from what was captured), and optionally open a deal (a toggle, then deal name and estimated value). " +
+      "\"Convert to Account\" shows an \"Account created\" confirmation that names the account and primary contact, then calls onConverted.",
+    file: "app/components/accounts/ConvertToAccountSheet.tsx",
+    flutterEquivalent: "ConvertToAccountSheet — lib/view/_widget/accounts/convert_to_account_sheet.dart (use case: ConvertLeadToAccount)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "type chips, deal toggle row, fields (via TextField)" },
+        { token: "color.neonindigo.base / dark", role: "selected chip, section icons, active stroke" },
+        { token: "color.brand.teal", role: "Convert button and success state (hand-built; no teal Button fill yet)" },
+        { token: "color.text.primary / secondary / muted / disabled", role: "labels and sub-labels" },
+        { token: "radius.xl / md / full", role: "toggle row / chips / pills" },
+      ],
+      forbidden: ["A raw <input> — fields are TextField size md", "Converting without confirming the contact"],
+    },
+    props: [
+      { name: "accountName", type: "string", required: true, description: "Shown in the success message." },
+      { name: "initialContact", type: "{ name; title; phone }", required: true, description: "Pre-filled primary contact." },
+      { name: "onClose", type: "() => void", required: true, description: "Close request." },
+      { name: "onConverted", type: "() => void", required: true, description: "Runs after the success step (the account screen goes back to the list)." },
+    ],
+    usage: {
+      patterns: [{ name: "from a lead", when: "A lead account page", code: `<ConvertToAccountSheet accountName={account.name} initialContact={contact} onClose={close} onConverted={() => router.push("/relationships")} />` }],
+      antiPatterns: [{ scenario: "Creating a deal outside this sheet", why: "The deal is part of conversion and syncs with it", instead: "Use the toggle here" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Converting a lead into a Salesforce account"],
+      neverUseFor: ["Creating a new lead — that is CreateLeadSheet"],
+      alwaysRemember: [
+        "Account type is required (Customer is the default); the deal is optional",
+        "Est. Value brings up the number pad (inputMode numeric) but stays a text field",
+        "The Convert button and success state are hand-built teal; there is no teal Button fill yet",
+      ],
+    },
+    changelog: ["2026-11-09: registry entry added; the local Field helper now renders a TextField (size md)."],
+  },
+
+  // ── NoteSheet ───────────────────────────────────────────────────────────────
+  {
+    name: "NoteSheet",
+    category: "feature",
+    type: "interactive",
+    description:
+      "The sheet that slides up after an action item is checked off, offering a note (\"Anything worth remembering for next time…\"). " +
+      "Tap Done with or without text, or dismiss it; either way the completion is committed, so there is no undo here. " +
+      "The note is one multi-line TextField, focused as the sheet opens.",
+    file: "app/components/ui/NoteSheet.tsx",
+    flutterEquivalent: "CompletionNoteSheet — lib/view/_widget/action_items/completion_note_sheet.dart",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "note field (via TextField)" },
+        { token: "color.brand.teal", role: "Done button (hand-built; no teal Button fill yet)" },
+        { token: "color.text.primary / muted", role: "note text / header" },
+        { token: "radius.full", role: "Done button" },
+      ],
+      forbidden: ["Treating dismiss as undo — it commits without a note", "A raw <textarea> — use TextField multiline"],
+    },
+    props: [
+      { name: "visible", type: "boolean", required: true, description: "Sheet visibility; the note clears each time it opens." },
+      { name: "onDone", type: "(note: string) => void", required: true, description: "Called with the note, or an empty string when dismissed without typing." },
+    ],
+    usage: {
+      patterns: [{ name: "after completing an item", when: "A check-off that offers a note", code: `<NoteSheet visible={noteOpen} onDone={(note) => finishCompletion(id, note)} />` }],
+      antiPatterns: [{ scenario: "Showing it before the item is checked", why: "It only appears after the completion starts", instead: "Open it from the completion flow" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["Offering a note right after an item is completed"],
+      neverUseFor: ["General note entry", "Editing an existing note"],
+      alwaysRemember: ["Dismiss and Done both commit the completion", "The Done button is hand-built teal"],
+    },
+    changelog: ["2026-11-09: registry entry added; the note field is now a TextField."],
+  },
+
+  // ── FilterDropdown ──────────────────────────────────────────────────────────
+  {
+    name: "FilterDropdown",
+    category: "ui-primitive",
+    type: "interactive",
+    description:
+      "A 32px pill that shows the current choice and opens a check menu. Three looks: resting (dark.secondary fill, muted down arrow), filtered (a small indigo check before the label, when the value is not the default) " +
+      "and open (neonindigo fill, up arrow). The menu is the shared Menu (variant `check`, min width 180) anchored top-left under the pill. Used for Open / Done and Due Date / Company on the items list.",
+    file: "app/components/ui/FilterDropdown.tsx",
+    designSystemSection: "#filter-pill",
+    flutterEquivalent: "FilterDropdown — lib/view/_widget/filter_dropdown.dart (pill + PopupMenuButton with HalosightMenu check rows)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "pill fill" },
+        { token: "color.neonindigo.base", role: "open fill, filtered check" },
+        { token: "color.text.on-accent", role: "label while open" },
+        { token: "color.text.primary / muted", role: "label / arrow" },
+        { token: "radius.full", role: "pill" },
+      ],
+      forbidden: [
+        "A hand-built dropdown panel — the menu is Menu",
+        "A native <select>",
+        "More than about six options — use a sheet",
+      ],
+    },
+    props: [
+      { name: "options", type: "{ value, label }[]", required: true, description: "The choices. The first one is the unfiltered default unless defaultValue is set." },
+      { name: "value", type: "T extends string", required: true, description: "The current choice." },
+      { name: "onChange", type: "(v: T) => void", required: true, description: "Called when a row is chosen; the menu closes." },
+      { name: "defaultValue", type: "T", required: false, description: "The value that means no filter (drives the filtered check)." },
+    ],
+    usage: {
+      patterns: [{ name: "status filter", when: "A list with a few filter choices", code: `<FilterDropdown options={[{ value: "open", label: "Open" }, { value: "done", label: "Done" }]} value={status} onChange={setStatus} />` }],
+      antiPatterns: [{ scenario: "A second hand-built pill with its own menu", why: "The three looks and the Menu panel are shared", instead: "Use FilterDropdown" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Choosing one value from a short list to filter or sort a list"],
+      neverUseFor: ["Dates — that is VisitedFilterDropdown", "Record actions — that is KebabMenu"],
+      alwaysRemember: ["The filtered check shows only when the value differs from the default", "The open-state arrow is a raw white at 70% (no token yet)"],
+    },
+    changelog: ["2026-11-09: registry entry and design-system area (Filter Pill) added; removed a duplicated background branch."],
+  },
+
+  // ── VisitedFilterDropdown ───────────────────────────────────────────────────
+  {
+    name: "VisitedFilterDropdown",
+    category: "ui-primitive",
+    type: "interactive",
+    description:
+      "The Last Visited filter on the companies list: the same pill as FilterDropdown (it reads \"Last Visited\" until a choice is made), opening a check menu with All time, Last 7 days, " +
+      "Last 2 weeks, Last 30 days and Last 90 days (each applies at once), then a divider and Custom range, which expands to two date TextFields (From, To) and an indigo Apply button.",
+    file: "app/components/ui/VisitedFilterDropdown.tsx",
+    designSystemSection: "#filter-pill",
+    flutterEquivalent: "VisitedFilterDropdown — lib/view/_widget/visited_filter_dropdown.dart (custom range via showDateRangePicker)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "pill fill" },
+        { token: "color.neonindigo.base", role: "open fill, filtered check" },
+        { token: "color.text.on-accent", role: "label while open" },
+        { token: "color.text.primary / muted", role: "label / arrow" },
+        { token: "radius.full", role: "pill" },
+      ],
+      forbidden: ["Raw date inputs — the range fields are TextField type=date", "Applying a custom range before Apply is tapped"],
+    },
+    props: [
+      { name: "value", type: '"all" | "7d" | "14d" | "30d" | "90d" | "custom"', required: true, description: "The applied filter." },
+      { name: "customFrom / customTo", type: "Date | null", required: true, description: "The applied custom range." },
+      { name: "onChange", type: "(v, from?, to?) => void", required: true, description: "Called for a preset, or with the range when Apply is tapped." },
+    ],
+    usage: {
+      patterns: [{ name: "companies list", when: "Filtering companies by last visit", code: `<VisitedFilterDropdown value={visited} customFrom={from} customTo={to} onChange={(v, f, t) => { setVisited(v); setFrom(f ?? null); setTo(t ?? null); }} />` }],
+      antiPatterns: [{ scenario: "A different date-range control on another list", why: "One range pattern keeps the pill and menu consistent", instead: "Reuse this, or extract a shared date-range filter" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["Filtering a list by how recently something happened"],
+      neverUseFor: ["Choosing a due date — that is MiniCalendar or the platform date picker"],
+      alwaysRemember: ["Presets apply immediately; the custom range applies on Apply", "Reopening restores the applied dates into the fields"],
+    },
+    changelog: ["2026-11-09: registry entry and design-system area (Filter Pill) added; the date fields are TextField."],
+  },
+
+  // ── KebabMenu ───────────────────────────────────────────────────────────────
+  {
+    name: "KebabMenu",
+    category: "ui-primitive",
+    type: "interactive",
+    description:
+      "The three-dot \"more options\" button for a record's actions (Edit, Share, Delete on the account page): a 40px rounded square on dark.secondary. Tapping it fades the button out " +
+      "while the menu springs in from the top-right over the same spot. The menu is the shared Menu (variant `icon`); destructive rows use the error color.",
+    file: "app/components/ui/KebabMenu.tsx",
+    designSystemSection: "#kebab-menu",
+    flutterEquivalent: "KebabMenu — lib/view/_widget/kebab_menu.dart (IconButton + PopupMenuButton with HalosightMenu icon rows)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "button fill" },
+        { token: "color.text.muted", role: "the three dots" },
+      ],
+      forbidden: ["A hand-built panel — the menu is Menu", "More than about five actions"],
+    },
+    props: [
+      { name: "items", type: "{ label, icon?, onClick, destructive? }[]", required: true, description: "One row each; destructive rows use the error color." },
+    ],
+    usage: {
+      patterns: [{ name: "record actions", when: "A header with Edit / Share / Delete", code: `<KebabMenu items={[{ label: "Edit", icon: "edit", onClick: edit }, { label: "Delete", icon: "delete", destructive: true, onClick: remove }]} />` }],
+      antiPatterns: [{ scenario: "Putting the destructive action first", why: "It sits last so it is not hit by accident", instead: "Order: Edit, Share, then Delete" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["A short list of actions on a single record"],
+      neverUseFor: ["Choosing a filter or sort — that is FilterDropdown or SortMenu"],
+      alwaysRemember: ["The trigger fades out as the menu opens", "Delete goes through a confirmation (AlertDialog)"],
+    },
+    changelog: ["2026-11-09: registry entry and design-system area (More Menu) added."],
+  },
+
+  // ── Skeleton ────────────────────────────────────────────────────────────────
+  {
+    name: "Skeleton",
+    category: "ui-primitive",
+    type: "display",
+    description:
+      "Grey shapes that hold a screen's layout while its content loads. Bone is the primitive (a rounded rectangle with a left-to-right sweep from dark.secondary through dark.tertiary, 1.4s); " +
+      "AccountListSkeleton (rows, default 6) matches the company row, and AccountDetailSkeleton matches the account page. For whole-screen or whole-list loads only; a short wait is ThinkingDots.",
+    file: "app/components/ui/Skeleton.tsx",
+    designSystemSection: "#skeleton",
+    flutterEquivalent: "Skeleton — lib/view/_widget/skeleton.dart (shimmer package; Shimmer.fromColors around sized Containers)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary / tertiary", role: "the sweep gradient and the row hairline" },
+        { token: "color.background", role: "account page skeleton ground" },
+      ],
+      forbidden: ["A spinner for a whole-list load — use a skeleton", "Skeleton shapes that do not match the real content's size"],
+    },
+    props: [
+      { name: "Bone: width / height / radius / style", type: "number | string / number / number / CSSProperties", required: false, default: "100% / 14 / 6", description: "One placeholder rectangle." },
+      { name: "AccountListSkeleton: rows", type: "number", required: false, default: "6", description: "How many company rows." },
+    ],
+    usage: {
+      patterns: [{ name: "list loading", when: "The companies list is loading", code: `{loading ? <AccountListSkeleton rows={6} /> : <AccountList />}` }],
+      antiPatterns: [{ scenario: "A skeleton inside a button", why: "The button already has a loading state", instead: "Pass loading to <Button>" }],
+    },
+    aiHints: {
+      priority: "medium",
+      useWhen: ["Loading a list or a whole screen"],
+      neverUseFor: ["A short wait next to text or in a button — that is ThinkingDots"],
+      alwaysRemember: ["Match the real content's layout so nothing jumps when it arrives", "Bone radius is a number (px) for now"],
+    },
+    changelog: ["2026-11-09: registry entry and design-system area (Skeleton) added."],
+  },
+
+  // ── CompletionToast ─────────────────────────────────────────────────────────
+  {
+    name: "CompletionToast",
+    category: "ui-primitive",
+    type: "display",
+    description:
+      "A thin wrapper over Toast for the pending-complete window after an action item is checked off: a success toast reading \"Item complete\" with one Undo action and, when onAddNote is given, an \"Add a note\" row under it. " +
+      "The screens time that window themselves, so it never dismisses on its own and pressing Undo does not close it. In Flutter this is a call to the toast controller, not a widget.",
+    file: "app/components/ui/CompletionToast.tsx",
+    designSystemSection: "#toast",
+    flutterEquivalent: "No widget — ToastController.show(tone: success, title: \"Item complete\", action: Undo, secondary: \"Add a note\") with no auto-dismiss",
+    tokens: { required: [{ token: "see Toast", role: "all styling comes from Toast" }], forbidden: ["Restyling it — change Toast instead"] },
+    props: [
+      { name: "visible", type: "boolean", required: true, description: "Whether the toast shows." },
+      { name: "bottom", type: "number", required: false, default: "24", description: "Distance from the bottom of the phone frame; raise it to clear a floating control." },
+      { name: "onUndo", type: "() => void", required: true, description: "Undo pressed." },
+      { name: "onDismiss", type: "() => void", required: true, description: "The screen hides it." },
+      { name: "onAddNote", type: "() => void", required: false, description: "Adds an \"Add a note\" row." },
+    ],
+    usage: {
+      patterns: [{ name: "after check-off", when: "An item is marked complete and can still be undone", code: `<CompletionToast visible={pending} onUndo={undo} onDismiss={hide} onAddNote={openNote} />` }],
+      antiPatterns: [{ scenario: "Building a second \"item complete\" toast", why: "Toast already has tone, action and secondary row", instead: "Use CompletionToast, or Toast directly" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["Confirming an action item was completed, with Undo"],
+      neverUseFor: ["Any other confirmation — use useToast().show(...)"],
+      alwaysRemember: ["It does not auto-dismiss; the screen owns the timing", "Flutter: no separate widget"],
+    },
+    changelog: ["2026-11-09: registry entry added (it already wrapped Toast)."],
+  },
+
+  // ── ErrorState ──────────────────────────────────────────────────────────────
+  {
+    name: "ErrorState",
+    category: "ui-primitive",
+    type: "display",
+    description:
+      "What a list or screen shows when its data fails to load, centered in the space it fills: a 52px circle holding a coral warning triangle, a title, a short message (max 260px wide) and, when onRetry is given, a tonal \"Try again\" Button. " +
+      "A failed action (a save that did not go through) is a Toast or Banner, not this.",
+    file: "app/components/ui/ErrorState.tsx",
+    designSystemSection: "#error-state",
+    flutterEquivalent: "ErrorState — lib/view/_widget/error_state.dart (centered Column; onRetry re-runs the load)",
+    tokens: {
+      required: [
+        { token: "color.dark.secondary", role: "icon circle" },
+        { token: "color.brand.coral", role: "warning triangle" },
+        { token: "color.text.primary / muted", role: "title / message" },
+      ],
+      forbidden: ["A hand-built retry button — it is Button (tonal, sm)", "Using it for a failed action — use Toast or Banner"],
+    },
+    props: [
+      { name: "title", type: "string", required: false, default: '"Something went wrong"', description: "Say what failed, e.g. \"Couldn't load accounts\"." },
+      { name: "message", type: "string", required: false, default: '"We couldn\'t load this content. Check your connection and try again."', description: "One short line." },
+      { name: "onRetry", type: "() => void", required: false, description: "Shows the Try again button and runs the load again." },
+    ],
+    usage: {
+      patterns: [{ name: "failed list load", when: "The data call fails", code: `<ErrorState title="Couldn't load accounts" message="We had trouble reaching the server." onRetry={reload} />` }],
+      antiPatterns: [{ scenario: "A red banner for a failed list", why: "The list has nothing to show; it needs a full state", instead: "ErrorState" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["A list or screen could not load its data"],
+      neverUseFor: ["A failed save or action", "An empty list — that is an empty state, not an error"],
+      alwaysRemember: ["Retry is optional", "The triangle is a raw SVG in coral, not a Material icon"],
+    },
+    changelog: ["2026-11-09: registry entry and design-system area added; Try again is now the shared Button (tonal) instead of a hand-built pill."],
+  },
+
+  // ── ScrollAwareTopBar ───────────────────────────────────────────────────────
+  {
+    name: "ScrollAwareTopBar",
+    category: "layout",
+    type: "navigation",
+    description:
+      "A back button that floats over the top of a scrolling page, with an optional control on the right (Edit, Send). At the top the arrow has no background; after 10px of scroll a 36px glass circle appears behind it. " +
+      "The right control fades out while scrolling down and returns when scrolling up. The bar sits 40px from the top and lets taps through everywhere except its controls. Page content needs about 86px of top padding.",
+    file: "app/components/ui/ScrollAwareTopBar.tsx",
+    designSystemSection: "#scroll-top-bar",
+    flutterEquivalent: "ScrollAwareTopBar — lib/view/_widget/scroll_aware_top_bar.dart (Stack overlay driven by the page's ScrollController)",
+    tokens: {
+      required: [
+        { token: "color.text.primary", role: "back arrow" },
+        { token: "color.alpha.bg-glass", role: "scrolled circle, with a 16px backdrop blur" },
+        { token: "color.alpha.white-10", role: "circle's hairline ring" },
+      ],
+      forbidden: ["A solid header bar that scrolls away — this one floats", "Putting content under the bar without the 86px top padding"],
+    },
+    props: [
+      { name: "onBack", type: "() => void", required: true, description: "Back pressed." },
+      { name: "rightSlot", type: "ReactNode", required: false, description: "A control on the right; fades with scroll direction." },
+      { name: "scrollRef", type: "RefObject<HTMLDivElement>", required: true, description: "The scrolling container to listen to." },
+    ],
+    usage: {
+      patterns: [{ name: "page with a floating back", when: "A full page with its own scroll area", code: `
+<div style={{ position: "relative", height: "100%", overflow: "hidden" }}>
+  <ScrollAwareTopBar onBack={back} rightSlot={<EditButton />} scrollRef={scrollRef} />
+  <div ref={scrollRef} style={{ position: "absolute", inset: 0, overflowY: "auto" }}>
+    <div style={{ paddingTop: 86 }}>…</div>
+  </div>
+</div>` }],
+      antiPatterns: [{ scenario: "A fixed header with a title", why: "This component is only the back button and one control", instead: "Build a header for that screen" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["A scrolling detail page that needs a floating back button"],
+      neverUseFor: ["Sheets and drawers — they have their own header"],
+      alwaysRemember: ["The glass circle appears after 10px of scroll", "The right control hides while scrolling down"],
+    },
+    changelog: ["2026-11-09: registry entry and design-system area (Scroll Top Bar) added; handoff comment corrected to the real tokens."],
+  },
+
+  // ── CustomIcons ─────────────────────────────────────────────────────────────
+  {
+    name: "CustomIcons",
+    category: "ui-primitive",
+    type: "display",
+    description:
+      "Icons Material Symbols does not have, drawn as filled SVGs on a 24px grid that take currentColor: LeadStarIcon (a four-pointed star marking a lead), CompanyIcon (a building marking a company) " +
+      "and AiChatIcon (a speech bubble with a sparkle, the Ask button on the account page). Each takes size (px), style and className.",
+    file: "app/components/ui/CustomIcons.tsx",
+    designSystemSection: "#custom-icons",
+    flutterEquivalent: "SVG assets via flutter_svg (lead_star.svg, company.svg, ai_chat.svg), tinted with the icon colour",
+    tokens: { required: [{ token: "currentColor", role: "the parent's text colour" }], forbidden: ["Hard-coding a colour on the icon", "Redrawing these with a Material Symbols name"] },
+    props: [
+      { name: "size", type: "number", required: false, default: "18 (24 for AiChatIcon)", description: "Width and height in px." },
+      { name: "style / className", type: "CSSProperties / string", required: false, description: "Passed to the SVG." },
+    ],
+    usage: {
+      patterns: [{ name: "lead marker", when: "Marking a lead in a row", code: `<LeadStarIcon size={14} style={{ color: "var(--md-sys-color-neonindigo)" }} />` }],
+      antiPatterns: [{ scenario: "Adding another one-off inline SVG", why: "They drift in size and weight", instead: "Add it to CustomIcons" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["An icon Material Symbols lacks (lead star, company, Ask)"],
+      neverUseFor: ["Anything Material Symbols has — use Icon"],
+      alwaysRemember: ["currentColor only", "Ship as SVG assets in Flutter"],
+    },
+    changelog: ["2026-11-09: registry entry and design-system area (Custom Icons) added."],
+  },
+
+  // ── ThumbsDownIcon ──────────────────────────────────────────────────────────
+  {
+    name: "ThumbsDownIcon",
+    category: "ui-primitive",
+    type: "display",
+    description:
+      "The \"not helpful\" mark on AI answers (the insight card and chat messages): a 15px thumbs-down on a 1.6 stroke, outline by default and filled with currentColor once the feedback is given. " +
+      "Drawn by hand because Material's thumb_down has a wrist cuff we don't want.",
+    file: "app/components/ui/ThumbsDownIcon.tsx",
+    designSystemSection: "#custom-icons",
+    flutterEquivalent: "ThumbsDownIcon — an SVG asset or CustomPaint with filled: bool",
+    tokens: { required: [{ token: "currentColor", role: "stroke and fill" }], forbidden: ["Swapping in Material's thumb_down"] },
+    props: [
+      { name: "filled", type: "boolean", required: false, default: "false", description: "Fills the shape once feedback is given." },
+      { name: "size", type: "number", required: false, default: "15", description: "Width and height in px." },
+    ],
+    usage: {
+      patterns: [{ name: "feedback button", when: "A thumbs-down control on an AI answer", code: `<ThumbsDownIcon filled={disliked} />` }],
+      antiPatterns: [{ scenario: "A thumbs-up beside it for the same answer", why: "The product only asks for negative feedback", instead: "Keep thumbs-down only" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["Marking an AI answer not helpful"],
+      neverUseFor: ["General dislike or delete actions"],
+      alwaysRemember: ["Outline until pressed, then filled"],
+    },
+    changelog: ["2026-11-09: registry entry added (shares the Custom Icons area)."],
+  },
+
+  // ── AccountPickerSheet ──────────────────────────────────────────────────────
+  {
+    name: "AccountPickerSheet",
+    category: "feature",
+    type: "interactive",
+    description:
+      "\"Switch account\": the sheet that moves the capture flow to a different company. A header with a close button, a SearchField (focused as the sheet slides up), then the accounts A to Z. " +
+      "Without a search the current account is pinned at the top in indigo with a check, then a hairline and the rest; with a search it is one list filtered by name, city or state, and no match shows a muted \"No accounts match\" line. " +
+      "Tapping a row selects it and closes the sheet. It does not portal itself; the parent renders it in the overlay root.",
+    file: "app/components/accounts/AccountPickerSheet.tsx",
+    designSystemSection: "#account-picker",
+    flutterEquivalent: "AccountPickerSheet — lib/view/_widget/accounts/account_picker_sheet.dart (showModalBottomSheet; use case: SearchAccounts)",
+    tokens: {
+      required: [
+        { token: "color.dark.primary", role: "sheet fill (via Drawer)" },
+        { token: "color.dark.tertiary", role: "row hairlines" },
+        { token: "color.neonindigo.base", role: "current account name and check" },
+        { token: "color.text.primary / muted", role: "names / city and state, empty message" },
+        { token: "radius.xl", role: "sheet top corners (via Drawer)" },
+      ],
+      forbidden: ["A hand-built search input — it is SearchField", "text.disabled for the empty message — it is informational, so text.muted"],
+    },
+    props: [
+      { name: "currentId", type: "string | null", required: true, description: "The account to pin and mark." },
+      { name: "onSelect", type: "(id: string, name: string) => void", required: true, description: "Called with the chosen account; the sheet then closes." },
+      { name: "onClose", type: "() => void", required: true, description: "Close request (backdrop, close button, after a pick)." },
+      { name: "autoFocus", type: "boolean", required: false, default: "true", description: "Focus the search field after the slide-up. The design-system preview turns it off." },
+    ],
+    usage: {
+      patterns: [{ name: "from the capture sheet", when: "Changing which account a capture belongs to", code: `
+<AnimatePresence>
+  {showPicker && <AccountPickerSheet currentId={accountId} onSelect={switchAccount} onClose={() => setShowPicker(false)} />}
+</AnimatePresence>` }],
+      antiPatterns: [{ scenario: "Using it to browse companies", why: "It is a switcher for capture; browsing is the companies list", instead: "Use the companies screen" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["Moving the current capture to another account"],
+      neverUseFor: ["Browsing or searching all companies"],
+      alwaysRemember: ["The current account is pinned first and marked", "The parent supplies the portal and AnimatePresence", "Z-index 60 / 61 so it sits above the capture sheet"],
+    },
+    changelog: ["2026-11-09: registry entry and design-system area (Account Picker) added; the empty message now uses text.muted; autoFocus prop added for the preview."],
+  },
+
+  // ── InsightCardLoader ───────────────────────────────────────────────────────
+  {
+    name: "InsightCardLoader",
+    category: "feature",
+    type: "display",
+    description:
+      "What the account summary looks like while the app brings it in: a four-point indigo sparkle that turns 90 degrees every 1.6s with a small pulse, and beside it a status line (\"Reading 6 visits...\", \"Checking Salesforce...\", \"Writing your summary...\") " +
+      "that slides up and fades every 1.1s until the last one, which it holds until loading ends. It replaces the InsightCard body and the footer is hidden. Reduced motion: the sparkle holds still and lines swap with a fade.",
+    file: "app/components/accounts/InsightCardLoader.tsx",
+    designSystemSection: "#insight-card",
+    flutterEquivalent: "InsightCardLoader — lib/view/_widget/insight_card_loader.dart (Timer.periodic for the lines, a repeating AnimationController for the sparkle, AnimatedSwitcher with a slide and fade)",
+    tokens: {
+      required: [
+        { token: "color.neonindigo.base", role: "sparkle" },
+        { token: "color.text.muted", role: "status line" },
+        { token: "spacing.3", role: "gap between sparkle and text" },
+      ],
+      forbidden: ["A spinner or ThinkingDots for the summary load — this is the loading state of the card", "Dismissing early — it waits on the last line until the text arrives"],
+    },
+    props: [
+      { name: "messages", type: "string[]", required: false, default: "Reading 6 visits... / Checking Salesforce... / Writing your summary...", description: "The status lines in order." },
+      { name: "interval", type: "number (ms)", required: false, default: "1100", description: "Time each line shows." },
+    ],
+    usage: {
+      patterns: [{ name: "inside InsightCard", when: "The summary is loading", code: `<InsightCard loading loadingMessages={["Reading 6 visits...", "Checking Salesforce...", "Writing your summary..."]} />` }],
+      antiPatterns: [{ scenario: "Using it outside the insight card", why: "It is tuned to the card body", instead: "ThinkingDots for short waits; Skeleton for whole lists" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["Inside InsightCard while its text is loading"],
+      neverUseFor: ["Any other wait"],
+      alwaysRemember: ["Timings were read off a screen recording; treat them as a close match", "InsightCard owns the cross-fade to the real text"],
+    },
+    changelog: ["2026-11-09: registry entry added (it was already shown in the Insight Card area)."],
+  },
+
+  // ── AIReviewOverlay ─────────────────────────────────────────────────────────
+  {
+    name: "AIReviewOverlay",
+    category: "feature",
+    type: "interactive",
+    description:
+      "The full-screen review after a capture: the rep checks what the AI pulled out of the visit before it goes to Salesforce, and fixes anything by hand or by voice. " +
+      "A header (\"What we learned\" and \"Here's the read on <account>\", or a waveform and live caption while the mic is held), a scrolling list of field cards, and a bottom bar with Use defaults, a hold-to-talk mic and Save. " +
+      "Each field card shows the AI's confidence: high (indigo, sparkle), uncertain (dashed outline) or confirmed (green, once edited or spoken). Tap a card to edit; leaving it saves and confirms; empty text is ignored.",
+    file: "app/components/capture/AIReviewOverlay.tsx",
+    designSystemSection: "#ai-review",
+    flutterEquivalent: "AIReviewOverlay — lib/view/_widget/capture/ai_review_overlay.dart; FieldCard — field_card.dart (use cases: ExtractVisitFields, ConfirmField)",
+    tokens: {
+      required: [
+        { token: "color.background", role: "screen" },
+        { token: "color.dark.secondary", role: "field cards" },
+        { token: "color.neonindigo.base", role: "high-confidence outline and sparkle, mic, focused stroke" },
+        { token: "color.semantic.success", role: "confirmed outline, tint and check" },
+        { token: "color.alpha.neonindigo-10", role: "Save button fill" },
+        { token: "color.text.primary / muted / on-accent", role: "values / labels, eyebrows / mic icon" },
+        { token: "radius.lg / full", role: "cards / buttons" },
+      ],
+      forbidden: [
+        "A raw <input> in a card — the text is TextField (bare); the card owns the outline",
+        "text.disabled for the eyebrows or \"Listening…\" — informational text is text.muted",
+        "Hiding the confidence — it is how the rep decides what to double-check",
+      ],
+    },
+    props: [{ name: "(none)", type: "—", required: false, description: "Shows while CaptureContext.status is \"reviewing\"; reads the account name from it. Use defaults and Save both call readyCapture()." }],
+    usage: {
+      patterns: [{ name: "mounted once", when: "In the mobile layout, next to the capture widget", code: `<AIReviewOverlay />` }],
+      antiPatterns: [{ scenario: "Showing AI fields as a plain form", why: "The rep needs to see how sure the AI was and what changed", instead: "Use the field card states" }],
+    },
+    aiHints: {
+      priority: "high",
+      useWhen: ["Reviewing AI-extracted CRM fields after a capture"],
+      neverUseFor: ["General forms — those are TextField"],
+      alwaysRemember: [
+        "Confidence is shown in the card's outline and value colour, not hidden",
+        "An edit marks the field confirmed",
+        "Tapping \"What we learned\" toggles five extra demo fields (prototype only)",
+        "Save and Use defaults are hand-built round buttons (SideButton), not Button or IconButton",
+      ],
+    },
+    changelog: ["2026-11-09: registry entry and design-system area (AI Review) added. The focused field's raw input is now TextField (bare); informational text moved from text.disabled to text.muted. FieldCard, LiveCaption, WaveformBars and SideButton are exported for the previews."],
+  },
+
+  // ── CaptureWidget ───────────────────────────────────────────────────────────
+  {
+    name: "CaptureWidget",
+    category: "feature",
+    type: "interactive",
+    description:
+      "The persistent recording bar anchored to the bottom edge while a visit is being captured. A red dot and timer, \"Taking notes\" with the account name (tap it to switch accounts without stopping), and a coral Finish button, over three drifting blurred color blobs. " +
+      "When a phone call interrupts, the timer pauses, the blobs settle and Finish turns into a disabled \"Paused\" pill. After Finish the bar leaves; processing and \"Note ready\" show as the top pill Toast, with AIReviewOverlay in between for prospects.",
+    file: "app/components/capture/CaptureWidget.tsx",
+    flutterEquivalent: "CaptureWidget — lib/view/_widget/capture/capture_widget.dart; state machine in capture_view_model.dart (use cases: StartCapture, FinishCapture, SwitchCaptureAccount)",
+    tokens: {
+      required: [
+        { token: "color.brand.coral", role: "left blob" },
+        { token: "color.neonindigo.dark / base", role: "right and middle blobs" },
+        { token: "color.semantic.error", role: "recording dot" },
+        { token: "color.dark.primary", role: "bar surface (82% over the blobs)" },
+        { token: "color.text.primary / secondary", role: "timer, title / account name" },
+        { token: "color.brand.coral.dark + color.text.on-coral", role: "Finish button" },
+        { token: "color.alpha.white.10 + color.text.muted", role: "Paused button" },
+        { token: "radius.full", role: "buttons" },
+      ],
+      forbidden: [
+        "Raw hex or rgba for the blobs, dot or Paused button — they are tokens, so they follow the theme like VoiceAtmosphere",
+        "Showing processing or ready inside the bar — those are Toast pill states",
+        "A switcher that interrupts the recording",
+      ],
+    },
+    props: [{ name: "(none)", type: "—", required: false, description: "Driven by CaptureContext (status, account, canSwitchAccount, isProspect) and FakeCallContext (callStatus). Renders into #phone-overlay-root." }],
+    usage: {
+      patterns: [{ name: "mounted once", when: "In the mobile layout, so a capture survives navigation", code: `<CaptureWidget />` }],
+      antiPatterns: [{ scenario: "Starting a second capture UI on a screen", why: "There is one capture session at a time, owned by CaptureContext", instead: "Call the capture context's start function" }],
+    },
+    aiHints: {
+      priority: "high",
+      useWhen: ["Describing or changing the recording bar and its call-interrupted state"],
+      neverUseFor: ["Processing or ready states — those are the Toast pill", "Reviewing AI fields — that is AIReviewOverlay"],
+      alwaysRemember: [
+        "Bar = recording only; the status machine is idle → recording → finalizing → (reviewing) → ready",
+        "Account switching keeps the recording running",
+        "No design-system area yet: it needs the capture context, so it is documented here and in the handoff comment",
+      ],
+    },
+    changelog: ["2026-11-09: registry entry and handoff comment added. Blob, recording-dot and Paused-button colors moved from raw hex/rgba to tokens (deep blob is now neonindigo.dark, slightly lighter)."],
+  },
+
+  // ── ChatHeader ──────────────────────────────────────────────────────────────
+  {
+    name: "ChatHeader",
+    category: "feature",
+    type: "navigation",
+    description:
+      "The row under the chat drawer's handle: Chat history on the left (turns indigo while its menu is open), New chat and Minimize on the right. Three 44px round touch targets with 26px icons, 12px side padding, no divider.",
+    file: "app/components/chat/ChatHeader.tsx",
+    designSystemSection: "#account-chat",
+    flutterEquivalent: "ChatHeader — lib/view/_widget/chat/chat_header.dart",
+    tokens: {
+      required: [
+        { token: "color.text.secondary", role: "icons" },
+        { token: "color.neonindigo.base", role: "history icon while its menu is open" },
+        { token: "spacing.3", role: "side padding" },
+      ],
+      forbidden: ["Adding a divider under it", "Smaller than 44px touch targets"],
+    },
+    props: [
+      { name: "historyOpen", type: "boolean", required: false, default: "false", description: "Marks the history button active (indigo, aria-pressed)." },
+      { name: "onHistory / onNewChat / onMinimize", type: "() => void", required: false, description: "Button handlers." },
+    ],
+    usage: {
+      patterns: [{ name: "in the chat drawer", when: "Top of the account chat", code: `<ChatHeader historyOpen={menuOpen} onHistory={toggleHistory} onNewChat={newChat} onMinimize={close} />` }],
+      antiPatterns: [{ scenario: "Putting a title in the header", why: "The account name is in the empty state and the conversation", instead: "Leave it three buttons" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["The top of the account chat"],
+      neverUseFor: ["Other drawers — they use DrawerHeader"],
+      alwaysRemember: ["History turns indigo only while its menu is open"],
+    },
+    changelog: ["2026-11-09: registry entry added (it was documented inside ChatDrawer)."],
+  },
+
+  // ── ChatEmptyState ──────────────────────────────────────────────────────────
+  {
+    name: "ChatEmptyState",
+    category: "feature",
+    type: "display",
+    description:
+      "What the chat shows before anything is asked: a greeting (\"Hi, <name>\", 32px indigo) and \"Ask anything about <account>.\" centered in the free space, and a horizontally scrolling row of SuggestionChips below. " +
+      "Each chip is about 1/2.4 of the row wide (148 to 176px), so the third is always cut off by the right edge, which is the cue that the row scrolls. SuggestionChip is a dark.secondary rounded card with 17px text that fills the box when tapped.",
+    file: "app/components/chat/ChatEmptyState.tsx",
+    designSystemSection: "#account-chat",
+    flutterEquivalent: "ChatEmptyState — lib/view/_widget/chat/chat_empty_state.dart (Column + horizontal SingleChildScrollView of chips); SuggestionChip is its own widget",
+    tokens: {
+      required: [
+        { token: "color.neonindigo.base", role: "greeting" },
+        { token: "color.text.muted", role: "subtitle" },
+        { token: "color.text.primary", role: "chip text" },
+        { token: "color.dark.secondary", role: "chip fill" },
+        { token: "radius.lg", role: "chips" },
+        { token: "spacing.2 / 4 / 5 / 8", role: "gaps and padding" },
+      ],
+      forbidden: ["Chips so narrow that no chip is cut off — the cut-off one signals the scroll"],
+    },
+    props: [
+      { name: "userName", type: "string", required: true, description: "Greeted by name." },
+      { name: "accountName", type: "string", required: true, description: "Shown in the subtitle." },
+      { name: "suggestions", type: "string[]", required: true, description: "One chip each." },
+      { name: "onPick", type: "(s: string) => void", required: false, description: "A chip is tapped; the text is sent as the question." },
+    ],
+    usage: {
+      patterns: [{ name: "new chat", when: "A chat with no turns", code: `<ChatEmptyState userName="Nate" accountName="Acme Co" suggestions={CHAT_SUGGESTIONS} onPick={send} />` }],
+      antiPatterns: [{ scenario: "More than about six suggestions", why: "The row becomes a hunt", instead: "Keep it to a handful of useful questions" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["The first screen of an account chat"],
+      neverUseFor: ["An empty list elsewhere"],
+      alwaysRemember: ["The third chip is cut off on purpose", "Chips send their text as the question"],
+    },
+    changelog: ["2026-11-09: registry entry added (it was documented inside ChatDrawer)."],
+  },
+
+  // ── ChatMessageList ─────────────────────────────────────────────────────────
+  {
+    name: "ChatMessageList",
+    category: "feature",
+    type: "display",
+    description:
+      "The scrolling conversation: 16px side padding, 24px between messages, 16px under the last. It scrolls to the newest message when the list grows, when the thinking row appears, or as a spoken reply is revealed word by word. " +
+      "Renders a ChatMessage per turn and a ThinkingRow while an answer is on its way. `scroll` is off in static previews.",
+    file: "app/components/chat/ChatMessageList.tsx",
+    designSystemSection: "#account-chat",
+    flutterEquivalent: "ChatMessageList — lib/view/_widget/chat/chat_message_list.dart (ListView with reverse: true and a ScrollController)",
+    tokens: { required: [{ token: "spacing.2 / 4 / 6", role: "padding and the gap between messages" }] },
+    props: [
+      { name: "turns", type: "ChatTurn[]", required: true, description: "The conversation." },
+      { name: "thinking", type: "boolean", required: false, default: "false", description: "Appends the ThinkingRow." },
+      { name: "streamingId", type: "string", required: false, description: "The turn being read aloud." },
+      { name: "revealedWords", type: "number", required: false, description: "How many words of the streaming turn are highlighted." },
+      { name: "scroll", type: "boolean", required: false, default: "true", description: "Auto-scroll to the newest message; false for static previews." },
+    ],
+    usage: {
+      patterns: [{ name: "in the chat drawer", when: "A chat with turns", code: `<ChatMessageList turns={turns} thinking={thinking} streamingId={streamId} revealedWords={words} />` }],
+      antiPatterns: [{ scenario: "Rendering ChatMessage rows by hand in a column", why: "The spacing and auto-scroll live here", instead: "Use ChatMessageList" }],
+    },
+    aiHints: {
+      priority: "low",
+      useWhen: ["Showing the turns of an account chat"],
+      neverUseFor: ["The empty chat — that is ChatEmptyState"],
+      alwaysRemember: ["It scrolls itself to the newest message", "Flutter: a reversed ListView"],
+    },
+    changelog: ["2026-11-09: registry entry added (it was documented inside ChatDrawer)."],
+  },
+
   // ── SearchField ────────────────────────────────────────────────────────────────
   {
     name: "SearchField",
     category: "ui-primitive",
     type: "interactive",
     description:
-      "The one search bar for the whole app: a search icon, the text field and a clear button once there is text, in three sizes (sm 36, md 44, lg 48). The indigo stroke shows on focus, or always with `active` (searching beyond your own list). `trailing` takes a small tag; `endSlot` a control inside the pill (the sort menu on the companies list). Used on the companies list, the action item lists, the account picker, the chat history menu and the Engagements drawer.",
+      "The one search bar for the whole app (a TextField with a search icon): a search icon, the text field and a clear button once there is text, in three sizes (sm 36, md 44, lg 48). The indigo stroke shows on focus, or always with `active` (searching beyond your own list). `trailing` takes a small tag; `endSlot` a control inside the pill (the sort menu on the companies list). Used on the companies list, the action item lists, the account picker, the chat history menu and the Engagements drawer.",
     file: "app/components/ui/SearchField.tsx",
     designSystemSection: "#search-field",
     flutterEquivalent: "HalosightSearchField — lib/view/_widget/halosight_search_field.dart",
@@ -1880,8 +2715,7 @@ BEFORE BUILDING ANY UI IN THIS PROJECT:
 1. Check this registry — if a component exists for your use case, use it. Do not recreate.
 2. Check tokenRules above — use the correct token for the surface/text/border role.
 3. Never use raw hex values. Every color must be var(--md-sys-color-*).
-4. Every new screen must include <BottomNav /> if it is a top-level tab.
-5. Typography classes: headings use .heading-1 through .heading-6 (Roboto Slab).
+4. Typography classes: headings use .heading-1 through .heading-6 (Roboto Slab).
    Body text uses Tailwind's text-xl/lg/base/sm/xs + .text-*-bold for 600 weight.
    Nav labels use .label-serif. Tiny captions use .text-2xs.
 6. Icons: use <Icon name="..." /> for any Material Symbols icon. Use AccountTypeIcon

@@ -35,7 +35,7 @@ Reps make mistakes. Connections drop. Recordings fail. Every flow must have a gr
 
 ## Navigation Rules
 
-- **Bottom nav** has exactly two tabs: Home and Accounts. Nothing else unless product strategy changes significantly.
+- **No bottom nav** for now. Top-level navigation is the Home screen plus drawers. If a bottom nav comes back it will be redesigned first.
 - **Back navigation** is always available on detail screens. Never trap a user.
 - **Modals and overlays** are used only for transient, contextual interactions (sort menu, confirm dialogs). Not for full workflows.
 - **Deep linking**: Every account and interaction should be addressable by URL/route for sharability.
