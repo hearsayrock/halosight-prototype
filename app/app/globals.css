@@ -6,6 +6,7 @@
 @import "../tokens/spacing.css";
 @import "../tokens/typography.css";
 @import "../tokens/icons.css";
+@import "../tokens/generated/design-tokens.css";
 
 /* ─── Animations ──────────────────────────────────────────────────────────── */
 

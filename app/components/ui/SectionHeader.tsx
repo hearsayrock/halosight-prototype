@@ -11,15 +11,18 @@
  */
 
 import Icon from "@/components/ui/Icon";
+import type { ReactNode } from "react";
 
 export default function SectionHeader({
-  label, count, onAdd, addLabel = "Add", divider = false,
+  label, count, onAdd, addLabel = "Add", divider = false, trailing, compact = false,
 }: {
   label: string;
   count?: number;
   onAdd?: () => void;
   addLabel?: string;
   divider?: boolean;
+  trailing?: ReactNode;
+  compact?: boolean;
 }) {
   if (divider) {
     const line = { flex: 1, height: 1, background: "var(--md-sys-color-alpha-white-10)" } as const;
@@ -32,14 +35,14 @@ export default function SectionHeader({
     );
   }
   return (
-    <div className="flex items-center justify-between" style={{ padding: "var(--spacing-2) var(--spacing-4)" }}>
+    <div className="flex items-center justify-between" style={{ padding: compact ? "4px 16px" : "var(--spacing-2) var(--spacing-4)", minHeight: compact ? 40 : undefined }}>
       <div className="flex items-center" style={{ gap: "var(--spacing-2)" }}>
         <span className="text-11-bold" style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}>{label}</span>
         {count !== undefined && (
           <span className="text-11-bold" style={{ color: "var(--md-sys-color-text-disabled)", background: "var(--md-sys-color-dark-secondary)", borderRadius: "var(--radius-full)", padding: "1px 7px" }}>{count}</span>
         )}
       </div>
-      {onAdd && (
+      {trailing ?? (onAdd && (
         <button
           type="button"
           onClick={onAdd}
@@ -49,7 +52,7 @@ export default function SectionHeader({
         >
           <Icon name="add" size={18} style={{ color: "var(--md-sys-color-neonindigo)" }} />
         </button>
-      )}
+      ))}
     </div>
   );
 }

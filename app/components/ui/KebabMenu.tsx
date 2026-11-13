@@ -15,9 +15,10 @@
  */
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
+import MenuPopover from "@/components/ui/MenuPopover";
 import Icon from "@/components/ui/Icon";
-import { MenuPanel, MenuRow, menuPanelVariants, menuPanelTransition } from "@/components/ui/Menu";
+import { MenuPanel, MenuRow } from "@/components/ui/Menu";
 
 export interface KebabMenuItem {
   label: string;
@@ -47,19 +48,7 @@ export default function KebabMenu({ items }: Props) {
         <Icon name="more_vert" size={20} style={{ color: "var(--md-sys-color-text-muted)" }} />
       </motion.button>
 
-      <AnimatePresence>
-        {open && (
-          <>
-            <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-            <motion.div
-              className="absolute right-0 top-0 z-20"
-              variants={menuPanelVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={menuPanelTransition}
-              style={{ transformOrigin: "top right" }}
-            >
+      <MenuPopover open={open} onClose={() => setOpen(false)} placement="top-right" backdropZIndex={10} panelZIndex={20}>
               <MenuPanel>
                 {items.map((item, i) => (
                   <MenuRow
@@ -76,10 +65,7 @@ export default function KebabMenu({ items }: Props) {
                   />
                 ))}
               </MenuPanel>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      </MenuPopover>
     </div>
   );
 }

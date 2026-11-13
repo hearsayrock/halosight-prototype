@@ -3,18 +3,18 @@
 > The Halosight design system is M3-aligned, Flutter-ready, and Figma-portable. All tokens are named to map directly to Flutter `ThemeData` and Figma variables.
 
 **Live viewer:** `localhost:3000/design-system`  
-**Source of truth:** `app/tokens/*.css` — hand-maintained for now; editing them updates every swatch on the live viewer automatically. Published token values live in the separate design-system repo (`tokens/tokens.json`); see `docs/token-pipeline.md`.
+**Source of truth:** the pinned official token release in `app/tokens/tokens.json`. `app/tokens/generated/design-tokens.css` is generated from that snapshot; do not edit its values by hand. Sync and handoff details are in `docs/token-pipeline.md`.
 
 ---
 
 ## Token Architecture
 
-Tokens live in `app/tokens/` (`colors.css`, `spacing.css`, `typography.css`, `fonts.css`, `icons.css`), imported by `app/app/globals.css`. There is no `tailwind.config.ts` — Tailwind v4 uses a CSS-first config.
+Official token values are pinned in `app/tokens/tokens.json` and generated into `app/tokens/generated/design-tokens.css`. Prototype utility classes and icon-axis rules live in `typography.css` and `icons.css`; font-face declarations and gradient compositions remain consumer-owned. There is no `tailwind.config.ts` — Tailwind v4 uses a CSS-first config.
 
 | Layer | Location | Purpose |
 |---|---|---|
-| **Gradients** | `:root { --gradient-* }` | Gradient definitions. Referenced in components via `var()`. |
-| **Semantic tokens** | `@theme { --md-sys-color-* }` | Role-based color names. Only these go in components. Tailwind generates utility classes from these automatically. CSS vars are emitted to `:root` so the design system viewer can read live values via `getComputedStyle`. |
+| **Official tokens** | `app/tokens/generated/design-tokens.css` | Generated values from a pinned release, read by components through `var()`. |
+| **Prototype utilities** | `typography.css`, `icons.css`, `spacing.css`, `colors.css` | Class-name adapters, icon-axis rules, and local layout/gradient recipes. They do not own shared token values. |
 
 **Rule:** Never use raw hex values in components. Always use `var(--md-sys-color-*)` tokens.
 
@@ -24,173 +24,173 @@ Tokens live in `app/tokens/` (`colors.css`, `spacing.css`, `typography.css`, `fo
 
 ### App Surface
 
-| Token | Value | Use |
+| CSS property | Official token path | Use |
 |---|---|---|
-| `--md-sys-color-background` | `#111420` | Page / app chrome |
-| `--md-sys-color-surface-dim` | `#171B29` | Nav, persistent UI |
+| `--md-sys-color-background` | `color.background` | Page / app chrome |
+| `--md-sys-color-surface-dim` | `color.surface-dim` | Nav, persistent UI |
 
 ### Dark Theme
 
-| Token | Value | Use |
+| CSS property | Official token path | Use |
 |---|---|---|
-| `--md-sys-color-dark-void` | `#04050B` | Near-black — deepest chrome |
-| `--md-sys-color-dark-base` | `#0D0F1A` | Off-black — deepest dark |
-| `--md-sys-color-dark-primary` | `#1A1D29` | Primary dark background |
-| `--md-sys-color-dark-secondary` | `#252A36` | Secondary dark — cards, list items |
-| `--md-sys-color-dark-tertiary` | `#3D4451` | Tertiary dark — dividers, borders |
+| `--md-sys-color-dark-void` | `color.dark.void` | Near-black — deepest chrome |
+| `--md-sys-color-dark-base` | `color.dark.base` | Off-black — deepest dark |
+| `--md-sys-color-dark-primary` | `color.dark.primary` | Primary dark background |
+| `--md-sys-color-dark-secondary` | `color.dark.secondary` | Secondary dark — cards, list items |
+| `--md-sys-color-dark-tertiary` | `color.dark.tertiary` | Tertiary dark — dividers, borders |
 
 ### Light Theme
 
-| Token | Value | Use |
+| CSS property | Official token path | Use |
 |---|---|---|
-| `--md-sys-color-surface-white` | `#FFFFFF` | Pure white background |
-| `--md-sys-color-surface-light` | `#F8FAFC` | Light background |
-| `--md-sys-color-surface-gray` | `#F1F5F9` | Subtle gray background |
+| `--md-sys-color-surface-white` | `color.surface.white` | Pure white background |
+| `--md-sys-color-surface-light` | `color.surface.light` | Light background |
+| `--md-sys-color-surface-gray` | `color.surface.gray` | Subtle gray background |
 
 ### Text Colors
 
-| Token | Value | Use |
+| CSS property | Official token path | Use |
 |---|---|---|
-| `--md-sys-color-text-primary` | `#F7F8FF` | Primary text |
-| `--md-sys-color-text-secondary` | `#C3CAD8` | Supporting text, subtitles |
-| `--md-sys-color-text-muted` | `#8B94A8` | Muted text, metadata |
-| `--md-sys-color-text-disabled` | `#5D667A` | Placeholders, inactive nav, timestamps |
-| `--md-sys-color-text-inverse` | `#111420` | Text on light surfaces |
+| `--md-sys-color-text-primary` | `color.text.primary` | Primary text |
+| `--md-sys-color-text-secondary` | `color.text.secondary` | Supporting text, subtitles |
+| `--md-sys-color-text-muted` | `color.text.muted` | Muted text, metadata |
+| `--md-sys-color-text-disabled` | `color.text.disabled` | Placeholders, inactive nav, timestamps |
+| `--md-sys-color-text-inverse` | `color.text.inverse` | Text on light surfaces |
 
 ### Brand — Neon Indigo
 
 Interactive & accent color. Use for interactive elements, hover states, active states, and visual accents.
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-sys-color-neonindigo-light` | `#B3B8FF` |
-| `--md-sys-color-neonindigo` | `#8B92FF` |
-| `--md-sys-color-neonindigo-dark` | `#6B72E8` |
+| `--md-sys-color-neonindigo-light` | `color.neonindigo.light` |
+| `--md-sys-color-neonindigo` | `color.neonindigo.base` |
+| `--md-sys-color-neonindigo-dark` | `color.neonindigo.dark` |
 
 ### Brand — Indigo
 
 Secondary actions & links. Use for secondary CTAs, text links, eyebrow text, and exploratory actions.
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-sys-color-indigo-light` | `#7E85E6` |
-| `--md-sys-color-indigo` | `#5B63D6` |
-| `--md-sys-color-indigo-dark` | `#4850B8` |
+| `--md-sys-color-indigo-light` | `color.indigo.light` |
+| `--md-sys-color-indigo` | `color.indigo.base` |
+| `--md-sys-color-indigo-dark` | `color.indigo.dark` |
 
 ### Brand — Coral Ember
 
 Primary CTA & action color. Use for primary call-to-action buttons and high-priority actions.
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-sys-color-brand-coral-light` | `#FF8F82` |
-| `--md-sys-color-brand-coral` | `#FF6B5A` |
-| `--md-sys-color-brand-coral-dark` | `#E64A37` |
+| `--md-sys-color-brand-coral-light` | `color.brand.coral-light` |
+| `--md-sys-color-brand-coral` | `color.brand.coral` |
+| `--md-sys-color-brand-coral-dark` | `color.brand.coral-dark` |
 
 ### Brand — Teal
 
 Alternative secondary & highlights. Use for account/relationship data visualization, badges, featured highlights.
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-sys-color-brand-teal-light` | `#8CB5C5` |
-| `--md-sys-color-brand-teal` | `#6B9DB0` |
-| `--md-sys-color-brand-teal-dark` | `#4D8495` |
+| `--md-sys-color-brand-teal-light` | `color.brand.teal-light` |
+| `--md-sys-color-brand-teal` | `color.brand.teal` |
+| `--md-sys-color-brand-teal-dark` | `color.brand.teal-dark` |
 
 ### Brand — Pink
 
 Special accents & badges. Use sparingly for promotional badges, featured items, or unique visual accents.
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-sys-color-brand-pink` | `#E85D9C` |
+| `--md-sys-color-brand-pink` | `color.brand.pink` |
 
 ### Semantic — Success
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-sys-color-success-light` | `#86EFAC` |
-| `--md-sys-color-success` | `#2ECC71` |
-| `--md-sys-color-success-dark` | `#16A34A` |
+| `--md-sys-color-semantic-success-light` | `color.semantic.success-light` |
+| `--md-sys-color-semantic-success` | `color.semantic.success` |
+| `--md-sys-color-semantic-success-dark` | `color.semantic.success-dark` |
 
 ### Semantic — Warning
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-sys-color-warning-light` | `#FCD384` |
-| `--md-sys-color-warning` | `#F5A623` |
-| `--md-sys-color-warning-dark` | `#C47D10` |
+| `--md-sys-color-semantic-warning-light` | `color.semantic.warning-light` |
+| `--md-sys-color-semantic-warning` | `color.semantic.warning` |
+| `--md-sys-color-semantic-warning-dark` | `color.semantic.warning-dark` |
 
 ### Semantic — Error
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-sys-color-error-light` | `#FF8586` |
-| `--md-sys-color-error` | `#FF4D4F` |
-| `--md-sys-color-error-dark` | `#CC1F21` |
+| `--md-sys-color-semantic-error-light` | `color.semantic.error-light` |
+| `--md-sys-color-semantic-error` | `color.semantic.error` |
+| `--md-sys-color-semantic-error-dark` | `color.semantic.error-dark` |
 
 ### Semantic — Info
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-sys-color-info-light` | `#93C5FD` |
-| `--md-sys-color-info` | `#4DA3FF` |
-| `--md-sys-color-info-dark` | `#1D6FBF` |
+| `--md-sys-color-semantic-info-light` | `color.semantic.info-light` |
+| `--md-sys-color-semantic-info` | `color.semantic.info` |
+| `--md-sys-color-semantic-info-dark` | `color.semantic.info-dark` |
 
 ### Data Colors
 
 Used exclusively for data visualization — charts, account health scores, recency indicators.
 
-| Token | Value | Use |
+| CSS property | Official token path | Use |
 |---|---|---|
-| `--md-sys-color-data-account` | `#6B9DB0` | Account data |
-| `--md-sys-color-data-recency` | `#8B92FF` | Recency indicators |
-| `--md-sys-color-data-crm-sync` | `#2ECC71` | CRM sync status |
-| `--md-sys-color-data-review` | `#F5A623` | Review / pending states |
+| `--md-sys-color-data-account` | `color.data.account` | Account data |
+| `--md-sys-color-data-recency` | `color.data.recency` | Recency indicators |
+| `--md-sys-color-data-crm-sync` | `color.data.crm-sync` | CRM sync status |
+| `--md-sys-color-data-review` | `color.data.review` | Review / pending states |
 
 ### Recording
 
-| Token | Value | Use |
+| CSS property | Official token path | Use |
 |---|---|---|
-| `--md-sys-color-recording` | `#FF5A4F` | Live recording indicator — visually distinct from error |
+| `--md-sys-color-brand-recording` | `color.brand.recording` | Live recording indicator — visually distinct from error |
 
 ### Neutrals
 
 True neutral scale — not tinted. Use for generic backgrounds, dividers, or when brand color would be inappropriate.
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-ref-palette-neutral-950` | `#0A0A0A` |
-| `--md-ref-palette-neutral-800` | `#262626` |
-| `--md-ref-palette-neutral-600` | `#525252` |
-| `--md-ref-palette-neutral-400` | `#A3A3A3` |
-| `--md-ref-palette-neutral-200` | `#E5E5E5` |
-| `--md-ref-palette-neutral-50` | `#FAFAFA` |
+| `--md-sys-color-neutral-950` | `color.neutral.950` |
+| `--md-sys-color-neutral-800` | `color.neutral.800` |
+| `--md-sys-color-neutral-600` | `color.neutral.600` |
+| `--md-sys-color-neutral-400` | `color.neutral.400` |
+| `--md-sys-color-neutral-200` | `color.neutral.200` |
+| `--md-sys-color-neutral-50` | `color.neutral.50` |
 
 ### Extended Palette
 
 Supplemental accent colors for data visualization, tags, and categorization when brand colors are exhausted.
 
-| Token | Value |
+| CSS property | Official token path |
 |---|---|
-| `--md-ref-palette-ext-cyan` | `#5BBFCC` |
-| `--md-ref-palette-ext-lime` | `#89B347` |
-| `--md-ref-palette-ext-orange` | `#C97A42` |
-| `--md-ref-palette-ext-gold` | `#C4962B` |
-| `--md-ref-palette-ext-violet` | `#8875C4` |
-| `--md-ref-palette-ext-rose` | `#C97888` |
+| `--md-sys-color-ext-cyan` | `color.ext.cyan` |
+| `--md-sys-color-ext-lime` | `color.ext.lime` |
+| `--md-sys-color-ext-orange` | `color.ext.orange` |
+| `--md-sys-color-ext-gold` | `color.ext.gold` |
+| `--md-sys-color-ext-violet` | `color.ext.violet` |
+| `--md-sys-color-ext-rose` | `color.ext.rose` |
 
 ### Alpha Colors
 
 Transparent overlays for glass effects, borders, and layered surfaces. Always applied over a dark background.
 
-| Token | Value | Use |
+| CSS property | Official token path | Use |
 |---|---|---|
-| `--md-sys-color-alpha-white-10` | `rgba(255,255,255,0.10)` | Borders, card edges |
-| `--md-sys-color-alpha-white-18` | `rgba(255,255,255,0.18)` | Active fields, emphasized containers |
-| `--md-sys-color-alpha-neonindigo-10` | `rgba(179,184,255,0.10)` | Subtle purple backgrounds |
-| `--md-sys-color-alpha-neonindigo-glass` | `rgba(179,184,255,0.10)` | Glass nav background |
-| `--md-sys-color-alpha-dark-glass` | `rgba(255,255,255,0.18)` | Active pill on glass nav |
+| `--md-sys-color-alpha-white-10` | `color.alpha.white-10` | Borders, card edges |
+| `--md-sys-color-alpha-white-18` | `color.alpha.white-18` | Active fields, emphasized containers |
+| `--md-sys-color-alpha-neonindigo-10` | `color.alpha.neonindigo-10` | Subtle purple backgrounds |
+| `--md-sys-color-alpha-neonindigo-glass` | `color.alpha.neonindigo-glass` | Glass nav background |
+| `--md-sys-color-alpha-dark-glass` | `color.alpha.dark-glass` | Active pill on glass nav |
 
 ### Gradients
 
@@ -209,55 +209,56 @@ Defined in `:root` (not `@theme inline`) — referenced via `var(--gradient-*)`.
 
 ## Typography
 
-Two font families, both self-hosted via `@font-face` in `app/tokens/fonts.css`. No Google CDN dependency.
+The official set defines UI sans, display serif, and icon families. Barlow and Roboto Slab font-face assets are self-hosted in `app/tokens/fonts.css`; the icon family is supplied by the prototype's Material Symbols asset.
 
-| Variable | Family | Use |
+| CSS variable | Official token path | Use |
 |---|---|---|
-| `--font-serif` | Roboto Slab | Headings only |
-| `--font-sans` | Barlow | All UI text |
+| `--font-serif` | `font.family.serif` | Headings only |
+| `--font-sans` | `font.family.sans` | All UI text |
+| `--font-icon` | `font.family.icon` | Material Symbols glyphs |
 
 ### Headings
 
 Roboto Slab, weight 700. Apply via CSS class.
 
-| Class | Size | Line Height |
-|---|---|---|
-| `.heading-1` | 60px | 66px |
-| `.heading-2` | 48px | 58px |
-| `.heading-3` | 36px | 43px |
-| `.heading-4` | 24px | 31px |
-| `.heading-5` | 20px | 26px |
-| `.heading-6` | 18px | 24px |
+| CSS class | Official typography token |
+|---|---|
+| `.heading-1` | `typography.heading-1` |
+| `.heading-2` | `typography.heading-2` |
+| `.heading-3` | `typography.heading-3` |
+| `.heading-4` | `typography.heading-4` |
+| `.heading-5` | `typography.heading-5` |
+| `.heading-6` | `typography.heading-6` |
 
 ### Body Text
 
-Barlow. Regular weight is 400, bold variants are 600. Applied via Tailwind utilities (`text-xl`, `text-lg`, etc.) or the bold CSS classes.
+Barlow. Regular and semibold weights come from `font.weight.*`. The CSS utility classes below use the generated typography properties; these token paths carry the actual metrics.
 
-| Tailwind class | Size | Line Height | Bold class |
+| CSS class | Official typography token | Bold class / token |
 |---|---|---|---|
-| `text-xl` | 20px | 30px | `.text-xl-bold` |
-| `text-lg` | 18px | 27px | `.text-lg-bold` |
-| `text-base` | 16px | 24px | `.text-base-bold` |
-| `text-sm` | 14px | 21px | `.text-sm-bold` |
-| `text-xs` | 12px | 18px | `.text-xs-bold` |
+| `.body-xl` | `typography.text-xl` | `.text-xl-bold` · `typography.text-xl-bold` |
+| `.body-lg` | `typography.text-lg` | `.text-lg-bold` · `typography.text-lg-bold` |
+| `.body-base` | `typography.text-base` | `.text-base-bold` · `typography.text-base-bold` |
+| `.body-sm` | `typography.text-sm` | `.text-sm-bold` · `typography.text-sm-bold` |
+| `.body-xs` | `typography.text-xs` | `.text-xs-bold` · `typography.text-xs-bold` |
 
 ### Subheadlines
 
 Barlow 400. Used for marketing / hero text.
 
-| Class | Size | Line Height |
-|---|---|---|
-| `.subheadline-lg` | 24px | 36px |
-| `.subheadline-md` | 20px | 30px |
+| CSS class | Official typography token |
+|---|---|
+| `.subheadline-lg` | `typography.subheadline-lg` |
+| `.subheadline-md` | `typography.subheadline-md` |
 
 ### Labels & Captions
 
-Used for nav labels, timestamps, micro-copy. Two families available at 10px.
+Used for nav labels, timestamps, and micro-copy. See the shared token paths for typography metrics.
 
-| Class | Family | Weight | Size | Line Height |
-|---|---|---|---|---|
-| `.label-serif` | Roboto Slab | 400 | 10px | 14px |
-| `.text-2xs` | Barlow | 400 | 10px | 14px |
+| CSS class | Official typography token |
+|---|---|
+| `.label-serif` | `typography.label-serif` |
+| `.text-2xs` | `typography.text-2xs` |
 
 ---
 
@@ -315,15 +316,16 @@ SVG icons used in specific components. Not part of the Material Symbols set.
 
 M3 shape scale. Applied via `var(--radius-*)` in component styles.
 
-| Token | Value | M3 Name | Use |
+| CSS property | Official token path | M3 Name | Use |
 |---|---|---|---|
-| `--radius-none` | `0px` | None | Dividers, full-bleed images |
-| `--radius-xs` | `4px` | Extra Small | Small badges, swatch cards |
-| `--radius-sm` | `8px` | Small | Input fields, account cards |
-| `--radius-md` | `12px` | Medium | Cards, dropdowns |
-| `--radius-lg` | `16px` | Large | Sheet surfaces |
-| `--radius-xl` | `28px` | Extra Large | Buttons, sort menu |
-| `--radius-full` | `100px` | Full | Pills, nav bar, tags |
+| `--radius-none` | `prototype-only CSS zero` | None | Dividers, full-bleed images |
+| `--radius-xs` | `radius.xs` | Extra Small | Small badges, swatch cards |
+| `--radius-sm` | `radius.sm` | Small | Input fields, account cards |
+| `--radius-md` | `radius.md` | Medium | Cards, dropdowns |
+| `--radius-lg` | `radius.lg` | Large | Sheet surfaces |
+| `--radius-xl` | `radius.xl` | Extra Large | Buttons, sort menu |
+| `--radius-full` | `radius.full` | Full | Pills, nav bar, tags |
+| `--radius-input` | `radius.input` | Input role | Text fields and input controls |
 
 ---
 
@@ -331,32 +333,32 @@ M3 shape scale. Applied via `var(--radius-*)` in component styles.
 
 4px base grid. 10 steps.
 
-| Token | Value | Common use |
+| CSS property | Official token path | Common use |
 |---|---|---|
-| `--spacing-1` | `4px` | Icon gap, micro padding |
-| `--spacing-2` | `8px` | Compact padding |
-| `--spacing-3` | `12px` | Input padding, gap between elements |
-| `--spacing-4` | `16px` | Standard component padding |
-| `--spacing-5` | `20px` | |
-| `--spacing-6` | `24px` | Section inner padding |
-| `--spacing-8` | `32px` | Nav margins, section gaps |
-| `--spacing-10` | `40px` | |
-| `--spacing-12` | `48px` | |
-| `--spacing-16` | `64px` | Large section breaks |
+| `--spacing-1` | `spacing.1` | Icon gap, micro padding |
+| `--spacing-2` | `spacing.2` | Compact padding |
+| `--spacing-3` | `spacing.3` | Input padding, gap between elements |
+| `--spacing-4` | `spacing.4` | Standard component padding |
+| `--spacing-5` | `spacing.5` | |
+| `--spacing-6` | `spacing.6` | Section inner padding |
+| `--spacing-8` | `spacing.8` | Nav margins, section gaps |
+| `--spacing-10` | `spacing.10` | |
+| `--spacing-12` | `spacing.12` | |
+| `--spacing-16` | `spacing.16` | Large section breaks |
 
 ---
 
 ## Elevation
 
-5 levels following M3 tonal elevation. Halosight uses drop shadows (not surface tint) on dark surfaces.
+Official levels `elevation.0` through `elevation.4` are generated as CSS `box-shadow` values. Halosight uses drop shadows on dark surfaces. The prototype-only `--elevation-5` remains a local extension until it is considered for the official contract.
 
-| Token | Level | Shadow | Use |
-|---|---|---|---|
-| `--elevation-0` | 0 | none | Flat surfaces, list items |
-| `--elevation-1` | 1 | subtle | Cards at rest |
-| `--elevation-2` | 2 | soft | Floating buttons |
-| `--elevation-3` | 3 | medium | Drawers, bottom sheets, dropdowns |
-| `--elevation-4` | 4 | strong | Modals, dialogs |
+| CSS variable | Official token path | Use |
+|---|---|---|
+| `--elevation-0` | `elevation.0` | Flat surfaces, list items |
+| `--elevation-1` | `elevation.1` | Cards at rest |
+| `--elevation-2` | `elevation.2` | Floating buttons |
+| `--elevation-3` | `elevation.3` | Drawers, bottom sheets, dropdowns |
+| `--elevation-4` | `elevation.4` | Modals, dialogs |
 
 ---
 
@@ -364,9 +366,9 @@ M3 shape scale. Applied via `var(--radius-*)` in component styles.
 
 Defined in `@theme inline` — available as Tailwind responsive prefixes.
 
-| Token | Value | Use |
+| CSS property | Official token path | Use |
 |---|---|---|
-| `--breakpoint-aside` | `860px` | Sidebar visible above · drawer below |
+| `--breakpoint-aside` | Prototype extension | Sidebar visible above · drawer below |
 
 Built-in Tailwind breakpoints (`sm` 640px, `md` 768px, `lg` 1024px, etc.) are also available.
 

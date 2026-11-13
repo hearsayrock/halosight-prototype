@@ -1,6 +1,6 @@
 # Component inventory
 
-> Refreshed 2026-11-09 from the code on `playground/component-updates`. The handoff, registry and hard-coded-color columns are recomputed from the files. Facts come from the source files; **the labels and descriptions are proposals — mark the "Your call" column**. Once labels are final, this becomes the registry and Reed's conversion list.
+> Updated 2026-11-11 on `codex/atomic-component-consolidation`. The handoff, registry and hard-coded-color columns are recomputed from the files. Facts come from the source files; **the labels and descriptions are proposals — mark the "Your call" column**. Once labels are final, this becomes the registry and Reed's conversion list.
 
 ## Decisions so far (2026-10-27)
 
@@ -8,7 +8,7 @@
 - **Sheets → one Drawer:** the six bottom sheets were rebuilt on the shared `Drawer` pieces (2026-10-28). Fill is now `color.dark.primary` everywhere; the dim behind is the new `color.alpha.scrim` token. The action item detail page was replaced by `ActionItemDrawer`.
 - **SystemAccountListItem:** merged into AccountListItem as the `crm` variant (done 2026-10-27; the file is deleted). Reed builds one widget.
 - **BottomNav and StaticBottomNav:** deleted (2026-11-09). Not in use; a future bottom nav will be redesigned from scratch.
-- **2026-11-09 refresh:** rows that were added later had landed under Furniture, so every row is now in its proposed section (Library 34, Feature 17, Furniture 11). Added the missing rows (ListCard, VoiceAtmosphere, IconLibraryToggle, the design-system previews). The handoff, registry and color columns were recomputed. The Library and Feature moves are proposals (☐) until you confirm them.
+- **2026-11-09 refresh:** rows that were added later had landed under Furniture, so every row is now in its proposed section (Library 36, Feature 17, Furniture 11). Added the missing rows (ListCard, VoiceAtmosphere, IconLibraryToggle, the design-system previews). The handoff, registry and color columns were recomputed. The Library and Feature moves are proposals (☐) until you confirm them.
 - Everything not marked ☑ below is my proposal and stands unless changed.
 
 ## How to use this
@@ -22,7 +22,7 @@
 
 | Label | Meaning | Count |
 |---|---|---|
-| **Library** | Reusable widgets. These become the shared Flutter component library. | 34 |
+| **Library** | Reusable widgets. These become the shared Flutter component library. | 36 |
 | **Feature** | Built for one flow. These become Flutter feature widgets, not shared library components. | 17 |
 | **Furniture** | Prototype scaffolding. Never converted to Flutter. | 11 |
 
@@ -38,7 +38,7 @@
 - **Undefined token referenced (`†`) — fixed 2026-10-27.** `--md-sys-color-semantic-success` is used in `FeedbackWidget`, `AIReviewOverlay` and the companies page, but only the short name `--md-sys-color-success` was defined, so those checkmarks had no color. `tokens/colors.css` now defines `--md-sys-color-semantic-{success,warning,error,info}` (and `-light` / `-dark`) as aliases of the short names, in both themes, same values. The generator (DELIVERY-1475) replaces the aliases later.
 - **Hard-coded colors — fixed 2026-11-09.** CaptureWidget (blobs, recording dot, Paused button), FilterDropdown / VisitedFilterDropdown (open arrow), ConvertToAccountSheet (selected chip sub-label, teal button labels) and NoteSheet (Done label) now use tokens. New token `--md-sys-color-text-on-teal` (#FFFFFF in both themes) for labels on brand-teal fills. Dev tooling (FakeCallOverlay, DevModeOverlay, DevPanel, MobileKeyboard, PhoneFrame, PlaygroundNav) keeps its own colors.
 
-## Library (34)
+## Library (36)
 
 _Reusable widgets. These become the shared Flutter component library._
 
@@ -62,11 +62,13 @@ _Reusable widgets. These become the shared Flutter component library._
 | 16 | **ScrollAwareTopBar**<br>`ui/ScrollAwareTopBar.tsx` | Floating back bar: glass circle once scrolled, right-hand slot hides on scroll. | Action item, Profile, Review | ✓ | ✓ | 0 | Registry entry and design-system area (Scroll Top Bar) added 2026-11-09. Handoff comment tokens corrected. | ☐ |
 | 17 | **Skeleton**<br>`ui/Skeleton.tsx` | Shimmer loading placeholders (single bone and composed skeletons). | Account detail, Companies / home / items | ✓ | ✓ | 0 | Registry entry and design-system area (Skeleton) added 2026-11-09. Bone radius is a number in px. | ☐ |
 | 18 | **VisitedFilterDropdown**<br>`ui/VisitedFilterDropdown.tsx` | "Last visited" filter with presets and a custom date range. | Companies / home / items, SortMenu | ✓ | ✓ | 1 | Registry entry added 2026-11-09 (shares the Filter Pill area). Open-state arrow is a raw white at 70% (no token). | ☑ Library |
-| 38 | **Drawer**<br>`ui/Drawer.tsx` | The one bottom drawer: scrim, dark-primary panel, handle, motion, plus DrawerBody and DrawerHeader. | NoteSheet, AddActionItemSheet, CreateLeadSheet, CreateAccountSheet, ConvertToAccountSheet, AccountPickerSheet, ActionItemDrawer, design-system page | ✓ | ✓ | 0 | New 2026-10-28. The six sheets now share its chrome (fill unified to dark-primary, scrim on `color.alpha.scrim`). | ☐ |
+| 38 | **Drawer**<br>`ui/Drawer.tsx` | The one bottom drawer: scrim, dark-primary panel, handle, motion, plus DrawerBody and DrawerHeader. | NoteSheet, AddActionItemSheet, CreateLeadSheet, ConvertToAccountSheet, AccountPickerSheet, ActionItemDrawer, design-system page | ✓ | ✓ | 0 | New 2026-10-28. The six sheets now share its chrome (fill unified to dark-primary, scrim on `color.alpha.scrim`). | ☐ |
 | 40 | **ThinkingDots**<br>`ui/ThinkingDots.tsx` | In-progress indicator ("Shuffle": three capsules swapping places) that replaces the spinning circle. | Button, design-system page | ✓ | ✓ | 0 | New 2026-10-28. Existing spinners (processing banner, "Preparing note" card, story mocks) not migrated yet. | ☐ |
 | 41 | **Button**<br>`ui/Button.tsx` | Filled / tonal / outlined / text buttons with a loading state. | design-system page | ✓ | ✓ | 0 | New 2026-10-28. Screens still use inline button styles; migrate as touched. | ☐ |
 | 42 | **Tabs**<br>`ui/Tabs.tsx` | Tab bar with underline (default) and segmented (sub-variant) styles. | Account detail, design-system page | ✓ | ✓ | 0 | New 2026-10-28, extracted from the account screen's inline tabs. | ☐ |
-| 43 | **ActivityCard**<br>`accounts/ActivityCard.tsx` | Activity tab row: title, summary, meta (relative date · duration or From Salesforce · creator). Halosight and CRM variants. | Account detail, design-system page | ✓ | ✓ | 0 | New 2026-10-28, extracted from the inline boxed card. | ☐ |
+| 43 | **ActivityCard**<br>`accounts/ActivityCard.tsx` | Account activity row: title, summary, meta (relative date · duration or From Salesforce · creator). Halosight and CRM variants. | Account detail, design-system page | ✓ | ✓ | 0 | Recent engagement rows now live in EngagementRow. | ☐ |
+| 63 | **FilterPill**<br>`ui/FilterPill.tsx` | Shared filter trigger pill with default, active and open states. | FilterDropdown, VisitedFilterDropdown | ✓ | ✓ | 0 | New 2026-11-11; consolidates identical filter triggers. | ☐ |
+| 64 | **MenuPopover**<br>`ui/MenuPopover.tsx` | Shared anchored popup wrapper for dismissal, placement and spring animation. | SortMenu, KebabMenu, FilterDropdown, VisitedFilterDropdown | ✓ | ✓ | 0 | New 2026-11-11; menu rows remain feature-specific. | ☐ |
 | 44 | **Menu**<br>`ui/Menu.tsx` | The popup panel behind every dropdown. Variants: icon, check (right-aligned), icon + check. | SortMenu, FilterDropdown, KebabMenu, interaction-type picker | ✓ | ✓ | 0 | New 2026-10-28. Replaces four hand-built panels. Panel is translucent dark-secondary (88%, blurred) with a white-18 stroke at 80%. | ☑ Library |
 | 51 | **ThumbsDownIcon**<br>`ui/ThumbsDownIcon.tsx` | Thumbs-down glyph without the wrist cuff. | InsightCard, ChatMessage | ✓ | ✓ | 0 | Registry entry added 2026-11-09 (shares the Custom Icons area). | ☐ |
 | 52 | **InsightCardLoader**<br>`accounts/InsightCardLoader.tsx` | Sparkle + cycling status lines shown in the Insight Card while the summary loads. | InsightCard (`loading`) | ✓ | ✓ | 0 | Registry entry added 2026-11-09 (shown inside the Insight Card area). | ☐ |
@@ -88,8 +90,7 @@ _Built for one flow. These become Flutter feature widgets, not shared library co
 | 19 | **AccountPickerSheet**<br>`accounts/AccountPickerSheet.tsx` | Sheet to choose which account a capture belongs to. | CaptureWidget | ✓ | ✓ | 0 | Registry entry and design-system area (Account Picker) added 2026-11-09. Close button is hand-built, not IconButton. | ☐ |
 | 20 | **AddActionItemSheet**<br>`accounts/AddActionItemSheet.tsx` | Create-action-item sheet (title plus MiniCalendar). | Account detail, Interaction detail | ✓ | ✓ | 0 | Handoff comment and registry entry added 2026-11-09. Day chips are hand-built; the edit drawer has its own DateChips. | ☐ |
 | 21 | **ConvertToAccountSheet**<br>`accounts/ConvertToAccountSheet.tsx` | Multi-step sheet to convert a lead to an account, with an optional deal. | Account detail | ✓ | ✓ | 1 | Registry entry added 2026-11-09. The Convert button and success step are hand-built teal. | ☐ |
-| 22 | **CreateAccountSheet**<br>`accounts/CreateAccountSheet.tsx` | "Add new account" form sheet. | Companies / home / items | ✓ | ✓ | 0 | Registry entry added 2026-11-09. Same sheet as CreateLeadSheet without duplicate detection: merge for Flutter. | ☐ |
-| 23 | **CreateLeadSheet**<br>`accounts/CreateLeadSheet.tsx` | "Add new lead" form sheet with duplicate detection. | Companies / home / items | ✓ | ✓ | 0 | Registry entry added 2026-11-09. Company is a TextField (warning stroke on duplicates). | ☐ |
+| 23 | **CreateLeadSheet**<br>`accounts/CreateLeadSheet.tsx` | Shared create sheet with optional initial name and duplicate detection. | Companies / home / items | ✓ | ✓ | 0 | Absorbs CreateAccountSheet; search flow uses `initialName` and disables duplicate detection. | ☐ |
 | 24 | **AIReviewOverlay**<br>`capture/AIReviewOverlay.tsx` | Post-visit "Here's the read" screen: AI-extracted CRM fields, edit by voice or text. | CaptureWidget | ✓ | ✓ | 0 | Registry entry and design-system area (AI Review) added 2026-11-09. Raw input in the focused field moved to TextField (bare). Save and Use defaults are hand-built round buttons. | ☐ |
 | 25 | **CaptureWidget**<br>`capture/CaptureWidget.tsx` | Persistent capture bar: recording, finishing and ready states, with account switching. | mobile layout | ✓ | ✓ | 0 | Registry entry and handoff comment added 2026-11-09; raw colors moved to tokens. No design-system area (needs capture context). | ☐ |
 | 26 | **FeedbackWidget**<br>`ui/FeedbackWidget.tsx` | Home feedback card (3 full-width options) plus the feedback drawer (Bug / Idea / Other). Exports FeedbackEntryCard and FeedbackForm. | Companies / home / items, design-system page | ✓ | ✓ | 0 | Brought in from `playground/add-company-test` 2026-10-28 and moved onto the shared Drawer; raw rgba tints replaced with token mixes. Has its own area on /design-system. | ☐ |
@@ -100,7 +101,8 @@ _Built for one flow. These become Flutter feature widgets, not shared library co
 | 48 | **ChatVoiceDock**<br>`chat/ChatVoiceDock.tsx` | Voice-mode dock: listening / thinking / speaking. | ChatDrawer | ✓ | ✓ | 0 | New. Light mode unchecked. | ☐ |
 | 49 | **ChatHistoryMenu**<br>`chat/ChatHistoryMenu.tsx` | Search + pinned/recent chat list popover. | ChatDrawer | ✓ | ✓ | 0 | New. Uses Menu chrome. | ☐ |
 | 50 | **ChatHeader / ChatEmptyState / ChatMessageList**<br>`chat/…` | Header icons, greeting + suggestion chips, scrolling message list. | ChatDrawer | ✓ | ✓ | 0 | Each has its own registry entry as of 2026-11-09 (shown in the Account Chat area). | ☐ |
-| 55 | **EngagementsDrawer**<br>`accounts/EngagementsDrawer.tsx` | Home side drawer: feed of recent interactions across accounts, unread marking, search, lazy loading. | Home screen menu button | ✓ | ✓ | 0 | New 2026-11-02. Rows are ActivityCard `recent` / `recent-unread`. Mock data in home.ts (mockRecentActivities). | ☐ |
+| 65 | **EngagementRow**<br>`accounts/EngagementRow.tsx` | Recent-engagement feed row with read and unread variants. | EngagementsDrawer, design-system page | ✓ | ✓ | 0 | New 2026-11-11; split from ActivityCard so feed and history data remain separate. | ☐ |
+| 55 | **EngagementsDrawer**<br>`accounts/EngagementsDrawer.tsx` | Home side drawer: feed of recent interactions across accounts, unread marking, search, lazy loading. | Home screen menu button | ✓ | ✓ | 0 | New 2026-11-02. Rows use EngagementRow `recent` / `recent-unread`. Mock data in home.ts (mockRecentActivities). | ☐ |
 | 62 | **VoiceAtmosphere**<br>`chat/VoiceAtmosphere.tsx` | The coloured haze behind a voice conversation: listening, thinking and speaking states. | ChatDrawer | ✓ | ✓ | 0 | Added to the inventory 2026-11-09 (the file already existed). | ☐ |
 
 ## Furniture (11)
@@ -151,7 +153,6 @@ Generated 2026-10-27, so it does not cover components added since (see each comp
 - **AccountPickerSheet**: `color.dark.primary`, `color.dark.secondary`, `color.dark.tertiary`, `color.neonindigo.base`, `color.text.disabled`, `color.text.muted`, `color.text.primary`, `radius.full`, `radius.xl`
 - **AddActionItemSheet**: `color.background`, `color.brand.coral`, `color.dark.secondary`, `color.dark.tertiary`, `color.neonindigo.base`, `color.neonindigo.dark`, `color.text.muted`, `color.text.primary`, `radius.full`, `radius.md`, `radius.xl`
 - **ConvertToAccountSheet**: `color.background`, `color.brand.teal`, `color.dark.secondary`, `color.dark.tertiary`, `color.neonindigo.base`, `color.neonindigo.dark`, `color.text.disabled`, `color.text.muted`, `color.text.primary`, `color.text.secondary`, `radius.full`, `radius.md`, `radius.sm`, `radius.xl`
-- **CreateAccountSheet**: `color.alpha.neonindigo-10`, `color.background`, `color.dark.secondary`, `color.dark.tertiary`, `color.neonindigo.base`, `color.text.disabled`, `color.text.primary`, `radius.full`, `radius.lg`, `radius.sm`, `radius.xl`
 - **CreateLeadSheet**: `color.alpha.neonindigo-10`, `color.background`, `color.dark.secondary`, `color.dark.tertiary`, `color.neonindigo.base`, `color.semantic.warning *`, `color.text.disabled`, `color.text.muted`, `color.text.primary`, `radius.full`, `radius.lg`, `radius.sm`, `radius.xl`
 - **AIReviewOverlay**: `color.alpha.neonindigo-10`, `color.background`, `color.dark.secondary`, `color.neonindigo.base`, `color.semantic.success †`, `color.text.disabled`, `color.text.muted`, `color.text.primary`, `radius.lg`
 - **CaptureWidget**: `color.brand.coral`, `color.dark.primary`, `color.neonindigo.base`, `color.text.muted`, `color.text.primary`, `color.text.secondary`

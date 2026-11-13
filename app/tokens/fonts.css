@@ -100,9 +100,3 @@
   font-style: normal;
   font-display: block;
 }
-
-/* ── Font family tokens ───────────────────────────────────────────────────── */
-@theme {
-  --font-sans:  "Barlow", system-ui, sans-serif;
-  --font-serif: "Roboto Slab", Georgia, serif;
-}

@@ -1,58 +1,44 @@
-/* ─── Halosight Typography Classes ───────────────────────────────────────────
-   Named CSS classes for all type styles. Use these in components instead of
-   raw font-size/weight values so type scales stay consistent and
-   Flutter engineers can map directly to TextStyle.
-   See flutter-handoff.md for the full Dart mapping.
-──────────────────────────────────────────────────────────────────────────── */
+/*
+ * Prototype utility names backed by generated typography tokens.
+ * Sizes without an official typography token are explicitly prototype-only
+ * helpers; see docs/token-pipeline.md before promoting them to shared UI.
+ */
 
-/* ── Headings — Roboto Slab 700 ──────────────────────────────────────────── */
-.heading-1 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 60px; line-height: 66px; }
-.heading-2 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 48px; line-height: 58px; }
-.heading-3 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 36px; line-height: 43px; }
-.heading-4 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 24px; line-height: 31px; }
-.heading-5 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 20px; line-height: 26px; }
-.heading-6 { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; font-size: 18px; line-height: 24px; }
+/* Headings — Roboto Slab */
+.heading-1 { font-family: var(--typography-heading-1-font-family); font-weight: var(--typography-heading-1-font-weight); font-size: var(--typography-heading-1-font-size); line-height: var(--typography-heading-1-line-height); }
+.heading-2 { font-family: var(--typography-heading-2-font-family); font-weight: var(--typography-heading-2-font-weight); font-size: var(--typography-heading-2-font-size); line-height: var(--typography-heading-2-line-height); }
+.heading-3 { font-family: var(--typography-heading-3-font-family); font-weight: var(--typography-heading-3-font-weight); font-size: var(--typography-heading-3-font-size); line-height: var(--typography-heading-3-line-height); }
+.heading-4 { font-family: var(--typography-heading-4-font-family); font-weight: var(--typography-heading-4-font-weight); font-size: var(--typography-heading-4-font-size); line-height: var(--typography-heading-4-line-height); }
+.heading-5 { font-family: var(--typography-heading-5-font-family); font-weight: var(--typography-heading-5-font-weight); font-size: var(--typography-heading-5-font-size); line-height: var(--typography-heading-5-line-height); }
+.heading-6 { font-family: var(--typography-heading-6-font-family); font-weight: var(--typography-heading-6-font-weight); font-size: var(--typography-heading-6-font-size); line-height: var(--typography-heading-6-line-height); }
 
-/* ── Body Bold — Barlow 600 ──────────────────────────────────────────────── */
-.text-xl-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 20px; line-height: 30px; }
-.text-lg-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 18px; line-height: 27px; }
-.text-base-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 16px; line-height: 24px; }
-.text-sm-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 14px; line-height: 21px; }
-.text-xs-bold   { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 12px; line-height: 18px; }
+/* Body names avoid Tailwind's text-size utility names. */
+.body-xl { font-family: var(--typography-text-xl-font-family); font-weight: var(--typography-text-xl-font-weight); font-size: var(--typography-text-xl-font-size); line-height: var(--typography-text-xl-line-height); }
+.body-lg { font-family: var(--typography-text-lg-font-family); font-weight: var(--typography-text-lg-font-weight); font-size: var(--typography-text-lg-font-size); line-height: var(--typography-text-lg-line-height); }
+.body-base { font-family: var(--typography-text-base-font-family); font-weight: var(--typography-text-base-font-weight); font-size: var(--typography-text-base-font-size); line-height: var(--typography-text-base-line-height); }
+.body-sm { font-family: var(--typography-text-sm-font-family); font-weight: var(--typography-text-sm-font-weight); font-size: var(--typography-text-sm-font-size); line-height: var(--typography-text-sm-line-height); }
+.body-xs { font-family: var(--typography-text-xs-font-family); font-weight: var(--typography-text-xs-font-weight); font-size: var(--typography-text-xs-font-size); line-height: var(--typography-text-xs-line-height); }
 
-/* ── Body Regular — Barlow 400 ───────────────────────────────────────────── */
-/* Named body-* to avoid collision with Tailwind's text-* size utilities.   */
-.body-xl   { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 20px; line-height: 30px; }
-.body-lg   { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 18px; line-height: 27px; }
-.body-base { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 16px; line-height: 24px; }
-.body-sm   { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 14px; line-height: 21px; }
-.body-xs   { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 12px; line-height: 18px; }
+/* Bold body variants */
+.text-xl-bold { font-family: var(--typography-text-xl-bold-font-family); font-weight: var(--typography-text-xl-bold-font-weight); font-size: var(--typography-text-xl-bold-font-size); line-height: var(--typography-text-xl-bold-line-height); }
+.text-lg-bold { font-family: var(--typography-text-lg-bold-font-family); font-weight: var(--typography-text-lg-bold-font-weight); font-size: var(--typography-text-lg-bold-font-size); line-height: var(--typography-text-lg-bold-line-height); }
+.text-base-bold { font-family: var(--typography-text-base-bold-font-family); font-weight: var(--typography-text-base-bold-font-weight); font-size: var(--typography-text-base-bold-font-size); line-height: var(--typography-text-base-bold-line-height); }
+.text-sm-bold { font-family: var(--typography-text-sm-bold-font-family); font-weight: var(--typography-text-sm-bold-font-weight); font-size: var(--typography-text-sm-bold-font-size); line-height: var(--typography-text-sm-bold-line-height); }
+.text-xs-bold { font-family: var(--typography-text-xs-bold-font-family); font-weight: var(--typography-text-xs-bold-font-weight); font-size: var(--typography-text-xs-bold-font-size); line-height: var(--typography-text-xs-bold-line-height); }
 
-/* ── In-between sizes — fills the 11 / 13 / 15 / 17px gap ──────────────── */
-/* These sizes appear frequently in UI but fall between the standard scale.  */
-.text-17      { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 17px; line-height: 24px; } /* form inputs */
-.text-15      { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 15px; line-height: 22px; }
-.text-15-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 15px; line-height: 22px; }
-.text-13      { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 13px; line-height: 19px; }
-.text-13-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 13px; line-height: 19px; }
-.text-11      { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 11px; line-height: 16px; }
-.text-11-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 11px; line-height: 16px; }
+/* Subheadlines and labels */
+.subheadline-lg { font-family: var(--typography-subheadline-lg-font-family); font-weight: var(--typography-subheadline-lg-font-weight); font-size: var(--typography-subheadline-lg-font-size); line-height: var(--typography-subheadline-lg-line-height); }
+.subheadline-md { font-family: var(--typography-subheadline-md-font-family); font-weight: var(--typography-subheadline-md-font-weight); font-size: var(--typography-subheadline-md-font-size); line-height: var(--typography-subheadline-md-line-height); }
+.eyebrow-text { font-family: var(--typography-eyebrow-font-family); font-weight: var(--typography-eyebrow-font-weight); font-size: var(--typography-eyebrow-font-size); line-height: var(--typography-eyebrow-line-height); text-transform: var(--typography-eyebrow-text-transform); letter-spacing: var(--typography-eyebrow-letter-spacing); }
+.label-serif { font-family: var(--typography-label-serif-font-family); font-weight: var(--typography-label-serif-font-weight); font-size: var(--typography-label-serif-font-size); line-height: var(--typography-label-serif-line-height); }
+.text-2xs { font-family: var(--typography-text-2xs-font-family); font-weight: var(--typography-text-2xs-font-weight); font-size: var(--typography-text-2xs-font-size); line-height: var(--typography-text-2xs-line-height); }
 
-/* ── Subheadlines — Barlow 400 ───────────────────────────────────────────── */
-.subheadline-lg { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 24px; line-height: 36px; }
-.subheadline-md { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 20px; line-height: 30px; }
-
-/* ── Eyebrow ─────────────────────────────────────────────────────────────── */
-.eyebrow-text {
-  font-family: "Barlow", system-ui, sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* ── Labels & Captions ───────────────────────────────────────────────────── */
-.label-serif { font-family: "Roboto Slab", Georgia, serif; font-weight: 400; font-size: 10px; line-height: 14px; }
-.text-2xs    { font-family: "Barlow", system-ui, sans-serif; font-weight: 400; font-size: 10px; line-height: 14px; }
-.text-2xs-bold { font-family: "Barlow", system-ui, sans-serif; font-weight: 600; font-size: 10px; line-height: 14px; }
+/* Prototype-only in-between sizes; not part of the official shared scale. */
+.text-17 { font-family: var(--font-sans); font-weight: 400; font-size: 17px; line-height: 24px; }
+.text-15 { font-family: var(--font-sans); font-weight: 400; font-size: 15px; line-height: 22px; }
+.text-15-bold { font-family: var(--font-sans); font-weight: 600; font-size: 15px; line-height: 22px; }
+.text-13 { font-family: var(--font-sans); font-weight: 400; font-size: 13px; line-height: 19px; }
+.text-13-bold { font-family: var(--font-sans); font-weight: 600; font-size: 13px; line-height: 19px; }
+.text-11 { font-family: var(--font-sans); font-weight: 400; font-size: 11px; line-height: 16px; }
+.text-11-bold { font-family: var(--font-sans); font-weight: 600; font-size: 11px; line-height: 16px; }
+.text-2xs-bold { font-family: var(--font-sans); font-weight: 600; font-size: 10px; line-height: 14px; }

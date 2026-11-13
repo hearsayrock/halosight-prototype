@@ -2,7 +2,7 @@
 
 /**
  * Halosight Design System — Reference Page
- * Live viewer for all tokens, type scale, and components.
+ * Browsable reference for foundations and components. Component examples open on demand from a searchable Atomic-tier catalog.
  * M3-aligned naming throughout for Figma + Flutter compatibility.
  * Not part of the mobile app UX — browser-only reference tool.
  *
@@ -11,13 +11,14 @@
  */
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import AccountListItem from "@/components/accounts/AccountListItem";
 import ListCard from "@/components/ui/ListCard";
 import { DrawerHandle, DrawerBody, DrawerHeader } from "@/components/ui/Drawer";
 import Button from "@/components/ui/Button";
 import ActivityCard from "@/components/accounts/ActivityCard";
+import EngagementRow from "@/components/accounts/EngagementRow";
 import { EngagementsPanel } from "@/components/accounts/EngagementsDrawer";
 import { mockRecentActivities } from "@/lib/mock-data/home";
 import Menu from "@/components/ui/Menu";
@@ -51,6 +52,7 @@ import { InteractionCard, DateChips } from "@/components/accounts/ActionItemDraw
 import { ViewPreview, EditPreview, DeletePreview, SAMPLE_FULL, SAMPLE_MINIMAL, SAMPLE_DONE } from "@/components/design-system/ActionItemDrawerPreviews";
 import CountBadge from "@/components/accounts/CountBadge";
 import { ComponentArea, AreaGroup, VariantCard, SubComponentCard, StateSample } from "@/components/design-system/ComponentArea";
+import { ComponentCatalogContext, TIER_BY_SECTION, type AtomicTier, useComponentCatalog } from "@/components/design-system/ComponentCatalogContext";
 import ActionItemList, { ActionItemsHeader, type ActionItemEntry } from "@/components/accounts/ActionItemList";
 import Icon from "@/components/ui/Icon";
 import AccountTypeIcon from "@/components/accounts/AccountTypeIcon";
@@ -103,6 +105,13 @@ const SECTIONS = [
   { id: "icons",       label: "Icons" },
 ];
 
+const COMPONENT_SECTIONS = SECTIONS.filter((section) => TIER_BY_SECTION[section.id]);
+const AREA_BY_SECTION: Record<string, string> = {
+  "account-list-item": "Accounts", "action-item-list": "Action items", "action-item-drawer": "Action items",
+  "activity-card": "Activity", "engagements-drawer": "Activity", "ai-review": "Capture", "account-picker": "Capture",
+  "account-chat": "Chat", "feedback-widget": "Feedback", "insight-card": "AI insights",
+};
+
 // ─── Helpers ───────────────────────────────────────────────────────────────
 function SectionHeader({ id, title, subtitle }: { id: string; title: string; subtitle?: string }) {
   return (
@@ -112,6 +121,37 @@ function SectionHeader({ id, title, subtitle }: { id: string; title: string; sub
       <div className="mt-3 h-px" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
     </div>
   );
+}
+
+function SectionNavLinks({ pageView, onSelect }: { pageView: "components" | "foundations"; onSelect?: (id: string) => void }) {
+  const groups = pageView === "foundations"
+    ? [
+        { label: "Guidance", items: SECTIONS.filter((s) => s.id === "voice-tone") },
+        { label: "Color", items: SECTIONS.filter((s) => ["base-brand-colors", "light-theme-colors", "dark-theme-colors", "text-colors", "semantic-colors", "color"].includes(s.id)) },
+        { label: "Type & Layout", items: SECTIONS.filter((s) => ["typography", "labels-captions", "shape", "spacing", "elevation"].includes(s.id)) },
+      ]
+    : (["Atoms", "Molecules", "Organisms", "Templates"] as const).map((tier) => ({ label: tier, items: COMPONENT_SECTIONS.filter((item) => TIER_BY_SECTION[item.id] === tier) }));
+  return <div className="space-y-2">{groups.map((group, index) => <details key={group.label} open={index === 0}>
+    <summary className="cursor-pointer py-2 text-[11px] font-bold uppercase tracking-wider" style={{ color: "var(--md-sys-color-text-disabled)" }}>{group.label} <span>({group.items.length})</span></summary>
+    <div className="pl-2">{group.items.length ? group.items.map((item) => <a key={item.id} href={`#${item.id}`} onClick={() => onSelect?.(item.id)} className="block py-1.5 text-[13px] transition-colors" style={{ color: "var(--md-sys-color-text-muted)" }}>{item.label}</a>) : <p className="py-1.5 text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>No screen templates yet</p>}</div>
+  </details>)}</div>;
+}
+
+function CatalogContextBridge({ query, tier, activeId, children }: { query: string; tier: AtomicTier; activeId: string | null; children: ReactNode }) {
+  return <ComponentCatalogContext.Provider value={{ query, tier, activeId }}>{children}</ComponentCatalogContext.Provider>;
+}
+
+function CatalogSection({ id, title, children }: { id: string; title: string; children: ReactNode }) {
+  const { query, tier, activeId } = useComponentCatalog();
+  const atomicTier = TIER_BY_SECTION[id];
+  const matches = `${title} ${id}`.toLowerCase().includes(query.trim().toLowerCase());
+  const isActive = activeId === id;
+  if (activeId ? !isActive : (!matches || (tier !== "All" && tier !== atomicTier))) return null;
+  return <section id={id} className="mb-16 rounded-2xl overflow-hidden" style={{ scrollMarginTop: 80, background: "var(--md-sys-color-dark-secondary)", border: "1px solid var(--md-sys-color-dark-tertiary)" }}>
+    <div className="flex items-center justify-between px-5 py-4">
+      <span className="flex items-center gap-3"><strong style={{ color: "var(--md-sys-color-text-primary)" }}>{title}</strong><span className="text-xs px-2 py-1 rounded-full" style={{ background: "var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-muted)" }}>{atomicTier}</span></span>
+      </div><div className="px-5 pb-6">{children}</div>
+  </section>;
 }
 
 function BrandSectionHeader({ id, title }: { id: string; title: string }) {
@@ -452,6 +492,11 @@ export default function DesignSystemPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [insightExtras, setInsightExtras] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [pageView, setPageView] = useState<"components" | "foundations">("components");
+  const [catalogQuery, setCatalogQuery] = useState("");
+  const [catalogTier, setCatalogTier] = useState<AtomicTier>("All");
+  const [catalogArea, setCatalogArea] = useState("All areas");
+  const [activeComponentId, setActiveComponentId] = useState<string | null>(null);
 
   useEffect(() => {
     if (theme === "light") {
@@ -518,17 +563,7 @@ export default function DesignSystemPage() {
           </button>
         </div>
         {/* Nav links */}
-        {SECTIONS.map((s) => (
-          <a
-            key={s.id}
-            href={`#${s.id}`}
-            onClick={() => setDrawerOpen(false)}
-            className="block py-1.5 text-[13px] transition-colors"
-            style={{ color: "var(--md-sys-color-text-muted)" }}
-          >
-            {s.label}
-          </a>
-        ))}
+        <SectionNavLinks pageView={pageView} onSelect={(id) => { setDrawerOpen(false); if (pageView === "components") { setCatalogQuery(""); setCatalogTier("All"); setCatalogArea("All areas"); setActiveComponentId(id); } }} />
       </nav>
 
       {/* Top bar */}
@@ -592,21 +627,16 @@ export default function DesignSystemPage() {
           <p className="text-[10px] font-semibold uppercase tracking-widest mb-4" style={{ color: "var(--md-sys-color-text-disabled)" }}>
             Contents
           </p>
-          {SECTIONS.map((s) => (
-            <a
-              key={s.id}
-              href={`#${s.id}`}
-              className="block py-1.5 text-[13px] transition-colors"
-              style={{ color: "var(--md-sys-color-text-muted)" }}
-            >
-              {s.label}
-            </a>
-          ))}
+          <SectionNavLinks pageView={pageView} onSelect={(id) => { if (pageView === "components") { setCatalogQuery(""); setCatalogTier("All"); setCatalogArea("All areas"); setActiveComponentId(id); } }} />
         </nav>
 
         {/* Content */}
         <main className="flex-1 min-w-0 max-w-5xl px-4 sm:px-8 lg:px-12 py-8 lg:py-12">
+          <div className="mb-8 mr-4 inline-flex rounded-full p-1" role="tablist" aria-label="Design system sections" style={{ background: "var(--md-sys-color-dark-secondary)" }}>
+            {(["components", "foundations"] as const).map((view) => <button key={view} type="button" role="tab" aria-selected={pageView === view} onClick={() => { setPageView(view); setActiveComponentId(null); setCatalogQuery(""); setCatalogTier("All"); setCatalogArea("All areas"); }} className="rounded-full px-4 py-2 text-sm font-semibold capitalize" style={{ background: pageView === view ? "var(--md-sys-color-neonindigo)" : "transparent", color: pageView === view ? "var(--md-sys-color-text-on-accent)" : "var(--md-sys-color-text-muted)" }}>{view === "components" ? "Components" : "Foundations"}</button>)}
+          </div>
 
+          {pageView === "foundations" && <>
           {/* ── Voice & Tone ─────────────────────────────────────────── */}
           <SectionHeader
             id="voice-tone"
@@ -984,9 +1014,63 @@ export default function DesignSystemPage() {
             <ElevationSwatch level={4} token="--elevation-4" shadow="0 6px 10px 4px rgba(0,0,0,0.2), 0 2px 3px rgba(0,0,0,0.35)" />
           </div>
 
+          </>}
+          {pageView === "components" && <>
+          {activeComponentId ? (
+            <button type="button" onClick={() => setActiveComponentId(null)} className="mb-6 rounded-full px-4 py-2 text-sm font-semibold" style={{ background: "var(--md-sys-color-dark-secondary)", color: "var(--md-sys-color-neonindigo)" }}>← All components</button>
+          ) : <div id="component-catalog" className="mb-8 rounded-2xl p-5" style={{ background: "var(--md-sys-color-dark-secondary)", border: "1px solid var(--md-sys-color-dark-tertiary)" }}>
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div><h1 className="text-2xl font-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>Component library</h1><p className="mt-1 text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>Browse by Atomic tier, search by name, then open a component to inspect its variants and handoff details.</p></div>
+              <input value={catalogQuery} onChange={(e) => setCatalogQuery(e.target.value)} placeholder="Search components" aria-label="Search components" className="h-10 w-full lg:w-72 rounded-full px-4 text-sm outline-none" style={{ background: "var(--md-sys-color-background)", border: "1px solid var(--md-sys-color-dark-tertiary)", color: "var(--md-sys-color-text-primary)" }} />
+            </div>
+            <p className="mt-4 text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>{COMPONENT_SECTIONS.filter((item) => (catalogTier === "All" || TIER_BY_SECTION[item.id] === catalogTier) && (catalogArea === "All areas" || (AREA_BY_SECTION[item.id] ?? "Core UI") === catalogArea) && `${item.label} ${item.id} ${AREA_BY_SECTION[item.id] ?? "Core UI"}`.toLowerCase().includes(catalogQuery.trim().toLowerCase())).length} components shown · select a card to open its live examples and implementation notes.</p>
+            <div className="flex gap-2 flex-wrap mt-3" role="group" aria-label="Filter components by Atomic tier">
+              {(["All", "Atoms", "Molecules", "Organisms", "Templates"] as AtomicTier[]).map((tier) => <button key={tier} type="button" onClick={() => setCatalogTier(tier)} className="rounded-full px-3 py-1.5 text-xs font-semibold" style={{ background: catalogTier === tier ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-tertiary)", color: catalogTier === tier ? "var(--md-sys-color-text-on-accent)" : "var(--md-sys-color-text-muted)" }}>{tier}{tier === "Templates" ? " · coming later" : ""}</button>)}
+            </div>
+            <div className="flex gap-2 flex-wrap mt-3" role="group" aria-label="Filter components by product area">
+              {["All areas", "Accounts", "Action items", "Activity", "Capture", "Chat", "Feedback", "AI insights", "Core UI"].map((area) => <button key={area} type="button" onClick={() => setCatalogArea(area)} className="rounded-full px-3 py-1.5 text-xs" style={{ background: catalogArea === area ? "var(--md-sys-color-dark-tertiary)" : "transparent", color: catalogArea === area ? "var(--md-sys-color-text-primary)" : "var(--md-sys-color-text-muted)", border: "1px solid var(--md-sys-color-dark-tertiary)" }}>{area}</button>)}
+            </div>
+            <div className="mt-5 space-y-6">
+              {(["Atoms", "Molecules", "Organisms", "Templates"] as const).filter((tier) => catalogTier === "All" || catalogTier === tier).map((tier) => {
+                const items = COMPONENT_SECTIONS.filter((item) => TIER_BY_SECTION[item.id] === tier && (catalogArea === "All areas" || (AREA_BY_SECTION[item.id] ?? "Core UI") === catalogArea) && `${item.label} ${item.id} ${AREA_BY_SECTION[item.id] ?? "Core UI"}`.toLowerCase().includes(catalogQuery.trim().toLowerCase()));
+                if (!items.length) return null;
+                return <section key={tier} aria-label={tier}>
+                  <h2 className="mb-3 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--md-sys-color-text-disabled)" }}>{tier} <span>({items.length})</span></h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                    {items.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          setActiveComponentId(item.id);
+                          requestAnimationFrame(() => {
+                            document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          });
+                        }}
+                        className="text-left rounded-xl p-4 transition-colors hover:border-[var(--md-sys-color-neonindigo)]"
+                        style={{ background: "var(--md-sys-color-background)", border: "1px solid var(--md-sys-color-dark-tertiary)" }}
+                      >
+                        <span className="flex items-center justify-between gap-2">
+                          <strong className="text-sm" style={{ color: "var(--md-sys-color-text-primary)" }}>{item.label}</strong>
+                          <span className="text-[10px] uppercase tracking-wide" style={{ color: "var(--md-sys-color-neonindigo)" }}>{tier}</span>
+                        </span>
+                        <span className="mt-1 block text-xs" style={{ color: "var(--md-sys-color-text-disabled)" }}>
+                          {AREA_BY_SECTION[item.id] || "Core UI"} · Open live preview and handoff details →
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </section>;
+              })}
+            </div>
+            {catalogTier !== "Templates" && !COMPONENT_SECTIONS.some((item) => (catalogTier === "All" || TIER_BY_SECTION[item.id] === catalogTier) && (catalogArea === "All areas" || (AREA_BY_SECTION[item.id] ?? "Core UI") === catalogArea) && `${item.label} ${item.id} ${AREA_BY_SECTION[item.id] ?? "Core UI"}`.toLowerCase().includes(catalogQuery.trim().toLowerCase())) && <p className="mt-4 text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>No components match those filters.</p>}
+            {catalogTier === "Templates" && <p className="mt-4 text-sm" style={{ color: "var(--md-sys-color-text-muted)" }}>There are no screen-level templates in the current library yet. This tier is reserved for full page compositions.</p>}
+          </div>}
+          <CatalogContextBridge query={catalogQuery} tier={catalogTier} activeId={activeComponentId}>
           {/* ── Buttons ───────────────────────────────────────────────── */}
+          <CatalogSection id="buttons" title="Buttons">
           <SectionHeader
-            id="buttons"
+            id="buttons-heading"
             title="Buttons"
             subtitle="One Button component: Filled (coral, indigo, danger), Tonal, Outlined and Text, in three heights, full width, and with a loading state."
           />
@@ -1110,9 +1194,11 @@ export default function DesignSystemPage() {
             </div>
           </div>
 
+          </CatalogSection>
           {/* ── Badges ────────────────────────────────────────────────── */}
+          <CatalogSection id="badges" title="Badges & Chips">
           <SectionHeader
-            id="badges"
+            id="badges-heading"
             title="Badges & Chips"
             subtitle="Count badges, status chips, and filter chips."
           />
@@ -1141,6 +1227,7 @@ export default function DesignSystemPage() {
             </div>
           </div>
 
+          </CatalogSection>
           {/* ── Account List Item (component area) ─────────────────────── */}
           <ComponentArea
             id="account-list-item"
@@ -1544,12 +1631,12 @@ export default function DesignSystemPage() {
           {/* ── Activity Card (component area) ─────────────────────────── */}
           <ComponentArea
             id="activity-card"
-            name="Activity Card"
+            name="Activity & Engagement Rows"
             kind="Library"
-            description="One row of an interaction list. Open rows on the page background, separated by hairlines. Activity tab: logged in Halosight, or brought in from Salesforce. Engagements drawer: recent, or recent and unread."
-            source="components/accounts/ActivityCard.tsx"
-            flutter="activity_card.dart"
-            anatomy="title · two-line summary · meta line (relative date · duration or source · who created it)"
+            description="Two distinct open-row components: account activity history, plus the recent engagement feed with read and unread states."
+            source="components/accounts/ActivityCard.tsx · components/accounts/EngagementRow.tsx"
+            flutter="activity_card.dart · engagement_row.dart"
+            anatomy="Activity: title · summary · meta. Engagement: company · interaction · date."
           >
             <AreaGroup title="Variants" count={4}>
               <VariantCard
@@ -1600,7 +1687,7 @@ export default function DesignSystemPage() {
               >
                 <div style={{ padding: "var(--spacing-2) 0" }}>
                   {recentSamples.filter((r) => !r.unread).map((r, i, all) => (
-                    <ActivityCard key={r.id} recent={r} variant="recent" isLast={i === all.length - 1} />
+                    <EngagementRow key={r.id} recent={r} variant="recent" isLast={i === all.length - 1} />
                   ))}
                 </div>
               </VariantCard>
@@ -1613,7 +1700,7 @@ export default function DesignSystemPage() {
               >
                 <div style={{ padding: "var(--spacing-2) 0" }}>
                   {recentSamples.filter((r) => r.unread).map((r, i, all) => (
-                    <ActivityCard key={r.id} recent={r} variant="recent-unread" isLast={i === all.length - 1} />
+                    <EngagementRow key={r.id} recent={r} variant="recent-unread" isLast={i === all.length - 1} />
                   ))}
                 </div>
               </VariantCard>
@@ -2545,6 +2632,8 @@ export default function DesignSystemPage() {
             </p>
           </div>
 
+          </CatalogContextBridge>
+          </>}
         </main>
       </div>
     </div>

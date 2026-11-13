@@ -1,132 +1,16 @@
-/* ─── Halosight Color Tokens ──────────────────────────────────────────────────
-   M3-aligned color system — Flutter-portable, Figma-ready.
-   Primitive palette lives in :root (reference only — never use directly in components).
-   Semantic tokens live in @theme {} and are available as Tailwind utilities.
-──────────────────────────────────────────────────────────────────────────── */
-
-/* ── Primitive palette & gradients ───────────────────────────────────────── */
+/* Prototype gradient recipes. Official CSS token variables are generated in
+   generated/design-tokens.css from the pinned release. The legacy light-theme
+   block below is retained as-is and is not part of token sync. */
 :root {
-  --palette-green:        #2ECC71;
-  --palette-amber:        #F5A623;
-  --palette-red:          #FF4D4F;
-  --palette-sky:          #4DA3FF;
-
-  --gradient-login:      radial-gradient(ellipse 70% 60% at 50% 40%, #1A1E44 0%, #131728 40%, #111420 100%);
-  --gradient-ai-dark:    radial-gradient(ellipse at 25% 30%, rgba(139,146,255,0.85) 0%, transparent 55%), radial-gradient(ellipse at 75% 70%, rgba(255,107,90,0.9) 0%, transparent 55%), #7874D8;
+  /* Release v0.5 compatibility fallback; official alpha tokens are pending in v0.6. */
+  --md-sys-color-alpha-bg-glass: rgba(17, 20, 32, 0.82);
+  --md-sys-color-alpha-scrim: rgba(0, 0, 0, 0.60);
+  --gradient-login: radial-gradient(ellipse 70% 60% at 50% 40%, var(--md-sys-color-legacy-login-gradient-core) 0%, var(--md-sys-color-legacy-login-gradient-mid) 40%, var(--md-sys-color-background) 100%);
+  --gradient-ai-dark: radial-gradient(ellipse at 25% 30%, color-mix(in srgb, var(--md-sys-color-neonindigo) 85%, transparent) 0%, transparent 55%), radial-gradient(ellipse at 75% 70%, color-mix(in srgb, var(--md-sys-color-brand-coral) 90%, transparent) 0%, transparent 55%), var(--md-sys-color-indigo);
   --gradient-ai-light:   radial-gradient(ellipse at 25% 30%, rgba(179,184,255,0.85) 0%, transparent 55%), radial-gradient(ellipse at 75% 70%, rgba(255,143,130,0.9) 0%, transparent 55%), #A8AAEE;
-  --gradient-hero:       linear-gradient(to bottom right, #1A1D29, #252A36, #1A1D29);
-  --gradient-card:       linear-gradient(to bottom right, #475569, #334155);
-  --gradient-text-brand: linear-gradient(to right, #8B92FF, #5B63D6);
-}
-
-@theme {
-
-  /* ── App Surface ────────────────────────────────────────────────────────── */
-  --md-sys-color-background:  #111420;  /* page / app chrome   */
-  --md-sys-color-surface-dim: #171B29;  /* nav, persistent UI  */
-
-  /* ── Dark Scale ─────────────────────────────────────────────────────────── */
-  --md-sys-color-dark-void:      #04050B;  /* Near-black — app chrome background */
-  --md-sys-color-dark-base:      #0D0F1A;  /* Off-black — deepest dark  */
-  --md-sys-color-dark-primary:   #1A1D29;  /* Primary dark background   */
-  --md-sys-color-dark-secondary: #252A36;  /* Secondary dark background */
-  --md-sys-color-dark-tertiary:  #3D4451;  /* Tertiary dark elements    */
-
-  /* ── Text ───────────────────────────────────────────────────────────────── */
-  --md-sys-color-text-primary:   #F7F8FF;  /* Primary text           */
-  --md-sys-color-text-secondary: #C3CAD8;  /* Supporting text        */
-  --md-sys-color-text-muted:     #8B94A8;  /* Muted text, metadata   */
-  --md-sys-color-text-disabled:  #5D667A;  /* Placeholders, inactive */
-  --md-sys-color-text-inverse:   #111420;  /* Text on light surfaces */
-  --md-sys-color-text-on-coral:  #FFFFFF;  /* Label on brand-coral fills (same in both themes) */
-  --md-sys-color-text-on-accent: #FFFFFF;  /* Label or icon on neonindigo fills (same in both themes) */
-  --md-sys-color-text-on-teal:   #FFFFFF;  /* Label on brand-teal fills (same in both themes) */
-  --md-sys-color-surface-static-white: #FFFFFF;  /* White buttons (sign-in): white in both themes, brand requirement */
-  --md-sys-color-text-on-white:  #111420;  /* Label on static-white fills (same in both themes) */
-
-  /* ── Light Surfaces ─────────────────────────────────────────────────────── */
-  --md-sys-color-surface-white: #FFFFFF;
-  --md-sys-color-surface-light: #F8FAFC;
-  --md-sys-color-surface-gray:  #F1F5F9;
-
-  /* ── Brand — Neon Indigo ─────────────────────────────────────────────────── */
-  --md-sys-color-neonindigo-light: #B3B8FF;
-  --md-sys-color-neonindigo:       #8B92FF;
-  --md-sys-color-neonindigo-dark:  #6B72E8;
-
-  /* ── Brand — Coral Ember ─────────────────────────────────────────────────── */
-  --md-sys-color-brand-coral-light: #FF8F82;
-  --md-sys-color-brand-coral:       #FF6B5A;
-  --md-sys-color-brand-coral-dark:  #E64A37;
-
-  /* ── Brand — Indigo ─────────────────────────────────────────────────────── */
-  --md-sys-color-indigo-light: #7E85E6;
-  --md-sys-color-indigo:       #5B63D6;
-  --md-sys-color-indigo-dark:  #4850B8;
-
-  /* ── Brand — Halosight Custom ────────────────────────────────────────────── */
-  --md-sys-color-brand-teal-light: #8CB5C5;
-  --md-sys-color-brand-teal:       #6B9DB0;
-  --md-sys-color-brand-teal-dark:  #4D8495;
-  --md-sys-color-brand-teal-hover: #8CB5C5;
-  --md-sys-color-brand-pink:       #E85D9C;
-  --md-sys-color-recording:        #FF5A4F;  /* live recording indicator */
-
-  /* ── Semantic ────────────────────────────────────────────────────────────── */
-  --md-sys-color-success-light: #86EFAC;
-  --md-sys-color-success:       #2ECC71;
-  --md-sys-color-success-dark:  #16A34A;
-
-  --md-sys-color-warning-light: #FCD384;
-  --md-sys-color-warning:       #F5A623;
-  --md-sys-color-warning-dark:  #C47D10;
-
-  --md-sys-color-error-light: #FF8586;
-  --md-sys-color-error:       #FF4D4F;
-  --md-sys-color-error-dark:  #CC1F21;
-
-  --md-sys-color-info-light: #93C5FD;
-  --md-sys-color-info:       #4DA3FF;
-  --md-sys-color-info-dark:  #1D6FBF;
-
-  /* Published names (color.semantic.* → --md-sys-color-semantic-*). Aliases of the short names above
-     until the token generator (DELIVERY-1475) replaces them; same values, so no visual change. */
-  --md-sys-color-semantic-success-light: var(--md-sys-color-success-light);
-  --md-sys-color-semantic-success: var(--md-sys-color-success);
-  --md-sys-color-semantic-success-dark: var(--md-sys-color-success-dark);
-  --md-sys-color-semantic-warning-light: var(--md-sys-color-warning-light);
-  --md-sys-color-semantic-warning: var(--md-sys-color-warning);
-  --md-sys-color-semantic-warning-dark: var(--md-sys-color-warning-dark);
-  --md-sys-color-semantic-error-light: var(--md-sys-color-error-light);
-  --md-sys-color-semantic-error: var(--md-sys-color-error);
-  --md-sys-color-semantic-error-dark: var(--md-sys-color-error-dark);
-  --md-sys-color-semantic-info-light: var(--md-sys-color-info-light);
-  --md-sys-color-semantic-info: var(--md-sys-color-info);
-  --md-sys-color-semantic-info-dark: var(--md-sys-color-info-dark);
-
-  /* ── Data Visualization ──────────────────────────────────────────────────── */
-  --md-sys-color-data-account:  #6B9DB0;
-  --md-sys-color-data-recency:  #8B92FF;
-  --md-sys-color-data-crm-sync: #2ECC71;
-  --md-sys-color-data-review:   #F5A623;
-
-  /* ── Alpha ───────────────────────────────────────────────────────────────── */
-  --md-sys-color-alpha-white-10:     rgba(255, 255, 255, 0.10);
-  --md-sys-color-alpha-white-18:     rgba(255, 255, 255, 0.18);
-  --md-sys-color-alpha-neonindigo-10:    rgba(179, 184, 255, 0.10);
-  --md-sys-color-alpha-neonindigo-glass: rgba(179, 184, 255, 0.10);
-  --md-sys-color-alpha-dark-glass:   rgba(255, 255, 255, 0.18);
-  --md-sys-color-alpha-bg-glass:     rgba(17, 20, 32, 0.82);  /* scrolled header backdrop */
-  --md-sys-color-alpha-scrim:        rgba(0, 0, 0, 0.60);     /* dim behind drawers and dialogs */
-
-  /* ── Extended Palette ────────────────────────────────────────────────────── */
-  --md-ref-palette-ext-cyan:   #5BBFCC;
-  --md-ref-palette-ext-lime:   #89B347;
-  --md-ref-palette-ext-orange: #C97A42;
-  --md-ref-palette-ext-gold:   #C4962B;
-  --md-ref-palette-ext-violet: #8875C4;
-  --md-ref-palette-ext-rose:   #C97888;
-
+  --gradient-hero: linear-gradient(to bottom right, var(--md-sys-color-dark-primary), var(--md-sys-color-dark-secondary), var(--md-sys-color-dark-primary));
+  --gradient-card: linear-gradient(to bottom right, var(--md-sys-color-legacy-slate-600), var(--md-sys-color-dark-tertiary));
+  --gradient-text-brand: linear-gradient(to right, var(--md-sys-color-neonindigo), var(--md-sys-color-indigo));
 }
 
 /* ─── Light Theme Overrides ───────────────────────────────────────────────────

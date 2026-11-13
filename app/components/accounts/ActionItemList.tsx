@@ -32,6 +32,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/ui/Icon";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { useActionItemDrawer } from "@/lib/context/ActionItemDrawerContext";
 import ListCard from "@/components/ui/ListCard";
 import type { ActionItem } from "@/lib/types";
@@ -56,32 +57,11 @@ export function ActionItemsHeader({
   action: { kind: "add" | "viewAll"; onClick: () => void };
 }) {
   return (
-    <div className="flex items-center justify-between px-4 py-2" style={{ minHeight: 40 }}>
-      <span
-        className="text-11-bold"
-        style={{ letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--md-sys-color-text-muted)" }}
-      >
-        Action Items
-      </span>
-      {action.kind === "viewAll" ? (
-        <button
-          onClick={action.onClick}
-          className="text-13-bold active:opacity-50 transition-opacity"
-          style={{ color: "var(--md-sys-color-neonindigo)", cursor: "pointer" }}
-        >
-          View all
-        </button>
-      ) : (
-        <button
-          onClick={action.onClick}
-          aria-label="Add action item"
-          className="flex items-center justify-center active:opacity-60 transition-opacity"
-          style={{ width: 32, height: 32, marginRight: -4, color: "var(--md-sys-color-text-primary)" }}
-        >
-          <Icon name="add" size={20} />
-        </button>
-      )}
-    </div>
+    <SectionHeader label="Action Items" compact trailing={action.kind === "viewAll" ? (
+      <button type="button" onClick={action.onClick} className="text-13-bold active:opacity-50 transition-opacity" style={{ color: "var(--md-sys-color-neonindigo)", cursor: "pointer" }}>View all</button>
+    ) : (
+      <button type="button" onClick={action.onClick} aria-label="Add action item" className="flex items-center justify-center active:opacity-60 transition-opacity" style={{ width: 32, height: 32, marginRight: -4, color: "var(--md-sys-color-text-primary)" }}><Icon name="add" size={20} /></button>
+    )} />
   );
 }
 

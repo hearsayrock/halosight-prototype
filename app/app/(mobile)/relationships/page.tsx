@@ -48,7 +48,7 @@ import NoteSheet from "@/components/ui/NoteSheet";
 import MenuIcon from "@/components/ui/MenuIcon";
 import FilterDropdown from "@/components/ui/FilterDropdown";
 import VisitedFilterDropdown, { type VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
-import CreateAccountSheet from "@/components/accounts/CreateAccountSheet";
+
 import CreateLeadSheet from "@/components/accounts/CreateLeadSheet";
 import FeedbackWidget from "@/components/ui/FeedbackWidget";
 import { mockAccounts } from "@/lib/mock-data/accounts";
@@ -1079,8 +1079,9 @@ function CombinedPageContent() {
 
       {/* Create account sheet (search CTA) */}
       {showCreateSheet && (
-        <CreateAccountSheet
+        <CreateLeadSheet
           initialName={query}
+          duplicateDetection={false}
           onClose={() => setShowCreateSheet(false)}
           onCreated={handleAccountCreated}
         />

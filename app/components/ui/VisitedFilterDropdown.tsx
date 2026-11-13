@@ -21,9 +21,10 @@
 import TextField from "@/components/ui/TextField";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Icon from "@/components/ui/Icon";
+import FilterPill from "@/components/ui/FilterPill";
+import MenuPopover from "@/components/ui/MenuPopover";
 import Button from "@/components/ui/Button";
-import { MenuPanel, MenuRow, MenuDivider, menuPanelVariants, menuPanelTransition } from "@/components/ui/Menu";
+import { MenuPanel, MenuRow, MenuDivider } from "@/components/ui/Menu";
 
 export type VisitedFilter = "all" | "7d" | "14d" | "30d" | "90d" | "custom";
 
@@ -90,46 +91,9 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
   return (
     <div className="relative">
 
-      {/* Pill trigger */}
-      <button
-        onClick={() => open ? setOpen(false) : openDropdown()}
-        className="flex items-center h-8 px-3 text-sm-bold active:opacity-70 transition-opacity"
-        style={{
-          gap: isFiltered ? 4 : 2,
-          background: open ? "var(--md-sys-color-neonindigo)" : "var(--md-sys-color-dark-secondary)",
-          borderRadius: "var(--radius-full)",
-          color: open ? "var(--md-sys-color-text-on-accent)" : "var(--md-sys-color-text-primary)",
-        }}
-      >
-        {isFiltered && !open && (
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginRight: 1 }}>
-            <path d="M3 8L6.5 11.5L13 5" stroke="var(--md-sys-color-neonindigo)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        )}
-        {pillLabel}
-        <Icon
-          name={open ? "keyboard_arrow_up" : "keyboard_arrow_down"}
-          size={18}
-          style={{ color: open ? "color-mix(in srgb, var(--md-sys-color-text-on-accent) 70%, transparent)" : "var(--md-sys-color-text-muted)" }}
-        />
-      </button>
+      <FilterPill label={pillLabel} open={open} filtered={isFiltered} onClick={() => open ? setOpen(false) : openDropdown()} />
 
-      <AnimatePresence>
-        {open && (
-          <>
-            {/* Dismiss overlay */}
-            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-
-            {/* Menu */}
-            <motion.div
-              className="absolute left-0 top-full mt-1 z-50"
-              variants={menuPanelVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={menuPanelTransition}
-              style={{ transformOrigin: "top left" }}
-            >
+      <MenuPopover open={open} onClose={() => setOpen(false)} placement="below-left" backdropZIndex={40} panelZIndex={50}>
               <MenuPanel minWidth={176}>
               {PRESETS.map((opt, i) => (
                 <MenuRow
@@ -168,10 +132,7 @@ export default function VisitedFilterDropdown({ value, customFrom, customTo, onC
                 )}
               </AnimatePresence>
               </MenuPanel>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      </MenuPopover>
     </div>
   );
 }

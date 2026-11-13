@@ -13,9 +13,10 @@
  */
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
+import MenuPopover from "@/components/ui/MenuPopover";
 import type { SortOption } from "@/lib/types";
-import { MenuPanel, MenuRow, MenuSectionLabel, MenuDivider, menuPanelVariants, menuPanelTransition } from "@/components/ui/Menu";
+import { MenuPanel, MenuRow, MenuSectionLabel, MenuDivider } from "@/components/ui/Menu";
 import type { VisitedFilter } from "@/components/ui/VisitedFilterDropdown";
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -62,22 +63,7 @@ export default function SortMenu({ current, onChange, visitedFilter = "all", onV
         </svg>
       </motion.button>
 
-      <AnimatePresence>
-        {open && (
-          <>
-            {/* Dismiss overlay */}
-            <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-
-            {/* Menu — top-right corner anchored to where the button sits */}
-            <motion.div
-              className="absolute right-0 top-0 z-20"
-              variants={menuPanelVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={menuPanelTransition}
-              style={{ transformOrigin: "top right" }}
-            >
+      <MenuPopover open={open} onClose={() => setOpen(false)} placement="top-right" backdropZIndex={10} panelZIndex={20}>
               <MenuPanel minWidth={224}>
                 <MenuSectionLabel>Sort</MenuSectionLabel>
                 {SORT_OPTIONS.map((opt, i) => (
@@ -111,10 +97,7 @@ export default function SortMenu({ current, onChange, visitedFilter = "all", onV
                   />
                 ))}
               </MenuPanel>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      </MenuPopover>
 
     </div>
   );

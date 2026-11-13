@@ -610,6 +610,35 @@ drawer.open(accountId, item.id, () => handleComplete(item.id));` },
     changelog: ["2026-10-28: new shared component. Underline variant extracted from the account screen's inline tab row (look unchanged) and made the default; the old pill tab bar became the `segmented` sub-variant."],
   },
 
+  {
+    name: "FilterPill", category: "ui-primitive", type: "interactive",
+    description: "Shared 32px pill trigger for menu-backed filters, with default, active-filter and open states.",
+    file: "app/components/ui/FilterPill.tsx", flutterEquivalent: "FilterPill — shared filter menu trigger",
+    tokens: { required: [{ token: "color.dark.secondary", role: "default fill" }, { token: "color.neonindigo.base", role: "open fill and filtered check" }, { token: "radius.full", role: "pill shape" }], forbidden: [] },
+    props: [
+      { name: "label", type: "string", required: true, description: "Current filter label." },
+      { name: "open", type: "boolean", required: true, description: "Whether the menu is open." },
+      { name: "filtered", type: "boolean", required: true, description: "Whether the filter differs from its default." },
+      { name: "onClick", type: "() => void", required: true, description: "Toggles or opens the filter menu." },
+    ],
+    usage: { patterns: [{ name: "filter trigger", when: "Opening a filter menu", code: '<FilterPill label={label} open={open} filtered={filtered} onClick={toggle} />' }], antiPatterns: [{ scenario: "Rebuilding the pill trigger", why: "Trigger states and visuals can drift", instead: "Use FilterPill" }] },
+    aiHints: { priority: "medium", useWhen: ["Building a menu-backed filter"], neverUseFor: ["Standalone tags or selections"], alwaysRemember: ["Menu content and selected values stay in the parent"] },
+  },
+  {
+    name: "MenuPopover", category: "ui-primitive", type: "interactive",
+    description: "Shared dismiss layer, anchor placement and spring animation for MenuPanel popovers.",
+    file: "app/components/ui/MenuPopover.tsx", flutterEquivalent: "PopupMenuButton / showMenu anchor wrapper",
+    tokens: { required: [], forbidden: [] },
+    props: [
+      { name: "open", type: "boolean", required: true, description: "Controls visibility." },
+      { name: "onClose", type: "() => void", required: true, description: "Dismisses the popover." },
+      { name: "placement", type: '"below-left" | "top-right"', required: false, default: '"below-left"', description: "Anchor position and transform origin." },
+      { name: "children", type: "ReactNode", required: true, description: "MenuPanel or equivalent menu content." },
+    ],
+    usage: { patterns: [{ name: "anchored menu", when: "Showing a dismissible menu", code: '<MenuPopover open={open} onClose={close}><MenuPanel>…</MenuPanel></MenuPopover>' }], antiPatterns: [{ scenario: "Repeating overlay and animation wrappers", why: "Dismiss and positioning behavior should be shared", instead: "Use MenuPopover" }] },
+    aiHints: { priority: "medium", useWhen: ["Anchoring a menu panel to a trigger"], neverUseFor: ["Drawers or full-screen dialogs"], alwaysRemember: ["The caller owns the open state and menu contents"] },
+  },
+
   // ── ActivityCard ────────────────────────────────────────────────────────────
   {
     name: "ActivityCard",
@@ -655,13 +684,30 @@ drawer.open(accountId, item.id, () => handleComplete(item.id));` },
     aiHints: {
       priority: "high",
       useWhen: ["Showing an account's activity history"],
-      neverUseFor: ["The Engagements side drawer — it has its own card"],
+      neverUseFor: ["The Engagements side drawer — use EngagementRow"],
       alwaysRemember: [
         "Person is who created it: “You” for the signed-in rep, otherwise their name",
         "Row padding 16px vertical / 20px sides; title 17/500, summary 15/21 (2 lines), meta 14",
       ],
     },
-    changelog: ["2026-10-28: rebuilt as a shared component with halosight and crm variants (was an inline boxed card on the account page). Added ActivityItem.source and formatRelativeDate()."],
+    changelog: ["2026-11-11: limited to account activity history; recent engagement rows moved to EngagementRow.", "2026-10-28: rebuilt as a shared component with halosight and crm variants (was an inline boxed card on the account page). Added ActivityItem.source and formatRelativeDate()."],
+  },
+
+  {
+    name: "EngagementRow", category: "feature", type: "navigation",
+    description: "A recent-engagement feed row with read and unread variants. Shows account eyebrow, title, interaction type and date; unread rows add a dot, stronger title and change note.",
+    file: "app/components/accounts/EngagementRow.tsx", flutterEquivalent: "EngagementRow — recent engagement feed row",
+    tokens: { required: [{ token: "color.brand.teal", role: "account eyebrow" }, { token: "color.neonindigo.base", role: "unread indicator and Today date" }, { token: "color.alpha.white-10", role: "separator" }], forbidden: [] },
+    props: [
+      { name: "recent", type: "RecentActivity", required: true, description: "Engagement row data." },
+      { name: "variant", type: '"recent" | "recent-unread"', required: false, description: "Defaults from recent.unread." },
+      { name: "isLast", type: "boolean", required: false, default: "false", description: "Hides the final separator." },
+      { name: "href", type: "string", required: false, description: "Optional destination for the row." },
+      { name: "onPress", type: "() => void", required: false, description: "Optional press callback." },
+    ],
+    usage: { patterns: [{ name: "engagement feed", when: "Showing recent interactions across accounts", code: '<EngagementRow recent={activity} variant={unread ? "recent-unread" : "recent"} />' }], antiPatterns: [{ scenario: "Using ActivityCard for recent interactions", why: "The feed and activity history have different data and layouts", instead: "Use EngagementRow for feed entries and ActivityCard for account history" }] },
+    aiHints: { priority: "medium", useWhen: ["Showing recent cross-account interactions"], neverUseFor: ["An account's activity history"], alwaysRemember: ["Read state controls the unread treatment; tapping is handled by the parent"] },
+    changelog: ["2026-11-11: split from ActivityCard into a dedicated feed row."],
   },
 
   // ── InsightCard ─────────────────────────────────────────────────────────────
@@ -1008,7 +1054,7 @@ show({ title: "Interaction deleted", action: { label: "Undo", onPress: restore }
     type: "interactive",
     description:
       "The home screen's side drawer: a feed of recent interactions across every account, newest first. Header with the halosight logo and a round search button (opens a search field that filters the feed). " +
-      "Under the header: Companies, Action Items and Risks links (serif, with icons) and an \"Interactions\" label; they step aside while searching. Rows are ActivityCard variants `recent` / `recent-unread`; opening a row marks it read. Lazy loads: 12 rows first, then 8 more each time the end of the list scrolls into view (ThinkingDots while loading). " +
+      "Under the header: Companies, Action Items and Risks links (serif, with icons) and an \"Interactions\" label; they step aside while searching. Rows use EngagementRow variants `recent` / `recent-unread`; opening a row marks it read. Lazy loads: 12 rows first, then 8 more each time the end of the list scrolls into view (ThinkingDots while loading). " +
       "EngagementsPanel is the stateless body used by the design-system page.",
     file: "app/components/accounts/EngagementsDrawer.tsx",
     designSystemSection: "#engagements-drawer",
@@ -1030,7 +1076,7 @@ show({ title: "Interaction deleted", action: { label: "Undo", onPress: restore }
     ],
     usage: {
       patterns: [{ name: "home menu", when: "Hamburger on the home screen", code: `<EngagementsDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />` }],
-      antiPatterns: [{ scenario: "Re-building the row inline", why: "The unread treatment must stay in sync with the Activity Card", instead: "Use <ActivityCard recent={…} variant=\"recent-unread\" />" }],
+      antiPatterns: [{ scenario: "Re-building the row inline", why: "The unread treatment must stay in sync with the Activity Card", instead: "Use <EngagementRow recent={…} variant=\"recent-unread\" />" }],
     },
     aiHints: {
       priority: "medium",
@@ -1038,7 +1084,7 @@ show({ title: "Interaction deleted", action: { label: "Undo", onPress: restore }
       neverUseFor: ["One account's history — use the Activity tab list"],
       alwaysRemember: ["Copy is “Modified …”, never “Created …”", "Read state is in AccountState (prototype); the real feed needs a server read flag"],
     },
-    changelog: ["2026-11-02: new. Replaces the old name-only engagements list (Today / Previous groups). ActivityCard gained the recent / recent-unread variants."],
+    changelog: ["2026-11-02: new. Replaces the old name-only engagements list (Today / Previous groups). EngagementRow was split into its own feed component."],
   },
 
   // ── TextField ───────────────────────────────────────────────────────────────
@@ -1216,10 +1262,15 @@ show({ title: "Interaction deleted", action: { label: "Undo", onPress: restore }
     props: [
       { name: "onClose", type: "() => void", required: true, description: "Called after the exit animation." },
       { name: "onCreated", type: "(account: Account) => void", required: true, description: "Receives the new prospect (type standalone, halosightType prospect)." },
+      { name: "initialName", type: "string", required: false, default: '""', description: "Optional prefilled company name, such as a search query." },
+      { name: "duplicateDetection", type: "boolean", required: false, default: "true", description: "Runs duplicate detection when enabled; turn off for the search-created flow." },
     ],
     usage: {
-      patterns: [{ name: "from the add button", when: "Adding a lead from the companies list", code: `{open && <CreateLeadSheet onClose={() => setOpen(false)} onCreated={handleCreated} />}` }],
-      antiPatterns: [{ scenario: "Building a second create-account sheet", why: "CreateAccountSheet already drifted from this one", instead: "Use this sheet; a search entry point passes the query in as the name" }],
+      patterns: [
+        { name: "from the add button", when: "Adding a lead from the companies list", code: `{open && <CreateLeadSheet onClose={() => setOpen(false)} onCreated={handleCreated} />}` },
+        { name: "from an empty search", when: "Creating a company from a search query without duplicate warnings", code: `<CreateLeadSheet initialName={query} duplicateDetection={false} onClose={close} onCreated={handleCreated} />` },
+      ],
+      antiPatterns: [{ scenario: "Building a second create-account sheet", why: "The form and result are shared", instead: "Use CreateLeadSheet with initialName and duplicateDetection props" }],
     },
     aiHints: {
       priority: "medium",
@@ -1228,48 +1279,10 @@ show({ title: "Interaction deleted", action: { label: "Undo", onPress: restore }
       alwaysRemember: [
         "Duplicate check is a warning, not a block; the field takes the warning stroke while the callout shows",
         "Matches are name-contains in the prototype; production should match on a server",
-        "CreateAccountSheet is the same sheet without duplicate detection; merge them for Flutter",
+        "Set duplicateDetection=false for the search-created flow; it defaults to true",
       ],
     },
-    changelog: ["2026-11-09: registry entry added; the Company field is now a TextField with status=warning for the duplicate state."],
-  },
-
-  // ── CreateAccountSheet ──────────────────────────────────────────────────────
-  {
-    name: "CreateAccountSheet",
-    category: "feature",
-    type: "interactive",
-    description:
-      "\"New Lead\" opened from the \"create\" prompt under a company search: the same sheet as CreateLeadSheet without duplicate detection, " +
-      "pre-filled with the search text. One TextField (Company), an \"AI fills the rest\" hint and an indigo Create a lead button. " +
-      "Contact and address fields are reserved for an \"Add more details\" step that is not built.",
-    file: "app/components/accounts/CreateAccountSheet.tsx",
-    flutterEquivalent: "Merge into CreateLeadSheet (initialName parameter; duplicate check on)",
-    tokens: {
-      required: [
-        { token: "color.dark.secondary", role: "Company field (via TextField)" },
-        { token: "color.neonindigo.base", role: "active stroke, AI hint, CTA" },
-        { token: "color.alpha.neonindigo-10", role: "AI hint fill" },
-        { token: "color.text.primary", role: "title" },
-        { token: "radius.lg", role: "AI hint" },
-      ],
-    },
-    props: [
-      { name: "initialName", type: "string", required: false, default: '""', description: "Search text to start from." },
-      { name: "onClose", type: "() => void", required: true, description: "Called after the exit animation." },
-      { name: "onCreated", type: "(account: Account) => void", required: true, description: "Receives the new prospect." },
-    ],
-    usage: {
-      patterns: [{ name: "from a search prompt", when: "No result matches the search", code: `{open && <CreateAccountSheet initialName={query} onClose={close} onCreated={handleCreated} />}` }],
-      antiPatterns: [{ scenario: "Keeping both lead sheets in Flutter", why: "They differ only by duplicate detection", instead: "One sheet with an initial name" }],
-    },
-    aiHints: {
-      priority: "low",
-      useWhen: ["Creating a company from a search that found nothing"],
-      neverUseFor: ["The + on the companies list — that is CreateLeadSheet"],
-      alwaysRemember: ["Flagged for merge into CreateLeadSheet", "showDetails state exists but the extra fields are not rendered"],
-    },
-    changelog: ["2026-11-09: registry entry added; Company is a TextField, the unused optional-field helper was removed."],
+    changelog: ["2026-11-11: absorbs CreateAccountSheet through initialName and duplicateDetection props.", "2026-11-09: registry entry added; the Company field is now a TextField with status=warning for the duplicate state."],
   },
 
   // ── ConvertToAccountSheet ───────────────────────────────────────────────────
@@ -2003,7 +2016,7 @@ show({ title: "Interaction deleted", action: { label: "Undo", onPress: restore }
     category: "ui-primitive",
     type: "display",
     description:
-      "The small label above a list section: uppercase label, optional count pill and round add button; `divider` centers the label between two hairlines (e.g. Company-Wide Results).",
+      "The small label above a list section: uppercase label, optional count pill and round add button; supports custom trailing content and compact layout. `divider` centers the label between two hairlines.",
     file: "app/components/ui/SectionHeader.tsx",
     designSystemSection: "#section-header",
     flutterEquivalent: "SectionHeader — lib/view/_widget/section_header.dart",
@@ -2022,6 +2035,8 @@ show({ title: "Interaction deleted", action: { label: "Undo", onPress: restore }
       { name: "count", type: "number", required: false, description: "Count pill." },
       { name: "onAdd / addLabel", type: "() => void / string", required: false, description: "Round add button and its accessibility label." },
       { name: "divider", type: "boolean", required: false, description: "Centered between hairlines." },
+      { name: "trailing", type: "ReactNode", required: false, description: "Custom trailing action or content." },
+      { name: "compact", type: "boolean", required: false, default: "false", description: "Uses the compact 40px header layout." },
     ],
     usage: {
       patterns: [{ name: "default", when: "Home companies list", code: `<SectionHeader label="Your Companies" count={n} onAdd={addLead} addLabel="Add new lead" />` }],

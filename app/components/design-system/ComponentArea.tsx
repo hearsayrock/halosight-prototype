@@ -2,8 +2,8 @@
  * Design-system page layout helpers — NOT part of the mobile app UX.
  * Browser-only reference scaffolding, so no Flutter equivalent.
  *
- * Gives a component its own "area" on /design-system:
- *   <ComponentArea>      header (name, kind, source files, one-line anatomy)
+ * Gives a component a searchable catalog detail on /design-system:
+ *   <ComponentArea>      focused header (name, Atomic tier, kind, source, anatomy)
  *     <VariantCard>      one per variant — live preview + the prop that selects it
  *     <SubComponentCard> atoms the component is built from, nested under it
  *
@@ -11,6 +11,7 @@
  */
 
 import type { ReactNode } from "react";
+import { TIER_BY_SECTION, useComponentCatalog } from "@/components/design-system/ComponentCatalogContext";
 
 type Kind = "Library" | "Feature" | "Furniture";
 
@@ -63,14 +64,26 @@ export function ComponentArea({
   anatomy?: string;
   children: ReactNode;
 }) {
+  const { query, tier, activeId } = useComponentCatalog();
+  const atomicTier = TIER_BY_SECTION[id] ?? "Organisms";
+  const matchesQuery = `${name} ${description} ${source} ${id}`.toLowerCase().includes(query.trim().toLowerCase());
+  const isActive = activeId === id;
+  if (activeId ? !isActive : (!matchesQuery || (tier !== "All" && tier !== atomicTier))) return null;
+
   return (
-    <section id={id} className="mb-16" style={{ scrollMarginTop: 16 }}>
-      <div className="mb-8 pt-2">
-        <div className="flex items-center gap-3 flex-wrap">
-          <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--md-sys-color-text-primary)" }}>{name}</h2>
-          <Chip tone="accent">{kind}</Chip>
+    <section id={id} className="mb-16 rounded-2xl overflow-hidden" style={{ scrollMarginTop: 80, background: "var(--md-sys-color-dark-secondary)", border: "1px solid var(--md-sys-color-dark-tertiary)" }}>
+      <div className="flex items-center justify-between gap-4 px-5 py-4">
+        <div className="min-w-0">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h2 className="text-xl font-bold" style={{ color: "var(--md-sys-color-text-primary)" }}>{name}</h2>
+            <Chip tone="accent">{atomicTier}</Chip>
+            <Chip>{kind}</Chip>
+          </div>
+          <p className="mt-1 text-sm truncate" style={{ color: "var(--md-sys-color-text-muted)" }}>{description}</p>
         </div>
-        <p className="mt-1 text-sm max-w-2xl" style={{ color: "var(--md-sys-color-text-muted)" }}>{description}</p>
+      </div>
+      <div className="px-5 pb-6 pt-2">
+      <div className="mb-8 pt-2">
         <div className="mt-3 flex flex-col gap-0.5">
           <p style={{ fontSize: 12, color: "var(--md-sys-color-text-disabled)" }}>
             <span style={{ ...label, marginRight: 8 }}>Source</span><Code>{source}</Code>
@@ -88,6 +101,7 @@ export function ComponentArea({
         <div className="mt-3 h-px" style={{ background: "var(--md-sys-color-dark-tertiary)" }} />
       </div>
       <div className="flex flex-col gap-10">{children}</div>
+      </div>
     </section>
   );
 }

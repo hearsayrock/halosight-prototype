@@ -14,7 +14,7 @@
  *     X shrinks it back. It filters the feed by company or title.
  *   - Under it: three links in the serif face with an icon each — Companies, Action Items, Risks — then an "Interactions" label over a hairline
  *     and the feed. While searching, the links and label step aside so the results get the room.
- *   - Rows are ActivityCard variants "recent" (opened) and "recent-unread" (dot, bold title, "Modified …" line). Opening a row marks it read.
+ *   - Rows use EngagementRow variants "recent" (opened) and "recent-unread" (dot, bold title, "Modified …" line). Opening a row marks it read.
  *   - Lazy loading: the first 12 rows load with the drawer; when the end of the list scrolls into view the next 8 load after a short
  *     beat, with ThinkingDots at the bottom, until the feed ends. (Prototype: the delay is simulated; real data pages from the API.)
  *   - Spring-free slide in from the left (280ms), scrim alpha-scrim, panel dark-primary, 86% of the phone wide.
@@ -26,7 +26,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import ActivityCard from "@/components/accounts/ActivityCard";
+import EngagementRow from "@/components/accounts/EngagementRow";
 import Icon from "@/components/ui/Icon";
 import SearchField from "@/components/ui/SearchField";
 import ThinkingDots from "@/components/ui/ThinkingDots";
@@ -147,7 +147,7 @@ export function EngagementsPanel({
 
       <div ref={scrollRef} className="flex-1 min-h-0" style={{ overflowY: "auto" }}>
         {items.map((r, i) => (
-          <ActivityCard
+          <EngagementRow
             key={r.id}
             recent={r}
             variant={isUnread(r) ? "recent-unread" : "recent"}

@@ -4,12 +4,12 @@
  * FLUTTER HANDOFF: CreateLeadSheet
  * Widget: StatefulWidget (bottom sheet)
  * State: name, isVisible, duplicates, dupeState, dismissed
- * Props: onClose, onCreated(Account)
+ * Props: onClose, onCreated(Account), initialName?, duplicateDetection? (default true)
  * Fields: one TextField ("Company"); the warning stroke shows while a possible duplicate is on screen. The checking spinner is its trailing slot.
  * Tokens: color.dark.secondary (field, via TextField), color.neonindigo.base (active stroke, AI hint), color.alpha.neonindigo-10 (AI hint fill),
  *         color.semantic.warning * (duplicate callout and field stroke), color.text.primary / muted, radius.lg, radius.sm *
  * Portals into #phone-overlay-root.
- * Extends CreateAccountSheet with debounced duplicate detection:
+ * Duplicate detection is configurable for search-created leads; the search flow can skip it:
  *   - 400ms after typing stops, fuzzy-matches against all accounts
  *   - Shows amber callout if matches found (max 2 shown)
  *   - "View existing" navigates to account detail
@@ -30,6 +30,8 @@ import { mockAccounts } from "@/lib/mock-data/accounts";
 interface Props {
   onClose: () => void;
   onCreated: (account: Account) => void;
+  initialName?: string;
+  duplicateDetection?: boolean;
 }
 
 type DupeState = "idle" | "checking" | "found" | "none";
@@ -129,9 +131,9 @@ function DuplicateCallout({
   );
 }
 
-export default function CreateLeadSheet({ onClose, onCreated }: Props) {
+export default function CreateLeadSheet({ onClose, onCreated, initialName = "", duplicateDetection = true }: Props) {
   const router = useRouter();
-  const [name,       setName]       = useState("");
+  const [name,       setName]       = useState(initialName);
   const [isVisible,  setIsVisible]  = useState(true);
   const [dupeState,  setDupeState]  = useState<DupeState>("idle");
   const [duplicates, setDuplicates] = useState<Account[]>([]);
@@ -146,6 +148,13 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
   }, []);
 
   const runDupeCheck = useCallback((value: string) => {
+    if (!duplicateDetection) {
+      if (dupeTimerRef.current) clearTimeout(dupeTimerRef.current);
+      setDupeState("idle");
+      setDuplicates([]);
+      setDismissed(false);
+      return;
+    }
     if (dupeTimerRef.current) clearTimeout(dupeTimerRef.current);
     const trimmed = value.trim();
     if (!trimmed || trimmed.length < 2) {
@@ -160,7 +169,9 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
       setDuplicates(results);
       setDupeState(results.length > 0 ? "found" : "none");
     }, 400);
-  }, []);
+  }, [duplicateDetection]);
+
+  useEffect(() => { runDupeCheck(initialName); }, [initialName, runDupeCheck]);
 
   function handleNameChange(value: string) {
     setName(value);
@@ -189,7 +200,7 @@ export default function CreateLeadSheet({ onClose, onCreated }: Props) {
     setTimeout(() => router.push(`/relationships/${account.id}`), 300);
   }
 
-  const showDupeCallout = dupeState === "found" && !dismissed;
+  const showDupeCallout = duplicateDetection && dupeState === "found" && !dismissed;
 
   const overlayRoot =
     typeof document !== "undefined"

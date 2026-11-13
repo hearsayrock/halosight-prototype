@@ -23,42 +23,43 @@ The prototype uses Next.js with a structure that intentionally mirrors Flutter's
 
 ## Design Token Mapping
 
-Every CSS token in `app/tokens/` maps to Flutter `ThemeData`. The token naming in the prototype is intentionally aligned with M3 ColorScheme roles wherever possible.
+The prototype pins the official token file and maps it to generated CSS. Active-listening generates `lib/view/theme/design_tokens.dart` from the same release. Consume those generated constants; do not restate values in a second Dart theme file. The new typography and weight classes follow the mapping proposal in the official design-system PR.
 
 ```dart
-// lib/theme/halosight_theme.dart
+// Import the generated file from active-listening.
+import 'package:active_listening/view/theme/design_tokens.dart';
 
 ThemeData halosightDarkTheme = ThemeData(
   colorScheme: ColorScheme(
     brightness: Brightness.dark,
     // Brand primaries
-    primary: Color(0xFFFF6B5A),         // --md-sys-color-brand-coral
-    primaryContainer: Color(0xFFFF8F82), // --md-sys-color-brand-coral-light
-    onPrimary: Color(0xFF111420),        // --md-sys-color-text-inverse
-    secondary: Color(0xFF8B92FF),        // --md-sys-color-neonindigo
-    secondaryContainer: Color(0xFFB3B8FF), // --md-sys-color-neonindigo-light
-    onSecondary: Color(0xFF111420),
-    tertiary: Color(0xFF5B63D6),         // --md-sys-color-indigo
-    onTertiary: Color(0xFFF7F8FF),
-    error: Color(0xFFFF4D4F),            // --md-sys-color-error
-    onError: Color(0xFFF7F8FF),
+    primary: DesignColors.brandCoral,
+    primaryContainer: DesignColors.brandCoralLight,
+    onPrimary: DesignColors.textInverse,
+    secondary: DesignColors.neonindigo,
+    secondaryContainer: DesignColors.neonindigoLight,
+    onSecondary: DesignColors.textInverse,
+    tertiary: DesignColors.indigo,
+    onTertiary: DesignColors.textPrimary,
+    error: DesignColors.semanticError,
+    onError: DesignColors.textPrimary,
     // Surfaces
-    surface: Color(0xFF252A36),          // --md-sys-color-dark-secondary
-    onSurface: Color(0xFFF7F8FF),        // --md-sys-color-text-primary
-    surfaceContainerLow: Color(0xFF1A1D29),  // --md-sys-color-dark-primary
-    surfaceContainerHigh: Color(0xFF3D4451), // --md-sys-color-dark-tertiary
-    onSurfaceVariant: Color(0xFF8B94A8), // --md-sys-color-text-muted
-    outline: Color(0x1AFFFFFF),          // --md-sys-color-alpha-white-10
+    surface: DesignColors.darkSecondary,
+    onSurface: DesignColors.textPrimary,
+    surfaceContainerLow: DesignColors.darkPrimary,
+    surfaceContainerHigh: DesignColors.darkTertiary,
+    onSurfaceVariant: DesignColors.textMuted,
+    outline: DesignColors.alphaWhite10,
   ),
-  scaffoldBackgroundColor: Color(0xFF111420), // --md-sys-color-background
-  fontFamily: 'Barlow',
+  scaffoldBackgroundColor: DesignColors.background,
+  fontFamily: DesignFonts.sans,
 );
 
 // Brand extension colors not mapped to M3 ColorScheme roles
 class HalosightColors extends ThemeExtension<HalosightColors> {
-  final Color brandTealLight;  // --md-sys-color-brand-teal-light  #8CB5C5
-  final Color brandTeal;       // --md-sys-color-brand-teal         #6B9DB0
-  final Color brandTealDark;   // --md-sys-color-brand-teal-dark    #4D8495
+  final Color brandTealLight;
+  final Color brandTeal;
+  final Color brandTealDark;
 
   const HalosightColors({
     required this.brandTealLight,
@@ -67,9 +68,9 @@ class HalosightColors extends ThemeExtension<HalosightColors> {
   });
 
   static const defaults = HalosightColors(
-    brandTealLight: Color(0xFF8CB5C5),
-    brandTeal:      Color(0xFF6B9DB0),
-    brandTealDark:  Color(0xFF4D8495),
+    brandTealLight: DesignColors.brandTealLight,
+    brandTeal: DesignColors.brandTeal,
+    brandTealDark: DesignColors.brandTealDark,
   );
 
   @override
@@ -90,45 +91,25 @@ class HalosightColors extends ThemeExtension<HalosightColors> {
 
 ## Typography Mapping
 
-The prototype uses named CSS classes for typography. Map these to Flutter `TextStyle`:
+Typography composites are generated as `TextStyle` constants from the official token file. CSS properties are generated from those same composites.
 
 ```dart
-// Headings — Roboto Slab, weight 700
-// .heading-1 → 60/66
-TextStyle heading1 = TextStyle(fontFamily: 'RobotoSlab', fontWeight: FontWeight.w700, fontSize: 60, height: 1.10);
-// .heading-2 → 48/58
-TextStyle heading2 = TextStyle(fontFamily: 'RobotoSlab', fontWeight: FontWeight.w700, fontSize: 48, height: 1.21);
-// .heading-3 → 36/43
-TextStyle heading3 = TextStyle(fontFamily: 'RobotoSlab', fontWeight: FontWeight.w700, fontSize: 36, height: 1.19);
-// .heading-4 → 24/31
-TextStyle heading4 = TextStyle(fontFamily: 'RobotoSlab', fontWeight: FontWeight.w700, fontSize: 24, height: 1.29);
-// .heading-5 → 20/26
-TextStyle heading5 = TextStyle(fontFamily: 'RobotoSlab', fontWeight: FontWeight.w700, fontSize: 20, height: 1.30);
-// .heading-6 → 18/24
-TextStyle heading6 = TextStyle(fontFamily: 'RobotoSlab', fontWeight: FontWeight.w700, fontSize: 18, height: 1.33);
+TextStyle heading = DesignTypography.heading1;
+TextStyle body = DesignTypography.textBase;
+TextStyle emphasizedBody = DesignTypography.textBaseBold;
+FontWeight semibold = DesignFontWeights.semibold;
 
-// Body — Barlow, weight 400 (regular) / 600 (bold)
-// text-xl / .text-xl-bold → 20/30
-TextStyle bodyXl     = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w400, fontSize: 20, height: 1.50);
-TextStyle bodyXlBold = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w600, fontSize: 20, height: 1.50);
-// text-lg / .text-lg-bold → 18/27
-TextStyle bodyLg     = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w400, fontSize: 18, height: 1.50);
-TextStyle bodyLgBold = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w600, fontSize: 18, height: 1.50);
-// text-base / .text-base-bold → 16/24
-TextStyle bodyBase     = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w400, fontSize: 16, height: 1.50);
-TextStyle bodyBaseBold = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w600, fontSize: 16, height: 1.50);
-// text-sm / .text-sm-bold → 14/21
-TextStyle bodySm     = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w400, fontSize: 14, height: 1.50);
-TextStyle bodySmBold = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w600, fontSize: 14, height: 1.50);
-// text-xs / .text-xs-bold → 12/18
-TextStyle bodyXs     = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w400, fontSize: 12, height: 1.50);
-TextStyle bodyXsBold = TextStyle(fontFamily: 'Barlow', fontWeight: FontWeight.w600, fontSize: 12, height: 1.50);
+// Flutter TextStyle has no textTransform field.
+String eyebrowLabel = switch (DesignTypographyTransforms.eyebrow) {
+  'uppercase' => label.toUpperCase(),
+  _ => label,
+};
+```
 
-// Labels & Captions — 10/14
-// .label-serif → Roboto Slab 400
-TextStyle labelSerif = TextStyle(fontFamily: 'RobotoSlab', fontWeight: FontWeight.w400, fontSize: 10, height: 1.40);
-// .text-2xs → Barlow 400
-TextStyle text2xs    = TextStyle(fontFamily: 'Barlow',     fontWeight: FontWeight.w400, fontSize: 10, height: 1.40);
+Use the generated elevation values in shared widgets:
+
+```dart
+BoxDecoration(boxShadow: DesignElevation.elevation3);
 ```
 
 ---
